@@ -1,0 +1,77 @@
+* ToDos new versions
+** Code
+*** 'use-numerals-below' is idiotisch, weil es darüber nicht ausschreibt und nicht darunter.
+
+* ToDos old-new versions
+** Code
+*** TODO translator definiert ohne ANgabe von 'to=' automatishc für Englisch, darum bei \cudefinename überall Symbole
+
+* Optimmization and maybe faster code
+** TODO Eventuell keine prop Liste verwenden? 
+*** Das neue l3keys verwendet keine prop Liste, sondenr stattdessen tl's.
+*** Eventuell nicht ganz so gute Idee, weil beim Umwandeln ist eine prop Liste mit key-val praktisch.
+
+* testfiles
+** TODO Add length to cutexts and glaube cunum.
+
+* cooking-units ToDos initialise
+** TODO Code 
+*** TODO Code beschreiben?					       :Text:
+*** TODO Mittels 'macro' und 'macrocode' code formatieren.	   :Struktur:
+*** TODO Eventuell Definitionen umstellen.			   :Struktur:
+*** TODO Eventuell an siunitx anpassen keys et all.
+*** TODO Achten, dass alle booleans et all auf Grundzustand gesetzt werden wenn das Makro beginnt.
+
+
+
+
+
+
+
+* Finished
+*** DONE \cuam programmieren
+*** DONE Berechnung streichen oder verbessern.
+*** DONE \@@_cunum_parse_range:Nn in cutext umwandeln?
+    Gemacht.
+** DONE Eventuell statt \tl_if_in:cnTF { l_@@_tmpa_ \l_@@_tmp_unit_tl  _ tl } { \l_tmpa_fp } mit booleans arbeiten
+*** \tl_set:Nf danach den bool drinnen haben (glaube schneller, sollte prüfen)
+*** Wieder aufgehoben, weil der Fall bei Temperaturen wenn kein #1 gegeben ist (zB Konvertierung von einem zum selben) dann nicht funktioniert.
+** DONE [#C] Anleitung
+   Hoffentlich
+*** DONE README.md schreiben und verbessern.
+*** DONE Readme nochmals durchlesen.
+*** DONE Neue Option 'fmtcount' hinzufügen.
+*** DONE Neuen Befehl '\cuaddtokeys' (und andere) hinzufügen.
+*** DONE EInheitentabelle überorüfen
+*** DONE lsistings neue Befehle hinzufügen
+*** DONE Generell Code und Anleitung abprüfen (wie zb. cuaddnames(?), etc.)
+*** DONE \cudefinesymbol Text überrüfen 
+*** DONE 'one ()' und 'unceartenity-seperator' in Dokumentation hinzufügen.
+*** DONE Beispiel (stone; ) Hölle hinzufügen.
+    Habs gemacht, bei cuaddkeys
+*** DONE Auch bei \cuaddkeys Beispiel mittels Formeln erkären (wie bei Temperatur).
+** DONE .ins
+*** DONE \generate  zurück anpassen.
+*** DONE \cudefinesymbol überprüfen und eventuell streichen.
+    Befehl dafür lassen damit man die Möglichkeit hat nur die Symbole zu verändern.
+*** DONE Step versionnumber of package expl3.
+*** DONE Befehle suchen die man streichen kann.			    :Sprache:
+*** DONE Geschelcht von Temperaturen im französischen Überprüfen.   :Sprache:
+    Sind männlich (hoffentlich).
+*** DONE \cuaddtokeys testen					       :Keys:
+*** DONE \cuaddtosinglekey schreiben und überprüfen.		       :Keys:
+    Funktioniert nicht, da nicht einfach invertierbar durch 1/(Formel), Makro gelöscht.
+*** DONE Make 'fmtcount' only useable during package loading.
+*** DONE Test if 'fmtcount' is actaully only useable as load-time-option.
+*** DONE Unbekannter Wert Warnungen zu Fehlern (Option dafür schreiben).
+    Kann zusätzlich auch abschalten.
+*** DONE Bei translate immer [CU] hinzufügen.			    :Sprache:
+    Hab überall cu- hinzugefügt.
+*** DONE Auf Versionsummer achten!
+*** DONE eV und EeV Namen hinzufügen.
+    Done. EeV gelöscht.
+*** DONE convert-to-eV verbessern.
+*** DONE 'cunum-range-sign' und 'cutext-range-sign' hinzufügen.
+*** DONE eV et all bessere keys.
+    Oder auch nicht.
+
