@@ -3941,6 +3941,16 @@ and the derived file cooking-units.sty.
     \SaveTranslationFor {#2} {#1} { #3 #4 }
   }
 \cs_generate_variant:Nn \@@_translate_let:nNnn { VNxx, nNxx }
+
+
+
+\cs_new:Npn \@@_if_translation_exists_for:nnnTF #1#2#3#4#5
+  {
+    \IfTranslation {#1} {#2#3} {#4} {#5}
+  }
+\cs_generate_variant:Nn \@@_if_translation_exists_for:nnnTF { VxxTF }
+
+
 %
 %
 %\cs_new:Npn \@@_translate:xx #1#2
@@ -5890,6 +5900,15 @@ and the derived file cooking-units.sty.
       { \prg_return_true: }
       { \prg_return_false: }
   }
+\prg_new_conditional:Npnn \@@_if_phrases_exists_for_language: { TF , T , F }
+  {
+    \@@_if_translation_exists_for:VxxTF 
+      \l_@@_language_tl
+      { phrase-list } 
+      \c_@@_postfix_phrase_tl
+      { \prg_return_true: }
+      { \prg_return_false: }
+  } 
 %    \end{macrocode}
 %    \begin{macrocode}
 %\@@_deftranslation:xxV { phrase-list }  \c_@@_postfix_phrase_tl \l_@@_phrase_prop
@@ -5903,18 +5922,30 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuphrase:nn #1#2
   {
     \tl_set:Nn \l_@@_language_tl {#1}
-    \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_prop 
-      { phrase-list } \c_@@_postfix_phrase_tl
+    
+%    \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_prop 
+%      { phrase-list } \c_@@_postfix_phrase_tl
 %    \end{macrocode}
 %    \begin{macrocode}
-    \@@_if_no_phrases_for_language:TF
-      {
-        \prop_clear:N \l_@@_phrase_prop
-        \clist_clear:N \l_@@_phrase_numbers_clist
-      }{
-        \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
-          { phrase-list-list } \c_@@_postfix_phrase_tl
-      }
+%    \@@_if_no_phrases_for_language:TF
+%      {
+%        \prop_clear:N \l_@@_phrase_prop
+%        \clist_clear:N \l_@@_phrase_numbers_clist
+%      }{
+%        \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
+%          { phrase-list-list } \c_@@_postfix_phrase_tl
+%      }
+      
+      \@@_if_phrases_exists_for_language:TF
+        {
+          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_prop 
+            { phrase-list } \c_@@_postfix_phrase_tl
+          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
+            { phrase-list-list } \c_@@_postfix_phrase_tl
+        }{
+          \prop_clear:N \l_@@_phrase_prop
+          \clist_clear:N \l_@@_phrase_numbers_clist
+        }
 %    \end{macrocode}
 %    \begin{macrocode}
       \@@_sanitize_arrows:n {#2}
