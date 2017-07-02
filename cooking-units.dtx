@@ -3873,7 +3873,7 @@ and the derived file cooking-units.sty.
   {
     \declaretranslationfallback { #1 #2 } {#3}
   }
-\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xx }
+\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xx , xxV }
 \cs_new:Npn \@@_deftranslation_to:nnnn #1#2#3#4
   {
     \declaretranslation {#1} { #2 #3 } {#4}
@@ -3951,6 +3951,15 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_if_translation_exists_for:nnnTF { VxxTF }
 
 
+\quark_new:N \q_@@_no_unitname_avaiable
+\prg_new_conditional:Npnn \@@_if_unitname_exists:n #1 { TF }
+  {
+    \@@_translate_let:Nxx \l_tmpa_tl {#1} \c_@@_postfix_unitname_tl
+    \tl_if_eq:NNTF \l_tmpa_tl \q_@@_no_unitname_avaiable %% ToDo: Test
+      { \prg_return_false: }
+      { \prg_return_true: }
+  }
+
 %
 %
 %\cs_new:Npn \@@_translate:xx #1#2
@@ -4011,9 +4020,13 @@ and the derived file cooking-units.sty.
 %\@@_newtranslation:xxn { one (m) } \c_@@_postfix_unitname_tl { one }
 %\@@_newtranslation:xxn { one (f) } \c_@@_postfix_unitname_tl { one }
 %\@@_newtranslation:xxn { one (n) } \c_@@_postfix_unitname_tl { one }
-\@@_newtranslation_base:nVn { one (m) } \c_@@_postfix_unitname_tl { one }
-\@@_newtranslation_base:nVn { one (f) } \c_@@_postfix_unitname_tl { one }
-\@@_newtranslation_base:nVn { one (n) } \c_@@_postfix_unitname_tl { one }
+\@@_newtranslation_base:nVn { one (m) } \c_@@_postfix_unitname_tl { \c_@@_no_unitname_avaiable_tl }
+\@@_newtranslation_base:nVn { one (f) } \c_@@_postfix_unitname_tl { \c_@@_no_unitname_avaiable_tl }
+\@@_newtranslation_base:nVn { one (n) } \c_@@_postfix_unitname_tl { \c_@@_no_unitname_avaiable_tl }
+%
+\@@_newtranslation_to:nnVn { English } { one (m) } \c_@@_postfix_unitname_tl { one }
+\@@_newtranslation_to:nnVn { English } { one (f) } \c_@@_postfix_unitname_tl { one }
+\@@_newtranslation_to:nnVn { English } { one (n) } \c_@@_postfix_unitname_tl { one }
 %    \end{macrocode}
 %    \begin{macrocode}
 %\@@_newtranslation:nxxn { German } { one (m) } \c_@@_postfix_unitname_tl { ein }
@@ -5013,8 +5026,7 @@ and the derived file cooking-units.sty.
       {
         \@@_if_integer:VT #1
           {
-            \@@_translate_let:Nxx \l_@@_phrase_prop { phrase-list } \c_@@_postfix_phrase_tl
-            \@@_if_no_phrases_for_language:F
+            \@@_phrase_list_get:NT \l_@@_phrase_prop
               {
                 \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
                   { phrase-list-list } \c_@@_postfix_phrase_tl
@@ -5892,6 +5904,9 @@ and the derived file cooking-units.sty.
 %
 % \subsection {Phrases}
 %
+%
+\@@_deftranslation_base:xxV { phrase-list } \c_@@_postfix_phrase_tl \c_empty_prop
+%
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_if_no_phrases_for_language: 
   { TF , T , F }
@@ -5900,14 +5915,19 @@ and the derived file cooking-units.sty.
       { \prg_return_true: }
       { \prg_return_false: }
   }
-\prg_new_conditional:Npnn \@@_if_phrases_exists_for_language: { TF , T , F }
+\prg_new_conditional:Npnn \@@_phrase_list_get_for:NN #1#2 { TF , T , F }
   {
-    \@@_if_translation_exists_for:VxxTF 
-      \l_@@_language_tl
-      { phrase-list } 
-      \c_@@_postfix_phrase_tl
-      { \prg_return_true: }
+    \@@_translate_let:VNxx #2 #1 { phrase-list } \c_@@_postfix_phrase_tl
+    \prop_if_empty:NTF \l_tmpa_prop
       { \prg_return_false: }
+      { \prg_return_true: }
+  } 
+\prg_new_conditional:Npnn \@@_phrase_list_get:N #1 { TF , T , F }
+  {
+    \@@_translate_let:Nxx #1 { phrase-list } \c_@@_postfix_phrase_tl
+    \prop_if_empty:NTF #1
+      { \prg_return_false: }
+      { \prg_return_true: }
   } 
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -5936,10 +5956,10 @@ and the derived file cooking-units.sty.
 %          { phrase-list-list } \c_@@_postfix_phrase_tl
 %      }
       
-      \@@_if_phrases_exists_for_language:TF
+      \@@_phrase_list_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
         {
-          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_prop 
-            { phrase-list } \c_@@_postfix_phrase_tl
+%          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_prop 
+%            { phrase-list } \c_@@_postfix_phrase_tl
           \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
             { phrase-list-list } \c_@@_postfix_phrase_tl
         }{
