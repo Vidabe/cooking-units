@@ -132,12 +132,13 @@ and the derived file cooking-units.sty.
 %<*driver> 
 \documentclass[
         ngerman,
+        french,
         english, %french, naustrian
         onlydoc,
 %        check-declarations,
 ]{l3doc}
 \usepackage[utf8]{inputenc}
-\usepackage{babel}
+\usepackage[main=english]{babel}
 \usepackage[use-numerals=true]{cooking-units}
 \usepackage{tikzsymbols}
 \usepackage{listings}
@@ -351,14 +352,17 @@ and the derived file cooking-units.sty.
   }
 \cs_new_eq:NN \__table_default_midrule: \__table_midrule:
 
-\NewDocumentCommand \CreateTableForLanguages { s m }
+\cs_new:Npn \_cook_use:n #1
+  { \cs_if_exist_use:cF { __cooking_units_#1 } {\ERROR} }
+
+\NewDocumentCommand \CreateTableForLanguages { s >{\TrimSpaces} m }
   {
     \IfBooleanTF {#1}
       { \clist_gset_eq:NN \l_tmpa_clist \l_list_of_textunits_clist }
       { \clist_gset_eq:NN \l_tmpa_clist \l_list_of_units_clist }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
-%    \CreateTableHeader {#2} 
-%    \CreateTableRow {#2} 
+    \CreateTableHeader {#2} 
+    \CreateTableRow {#2} 
   }
 
 \NewDocumentCommand \CreateTableHeader { m }
@@ -381,19 +385,23 @@ and the derived file cooking-units.sty.
                  \clist_if_in:NnTF \l_list_of_textunits_clist {##1}
                    { \l_translation_does_not_exist_tl }
                    { 
-                     \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unit) } 
+%                     \SaveTranslationFor \l_tmpa_tl {#1} { ##1 (cu-unit) } 
+                     \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unit_tl 
                      \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_unitname_avaiable
                        { \l_translation_does_not_exist_tl }
                        { \l_tmpa_tl }
                    }
                & 
-               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) } 
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
+%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) } 
                \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_unitname_avaiable
                  { \l_translation_does_not_exist_tl }
                  { \l_tmpa_tl }
                & 
-               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) }
-               \SaveTranslation\l_tmpb_tl{#1}{ ##1 (cu-unitname-pl) }
+%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) }
+%               \SaveTranslation\l_tmpb_tl{#1}{ ##1 (cu-unitname-pl) }
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpb_tl {##1} \c__cooking_units_postfix_unitname_pl_tl 
                \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
                  { 
                    \tl_if_in:NnTF \l_tmpb_tl \q__cooking_units_no_unitname_avaiable
@@ -401,7 +409,8 @@ and the derived file cooking-units.sty.
                      { (\l_tmpb_tl)  }
                  }
                &
-               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitgender) } 
+%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitgender) } 
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_gender_tl 
                \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_unitname_avaiable
                  { \l_translation_does_not_exist_tl }
                  { \l_tmpa_tl }
@@ -834,7 +843,7 @@ and the derived file cooking-units.sty.
 %   \cuam{1_2/3} 
 % \end{cuexamplecode}
 %
-% (as I don't know any english phrases, I switched the language to german  for the following example)
+% (as I don't know any english phrases, I switched the language to german  for the following examples)
 % \begin{myde}
 % \begin{cuexamplecode}
 %   \cuam{12} \\
@@ -2322,12 +2331,12 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \subsection{AmericanEnglish}
+% \subsection{american}
 % Only differences from \enquote{English} are defined.
-%⁄
+%
 % \begin{tabular}{ l l l l l }
 %   \toprule
-%   \CreateTableForLanguages{ AmericanEnglish  }
+%   \CreateTableForLanguages{ american  }
 % \end{tabular}
 %
 % \subsection{German}
@@ -2338,7 +2347,7 @@ and the derived file cooking-units.sty.
 %
 % \bigskip
 %
-%   \CreateTableForPhrases { German }
+%^^A   \CreateTableForPhrases { German }
 %
 % \bigskip
 %
@@ -4026,6 +4035,7 @@ and the derived file cooking-units.sty.
 %\@@_newtranslation:xxn { decimal-mark } \c_@@_postfix_unitname_tl { . }
 %\@@_newtranslation:nxxn { German } { decimal-mark } \c_@@_postfix_unitname_tl { , }
 \@@_newtranslation_base:nVn { decimal-mark } \c_@@_postfix_unitname_tl { . }
+\@@_newtranslation_base:nVn { decimal-mark } \c_@@_postfix_unitname_pl_tl { \q_@@_no_unitname_avaiable }
 \@@_newtranslation_to:nnVn { German } { decimal-mark } \c_@@_postfix_unitname_tl { , }
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -4035,6 +4045,9 @@ and the derived file cooking-units.sty.
 \@@_newtranslation_base:nVn { one (m) } \c_@@_postfix_unitname_tl { \q_@@_no_unitname_avaiable }
 \@@_newtranslation_base:nVn { one (f) } \c_@@_postfix_unitname_tl { \q_@@_no_unitname_avaiable }
 \@@_newtranslation_base:nVn { one (n) } \c_@@_postfix_unitname_tl { \q_@@_no_unitname_avaiable }
+\@@_newtranslation_base:nVn { one (m) } \c_@@_postfix_unitname_pl_tl { \q_@@_no_unitname_avaiable }
+\@@_newtranslation_base:nVn { one (f) } \c_@@_postfix_unitname_pl_tl { \q_@@_no_unitname_avaiable }
+\@@_newtranslation_base:nVn { one (n) } \c_@@_postfix_unitname_pl_tl { \q_@@_no_unitname_avaiable }
 %
 \@@_newtranslation_to:nnVn { English } { one (m) } \c_@@_postfix_unitname_tl { one }
 \@@_newtranslation_to:nnVn { English } { one (f) } \c_@@_postfix_unitname_tl { one }
@@ -4452,9 +4465,9 @@ and the derived file cooking-units.sty.
   {
     \tl_if_in:NnT #1 { . }
       {
-%        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl 
-%          { decimal-mark } \c_@@_postfix_unitname_tl
-        \tl_replace_once:Nnn #1 { . } { \@@_translate:nV { decimal-mark } \c_@@_postfix_unitname_tl }
+        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl 
+          { decimal-mark } \c_@@_postfix_unitname_tl
+        \tl_replace_once:Nnn #1 { . } { \l_@@_translation_tmpa_tl }
       }
     \tl_if_in:NnT #1 { - }
       { \tl_replace_once:NnV #1 { - } \c_@@_minus_tl }
@@ -5709,6 +5722,7 @@ and the derived file cooking-units.sty.
       }
     \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unitname_tl { \q_@@_no_unitname_avaiable }
     \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unitname_pl_tl { \q_@@_no_unitname_avaiable }
+    \@@_deftranslation_base:xxn {#2} \c_@@_postfix_gender_tl { \q_@@_no_unitname_avaiable }
   }
 %    \end{macrocode}
 %
