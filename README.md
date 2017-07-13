@@ -9,7 +9,7 @@ While writing a cookery book, units and their format can be quite
 troublesome. This contains not only the question of how to print those
 units, but also the question of the conversion of units. A cookery
 book doesn't contain only SI units, it contains a much more colorful
-range of units (kg, dag, g, oz, ... for example) and it macy cause
+range of units (kg, dag, g, oz, ... for example) and it may cause
 some confusion if too many different units are used, but if you just
 write a cookery book for fun you don't think about this ... until
 someone (my mother in my case) tells you that it's too confusing.

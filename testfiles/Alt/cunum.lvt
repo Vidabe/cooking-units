@@ -1,0 +1,106 @@
+\documentclass{minimal}
+\input{regression-test}
+
+\usepackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+\ExplSyntaxOff
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { default }
+  {
+    \mytest { \cunum{1}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { unit-conversion }
+  {
+    \mytest { \cunum[kg=g]{1}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { default-range-with-conversion }
+  {
+    \mytest { \cunum[kg=g]{1--2}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% doesn't work because of 'xfrac'.
+
+\TEST { check-fraction }
+  {
+%    \mytest { \cunum{1/2}{kg} }
+%    \mytest { \cunum{3_1/2}{kg} }
+%    \mytest { \cunum{3_1/2}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { check-special-sign }
+  {
+    \mytest { \cunum{?}{kg} }
+    \mytest { \cunum[kg=g]{10?--30?}{kg} }
+    \mytest { \cunum{100?--300?}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { check-phantom }
+  {
+    \mytest { \cunum{100}{dag} }
+    \mytest { \cunum{10}[0]{dag} }
+    \mytest { \cunum{1}[00]{dag} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { check-rounding }
+  {
+    \mytest { \cunum{1.2356789}{dag} }
+  }
+
+\TEST { check-rounding-temperatures }
+  {
+    \mytest { \cunum{1.23}{C} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { check-dots-and-minus }
+  {
+    \mytest { \cunum{1.2}{dag} }
+    \mytest { \cunum{1,2}{dag} }
+    \mytest { \cunum{-1,2}{dag} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\TEST { check-if-options-work }
+  {
+    \mytest { \cunum[round-precision=0]{1.2}{dag} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\END

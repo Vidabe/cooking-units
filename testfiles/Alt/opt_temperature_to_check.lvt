@@ -1,0 +1,49 @@
+%
+% Copyright (C) 2009-2012 The LaTeX3 Project
+%
+\documentclass{minimal}
+\input{regression-test}
+
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+\ExplSyntaxOff
+
+\newcookingunit{Ro}
+\cuaddsinglekeys {C}
+  {
+    {Ro} { #1 * 21/40 + 7.5 }
+  }
+
+\cusetup{check-temperature=true, add-temperature-to-check = { Ro  = -135.90375 } }
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST{test~if~new~temperature~is~checked}{
+    \mytest { \cunum{-2000}{Ro} }
+    \mytest { \cunum[C=Ro]{-300}{C} }
+  }
+
+\TEST{Try~with~no~argument~and~argument}{
+    \cusetup{add-temperature-to-check = {eV}}
+    \cusetup{add-temperature-to-check = {eV=981}}
+  }
+
+
+
+
+
+\END

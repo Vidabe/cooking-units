@@ -1,0 +1,56 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Author: Ben
+============================================================
+TEST 1: test~if~new~temperature~is~checked
+============================================================
+> \box27=
+\hbox(6.83331+0.83313)x48.47044
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\TS1/cmr/m/n/10 =
+.\OT1/cmr/m/n/10 2
+.\OT1/cmr/m/n/10 0
+.\OT1/cmr/m/n/10 0
+.\OT1/cmr/m/n/10 0
+.\kern 1.66672
+.\OT1/cmr/m/n/10 R
+.\OT1/cmr/m/n/10 o
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.83313)x43.47043
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\TS1/cmr/m/n/10 =
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 5
+.\OT1/cmr/m/n/10 0
+.\kern 1.66672
+.\OT1/cmr/m/n/10 R
+.\OT1/cmr/m/n/10 o
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 2: Try~with~no~argument~and~argument
+============================================================
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+! cooking-units error: "No-Value-given"
+! 
+! Please input a number to check for 'check-temperature'.
+! 
+! See the cooking-units documentation for further information.
+! 
+! For immediate help type H <return>.
+!...............................................  
+l. ...  }
+|'''''''''''''''''''''''''''''''''''''''''''''''
+| A minimum value is needed for testing if 'check-temperature' is active.
+| 
+| See the cooking-units documentation for further information.
+|...............................................
+============================================================

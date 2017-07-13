@@ -1,0 +1,107 @@
+\documentclass[french]{minimal}
+\input{regression-test}
+\usepackage{babel}
+
+\usepackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+\ExplSyntaxOff
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { weights }
+  {
+    \mytest { \cunum{1}{kg} }
+    \mytest { \cunum{1}{dag} }
+    \mytest { \cunum{1}{g} }
+    \mytest { \cunum{1}{oz} }
+    \mytest { \cunum{1}{lb} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { temperatures }
+  {
+    \mytest { \cunum{1}{C} }
+    \mytest { \cunum{1}{F} }
+    \mytest { \cunum{1}{Re} }
+    \mytest { \cunum{1}{K} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { time }
+  {
+    \mytest { \cunum{1}{d} }
+    \mytest { \cunum{1}{h} }
+    \mytest { \cunum{1}{min} }
+    \mytest { \cunum{1}{s} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { liter }
+  {
+    \mytest { \cunum{1}{l} }
+    \mytest { \cunum{1}{dl} }
+    \mytest { \cunum{1}{cl} }
+    \mytest { \cunum{1}{ml} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { energy }
+  {
+    \mytest { \cunum{1}{cal} }
+    \mytest { \cunum{1}{kcal} }
+    \mytest { \cunum{1}{J} }
+    \mytest { \cunum{1}{kJ} }
+    \mytest { \cunum{1}{eV} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { length }
+  {
+    \mytest { \cutext{1}{m} }
+    \mytest { \cutext{1}{dm} }
+    \mytest { \cutext{1}{cm} }
+    \mytest { \cutext{1}{mm} }
+    \mytest { \cutext{1}{in} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { other }
+  {
+    \mytest { \cunum{1}{pn} }
+    \mytest { \cunum{1}{EL} }
+    \mytest { \cunum{1}{TL} }
+    \mytest { \cunum{1}{Msp} }
+    \mytest { \cunum{1}{csp} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { decimal }
+  {
+    \mytest { \cunum{1.1}{kg} }
+  }
+
+
+
+
+\END

@@ -8,6 +8,11 @@
 *.out
 *.gz
 
+.DS_Store
+.swp
+
+
+cooking-units_Kopie.dtx
 build
 
 *~

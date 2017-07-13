@@ -1,0 +1,10 @@
+\documentclass{scrartcl}
+\usepackage{translator}
+
+\def\Test{Hallo}
+\deftranslation{Hallo}{\Test}
+
+\begin{document}
+\translatelet\Ding{Hallo}
+\show\Ding
+\end{document}

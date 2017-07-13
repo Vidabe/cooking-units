@@ -1,0 +1,57 @@
+%
+% Copyright (C) 2009-2012 The LaTeX3 Project
+%
+\documentclass[ngerman]{minimal}
+\usepackage{babel}
+\input{regression-test}
+
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cuphrase { German } 
+  {  
+    { 6 } * { halbes \  Dutzend } < n >
+    { 6 }  { efkjwefjkl \  Dutzend } < n >
+    { 12 } { Dutzend } < n >
+    { 60 } { Schock } < n >
+%    { 1728 } { Gro{\ss}gros } < n >
+%    { 144 } { Gros } < n >
+  }
+\ExplSyntaxOff
+
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+\ExplSyntaxOn
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { print-default }
+  {
+    \mytest { \cuam{6} Eier }
+    \mytest { \cuam{12} Eier }
+    \mytest { \cuam{18} Eier }
+    \mytest { \cuam[recalculate-amount=true, set-number-of-persons=10, label=Hallo*4, ref=Hallo]{24} Eier }
+    \mytest { \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, use-phrases=false]{24} Eier }
+    \mytest { \cuam{60} Eier }
+    \mytest { \cuam{62} Eier }
+    \mytest { \cuam{12--60} Eier }
+    \mytest { \cuam{60--120} Eier }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\END

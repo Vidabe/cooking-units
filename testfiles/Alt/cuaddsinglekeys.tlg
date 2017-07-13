@@ -1,0 +1,22 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Author: Ben
+============================================================
+TEST 1: print-default
+============================================================
+> \box27=
+\hbox(6.83331+1.94444)x56.38904
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 4
+.\kern 1.66672
+.\OT1/cmr/m/n/10 Q
+.\OT1/cmr/m/n/10 W
+.\OT1/cmr/m/n/10 E
+.\OT1/cmr/m/n/10 R
+.\kern-0.83334
+.\OT1/cmr/m/n/10 T
+.\OT1/cmr/m/n/10 Z
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================

@@ -1,0 +1,476 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Author: Ben
+============================================================
+TEST 1:  weights 
+============================================================
+> \box27=
+\hbox(6.94444+1.94444)x23.6112
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+1.94444)x28.88899
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 d
+.\OT1/cmr/m/n/10 a
+.\OT1/cmr/m/n/10 g
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.44444+1.94444)x18.3334
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 g
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.44444+0.0)x22.77785
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 o
+.\OT1/cmr/m/n/10 z
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x21.66675
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 l
+.\OT1/cmr/m/n/10 b
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 2:  temperatures 
+============================================================
+> \box27=
+\hbox(6.88586+0.0)x24.65285
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\mathon
+.\hbox(0.0+0.0)x0.0
+.\hbox(3.25694+0.0)x4.59723, shifted -3.62892
+..\OMS/cmsy/m/n/7 ^^N
+.\mathoff
+.\kern -0.5
+.\OT1/cmr/m/n/10 C
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.88586+0.0)x23.95842
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\mathon
+.\hbox(0.0+0.0)x0.0
+.\hbox(3.25694+0.0)x4.59723, shifted -3.62892
+..\OMS/cmsy/m/n/7 ^^N
+.\mathoff
+.\kern -0.5
+.\OT1/cmr/m/n/10 F
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x29.23618
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\mathon
+.\hbox(0.0+0.0)x0.0
+.\hbox(3.25694+0.0)x4.59723, shifted -3.62892
+..\OMS/cmsy/m/n/7 ^^N
+.\mathoff
+.\kern -0.5
+.\OT1/cmr/m/n/10 R
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^S
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.0)x21.11119
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 K
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 3:  time 
+============================================================
+> \box27=
+\hbox(6.94444+0.0)x18.88896
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 d
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x18.88896
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 h
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.67859+0.0)x30.0001
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 m
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 n
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.44444+0.0)x17.27783
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 s
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 4:  liter 
+============================================================
+> \box27=
+\hbox(6.83331+0.0)x19.5834
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 L
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x25.13898
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 d
+.\OT1/cmr/m/n/10 L
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.0)x24.02785
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 L
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.0)x27.91676
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 m
+.\OT1/cmr/m/n/10 L
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 5:  energy 
+============================================================
+> \box27=
+\hbox(6.94444+0.0)x25.55563
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 a
+.\OT1/cmr/m/n/10 l
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x30.55565
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\kern-0.27779
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 a
+.\OT1/cmr/m/n/10 l
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.0)x18.47229
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 J
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x23.75009
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 J
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+0.0)x25.27785
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 V
+.\glue 3.33333 plus 1.66498 minus 1.11221
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 6:  length 
+============================================================
+> \box27=
+\hbox(6.94444+0.0)x40.02782
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 m
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^R
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 r
+.\OT1/cmr/m/n/10 e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x57.25006
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 d
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^S
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 m
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^R
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 r
+.\OT1/cmr/m/n/10 e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x60.86118
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 n
+.\kern-0.27779
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 m
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^R
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 r
+.\OT1/cmr/m/n/10 e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x59.47232
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 m
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 l
+.\OT1/cmr/m/n/10 l
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 m
+.\kern -0.27779 (for accent)
+.\OT1/cmr/m/n/10 ^^R
+.\kern -4.72223 (for accent)
+.\OT1/cmr/m/n/10 e
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 r
+.\OT1/cmr/m/n/10 e
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+0.0)x33.05559
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 n
+.\OT1/cmr/m/n/10 c
+.\kern-0.27779
+.\OT1/cmr/m/n/10 h
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 7:  other 
+============================================================
+> \box27=
+\hbox(6.94444+1.94444)x36.94455
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 p
+.\OT1/cmr/m/n/10 i
+.\OT1/cmr/m/n/10 n
+.\OT1/cmr/m/n/10 c
+.\kern-0.27779
+.\OT1/cmr/m/n/10 h
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.44444+1.94444)x29.50009
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 s
+.\OT1/cmr/m/n/10 p
+.\OT1/cmr/m/n/10 .
+.\glue 3.33333 plus 1.67665 minus 1.10448
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+1.94444)x35.05566
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 t
+.\OT1/cmr/m/n/10 b
+.\OT1/cmr/m/n/10 s
+.\OT1/cmr/m/n/10 p
+.\OT1/cmr/m/n/10 .
+.\glue 3.33333 plus 1.67665 minus 1.10448
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.83331+1.94444)x34.77788
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 M
+.\OT1/cmr/m/n/10 s
+.\OT1/cmr/m/n/10 p
+.\OT1/cmr/m/n/10 .
+.\glue 3.33333 plus 1.67665 minus 1.10448
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.44444+1.94444)x30.05563
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 c
+.\OT1/cmr/m/n/10 s
+.\OT1/cmr/m/n/10 p
+.\OT1/cmr/m/n/10 .
+.\glue 3.33333 plus 1.67665 minus 1.10448
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
+============================================================
+TEST 8:  decimal 
+============================================================
+> \box27=
+\hbox(6.94444+1.94444)x31.389
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 .
+.\OT1/cmr/m/n/10 1
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+.\glue 3.33333 plus 1.66666 minus 1.11111
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================

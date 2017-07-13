@@ -1,0 +1,52 @@
+%
+% Copyright (C) 2009-2012 The LaTeX3 Project
+%
+\documentclass{minimal}
+\input{regression-test}
+
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+\ExplSyntaxOff
+
+\cusetup{eval-fraction=true}
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST{normal~fraction}{
+    \mytest { \cunum{2/3}{kg} }
+    \mytest { \cunum{-2/3}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST{mixed~fraction}{
+    \mytest { \cunum{1_2/3}{kg} }
+    \mytest { \cunum{-1_2/3}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST{division~through~zero}{
+    \mytest { \cunum{2/0}{kg} }
+    \mytest { \cunum{-1_2/0}{kg} }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\END

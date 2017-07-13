@@ -2,8 +2,8 @@
 % !TEX encoding = UTF-8 Unicode
 % !TEX program  = pdfLaTeX
 %
-% -- ToDo: Falls überstzung nicht existent -> erstzen.
-% -- ToDo: translations?
+% Füge hinzu: Star für expandierbar, etc.
+% dag -> ducks
 %
 %<*internal>
 \iffalse
@@ -20,7 +20,7 @@ While writing a cookery book, units and their format can be quite
 troublesome. This contains not only the question of how to print those
 units, but also the question of the conversion of units. A cookery
 book doesn't contain only SI units, it contains a much more colorful
-range of units (kg, dag, g, oz, ... for example) and it macy cause
+range of units (kg, dag, g, oz, ... for example) and it may cause
 some confusion if too many different units are used, but if you just
 write a cookery book for fun you don't think about this ... until
 someone (my mother in my case) tells you that it's too confusing.
@@ -637,6 +637,8 @@ and the derived file cooking-units.sty.
 %   It should be used for light-hearted things like
 %   cookery books (and not e.g. scientific texts).\footnote{I did hide  some 
 %   grammatical and spelling errors for easter egg hunters \Winkey.}
+%
+%   Please read through the section \enquote{Important Changes}
 % \end{abstract}
 %
 %^^A \tableofcontents
@@ -663,7 +665,7 @@ and the derived file cooking-units.sty.
 %
 % \begingroup
 % \cusetup{use-numerals-below=13}
-% \cunum[convert-to-eV=true]{1}{m} \\
+% \cutext[convert-to-eV=true]{1}{m} \\
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cuam{6} Eier \\
 % \cuam{12} Eier \\
@@ -4052,6 +4054,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_parse_number_in_input:n #1
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
+    \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
     \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
     \@@_further_process_input:NN \l_@@_number_tmpa_tl \q_no_value
     \@@_print_input:N \l_@@_number_tmpa_tl
@@ -4069,6 +4072,7 @@ and the derived file cooking-units.sty.
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl    
+    \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
     \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
     \@@_calculate_and_store_in:NN \l_@@_number_tmpb_tl \l_@@_number_tmpb_tl
     \@@_further_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl 
@@ -4105,6 +4109,7 @@ and the derived file cooking-units.sty.
       }{
         \tl_set:Nx \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
+        \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
         \@@_calculate_and_store_in:NN 
           \l_@@_number_tmpa_tl
           \l_@@_number_tmpa_tl
@@ -4151,6 +4156,7 @@ and the derived file cooking-units.sty.
               { \l_@@_mixed_fraction_tl + }
             \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl 
           }
+        \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
         \@@_calculate_and_store_in:NN 
           \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
         \@@_further_process_input:NN \l_@@_number_tmpa_tl \q_no_value 
@@ -4501,6 +4507,8 @@ and the derived file cooking-units.sty.
   {
     \str_if_eq:nnTF {#1} { < }
       {  
+        \tl_if_in:NoT \l_@@_allowed_special_signs_tl { < }
+          { \ERROR or \WARNING }
         \tl_clear:N \l_@@_tmpa_tl
         \tl_put_right:Nx \l_@@_tmpa_tl { \tl_to_str:N < }
         \@@_grab_arrows_for_safety_do_afterwards:nN
@@ -4591,9 +4599,6 @@ and the derived file cooking-units.sty.
         \keys_set_groups:nnn { cooking-units } { change-unit } {#2}  
       }
     \bool_if:NT \l_@@_convert_to_eV_bool { \@@_convert_to_eV: }
-%    \prop_get:NVN \l_@@_change_unit_prop \l_@@_given_unit_tl \l_@@_option_unit_tl
-%    \quark_if_no_value:NT \l_@@_option_unit_tl  
-%      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
     \prop_get:NVNF \l_@@_change_unit_prop \l_@@_given_unit_tl \l_@@_option_unit_tl
       {
         \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl

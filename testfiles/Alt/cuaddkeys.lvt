@@ -1,0 +1,48 @@
+\documentclass{minimal}
+\input{regression-test}
+
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\cs_new:Npn \mytest #1 
+  {
+    \OMIT
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \TIMO
+    \box_show:N \l_tmpa_box
+  }
+\ExplSyntaxOff
+
+\begin{document}
+\START
+\AUTHOR{Ben}
+\ExplSyntaxOn
+
+\newcookingunit{st}
+\newcookingunit{QW}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\TEST { print-default }
+  {
+    \mytest
+      {
+        \cuaddkeys {lb}
+          {
+            {st} { 1/14 }
+            {QW} { 14 }
+          }
+        \cunum[lb=st]{14}{lb}
+        \cunum[st=lb]{1}{st}
+        \cunum[lb=QW]{1}{lb}
+        \cunum[QW=lb]{14}{QW}
+        \cunum[st=QW]{1}{st}
+        \cunum[QW=st]{14}{QW}
+      }
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\END

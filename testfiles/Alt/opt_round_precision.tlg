@@ -1,0 +1,55 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Author: Ben
+============================================================
+TEST 1: round-precision
+============================================================
+> \box27=
+\hbox(6.94444+1.94444)x24.72235
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 .
+.\OT1/cmr/m/n/10 2
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+1.94444)x24.72235
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 .
+.\OT1/cmr/m/n/10 8
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+1.94444)x34.72238
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 .
+.\OT1/cmr/m/n/10 2
+.\OT1/cmr/m/n/10 3
+.\OT1/cmr/m/n/10 4
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+> \box27=
+\hbox(6.94444+1.94444)x34.72238
+.\OT1/cmr/m/n/10 1
+.\OT1/cmr/m/n/10 .
+.\OT1/cmr/m/n/10 8
+.\OT1/cmr/m/n/10 3
+.\OT1/cmr/m/n/10 4
+.\kern 1.66672
+.\OT1/cmr/m/n/10 k
+.\OT1/cmr/m/n/10 g
+! OK.
+<argument> \l_tmpa_box 
+l. ...  }
+============================================================
