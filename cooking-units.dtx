@@ -4406,7 +4406,14 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} { }
+% \begin{macro} 
+%  { 
+%    \@@_set_process_and_print_for_cunum: ,
+%    \@@_set_process_and_print_for_cutext: ,
+%    \@@_set_process_and_print_for_cuam: ,
+%  }
+%  It is handy to set the \enquote{print} and \enquote{process}
+%  command all in one go. It's also less to use messy.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_process_and_print_for_cunum: 
   { 
@@ -4419,8 +4426,8 @@ and the derived file cooking-units.sty.
   { 
     \cs_set_eq:NN \@@_print_input:N \@@_cutext_print_input:N
     \cs_set_eq:NN \@@_print_correct_unit: \@@_cutext_print_correct_unitname:
-    \cs_set_eq:NN \@@_pre_process_input:NN \@@_cutext_process_input:NN
-    \cs_set_eq:NN \@@_post_process_input:NN \@@_do_not_process_input:NN
+    \cs_set_eq:NN \@@_pre_process_input:NN \@@_cutext_pre_process_input:NN
+    \cs_set_eq:NN \@@_post_process_input:NN \@@_cutext_post_process_input:NN
   }
 \cs_new_protected:Npn \@@_set_process_and_print_for_cuam: 
   { 
@@ -4891,9 +4898,15 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cutext_process_input:NN #1#2
+\cs_new:Npn \@@_cutext_pre_process_input:NN #1#2
   {
     \@@_cutext_check_unitname_consequences:NN #1#2
+  }
+\cs_new:Npn \@@_cutext_post_process_input:NN #1#2
+  {
+    \bool_if:NTF \l_@@_range_in_input_bool
+      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
+      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
   }
 %    \end{macrocode}
 %
@@ -4910,11 +4923,7 @@ and the derived file cooking-units.sty.
       }
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl }
-    \@@_translate_let:Nxx 
-      \l_@@_tmpa_tl 
-      \l_@@_tmpb_tl 
-      \c_@@_postfix_unitname_tl 
-    \tl_if_eq:NNTF \l_@@_tmpa_tl \q_@@_no_unitname_avaiable
+    \@@_unitname_get:NxF \l_@@_tmpa_tl \l_@@_tmpb_tl
       { 
         \msg_warning:nnx 
           { cooking-units } 
@@ -4922,14 +4931,27 @@ and the derived file cooking-units.sty.
           \l_@@_tmpb_tl
         \bool_set_false:N \l_@@_using_cutext_bool 
         \@@_set_process_and_print_for_cunum:
-%        \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
-%        \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
-      }{
-        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_tmpb_tl %% ToDo: Check if necessary
-        \bool_if:NTF \l_@@_range_in_input_bool
-          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
-          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
       }
+%    \@@_translate_let:Nxx 
+%      \l_@@_tmpa_tl 
+%      \l_@@_tmpb_tl 
+%      \c_@@_postfix_unitname_tl 
+%    \tl_if_eq:NNTF \l_@@_tmpa_tl \q_@@_no_unitname_avaiable
+%      { 
+%        \msg_warning:nnx 
+%          { cooking-units } 
+%          { cutext-no-translation-available } 
+%          \l_@@_tmpb_tl
+%        \bool_set_false:N \l_@@_using_cutext_bool 
+%        \@@_set_process_and_print_for_cunum:
+%%        \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
+%%        \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
+%      }{
+%%        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_tmpb_tl %% ToDo: Check if necessary
+%        \bool_if:NTF \l_@@_range_in_input_bool
+%          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
+%          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
+%      }
   }
 %    \end{macrocode}
 %
