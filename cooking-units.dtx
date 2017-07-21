@@ -652,10 +652,12 @@ and the derived file cooking-units.sty.
 % \cuam{12} Eier \\
 % \cuam{18} Eier \\
 % \cuam{12--24} Eier \\
+% \cuam{12--24.2} Eier \\
 % \cuam{24--12} Eier \\
 % \cuam{18--6} Eier \\
 %  \cuam[recalculate-amount=true, set-number-of-persons=10, label=Hallo*4, ref=Hallo]{24} Eier \\
 %  \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, use-phrases=false]{24} Eier (phrase-false)\\
+%  \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, use-phrases=false]{12--24} Eier (do not parse -> currently does)\\
 % \cuam{23} Eier \\
 % \cuam{60} Eier \\
 % \cuam{62} Eier \\
@@ -3635,6 +3637,14 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
   }
 \cs_generate_variant:Nn \@@_if_parse_and_integer:nTF { V }
+
+\cs_new_protected:Npnn \@@_if_integer_set:Nn #1#2 
+  {
+    \@@_if_integer:nTF {#2}
+      { \bool_set_true:N #1 }
+      { \bool_set_false:N #1 }
+  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5045,9 +5055,6 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_cuam_initialise:nn #1#2
   {
     \@@_set_process_and_print_for_cuam:
-%    \cs_set_eq:NN \@@_print_input:N \@@_cuam_print_numerical_input:N
-%    \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_process_input:NN
-%    \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unitphrase:
     \tl_set_eq:NN \l_@@_given_unit_tl \c_@@_cuam_marker_tl
     \tl_set_eq:NN \l_@@_option_unit_tl \c_@@_cuam_marker_tl
     \@@_initialise_after_unit_change:nn {#1} {#2}
@@ -5056,12 +5063,60 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_process_input:NN #1#2
+%% ToDo: Check for parsing
   {
     \bool_if:NT \l_@@_use_phrases_bool
       {
         \@@_if_integer:VT #1
           {
-%            \tl_show:N \l_@@_phrase_prop
+            \@@_phrase_list_get:NT \l_@@_phrase_prop
+              {
+                \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
+                  { phrase-list-list } \c_@@_postfix_phrase_tl
+                \bool_set_false:N \l_@@_check_if_phrase_used_bool
+                \@@_cuam_process_input_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
+                \bool_if:NT \l_@@_check_if_phrase_used_bool
+                  {
+                    \bool_if:NTF \l_@@_range_in_input_bool
+                      {
+                        \bool_set_false:N \l_@@_check_if_phrase_used_bool
+                        \@@_if_integer:VT #2
+                          {
+                            \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                            \bool_if:NT \l_@@_check_if_phrase_used_bool
+                              {
+                                \tl_if_eq:NNTF \l_@@_phrase_number_tl \l_@@_tmpb_tl 
+                                  {
+                                    \tl_set:NV #1 \l_@@_tmpa_int
+                                    \tl_set:NV #2 \l_@@_tmpb_int
+                                    \@@_cuam_process_input_get_phrase_name:NVN 
+                                      \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
+                                  } 
+                                  { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
+                              }
+                          }
+                      }{ 
+                        \tl_set:NV #1 \l_@@_tmpa_int 
+                        \@@_cuam_process_input_get_phrase_name:NVN 
+                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
+                      }
+                  }
+              }
+          }
+      }
+  }
+\cs_new_protected:Npn \@@_cuam_process_input_FEHKEJFHKJEFKHJEKFHJ:NN #1#2
+  {
+    \bool_if:NT \l_@@_use_phrases_bool
+      {
+        \@@_if_integer_set:NV \l_@@_tmpa_bool #1
+        \bool_if:NTF \l_@@_range_in_input_bool
+          { \@@_if_integer_set:NV \l_@@_tmpb_bool #2 }
+          { }
+        
+        
+        \@@_if_integer:VT #1
+          {
             \@@_phrase_list_get:NT \l_@@_phrase_prop
               {
                 \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
