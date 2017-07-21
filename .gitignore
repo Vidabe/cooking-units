@@ -7,6 +7,7 @@
 *.log
 *.out
 *.gz
+*.synctex
 
 .DS_Store
 .swp
