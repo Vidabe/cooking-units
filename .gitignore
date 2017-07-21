@@ -23,4 +23,7 @@ build
 /drafts
 /self-extracting
 /versions
+testfiles/Alt
+auto/
+/translations test
 
