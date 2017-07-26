@@ -5083,16 +5083,17 @@ and the derived file cooking-units.sty.
                         \@@_if_integer:VT #2
                           {
                             \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                            \bool_lazy_and:nnTF
+                              { \l_@@_check_if_phrase_used_bool }
+                              { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
+                              { \bool_set_true:N \l_@@_check_if_phrase_used_bool }
+                              { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
                             \bool_if:NT \l_@@_check_if_phrase_used_bool
                               {
-                                \tl_if_eq:NNTF \l_@@_phrase_number_tl \l_@@_tmpb_tl 
-                                  {
-                                    \tl_set:NV #1 \l_@@_tmpa_int
-                                    \tl_set:NV #2 \l_@@_tmpb_int
-                                    \@@_cuam_process_input_get_phrase_name:NVN 
-                                      \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
-                                  } 
-                                  { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
+                                \tl_set:NV #1 \l_@@_tmpa_int
+                                \tl_set:NV #2 \l_@@_tmpb_int
+                                \@@_cuam_process_input_get_phrase_name:NVN 
+                                  \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
                               }
                           }
                       }{ 
