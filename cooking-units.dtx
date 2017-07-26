@@ -5064,58 +5064,9 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_process_input:NN #1#2
-%% ToDo: Check for parsing
   {
     \bool_if:NT \l_@@_use_phrases_bool
       {
-        \@@_if_integer:VT #1
-          {
-            \@@_phrase_list_get:NT \l_@@_phrase_prop
-              {
-                \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
-                  { phrase-list-list } \c_@@_postfix_phrase_tl
-                \bool_set_false:N \l_@@_check_if_phrase_used_bool
-                \@@_cuam_process_input_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
-                \bool_if:NT \l_@@_check_if_phrase_used_bool
-                  {
-                    \bool_if:NTF \l_@@_range_in_input_bool
-                      {
-                        \bool_set_false:N \l_@@_check_if_phrase_used_bool
-                        \@@_if_integer:VT #2
-                          {
-                            \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
-                            \bool_if:NT \l_@@_check_if_phrase_used_bool
-                              {
-                                \tl_if_eq:NNTF \l_@@_phrase_number_tl \l_@@_tmpb_tl 
-                                  {
-                                    \tl_set:NV #1 \l_@@_tmpa_int
-                                    \tl_set:NV #2 \l_@@_tmpb_int
-                                    \@@_cuam_process_input_get_phrase_name:NVN 
-                                      \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
-                                  } 
-                                  { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
-                              }
-                          }
-                      }{ 
-                        \tl_set:NV #1 \l_@@_tmpa_int 
-                        \@@_cuam_process_input_get_phrase_name:NVN 
-                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
-                      }
-                  }
-              }
-          }
-      }
-  }
-\cs_new_protected:Npn \@@_cuam_process_input_FEHKEJFHKJEFKHJEKFHJ:NN #1#2
-  {
-    \bool_if:NT \l_@@_use_phrases_bool
-      {
-        \@@_if_integer_set:NV \l_@@_tmpa_bool #1
-        \bool_if:NTF \l_@@_range_in_input_bool
-          { \@@_if_integer_set:NV \l_@@_tmpb_bool #2 }
-          { }
-        
-        
         \@@_if_integer:VT #1
           {
             \@@_phrase_list_get:NT \l_@@_phrase_prop
@@ -5168,6 +5119,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_process_input_aux:NNN #1#2#3
   {
+    \bool_set_false:N \l_@@_check_if_phrase_used_bool
     \clist_map_inline:Nn \l_@@_phrase_numbers_clist
       {
         \@@_cuam_check_if_larger:nnF { \int_abs:n {##1} } {#1}
