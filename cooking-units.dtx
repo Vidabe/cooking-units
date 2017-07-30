@@ -4,7 +4,6 @@
 %
 % Füge hinzu: Star für expandierbar, etc.
 % dag -> ducks
-% Überprüfen gender (wegen \q_no_avaiable -> m)
 %
 %<*internal>
 \iffalse
@@ -3638,14 +3637,6 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
   }
 \cs_generate_variant:Nn \@@_if_parse_and_integer:nTF { V }
-
-\cs_new_protected:Npn \@@_if_integer_set:Nn #1#2 
-  {
-    \@@_if_integer:nTF {#2}
-      { \bool_set_true:N #1 }
-      { \bool_set_false:N #1 }
-  }
-
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4612,8 +4603,6 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_cunum_initialise:nnnnn #1#2#3#4#5
   {
     \@@_set_process_and_print_for_cunum:
-%    \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
-%    \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
     \tl_set:Nn \l_@@_phantom_tl {#4}
     \@@_initialise_default:nnn {#1} {#2} {#5}
     \@@_initialise_unit_change:nnn {#1} {#2} {#5}
@@ -5069,7 +5058,7 @@ and the derived file cooking-units.sty.
       {
         \@@_if_integer:VT #1
           {
-            \@@_phrase_list_get:NT \l_@@_phrase_prop
+            \@@_if_phrase_list_exists:NT \l_@@_phrase_prop
               {
                 \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
                   { phrase-list-list } \c_@@_postfix_phrase_tl
@@ -5681,7 +5670,7 @@ and the derived file cooking-units.sty.
   }
 \NewDocumentCommand \providecookingunit { o m }
   {
-    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#2} 
+    \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#2} 
       { 
         \@@_new_cooking_unit:nn {#1} {#2} 
         \@@_set_cooking_unit:nn {#1} {#2}
@@ -5937,7 +5926,7 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
       { \prg_return_true: }
   } 
-\prg_new_conditional:Npnn \@@_phrase_list_get:N #1 { TF , T , F }
+\prg_new_conditional:Npnn \@@_if_phrase_list_exists:N #1 { TF , T , F }
   {
     \@@_translate_let:Nxx \l_tmpa_tl { phrase-list } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF \l_tmpa_tl \q_@@_no_translation
