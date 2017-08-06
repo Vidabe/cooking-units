@@ -253,7 +253,6 @@ and the derived file cooking-units.sty.
         \char_set_catcode_other:N \} %
         \char_set_catcode_other:N \_ %
         \char_set_catcode_other:N \~ %
-%        \char_set_catcode_other:N \# %
       }
       { \BODY }
     \tl_map_inline:Nn \l_tmpa_tl
@@ -645,7 +644,7 @@ and the derived file cooking-units.sty.
 % 
 %
 % \begin{myde}
-% \cusetup{use-numerals-below=13}
+% \cusetup{use-numerals-below=13,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cuam{6} Eier \\
@@ -657,7 +656,7 @@ and the derived file cooking-units.sty.
 % \cuam{18--6} Eier \\
 %  \cuam[recalculate-amount=true, set-number-of-persons=10, label=Hallo*4, ref=Hallo]{24} Eier \\
 %  \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, use-phrases=false]{24} Eier (phrase-false)\\
-%  \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, use-phrases=false]{12--24} Eier (do not parse -> currently does)\\
+%  \cuam[recalculate-amount=true, set-number-of-persons=10, ref=Hallo, parse-number=false]{12--24} Eier (no parse)\\
 % \cuam{23} Eier \\
 % \cuam{60} Eier \\
 % \cuam{62} Eier \\
@@ -693,6 +692,7 @@ and the derived file cooking-units.sty.
 % units. I expanded the code, rewrote it in \LaTeX3 (which is much
 % more pleasant than \LaTeXe) and here it is.
 %
+% \begin{comment}
 % \section{Important note}
 %
 % This package uses the \pkg{translator} package to be able to switch
@@ -726,6 +726,15 @@ and the derived file cooking-units.sty.
 %
 %  At least I hope that this works, dealing with languages is a pain
 %  in the ass\footnote{If you excuse me being blunt about this}.
+% \end{comment}
+% \subsection{Important Changes}
+%
+% \begin{description}
+%   \item[Language] I am now using the \pkg{translations} package
+%     and I hope it makes things easier.
+%   \item[Phrases] ...
+% \end{description}
+%
 %
 % \subsection{Supported languages}
 % 
@@ -1704,6 +1713,9 @@ and the derived file cooking-units.sty.
 %   neither change the amounts for a given number of persons nor
 %   change the unit of \cCutext. Both of them are set to \opt{new} by
 %   default.
+%
+%  \cutext[cutext-version=old]{2--6}{kg}
+%  \cutext[cutext-version=old]{2/6}{kg}
 % \end{function}
 %
 % \begin{function}{cutext-change-unit}
@@ -1817,6 +1829,7 @@ and the derived file cooking-units.sty.
 %   \cutext{1}{kg} \\
 %   \cutext{100}{kg} \\
 %   \cutext{gjfak}{kg} \\
+%   \cutext[kg=g]{12}{kg} \\
 %   \cuam{1----------2} \\
 %   \cuam{1,2} \\
 %   \cuam{1_1/2} \\
@@ -2895,7 +2908,6 @@ and the derived file cooking-units.sty.
 %
 % Setting some of them to \texttt{true}.
 %    \begin{macrocode}
-\bool_set_true:N \l_@@_use_phrases_bool
 \bool_set_true:N \l_@@_parse_input_bool
 \bool_set_true:N \l_@@_cutext_change_unit_bool
 %    \end{macrocode}
@@ -4412,7 +4424,7 @@ and the derived file cooking-units.sty.
 %  { 
 %    \@@_set_process_and_print_for_cunum: ,
 %    \@@_set_process_and_print_for_cutext: ,
-%    \@@_set_process_and_print_for_cuam: ,
+%    \@@_set_process_and_print_for_cuam:
 %  }
 %  It is handy to set the \enquote{print} and \enquote{process}
 %  command all in one go. It's also less to use messy.
@@ -4782,11 +4794,6 @@ and the derived file cooking-units.sty.
   {
     \bool_set_true:N \l_@@_using_cutext_bool
     \@@_set_process_and_print_for_cutext:
-%    \cs_set:Npn \@@_print_input:N ##1
-%      { \@@_cutext_print_input:NV ##1 \l_@@_option_unit_tl }
-%    \cs_set_eq:NN \@@_print_input:N \@@_cutext_print_input:N
-%    \cs_set_eq:NN \@@_pre_process_input:NN \@@_cutext_process_input:NN
-%    \cs_set_eq:NN \@@_print_correct_unit: \@@_cutext_print_correct_unitname:
     \@@_initialise_default:nnn {#1} {#2} {#3}
     \bool_if:NTF \l_@@_cutext_change_unit_bool
       { \@@_initialise_unit_change:nnn {#1} {#2} {#3} }
@@ -4932,26 +4939,6 @@ and the derived file cooking-units.sty.
         \bool_set_false:N \l_@@_using_cutext_bool 
         \@@_set_process_and_print_for_cunum:
       }
-%    \@@_translate_let:Nxx 
-%      \l_@@_tmpa_tl 
-%      \l_@@_tmpb_tl 
-%      \c_@@_postfix_unitname_tl 
-%    \tl_if_eq:NNTF \l_@@_tmpa_tl \q_@@_no_translation
-%      { 
-%        \msg_warning:nnx 
-%          { cooking-units } 
-%          { cutext-no-translation-available } 
-%          \l_@@_tmpb_tl
-%        \bool_set_false:N \l_@@_using_cutext_bool 
-%        \@@_set_process_and_print_for_cunum:
-%%        \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
-%%        \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
-%      }{
-%%        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_tmpb_tl %% ToDo: Check if necessary
-%        \bool_if:NTF \l_@@_range_in_input_bool
-%          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
-%          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
-%      }
   }
 %    \end{macrocode}
 %
@@ -5671,7 +5658,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \providecookingunit { o m }
   {
     \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#2} 
-      { 
+      {
         \@@_new_cooking_unit:nn {#1} {#2} 
         \@@_set_cooking_unit:nn {#1} {#2}
       }
