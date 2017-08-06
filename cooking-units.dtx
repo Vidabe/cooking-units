@@ -2,6 +2,7 @@
 % !TEX encoding = UTF-8 Unicode
 % !TEX program  = pdfLaTeX
 %
+% Lizenz updaten (Datum).
 % Füge hinzu: Star für expandierbar, etc.
 % dag -> ducks
 %
@@ -163,6 +164,7 @@ and the derived file cooking-units.sty.
 \labelformat{table}{table~#1}
 \labelformat{section}{section~#1}
 
+\newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
 
 %\NewDocumentCommand \Mynote { m }
 %  {
@@ -224,6 +226,7 @@ and the derived file cooking-units.sty.
   }
 
 
+
 \NewEnviron { mycomment } { }
 
 %% Allyourwhitespacearebelongtous (too long)
@@ -238,7 +241,8 @@ and the derived file cooking-units.sty.
     \begin{center}
     \begin{minipage}{0.4\linewidth}
     \tl_replace_all:Nnn \BODY { @ } { \dothewhitespace }
-    \tl_replace_all:Nnn \BODY { ! } { }
+    \tl_replace_all:Nnn \BODY { \% } { \color{red} \% \ignorespaces }
+    \tl_replace_all:Nnn \BODY { \\ } { \\ \color{black} }
     \tl_replace_all:Nnn \BODY { & } { \ignorespaces }
     \BODY
     \end{minipage}
@@ -278,14 +282,14 @@ and the derived file cooking-units.sty.
                 { \str_if_eq_p:nn {##1} { ! } }
                 { \str_if_eq_p:nn {##1} { & } }
               }
-%            \bool_if:nTF 
-%              { 
-%                \str_if_eq_p:nn {##1} { @ } ||
-%                \str_if_eq_p:nn {##1} { ! } ||
-%                \str_if_eq_p:nn {##1} { & } 
-%              }
               { 
-                \str_if_eq:nnTF {##1} { & } { \space } { \\ }
+                \str_if_eq:nnTF {##1} { & } 
+                  { \space } 
+                  { 
+                    \str_if_eq:nnTF {##1} { ! }
+                      { \ERROR  }
+                      { \\ }
+                  }
               }
               {
                 \token_if_active:NTF ##1 
@@ -733,6 +737,13 @@ and the derived file cooking-units.sty.
 %   \item[Language] I am now using the \pkg{translations} package
 %     and I hope it makes things easier.
 %   \item[Phrases] ...
+%   \item[Cutext] If no translation is found for a specific language,
+%    \cCutext\ are replaced by \mycs{cunum} and gives a warning.
+%   \item[Commands] Currently, it seems that alowing \emph{label}
+%     to be set by arrow-brackets was not the best idea as it leads to problems
+%    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
+%    |<| is not allowed as a \enquote{special-sign} anymore.
+%    \TODO{Further explain this}
 % \end{description}
 %
 %
@@ -856,13 +867,18 @@ and the derived file cooking-units.sty.
 %   \cuam{1_2/3} 
 % \end{cuexamplecode}
 %
+% Furhtermore it allows the concept of \enquote{phrases} (replacing a number
+% by a word, such as \enquote{12} to \enquote{docen}\footnote{At least I think})
+% which can be activated by the option \opt{use-phrases}
 % (as I don't know any english phrases, I switched the language to german  for the following examples)
 % \begin{myde}
 % \begin{cuexamplecode}
+%   \cusetup{use-phrases=true} @
 %   \cuam{12} \\
+%   \cuam{13} \\
 %   \cuam{24} \\
 %   \cuam{12--24} \\
-%   \cuam{12--13} \\
+%   \cuam{12--13}\\
 %   \cuam{18} \\
 %   \cuam{60} 
 % \end{cuexamplecode}
@@ -2545,6 +2561,16 @@ and the derived file cooking-units.sty.
       }
     \tex_endinput:D
   }
+\@ifpackagelater { expl3 } { 2017/07/03 }
+  { }
+  {
+    \PackageError { cooking-units } { Support~package~translations~too~old }
+      {
+        You~need~to~update~your~installation~of~the~package~'translations'.\MessageBreak
+        Loading~cooking-units~will~abort!
+      }
+    \tex_endinput:D
+  }
 %    \end{macrocode}
 % Loading some needed packages.
 %    \begin{macrocode}
@@ -3046,7 +3072,12 @@ and the derived file cooking-units.sty.
 %\begin{macro}{ add-special-sign }
 % Adding a (some) special sign(s) which is (are)  allowed in the input.
 %    \begin{macrocode}
-    add-special-sign .code:n = { \tl_put_right:Nn  \l_@@_allowed_special_signs_tl {#1} } ,
+    add-special-sign .code:n = 
+      { 
+        \str_if_eq:nnT {#1} { < }
+          { \ERROR }
+        \tl_put_right:Nn  \l_@@_allowed_special_signs_tl {#1} 
+      } ,
     add-special-sign .default:n = { } ,
 %    \end{macrocode}
 %\end{macro}
@@ -3054,7 +3085,12 @@ and the derived file cooking-units.sty.
 %\begin{macro}{ set-special-sign }
 % Doing the same as above but also overrides the old signs.
 %    \begin{macrocode}
-    set-special-sign .tl_set:N = \l_@@_allowed_special_signs_tl ,
+    set-special-sign .code:n = 
+      { 
+        \str_if_eq:nnT {#1} { < }
+          { \ERROR }
+        \tl_set:Nn  \l_@@_allowed_special_signs_tl {#1} 
+      } ,
 %    \end{macrocode}
 %\end{macro}
 %
