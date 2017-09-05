@@ -38,7 +38,7 @@ Requirements
 ------------
 
  * expl3 & xparse
- * translator
+ * translations
  * xfrac
  * l3keys2e
  * fmtcount (optional)
@@ -523,7 +523,7 @@ and the derived file cooking-units.sty.
   }
 \cusetup 
   {
-    set-option-for-Ro = { round-to-int = true }
+    set-option-for-Ro = { round-to-int = true } 
   }
 
 
@@ -738,7 +738,7 @@ and the derived file cooking-units.sty.
 %     and I hope it makes things easier.
 %   \item[Phrases] ...
 %   \item[Cutext] If no translation is found for a specific language,
-%    \cCutext\ are replaced by \mycs{cunum} and gives a warning.
+%    \cCutext\ are replaced by \mycs{cunum} and a warning is given.
 %   \item[Commands] Currently, it seems that alowing \emph{label}
 %     to be set by arrow-brackets was not the best idea as it leads to problems
 %    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
@@ -3080,9 +3080,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     add-special-sign .code:n = 
       { 
-        \str_if_eq:nnT {#1} { < }
-          { \ERROR }
-        \tl_put_right:Nn  \l_@@_allowed_special_signs_tl {#1} 
+        \str_if_eq:nnTF {#1} { < }
+          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+          { \tl_put_right:Nn  \l_@@_allowed_special_signs_tl {#1} }
       } ,
     add-special-sign .default:n = { } ,
 %    \end{macrocode}
@@ -3093,9 +3093,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     set-special-sign .code:n = 
       { 
-        \str_if_eq:nnT {#1} { < }
-          { \ERROR }
-        \tl_set:Nn  \l_@@_allowed_special_signs_tl {#1} 
+        \str_if_eq:nnTF {#1} { < }
+          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+          { \tl_set:Nn  \l_@@_allowed_special_signs_tl {#1} }
       } ,
 %    \end{macrocode}
 %\end{macro}
@@ -3454,7 +3454,7 @@ and the derived file cooking-units.sty.
   { 
     The \ key \ accepts \ accepts\ only \ a \ fixed \ set \ of \ choices. \
     You \ can \ add \ new \ choices \ via \ \cuaddkeys, \ \cuaddsinglekeys \
-    and \ \cuaddtokeys.
+    and \ \cuaddtokeys{}.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -3613,9 +3613,9 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { cutext-no-translation-available } %% ToDo
   { 
     For \ the \ unit \ '#1' \ there \ exists \ no \ translation \ to \ be \ used \
-    for \ \cutext and \ \Cutext. \
+    for \ \cutext and \ \Cutext{}. \
     You \ can \ define \ new \ translations \ for \ a \ given \ language \ using \
-    \cudefinename.
+    \cudefinename{}.
   } 
   { 
     \cunum \ is \ used \ instead.
@@ -3628,11 +3628,24 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { Translation-not-available } %% ToDo
   { 
     The \ translation \ for \ #1 \ does \ not \ exist. 
-    Please \ define \ it \ using \ \cudefinename.
+    Please \ define \ it \ using \ \cudefinename{}.
   } 
   { 
     And \ you \ may \ send \ me \ the \ translation \ as \ it \ is \
     not \ available \ yet.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { <-not-allowed-as-special-sign } 
+  { 
+    Currently \ (and \ probably \ forever) \ the \ sign \ '<' \
+    is \ not \ allowed \ to \ be \ used \ as \ a \ special \ sign.
+  } 
+  { 
+    I \ apologize \ for \ the \ inconvenience.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
