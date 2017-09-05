@@ -85,7 +85,7 @@ for the details of that license.
 %\keepsilent
 \askforoverwritefalse
 \preamble
-Copyright (C) 2016 by Ben Vitecek (current Maintainer)
+Copyright (C) 2016--2017 by Ben Vitecek (current Maintainer)
 
 This file may be distributed and/or modified under the 
 conditions of the LaTeX Project Public License, either 
@@ -175,7 +175,7 @@ and the derived file cooking-units.sty.
 
 \NewDocumentEnvironment {MyNote} { }
   {
-    Note: 
+    \texttt{Note:}
   }{
   
   }
@@ -963,7 +963,7 @@ and the derived file cooking-units.sty.
 %
 %   \begin{MyNote}
 %     \opt{use-numerals} is a package option as it needs to load
-%     \pkg{fmtcount} which is not loaded by default.
+%     \pkg{fmtcount} which is not loaded by default. 
 %   \end{MyNote}
 %
 %
@@ -995,7 +995,7 @@ and the derived file cooking-units.sty.
 %     \end{cuexamplecode}
 %   \end{myde}
 %
-% This of course also works with the \emph{package}-option
+% This of course also works with the \emph{package}-option \opt{use-numerals}
 % (Please note that this \emph{only} supports the lowercase variant):
 %
 %   \opt{use-numerals}:
@@ -2561,7 +2561,17 @@ and the derived file cooking-units.sty.
       }
     \tex_endinput:D
   }
-\@ifpackagelater { expl3 } { 2017/07/03 }
+%    \end{macrocode}
+% Loading some needed packages.
+%    \begin{macrocode}
+\@ifpackageloaded { translations } { } { \RequirePackage { translations } }
+\@ifpackageloaded { xfrac } { } { \RequirePackage { xfrac } }
+\@ifpackageloaded { l3keys2e } { } { \RequirePackage { l3keys2e } }
+%    \end{macrocode}
+%
+% Checking if \pkg{translations} is up-to-date, otherwise abort the loading of the package.
+%    \begin{macrocode}
+\@ifpackagelater { translations } { 2017/08/31 }
   { }
   {
     \PackageError { cooking-units } { Support~package~translations~too~old }
@@ -2571,12 +2581,6 @@ and the derived file cooking-units.sty.
       }
     \tex_endinput:D
   }
-%    \end{macrocode}
-% Loading some needed packages.
-%    \begin{macrocode}
-\@ifpackageloaded { translations } { } { \RequirePackage { translations } }
-\@ifpackageloaded { xfrac } { } { \RequirePackage { xfrac } }
-\@ifpackageloaded { l3keys2e } { } { \RequirePackage { l3keys2e } }
 %    \end{macrocode}
 %
 % Define the only load-time option for this package. If it is set,
@@ -2708,6 +2712,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_cutext_last_value_tl
 \tl_new:N \l_@@_phantom_tl
 \tl_new:N \l_@@_phrase_phrase_tl
+\tl_new:N \l_@@_unit_key_not_allowed_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2729,6 +2734,7 @@ and the derived file cooking-units.sty.
   { \char_set_catcode_letter:N \# } {#1}
 \tl_set:Nn \l_@@_cutext_space_tl { \space }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
+\tl_set:Nn \l_@@_unit_key_not_allowed_tl { , / }
 %    \end{macrocode}
 %
 % Flat out stolen from \pkg{siunitx}
@@ -3942,11 +3948,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_deftranslation_base:nnn #1#2#3
   {
-    \declaretranslationfallback { #1 #2 } { \exp_not:n {#3} }
+    \declaretranslationfallback { #1 #2 } {#3}
   }
 \cs_new:Npn \@@_deftranslation_to:nnnn #1#2#3#4
   {
-    \declaretranslation {#1} { #2 #3 } { \exp_not:n {#4} }
+    \declaretranslation {#1} { #2 #3 } {#4}
   }
 \cs_generate_variant:Nn \@@_deftranslation_base:nnn { xx , xxV }
 \cs_generate_variant:Nn \@@_deftranslation_to:nnnn { Vxxv, VxxV , Vxxn, Vxxx,Vxxo,Vxxf }
@@ -3961,11 +3967,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_newtranslation_base:nnn #1#2#3
   {
-    \definetranslationfallback { #1 #2 } { \exp_not:n {#3} }
+    \definetranslationfallback { #1 #2 } {#3}
   }
 \cs_new:Npn \@@_newtranslation_to:nnnn #1#2#3#4
   {
-    \definetranslation {#1} { #2 #3 } { \exp_not:n {#4} }
+    \definetranslation {#1} { #2 #3 } {#4}
   }
 \cs_generate_variant:Nn \@@_newtranslation_base:nnn { nVn }
 \cs_generate_variant:Nn \@@_newtranslation_to:nnnn { nnVn }
