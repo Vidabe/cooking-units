@@ -26,7 +26,7 @@ Requirements
 ------------
 
  * expl3 & xparse
- * translator
+ * translations
  * xfrac
  * l3keys2e
  * fmtcount (optional)
