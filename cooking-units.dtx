@@ -5161,6 +5161,19 @@ and the derived file cooking-units.sty.
               }
           }
       }
+    \bool_if:NTF \l_@@_range_in_input_bool
+      {
+        \bool_if:NT \g_@@_opt_numeral_bool
+          {
+            \bool_lazy_and:nnF
+              { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              { \bool_set_false:N \l_@@_local_numeral_bool }
+          }
+      }{
+        \fp_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+          { \bool_set_false:N \l_@@_local_numeral_bool }
+      }
   }
 %    \end{macrocode}
 %
@@ -5210,7 +5223,7 @@ and the derived file cooking-units.sty.
       {
         { \l_@@_check_if_phrase_used_bool }
         { \g_@@_opt_numeral_bool }
-        { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+        { \l_@@_local_numeral_bool }
       }{
         \@@_int_if_equal_one:nTF {#1}
           {
