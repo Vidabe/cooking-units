@@ -4967,7 +4967,9 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext_post_process_input:NN #1#2
   {
     \bool_if:NTF \l_@@_range_in_input_bool
-      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
+      { 
+        \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 
+      }
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
   }
 %    \end{macrocode}
@@ -6264,8 +6266,8 @@ and the derived file cooking-units.sty.
 %    { Msp } [ pinch ] { pinch } [ pinches ]
     { Msp } { Messerspitze } [ Messerspitzen ] <f>
     { pn } [ pinch ] { pinch } [ pinches ]
-    { EL } [ tsp. ] { tablespoon } [ tablespoons ]
-    { TL } [ tbsp. ] { teaspoon } [ teaspoons ]
+    { EL } [ tbsp. ] { tablespoon } [ tablespoons ]
+    { TL } [ tsp. ] { teaspoon } [ teaspoons ]
     { dsp } { dessertspoonful } 
     { csp } { coffeespoonful } 
     { ssp } { saltspoonful } 
