@@ -646,7 +646,6 @@ and the derived file cooking-units.sty.
 %
 %^^A \tableofcontents
 % 
-%
 % \begin{myde}
 % \cusetup{use-numerals-below=13,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
@@ -2926,8 +2925,10 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_round_commercial_bool
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_check_if_phrase_used_bool
+\bool_new:N \l_@@_local_numeral_bool
 %    \end{macrocode}
-% While rewriting the code I searched for this 
+%
+% While rewriting the code I searched for those 
 % booleans a lot.
 %    \begin{macrocode}
 \bool_new:N \l_@@_range_in_input_bool
@@ -2938,10 +2939,11 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% Setting some of them to \texttt{true}.
+% Setting some of them to \texttt{true} or another boolean respectively.
 %    \begin{macrocode}
 \bool_set_true:N \l_@@_parse_input_bool
 \bool_set_true:N \l_@@_cutext_change_unit_bool
+\bool_set_eq:NN \l_@@_local_numeral_bool \g_@@_opt_numeral_bool
 %    \end{macrocode}
 %
 %
@@ -4893,11 +4895,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
-% \begin{macro} {\@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:Nn}
+% \begin{macro} {\@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N}
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N #1 { TF }
   {
-    \bool_if:NTF \g_@@_opt_numeral_bool
+    \bool_lazy_and:nnTF 
+      { \g_@@_opt_numeral_bool } 
+      { \l_@@_local_numeral_bool }
       {
         \@@_if_parse_and_integer:VTF #1
           {
@@ -4969,6 +4973,15 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_range_in_input_bool
       { 
         \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 
+        \bool_if:NT \g_@@_opt_numeral_bool
+          {
+            \bool_lazy_and:nnF
+              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              {
+                \bool_set_false:N \l_@@_local_numeral_bool
+              }
+          }
       }
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
   }
