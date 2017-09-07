@@ -5120,6 +5120,13 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
   {
+    \bool_if:NT \g_@@_opt_numeral_bool
+      {
+        \bool_lazy_and:nnF
+          { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+          { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+          { \bool_set_false:N \l_@@_local_numeral_bool }
+      }
     \bool_if:NT \l_@@_use_phrases_bool
       {
         \@@_if_integer:VT #1
@@ -5207,9 +5214,9 @@ and the derived file cooking-units.sty.
   {
     \bool_lazy_all:nTF
       {
-        { \l_@@_check_if_phrase_used_bool }
+        { \l_@@_check_if_phrase_used_bool } 
         { \g_@@_opt_numeral_bool }
-        { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+        { \l_@@_local_numeral_bool }
       }{
         \@@_int_if_equal_one:nTF {#1}
           {
