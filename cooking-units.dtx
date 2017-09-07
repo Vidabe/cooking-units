@@ -1635,6 +1635,7 @@ and the derived file cooking-units.sty.
 %   \Cutext{2}{kg} \\
 %   \cutext{12}{kg} \\
 %   \cutext{13}{kg} \\
+%   \cutext{13}{kg} \\
 %   \Cutext{14}{kg} 
 % \end{cuexamplecode}
 % \cusetup{use-numerals-below=0}
@@ -3322,6 +3323,16 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%
+%
+% \begin{macro}{ print-numerals }
+% A not very good name, but I couldn't think of a better name.
+%    \begin{macrocode}
+    print-numerals .bool_set:N = \l_@@_local_numeral_bool ,
+    print-numerals .default:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
 % Ending the definition of keys.
 %    \begin{macrocode}
   }
@@ -4505,7 +4516,7 @@ and the derived file cooking-units.sty.
     \cs_set_eq:NN \@@_print_input:N \@@_cuam_print_numerical_input:N
     \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unitphrase:
     \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
-    \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_process_input:NN
+    \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_post_process_input:NN
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4976,11 +4987,9 @@ and the derived file cooking-units.sty.
         \bool_if:NT \g_@@_opt_numeral_bool
           {
             \bool_lazy_and:nnF
-              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-              {
-                \bool_set_false:N \l_@@_local_numeral_bool
-              }
+              { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              { \bool_set_false:N \l_@@_local_numeral_bool }
           }
       }
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
@@ -5109,7 +5118,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cuam_process_input:NN #1#2
+\cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
   {
     \bool_if:NT \l_@@_use_phrases_bool
       {
