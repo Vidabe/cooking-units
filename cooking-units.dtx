@@ -5,6 +5,7 @@
 % Lizenz updaten (Datum).
 % Füge hinzu: Star für expandierbar, etc.
 % dag -> ducks
+% stick
 %
 %<*internal>
 \iffalse
@@ -215,8 +216,9 @@ and the derived file cooking-units.sty.
 
 \NewDocumentCommand \PrintUnit { m }
   {
-    \GetTranslation{ #1 (cu-unitname) } & #1 & % \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
-    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } 
+    #1 &
+    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } &
+    \GetTranslation{ #1 (cu-unitname) }
   }
 
 \NewDocumentCommand \PrintUnitSymbol { m }
@@ -312,12 +314,28 @@ and the derived file cooking-units.sty.
     \end{minipage}
     \end{center}
   }
-
+\ProvideDocumentEnvironment{cuexamplecode}{}{}{}{}
 
 
 \NewDocumentEnvironment { cuexample } { }
   { \paragraph{Example:} }
   { }
+
+%\NewDocumentCommand\cuinterest{ m }
+%  { 
+%    \par \bigskip
+%    \mbox{}\marginpar{\raggedleft\opt{#1}}
+%    \ignorespaces
+%  }
+
+\NewDocumentEnvironment { cuinterest } { m }
+  { 
+    \par \bigskip
+    \mbox{}\marginpar{\raggedleft\opt{#1}}
+    \ignorespaces
+  }
+  { }
+
 
 %: table
 \tl_new:N \l_translation_does_not_exist_tl
@@ -504,6 +522,7 @@ and the derived file cooking-units.sty.
         cuaddtokeys,
         culabel,
         curef,
+        cudefinephrase,
       }
   }
 
@@ -525,7 +544,6 @@ and the derived file cooking-units.sty.
   {
     set-option-for-Ro = { round-to-int = true } 
   }
-
 
 %: \cusetup
 \cusetup
@@ -618,7 +636,7 @@ and the derived file cooking-units.sty.
 % \changes {2017/03/10} {1.10a} {\cs{curef} is now defined by \cs{NewExpandableDocumentCommand} instead of the Declare variant.}
 % \changes {2017/03/10} {1.11} {Removed \cs{translate} and others from code
 %   and replaced them with wrapper-macros.}
-% \changes {2017/03/10} {1.11} {Removed thing like 'cu-unit' from translate input
+% \changes {2017/03/10} {1.11} {Removed things like 'cu-unit' from translate input
 %   and placed them into separate tl's.}
 % 
 %
@@ -640,6 +658,7 @@ and the derived file cooking-units.sty.
 %   It should be used for light-hearted things like
 %   cookery books (and not e.g. scientific texts).\footnote{I did hide  some 
 %   grammatical and spelling errors for easter egg hunters \Winkey.}
+%
 %
 %   Please read through the section \enquote{Important Changes}
 % \end{abstract}
@@ -736,14 +755,15 @@ and the derived file cooking-units.sty.
 % \begin{description}
 %   \item[Language] I am now using the \pkg{translations} package
 %     and I hope it makes things easier.
-%   \item[Phrases] ...
-%   \item[Cutext] If no translation is found for a specific language,
+%   \item[Phrases] This package now supports the usage of \enquote{phrases}
+%     (words used instead of certain integers).
+%   \item[\cCutext] If no translation is found for a specific language,
 %    \cCutext\ are replaced by \mycs{cunum} and a warning is given.
 %   \item[Commands] Currently, it seems that alowing \emph{label}
 %     to be set by arrow-brackets was not the best idea as it leads to problems
 %    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
-%    |<| is not allowed as a \enquote{special-sign} anymore.
-%    \TODO{Further explain this}
+%    |<| is not allowed as a \enquote{special-sign} anymore as this package
+%   tries to \enquote{fix} this (at least make it work).
 % \end{description}
 %
 %
@@ -858,7 +878,7 @@ and the derived file cooking-units.sty.
 % 
 % \lstinline|\cuam| works like \mycs{cunum}, but without a unit, so
 % changing units doesn't affect it. Like \mycs{cunum} \texttt{\_} and
-% \texttt{/} are used to imply a (mixed) fraction and |--| is used to
+% \texttt{/} are used to imply a (mixed) fraction and |--| is used for ranges.
 %
 % \begin{cuexamplecode}
 %   \cuam{3} \\
@@ -955,19 +975,21 @@ and the derived file cooking-units.sty.
 % of this package and to highlight them this section exists. All options can be
 % found in \vref{sec:options}.
 %
-%   \opt{use-numerals}
 %
+%
+%   \begin{cuinterest}{use-numerals} 
 %   As seen above, you can use the \emph{package}-option
 %   \opt{use-numerals} to let integers from \cCutext{} below
 %   \opt{use-numerals-below} printed by \pkg{fmtcount}.
+%   You can still decide if numerals should be preinted or not with \opt{print-numerals}.
 %
 %   \begin{MyNote}
 %     \opt{use-numerals} is a package option as it needs to load
 %     \pkg{fmtcount} which is not loaded by default. 
 %   \end{MyNote}
+% \end{cuinterest}
 %
-%
-% \opt{use-phrases}
+% \begin{cuinterest}{use-phrases}
 %   In (I presume) all languages there exist phrases for a given
 %   amount bzw. number of things. In German you may say instead of
 %   \enquote{12}, \enquote{ein Dutzend}.
@@ -980,7 +1002,6 @@ and the derived file cooking-units.sty.
 %     \cuam{18} \\
 %     \cuam{60} 
 %   \end{cuexamplecode}
-%
 %   And using langauge \opt{ngerman} (or \opt{naustrian}, etc.) with
 %   package option \opt{use-phrases=true}.
 %   \begin{myde}
@@ -994,11 +1015,12 @@ and the derived file cooking-units.sty.
 %       \cuam{60} 
 %     \end{cuexamplecode}
 %   \end{myde}
-%
 % This of course also works with the \emph{package}-option \opt{use-numerals}
 % (Please note that this \emph{only} supports the lowercase variant):
 %
-%   \opt{use-numerals}:
+%  \end{cuinterest}
+%
+%   \begin{cuinterest}{use-numerals}
 %   \begin{myde}
 %     \cusetup{print-numerals=true}
 %     \begin{cuexamplecode}
@@ -1011,8 +1033,7 @@ and the derived file cooking-units.sty.
 %       \cuam{60} 
 %     \end{cuexamplecode}
 %   \end{myde}
-%
-% 
+% \end{cuinterest}
 %
 %
 % \section{Predefined units \& some notes}
@@ -1022,6 +1043,7 @@ and the derived file cooking-units.sty.
 % all predefined units.  In \vref{sec:Translations} all available
 % translations are listed.
 %
+% \begin{comment}
 % I now \emph{did} include a separate key for \enquote{Messerspitze}
 % (Msp.)  and therefore separated \enquote{Pinch} (pn) and
 % \enquote{Messerspitze} (Msp.).  My biggest problems with the units
@@ -1032,16 +1054,20 @@ and the derived file cooking-units.sty.
 % would be difficult. Therefore use units known to you and if there
 % are unsupported units or languages feel free to write (see
 % \vref{sec:bug-feed} for more details).
+% \end{comment}
 %
 % \begin{table}[htbp]
 %   \centering
-%   \caption{List of predefined unit-keys. 
-%   The \enquote{symbol} column is language dependent
-%   (and of course \enquote{unitname} too). Note that \enquote{electron
-%   volt} exists just for fun.}
+%   \caption{The first clumn shows a list of predefined unit-keys.
+%   The column \enquote{default-symbol} shows the abbreviation used if
+%   for given language no translation is defined. The third column
+%   \enquote{unitname} \emph{is} language dependent and shows the name
+%   printed while using \cCutext.
+%   Note that \enquote{electron volt} exists just for fun.
+% }
 %   \begin{tabular}{ lll }
-%    \toprule
-%     unitname & unit-key & default-symbol \\ \midrule
+%       \toprule
+%       unit-key &   default-symbol & unitname \\ \midrule
 %     \PrintUnit {kg} \\
 %     \PrintUnit {dag} \\
 %     \PrintUnit {g} \\
@@ -1106,7 +1132,7 @@ and the derived file cooking-units.sty.
 % \begin{table}[htbp]
 %   \centering
 %   \caption{List of nonsense units (exist just for fun, there will be
-%   no support for those units). }
+%   no support for those units).}
 %   \begin{tabular}{ ll }
 %    \toprule
 %      unit-key & symbol \\ \midrule
@@ -1138,7 +1164,7 @@ and the derived file cooking-units.sty.
 %   Note that \meta{unit-key} should neither contain |/| nor |,|.
 %
 %   \mycs{newcookingunit} raises an error if the unit is already defined,
-%   \mycs{declarecookingunit} overwrites \meta{symbol} (if given)
+%   \mycs{declarecookingunit} creates or (if given) overwrites  \meta{symbol} 
 %   and \mycs{providecookingunit} does nothing if the unit is already
 %   defined.
 %
@@ -1169,7 +1195,7 @@ and the derived file cooking-units.sty.
 %   \item \lstinline|\cuaddsinglekeys|
 %   \item \lstinline|\cuaddtokeys|
 % \end{itemize}
-% I apologize for the inconsistency between \lstinline|\cudefinekeys| and
+% I apologize for the (name) inconsistency between \lstinline|\cudefinekeys| and
 % \lstinline|\cudefinesinglekey|.
 %
 % \begin{function}{\cudefinekeys,\cudefinesinglekey}
@@ -1541,7 +1567,30 @@ and the derived file cooking-units.sty.
 %    }
 % \end{lstlisting}
 %
+% \begin{cuexample}
+%  Imageine that insetad of the abbrevation \enquote{dag} for \enquote{decagramm}
+%  you want to use \enquote{ducks} (because \dots\ I don't know). You can easily
+%  do this via
+%  \begin{lstlisting}
+%  \cudefinesymbol {English}
+%    {
+%      {dag} {ducks}
+%    }
+%  \end{lstlisting}
+%  \cudefinesymbol {English}
+%    {
+%      {dag} {ducks}
+%    }
+% As you can see it may be a bit suboptimal, as there is no plural version allowed.
+% You do it anyway and end up with:
+%  \begin{cuexamplecode}
+%    \cunum{12}{dag} \space weed\\
+%    \cunum{3}{dag} \space nuts\\
+%    \cunum{10}{dag} \space duckmeat
+%  \end{cuexamplecode}
 %
+%
+% \end{cuexample}
 %
 %
 %
@@ -1573,27 +1622,54 @@ and the derived file cooking-units.sty.
 %
 %   \meta{gender} can be \opt{m}, \opt{f} or \opt{n}. It is \opt{m} by default.
 %   
-%   Afterwards the numbers are ordered from highest to lowest. Furthermore,
-%   if choose bewteen non-star and star: star is bevorzugt.
-%   
+%   Afterwards the numbers are ordered from highest to lowest so that
+%   the phrase with the highest number is used (if used at all).
+%
+%   Furthermore, if it chooses star (|*|) phrases over non-star phrases.   
 %   \begin{MyNote}
 %     Numbers with the optional star |*| are stored as negative numbers. 
 %   \end{MyNote}
 % \end{function}
 %
-%  
+% \begin{cuexample}
+%   The following example creates some prahses for the language
+%   \enquote{German}.
+%   
+% \cudefinephrase {German}
+%    {
+%      { 60 }  {Schock} <n>
+%      { 6  }* {halbes\  Dutzend} <n>
+%    }
+%
+%
 % \begin{lstlisting}
 %  \cudefinephrase {German}
 %    {
 %      { 12 }  {Dutzend} <n> %% implemented by default
 %      { 60 }  {Schock} <n>
-%      { 6  }* {halbes\  Dutzend} < n >
+%      { 6  }* {halbes\  Dutzend} <n>
 %    }
 % \end{lstlisting}
+%   Let's just use them (activating the german language):
+%   \begin{myde}
+%   \begin{cuexamplecode}
+%     \cusetup{use-phrases=true} @
+%     \cuam{12} \\
+%     \cuam{24} \\
+%     \cuam{60} \\
+%     \cuam{120} \\
+%     \cuam{6} \\
+%     \cuam{18} 
+%   \end{cuexamplecode}
+%   \end{myde}
 %
+% As you can see, \enquote{Schock} ($60$) is preferred over \enquote{Dutzend} ($12$)
+% as it linked to the higher number. Furhtermore, for $6$ the phrase \enquote{halbes
+% Dutzend}  (half a dozen) is used, but because it is a star version it is \emph{not}
+% used for $18$.
 %
-%
-%
+% \end{cuexample}
+% 
 %
 % \section{Options}
 % \label{sec:options}
@@ -1613,13 +1689,15 @@ and the derived file cooking-units.sty.
 %   \end{syntax}
 %   If set to \true\ loads package \pkg{fmtcount} and uses 
 %   \cs{numberstringnum}  for \mycs{cutext}
-%   and \cs{Numberstringnum} for \mycs{Cutext} to  write-out numbers below
+%   and \cs{Numberstringnum} for \mycs{Cutext} to write-out numbers below
 %   \opt{use-numerals-below} (13 by default), integers above are
 %   printed as numbers. Please note the keys \opt{one(m)}, \opt{one(f)}
 %   and \opt{one(n)} to change the printed \enquote{one} (as
 %   \enquote{one} is in many languages dependent on the gender of the
 %   following word. E.g in German:  Masculine: ein Baum,
 %   Feminin: eine Pflanze, Neutrum: ein Auto).
+%
+%  You can decide to not print any numerals by setting \opt{print-numerals}.
 %
 %   \begin{MyNote}
 %     \opt{use-numerals} is a package option as it needs to load
@@ -1763,6 +1841,7 @@ and the derived file cooking-units.sty.
 %   Allows \meta{character(s)} to be used in the first mandatory argument of 
 %  \lstinline!\cunum! without raising an error (you can customize this
 %  behavior, see \opt{set-unknown-message}). By default it is set to \texttt{?}.
+%  Please note that the sign |<| is not allowed as a special sign.
 % \end{function}
 %
 % \begin{cuexamplecode}
@@ -1786,6 +1865,29 @@ and the derived file cooking-units.sty.
 %   and \opt{none} if you don't want to know anything about it.
 % \end{function}
 %
+% \begin{function}{print-numerals}
+%   \begin{syntax}
+%     print-numerals = \meta{true/false}
+%   \end{syntax}
+%   If the package option \opt{use-numerals} is set to \true\ you can
+%   deactivate the printing of numerals by setting \opt{print-numerals} to 
+%   \false\ and activate them by setting it to \true.
+%
+%  Note that this option is automatically set to \opt{true} if \opt{use-numerals} is used.
+% \end{function}
+% \cusetup{ print-numerals=true }
+% \begin{cuexamplecode}
+%   \cutext{1}{kg} \\
+%   \cutext{2}{kg} \\
+%   \cutext{12}{kg} \\
+%   \cutext{13}{kg} \\
+%   \cusetup{ print-numerals=false } @
+%   \cutext{1}{kg} \\
+%   \cutext{2}{kg} \\
+%   \cutext{12}{kg} \\
+%   \cutext{13}{kg} \\
+% \end{cuexamplecode}
+% \cusetup{ print-numerals=false }
 %
 % \begin{function}{use-numerals-below}
 %   \begin{syntax}
@@ -2095,6 +2197,7 @@ and the derived file cooking-units.sty.
 %   while using \mycs{cuam}. By default it is set to \cs{space}. Use this option
 %  if you want to e.g. insert an unbreakable space.
 % \end{function}
+%  \cusetup{use-phrases=true}
 % \begin{cuexamplecode}
 %   \selectlanguage{ngerman} @
 %   \cuam{12}\\
@@ -2105,7 +2208,7 @@ and the derived file cooking-units.sty.
 %   \cusetup { phrase-space = {qwe} } @
 %   \cuam{12}\\
 % \end{cuexamplecode}
-%
+%  \cusetup{use-phrases=false}
 %
 %
 % \subsubsection{label \& refs for People}
@@ -2367,7 +2470,6 @@ and the derived file cooking-units.sty.
 %
 % \subsection{american}
 %^^A Only differences from \enquote{English} are defined.
-% Note that if there is no difference from. 
 %
 % \begin{tabular}{ l l l l l }
 %   \toprule
