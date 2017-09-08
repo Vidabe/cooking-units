@@ -157,7 +157,7 @@ and the derived file cooking-units.sty.
 \DeclareSIUnit{\lb}{\pound}
 \DeclareSIUnit{\stone}{st}
 \DeclareSIUnit{\st}{\stone}
-\cusetup{use-numerals-below=0}
+\cusetup{print-numerals=false}
 
 %\EnableCrossrefs
 
@@ -647,7 +647,7 @@ and the derived file cooking-units.sty.
 %^^A \tableofcontents
 % 
 % \begin{myde}
-% \cusetup{use-numerals-below=13,use-phrases=true}
+% \cusetup{print-numerals=true,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cuam{6} Eier \\
@@ -669,7 +669,7 @@ and the derived file cooking-units.sty.
 % \end{myde}
 %
 % \begingroup
-% \cusetup{use-numerals-below=13}
+% \cusetup{print-numerals=true}
 % \cutext[convert-to-eV=true]{1}{m} \\
 % \cunum[convert-to-eV=true]{1}{m} \\
 % \cuam{6} Eier \\
@@ -832,7 +832,7 @@ and the derived file cooking-units.sty.
 %   \Cutext{13}{l} 
 % \end{cuexamplecode}
 % and using package option \opt{use-numerals=true}
-% \cusetup{use-numerals-below=13}
+% \cusetup{print-numerals=true}
 % \begin{cuexamplecode}
 %   \cutext{1}{l} \\
 %   \Cutext{1}{l} \\
@@ -840,7 +840,7 @@ and the derived file cooking-units.sty.
 %   \cutext{12}{l} \\
 %   \Cutext{13}{l} 
 % \end{cuexamplecode}
-% \cusetup{use-numerals-below=0}
+% \cusetup{print-numerals=false}
 % Furthermore,
 % since v1.10 \cCutext\ also allows their units to be changed (this behavior
 % can be altered using \opt{cutext-change-unit}):
@@ -1000,7 +1000,7 @@ and the derived file cooking-units.sty.
 %
 %   \opt{use-numerals}:
 %   \begin{myde}
-%     \cusetup{use-numerals-below=13}
+%     \cusetup{print-numerals=true}
 %     \begin{cuexamplecode}
 %       \cusetup{use-phrases=true} @
 %       \cuam{12} \\
@@ -1628,7 +1628,7 @@ and the derived file cooking-units.sty.
 %
 % \end{function}
 % 
-% \cusetup{use-numerals-below=13}
+% \cusetup{print-numerals=true}
 % \begin{cuexamplecode}
 %   \cutext{1}{kg} \\
 %   \Cutext{1}{kg} \\
@@ -1639,7 +1639,7 @@ and the derived file cooking-units.sty.
 %   \cutext{13}{kg} \\
 %   \Cutext{14}{kg} 
 % \end{cuexamplecode}
-% \cusetup{use-numerals-below=0}
+% \cusetup{print-numerals=false}
 % 
 % \subsection{Normal options}
 %
@@ -1797,7 +1797,7 @@ and the derived file cooking-units.sty.
 %   \meta{integer}. \meta{integer} is by default 13. Package
 %   pkg{fmtcount} is used for this purpose.
 % \end{function}
-% \cusetup{ use-numerals-below=13 }
+% \cusetup{ print-numerals=true }
 % \begin{cuexamplecode}
 %   \cutext{1}{kg} \\
 %   \cutext{2}{kg} \\
@@ -1819,7 +1819,7 @@ and the derived file cooking-units.sty.
 %   \cutext[kg=g]{12}{kg} \\
 %   \cutext[kg=g]{13}{kg} \\
 % \end{cuexamplecode}
-% \cusetup{ use-numerals-below=0 } 
+% \cusetup{ print-numerals=false } 
 %
 %
 % \begin{function}{parse-number}
@@ -4626,7 +4626,7 @@ and the derived file cooking-units.sty.
     \str_if_eq:nnTF {#1} { < }
       {  
         \tl_if_in:NoT \l_@@_allowed_special_signs_tl { < }
-          { \ERROR or \WARNING }
+          { \msg_error:nn {cooking-units} { <-not-allowed-as-special-sign } }
         \tl_clear:N \l_@@_tmpa_tl
         \tl_put_right:Nx \l_@@_tmpa_tl { \tl_to_str:N < }
         \@@_grab_arrows_for_safety_do_afterwards:nN
