@@ -1,0 +1,121 @@
+% !TEX encoding = UTF-8 Unicode
+\documentclass[naustrian]{scrartcl}
+
+\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xparse}
+\usepackage{translations}
+
+\ExplSyntaxOn
+
+%\declaretranslation{Ersetzen}{nahrwerte}{}
+%\declaretranslation{Ersetzen}{pro}{}
+%\declaretranslation{Ersetzen}{Durch.nahrwerte}{}
+%\declaretranslation{Ersetzen}{Durch.nahr.je}{}
+%\declaretranslation{Ersetzen}{energie}{}
+%\declaretranslation{Ersetzen}{Fett}{}
+%\declaretranslation{Ersetzen}{ges.Fettsauren}{}
+%\declaretranslation{Ersetzen}{dav.ges.Fettsauren}{}
+%\declaretranslation{Ersetzen}{Kohlenhydrate}{}
+%\declaretranslation{Ersetzen}{dav.Zucker}{}
+%\declaretranslation{Ersetzen}{Eiweiss}{}
+%\declaretranslation{Ersetzen}{Salz}{}
+
+
+\declaretranslation{German}{nahrwerte}{Nährwerte}
+\declaretranslation{German}{pro}{pro}
+\declaretranslation{German}{Durch.nahrwerte}{Durchschnittliche Nährwerte}
+\declaretranslation{German}{Durch.nahr.je}{Durchschnittliche Nährwerte je}
+\declaretranslation{German}{energie}{Energie} %% Brennwert
+\declaretranslation{German}{Fett}{Fett}
+\declaretranslation{German}{ges.Fettsauren}{gesättigte Fettsäuren}
+\declaretranslation{German}{dav.ges.Fettsauren}{davon gesättigte Fettsäuren}
+\declaretranslation{German}{Kohlenhydrate}{Kohlenhydrate}
+\declaretranslation{German}{dav.Zucker}{davon Zucker}
+\declaretranslation{German}{Eiweiss}{Eiwei{\ss}}
+\declaretranslation{German}{Salz}{Salz}
+
+\declaretranslation{Italian}{nahrwerte}{nutrizionali}
+\declaretranslation{Italian}{pro}{per}
+\declaretranslation{Italian}{Durch.nahrwerte}{nutrizionali medi} %% ???
+\declaretranslation{Italian}{Durch.nahr.je}{Valori nutrizionali medi per} 
+\declaretranslation{Italian}{energie}{Valore energetico}
+\declaretranslation{Italian}{Fett}{Grassi}
+\declaretranslation{Italian}{ges.Fettsauren}{acidi grassi saturi}
+\declaretranslation{Italian}{dav.ges.Fettsauren}{di cui acidi grassi saturi}
+\declaretranslation{Italian}{Kohlenhydrate}{Carboidrati}
+\declaretranslation{Italian}{dav.Zucker}{di cui zuccheri}
+\declaretranslation{Italian}{Eiweiss}{Proteine}
+\declaretranslation{Italian}{Salz}{Sale}
+
+%% So viele Akzente!
+\declaretranslation{Czech}{nahrwerte}{V\'{y}\v{z}ivov\'{e}}
+\declaretranslation{Czech}{pro}{na}
+\declaretranslation{Czech}{Durch.nahrwerte}{V\'{y}\v{z}ivov\'{e} \'{u}daje} 
+\declaretranslation{Czech}{Durch.nahr.je}{V\'{y}\v{z}ivov\'{e} \'{u}daje na} 
+\declaretranslation{Czech}{energie}{Energetick\'{a} hodnota}
+\declaretranslation{Czech}{Fett}{Tuky}
+\declaretranslation{Czech}{ges.Fettsauren}{nasycen\'{e} mastn\'{e} kyseliny}
+\declaretranslation{Czech}{dav.ges.Fettsauren}{z toho nasycen\'{e} mastn\'{e} kyseliny}
+\declaretranslation{Czech}{Kohlenhydrate}{Sacharidy}
+\declaretranslation{Czech}{dav.Zucker}{z toho cukry}
+\declaretranslation{Czech}{Eiweiss}{B\'{i}lkoviny}
+\declaretranslation{Czech}{Salz}{S\r{u}l}
+
+%% Ähnlich wie Czech, nur andere Akzente... (oder umgekehrt)
+\declaretranslation{slovak}{nahrwerte}{V\'{y}\v{z}ivov\'{e}}
+\declaretranslation{slovak}{pro}{na}
+\declaretranslation{slovak}{Durch.nahrwerte}{V\'{y}\v{z}ivov\'{e} \'{u}daje}
+\declaretranslation{slovak}{Durch.nahr.je}{V\'{y}\v{z}ivov\'{e} \'{u}daje na}
+\declaretranslation{slovak}{energie}{Energia}
+\declaretranslation{slovak}{Fett}{Tuky}
+\declaretranslation{slovak}{ges.Fettsauren}{nasy\'{y}ten\'{e} mastn\'{e} kyseliny}
+\declaretranslation{slovak}{dav.ges.Fettsauren}{z toho nasy\'{y}ten\'{e} mastn\'{e} kyseliny}
+\declaretranslation{slovak}{Kohlenhydrate}{Sacharidy}
+\declaretranslation{slovak}{dav.Zucker}{z toho cukry}
+\declaretranslation{slovak}{Eiweiss}{Bielkoviny}
+\declaretranslation{slovak}{Salz}{So\'{l}} %% \'{l} or l' ?
+
+%% Wenige Akzente :-)
+\declaretranslation{spanish}{nahrwerte}{nutricionales}
+\declaretranslation{spanish}{pro}{por}
+\declaretranslation{spanish}{Durch.nahrwerte}{Valores nutricionales medios}
+\declaretranslation{spanish}{Durch.nahr.je}{Valores nutricionales medios por}
+\declaretranslation{spanish}{energie}{Valor energ\'{e}tico}
+\declaretranslation{spanish}{Fett}{Grasas}
+\declaretranslation{spanish}{ges.Fettsauren}{\ERROR}
+\declaretranslation{spanish}{dav.ges.Fettsauren}{de las cuales saturadas}
+\declaretranslation{spanish}{Kohlenhydrate}{Hidratos de carbono}
+\declaretranslation{spanish}{dav.Zucker}{de los cuales az\'{u}cares}
+\declaretranslation{spanish}{Eiweiss}{Prote\'{i}nas}
+\declaretranslation{spanish}{Salz}{Sal}
+
+
+\declaretranslation{portuges}{nahrwerte}{\ERROR}
+\declaretranslation{portuges}{pro}{por}
+\declaretranslation{portuges}{Durch.nahrwerte}{Informa\c{c}\~{a}o nutricional m\'{e}dia}
+\declaretranslation{portuges}{Durch.nahr.je}{Informa\c{c}\~{a}o nutricional m\'{e}dia por}
+\declaretranslation{portuges}{energie}{Energia}
+\declaretranslation{portuges}{Fett}{L\'{i}pidos}
+\declaretranslation{portuges}{ges.Fettsauren}{\ERROR}
+\declaretranslation{portuges}{dav.ges.Fettsauren}{dos quais \'{a}cidos gordos saturados}
+\declaretranslation{portuges}{Kohlenhydrate}{Hidratos de carbono}
+\declaretranslation{portuges}{dav.Zucker}{dos quais a\c{c}\'{u}cares}
+\declaretranslation{portuges}{Eiweiss}{Prote\'{i}nas}
+\declaretranslation{portuges}{Salz}{Sal}
+
+
+\ExplSyntaxOff
+
+
+\begin{document}
+
+\'{o}
+\`{o}
+\GetTranslationFor{Czech}{Salz}
+\GetTranslationFor{slovak}{Salz}
+\GetTranslationFor{portuges}{Salz}
+
+\end{document}
+
