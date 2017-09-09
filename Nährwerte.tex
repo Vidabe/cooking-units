@@ -1,5 +1,5 @@
 % !TEX encoding = UTF-8 Unicode
-\documentclass[naustrian]{scrartcl}
+\documentclass[russian]{scrartcl}
 
 \usepackage{babel}
 \usepackage[utf8]{inputenc}
@@ -36,13 +36,15 @@
 \declaretranslation{German}{Eiweiss}{Eiwei{\ss}}
 \declaretranslation{German}{Salz}{Salz}
 
+
+%% So viele Wörter...
 \declaretranslation{Italian}{nahrwerte}{nutrizionali}
 \declaretranslation{Italian}{pro}{per}
-\declaretranslation{Italian}{Durch.nahrwerte}{nutrizionali medi} %% ???
+\declaretranslation{Italian}{Durch.nahrwerte}{Valori nutrizionali medi}
 \declaretranslation{Italian}{Durch.nahr.je}{Valori nutrizionali medi per} 
-\declaretranslation{Italian}{energie}{Valore energetico}
+\declaretranslation{Italian}{energie}{Energia} % Valore energetico
 \declaretranslation{Italian}{Fett}{Grassi}
-\declaretranslation{Italian}{ges.Fettsauren}{acidi grassi saturi}
+\declaretranslation{Italian}{ges.Fettsauren}{acidi grassi saturi} %% ?
 \declaretranslation{Italian}{dav.ges.Fettsauren}{di cui acidi grassi saturi}
 \declaretranslation{Italian}{Kohlenhydrate}{Carboidrati}
 \declaretranslation{Italian}{dav.Zucker}{di cui zuccheri}
@@ -63,7 +65,7 @@
 \declaretranslation{Czech}{Eiweiss}{B\'{i}lkoviny}
 \declaretranslation{Czech}{Salz}{S\r{u}l}
 
-%% Ähnlich wie Czech, nur andere Akzente... (oder umgekehrt)
+%% ÄhDutchich wie Czech, nur andere Akzente... (oder umgekehrt)
 \declaretranslation{slovak}{nahrwerte}{V\'{y}\v{z}ivov\'{e}}
 \declaretranslation{slovak}{pro}{na}
 \declaretranslation{slovak}{Durch.nahrwerte}{V\'{y}\v{z}ivov\'{e} \'{u}daje}
@@ -106,6 +108,50 @@
 \declaretranslation{portuges}{Salz}{Sal}
 
 
+%% Sehr merkwürdiges Deutsch ...
+\declaretranslation{Dutch}{nahrwerte}{\ERROR}
+\declaretranslation{Dutch}{pro}{per}
+\declaretranslation{Dutch}{Durch.nahrwerte}{Gemiddekde voedingswaarden}
+\declaretranslation{Dutch}{Durch.nahr.je}{Gemiddekde voedingswaarden per}
+\declaretranslation{Dutch}{energie}{Energie}
+\declaretranslation{Dutch}{Fett}{Vetten}
+\declaretranslation{Dutch}{ges.Fettsauren}{verzadigde vetzuren}
+\declaretranslation{Dutch}{dav.ges.Fettsauren}{waarvan verzadigde vetzuren}
+\declaretranslation{Dutch}{Kohlenhydrate}{Koolhydraten}
+\declaretranslation{Dutch}{dav.Zucker}{waarvan suikers}
+\declaretranslation{Dutch}{Eiweiss}{Eiwitten}
+\declaretranslation{Dutch}{Salz}{Zout}
+
+%% Dachte immer französisch sei die Sprache der Akzente ...
+\declaretranslation{french}{nahrwerte}{\ERROR}
+\declaretranslation{french}{pro}{par}
+\declaretranslation{french}{Durch.nahrwerte}{Valeurs nutritionnelles moyennes}
+\declaretranslation{french}{Durch.nahr.je}{Valeurs nutritionnelles moyennes par}
+\declaretranslation{french}{energie}{Energie}
+\declaretranslation{french}{Fett}{Graisses}
+\declaretranslation{french}{ges.Fettsauren}{acides gras satur\'{e}s}
+\declaretranslation{french}{dav.ges.Fettsauren}{dont acides gras satur\'{e}s}
+\declaretranslation{french}{Kohlenhydrate}{Glucides}
+\declaretranslation{french}{dav.Zucker}{dont sucres}
+\declaretranslation{french}{Eiweiss}{Prot\'{e}ines}
+\declaretranslation{french}{Salz}{Sel}
+
+%% So viele Zeichen ... schreib ich das überhaupt richtig?
+\declaretranslation{russian}{nahrwerte}{\ERROR}
+\declaretranslation{russian}{pro}{}
+\declaretranslation{russian}{Durch.nahrwerte}
+  {\CYRP\cyri\cyrshch\cyre\cyrv\cyra\cyrya\ \cyrc\cyre\cyrn\cyrn\cyro\cyrs\cyrt b.....}
+  %% giving up
+\declaretranslation{russian}{Durch.nahr.je}{}
+\declaretranslation{russian}{energie}{}
+\declaretranslation{russian}{Fett}{}
+\declaretranslation{russian}{ges.Fettsauren}{}
+\declaretranslation{russian}{dav.ges.Fettsauren}{}
+\declaretranslation{russian}{Kohlenhydrate}{}
+\declaretranslation{russian}{dav.Zucker}{}
+\declaretranslation{russian}{Eiweiss}{}
+\declaretranslation{russian}{Salz}{}
+
 \ExplSyntaxOff
 
 
@@ -116,6 +162,18 @@
 \GetTranslationFor{Czech}{Salz}
 \GetTranslationFor{slovak}{Salz}
 \GetTranslationFor{portuges}{Salz}
+
+\ExplSyntaxOn
+
+\begin{tabular} { r l rl }
+\int_step_inline:nnnn { 1 } { 1 } { 26 }
+  {
+    \int_to_alph:n {#1} & \use:c { cyr \int_to_alph:n {#1} } &
+    \int_to_Alph:n {#1} & \use:c { CYR \int_to_Alph:n {#1} }  \\
+  }
+\end{tabular}
+
+\ExplSyntaxOff
 
 \end{document}
 
