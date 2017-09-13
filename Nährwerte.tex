@@ -7,7 +7,6 @@
 \usepackage{xparse}
 \usepackage{translations}
 
-\ExplSyntaxOn
 
 %\declaretranslation{Ersetzen}{nahrwerte}{}
 %\declaretranslation{Ersetzen}{pro}{}
@@ -65,7 +64,7 @@
 \declaretranslation{Czech}{Eiweiss}{B\'{i}lkoviny}
 \declaretranslation{Czech}{Salz}{S\r{u}l}
 
-%% ÄhDutchich wie Czech, nur andere Akzente... (oder umgekehrt)
+%% Wie Czech, nur andere Akzente... (oder umgekehrt)
 \declaretranslation{slovak}{nahrwerte}{V\'{y}\v{z}ivov\'{e}}
 \declaretranslation{slovak}{pro}{na}
 \declaretranslation{slovak}{Durch.nahrwerte}{V\'{y}\v{z}ivov\'{e} \'{u}daje}
@@ -137,43 +136,32 @@
 \declaretranslation{french}{Salz}{Sel}
 
 %% So viele Zeichen ... schreib ich das überhaupt richtig?
+%% Was bedeutet "Г"?
 \declaretranslation{russian}{nahrwerte}{\ERROR}
-\declaretranslation{russian}{pro}{}
+\declaretranslation{russian}{pro}{\cyri\cyra}
 \declaretranslation{russian}{Durch.nahrwerte}
   {\CYRP\cyri\cyrshch\cyre\cyrv\cyra\cyrya\ \cyrc\cyre\cyrn\cyrn\cyro\cyrs\cyrt\cyrsftsn}
   %% \cyrsftsn found in "cleveref.sty"
-\declaretranslation{russian}{Durch.nahr.je}{}
-\declaretranslation{russian}{energie}{}
-\declaretranslation{russian}{Fett}{}
-\declaretranslation{russian}{ges.Fettsauren}{}
-\declaretranslation{russian}{dav.ges.Fettsauren}{}
-\declaretranslation{russian}{Kohlenhydrate}{}
-\declaretranslation{russian}{dav.Zucker}{}
-\declaretranslation{russian}{Eiweiss}{}
-\declaretranslation{russian}{Salz}{}
+\declaretranslation{russian}{Durch.nahr.je}{\ERROR}
+\declaretranslation{russian}{energie}{Энергетическая ценность, кДж/ккал}
+\declaretranslation{russian}{Fett}{Жиры, Г}
+\declaretranslation{russian}{ges.Fettsauren}{\ERROR}
+\declaretranslation{russian}{dav.ges.Fettsauren}{из них насыщенные жирые кислоты, Г}
+\declaretranslation{russian}{Kohlenhydrate}{Чглеводы, Г}
+\declaretranslation{russian}{dav.Zucker}{из них сахар, Г}
+\declaretranslation{russian}{Eiweiss}{Бели, Г}
+%% Warum ist "Salz" so lang?!
+\declaretranslation{russian}{Salz}{Поваренная солв, Г}
 
-\ExplSyntaxOff
 
 
 \begin{document}
 
-\'{o}
-\`{o}
 \GetTranslationFor{Czech}{Salz}
 \GetTranslationFor{slovak}{Salz}
 \GetTranslationFor{portuges}{Salz}
+\GetTranslationFor{russian}{Salz}
 
-\ExplSyntaxOn
-
-\begin{tabular} { r l rl }
-\int_step_inline:nnnn { 1 } { 1 } { 26 }
-  {
-    \int_to_alph:n {#1} & \use:c { cyr \int_to_alph:n {#1} } &
-    \int_to_Alph:n {#1} & \use:c { CYR \int_to_Alph:n {#1} }  \\
-  }
-\end{tabular}
-
-\ExplSyntaxOff
 
 \end{document}
 
