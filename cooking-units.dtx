@@ -146,7 +146,7 @@ and the derived file cooking-units.sty.
 \usepackage{listings}
 \usepackage{environ}
 \usepackage{nicefrac}
-\usepackage{varioref}
+\usepackage{cleveref}
 \usepackage{mathtools}
 \usepackage{siunitx}
 
@@ -162,8 +162,8 @@ and the derived file cooking-units.sty.
 
 %\EnableCrossrefs
 
-\labelformat{table}{table~#1}
-\labelformat{section}{section~#1}
+%\labelformat{table}{table~#1}
+%\labelformat{section}{section~#1}
 
 \newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
 
@@ -176,7 +176,7 @@ and the derived file cooking-units.sty.
 
 \NewDocumentEnvironment {MyNote} { }
   {
-    \texttt{Note:}
+    \textbf{Note:}
   }{
   
   }
@@ -331,7 +331,8 @@ and the derived file cooking-units.sty.
 \NewDocumentEnvironment { cuinterest } { m }
   { 
     \par \bigskip
-    \mbox{}\marginpar{\raggedleft\opt{#1}}
+    \clist_set:Nn \l_tmpa_clist {#1}
+    \mbox{}\marginpar{\raggedleft\opt{ \clist_use:Nn \l_tmpa_clist { \\ } }}
     \ignorespaces
   }
   { }
@@ -664,7 +665,7 @@ and the derived file cooking-units.sty.
 % \end{abstract}
 %
 %^^A \tableofcontents
-% 
+% \begin{mycomment}
 % \begin{myde}
 % \cusetup{print-numerals=true,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
@@ -700,7 +701,7 @@ and the derived file cooking-units.sty.
 % \cuam{60} Eier \\
 % \cuam{62} Eier \\
 % \endgroup
-%
+% \end{mycomment}
 % \section{Introduction}
 %
 %
@@ -754,11 +755,13 @@ and the derived file cooking-units.sty.
 %
 % \begin{description}
 %   \item[Language] I am now using the \pkg{translations} package
-%     and I hope it makes things easier.
+%     and I hope it makes things easier. As such, declaring the used language
+%     through class-options shouldn't be necessary anymore.
 %   \item[Phrases] This package now supports the usage of \enquote{phrases}
-%     (words used instead of certain integers).
+%     (words used instead of certain integers) (which I think are called \enquote{counting
+%     measures} in english, but I am not sure).
 %   \item[\cCutext] If no translation is found for a specific language,
-%    \cCutext\ are replaced by \mycs{cunum} and a warning is given.
+%    \cCutext\ are replaced by \mycs{cunum} with a warning is given.
 %   \item[Commands] Currently, it seems that alowing \emph{label}
 %     to be set by arrow-brackets was not the best idea as it leads to problems
 %    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
@@ -775,8 +778,8 @@ and the derived file cooking-units.sty.
 %  \item French (currently suboptimal\footnote{You can only get limited information from the internet.})
 % \end{itemize}
 % Have another language to add or a correction of an existing one?
-% See \vref{sec:bug-feed} for more details. Wanna just check the
-% existing translations? See \vref{sec:Translations}.
+% See \cref{sec:bug-feed} for more details. Wanna just check the
+% existing translations? See \cref{sec:Translations}.
 %
 % \section {The Commands}
 % \label{sec:commands}
@@ -796,17 +799,17 @@ and the derived file cooking-units.sty.
 % can interpret \verb|_| and \texttt{/} as (mixed) fractions and
 % \verb|--| as a separator for ranges; to convert units use the option
 % \texttt{\meta{old-unit}=\meta{new-unit}}\footnote{New keys can be
-% added and defined, see \vref{sec:pred-units} and
-% \vref{sec:def-units} for further information.}.  It furthermore
+% added and defined, see \cref{sec:pred-units} and
+% \cref{sec:def-units} for further information.}.  It furthermore
 % allows the sign \texttt{?} to be used as a placeholder for not known
 % amounts and raises a warning to remind that this amount needs a
 % checkup\footnote{You can customize this behavior, see
-% \vref{sec:options}}. \oarg{space} adds a space between the number
+% \cref{sec:options}}. \oarg{space} adds a space between the number
 % and the unit using \lstinline|\phantom|.
 %
-% For a list of predefined units have a look at \vref{tab:def-units}. 
+% For a list of predefined units have a look at \cref{tab:def-units}. 
 %
-% \meta{label} is explained in \vref{sec:labeletref}.
+% \meta{label} is explained in \cref{sec:labeletref}.
 % 
 % 
 % \begin{cuexamplecode}
@@ -830,7 +833,7 @@ and the derived file cooking-units.sty.
 % Decimal numbers are automatically rounded to 2 digits after the
 % colon, temperatures (\texttt{C}, \texttt{F}, \texttt{K} and
 % \texttt{Re}) are automatically rounded to integers.\footnote{You can
-% -- of course -- change this behavior, see \vref{sec:options}.}
+% -- of course -- change this behavior, see \cref{sec:options}.}
 % 
 %
 % \cCutext\ print the number and the written name of the unit. Since
@@ -921,13 +924,13 @@ and the derived file cooking-units.sty.
 %
 % The first one is the important one: It defines a \meta{label} for a recipe
 % which is initially for  \meta{number of persons}. Afterwards \meta{label}
-% can be used to tell the commands from \vref{sec:commands} that the given
+% can be used to tell the commands from \cref{sec:commands} that the given
 % amounts are for \meta{number of persons} people.
 % Each \meta{label} must be unique and an error is raised if a \meta{label}
 % is already defined.
 %  
 % If you would like to print the number of persons this recipe is for, use 
-% \mycs{curef}.
+% \mycs{curef}, which is fully expandable.
 %
 % The following example uses \mycs{culabel} to specify that the recipe is
 % initially intended for 2 persons:
@@ -938,7 +941,7 @@ and the derived file cooking-units.sty.
 %   \cunum<recipe>{1/2}{l} & water, \\
 %   \cutext[ref=recipe]{10}{g} & nuts, \\
 %   \cuam<recipe>{2--3} & eggs, \\
-%   \cunum{180}{C} & open & fire
+%   \cunum{180}{C} & (\cunum[C=F]{180}{C}) & open & fire
 % \end{cuexamplecode}
 %
 % Now with combination of the option \opt{set-number-of-persons}
@@ -958,7 +961,7 @@ and the derived file cooking-units.sty.
 %   \cunum<recipe>{1/2}{l} & water, \\
 %   \cutext[ref=recipe]{10}{g} & nuts, \\
 %   \cuam<recipe>{2--3} & eggs, \\
-%   \cunum{180}{C} & open & fire
+%   \cunum{180}{C} & & (\cunum[C=F]{180}{C}) & open & fire
 % \end{cuexamplecode}
 % \cusetup{recalculate-amount=false}
 %
@@ -972,38 +975,35 @@ and the derived file cooking-units.sty.
 % \section{Some Interesting options}
 % 
 % This package has some options which might be of interest for a user
-% of this package and to highlight them this section exists. All options can be
-% found in \vref{sec:options}.
+% of this package and to highlight them, this section exists. All options can be
+% found in \cref{sec:options}.
 %
 %
 %
-%   \begin{cuinterest}{use-numerals} 
+%   \begin{cuinterest}{use-numerals, use-numerals-below, print-numerals} 
 %   As seen above, you can use the \emph{package}-option
 %   \opt{use-numerals} to let integers from \cCutext{} below
-%   \opt{use-numerals-below} printed by \pkg{fmtcount}.
-%   You can still decide if numerals should be preinted or not with \opt{print-numerals}.
+%   \opt{use-numerals-below} be printed by \pkg{fmtcount}.
+%   You can still decide if numerals should be printed or not with \opt{print-numerals}.
 %
 %   \begin{MyNote}
 %     \opt{use-numerals} is a package option as it needs to load
 %     \pkg{fmtcount} which is not loaded by default. 
 %   \end{MyNote}
+%
 % \end{cuinterest}
 %
 % \begin{cuinterest}{use-phrases}
 %   In (I presume) all languages there exist phrases for a given
-%   amount bzw. number of things. In German you may say instead of
-%   \enquote{12}, \enquote{ein Dutzend}.
+%   amount bzw. number of things (think it is called \enquote{counting measurement}).
+%   In German you may say instead of
+%   \enquote{12}: \enquote{ein Dutzend}. Using this option you can tell this
+%   package to replace predefined integers used in \mycs{cuam} 
+%   by phrases for given language
+%   (to define new ones, see \cref{sec:phrases})
 %
-%   \begin{cuexamplecode}
-%     \cuam{12} \\
-%     \cuam{24} \\
-%     \cuam{12--24} \\
-%     \cuam{12--13} \\
-%     \cuam{18} \\
-%     \cuam{60} 
-%   \end{cuexamplecode}
-%   And using langauge \opt{ngerman} (or \opt{naustrian}, etc.) with
-%   package option \opt{use-phrases=true}.
+%   Using (for example) langauge \opt{ngerman} (or \opt{naustrian}, etc.) with
+%   package option \opt{use-phrases=true} gives:
 %   \begin{myde}
 %     \begin{cuexamplecode}
 %       \cusetup{use-phrases=true} @
@@ -1015,50 +1015,54 @@ and the derived file cooking-units.sty.
 %       \cuam{60} 
 %     \end{cuexamplecode}
 %   \end{myde}
-% This of course also works with the \emph{package}-option \opt{use-numerals}
-% (Please note that this \emph{only} supports the lowercase variant):
+% This of course also works with the \emph{package}-option \opt{use-numerals}:
+%   \begin{myde}
+%     \cusetup{print-numerals=true} 
+%     \begin{cuexamplecode}
+%       \cusetup{use-phrases=true} @
+%       \cuam{12} \\
+%       \cuam{24} \\
+%       \cuam{12--24} \\
+%       \cuam{12--13} \\
+%       \cuam{18} \\
+%       \cuam{60} 
+%     \end{cuexamplecode}
+%   \end{myde}
+%
+%
+%   \begin{MyNote}
+%     Curently only the lower-case variant for \opt{use-numerals} is
+%     supported. Furthermore this feature is only available for \mycs{cuam}.
+%   \end{MyNote}
+%
 %
 %  \end{cuinterest}
-%
-%   \begin{cuinterest}{use-numerals}
-%   \begin{myde}
-%     \cusetup{print-numerals=true}
-%     \begin{cuexamplecode}
-%       \cusetup{use-phrases=true} @
-%       \cuam{12} \\
-%       \cuam{24} \\
-%       \cuam{12--24} \\
-%       \cuam{12--13} \\
-%       \cuam{18} \\
-%       \cuam{60} 
-%     \end{cuexamplecode}
-%   \end{myde}
-% \end{cuinterest}
 %
 %
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
 %
-% In \vref{tab:def-units} and \vref{tab:some-more-units} you can find
-% all predefined units.  In \vref{sec:Translations} all available
-% translations are listed.
+% In \cref{tab:def-units} and \cref{tab:some-more-units} (and \cref{tab:strange-units})
+% you can find
+% all predefined units.  In \cref{sec:Translations} all translations available
+%  are listed.
 %
 % \begin{comment}
 % I now \emph{did} include a separate key for \enquote{Messerspitze}
 % (Msp.)  and therefore separated \enquote{Pinch} (pn) and
 % \enquote{Messerspitze} (Msp.).  My biggest problems with the units
-% given in \vref{tab:some-more-units} is that they may only exist in
+% given in \cref{tab:some-more-units} is that they may only exist in
 % one language (or country) and therefore do not exist in another
 % language (I think for example that knife point
 % \enquote{Messerspitze} doesn't exist in english) so translating them
 % would be difficult. Therefore use units known to you and if there
 % are unsupported units or languages feel free to write (see
-% \vref{sec:bug-feed} for more details).
+% \cref{sec:bug-feed} for more details).
 % \end{comment}
 %
 % \begin{table}[htbp]
 %   \centering
-%   \caption{The first clumn shows a list of predefined unit-keys.
+%   \caption{The first column shows a list of predefined unit-keys.
 %   The column \enquote{default-symbol} shows the abbreviation used if
 %   for given language no translation is defined. The third column
 %   \enquote{unitname} \emph{is} language dependent and shows the name
@@ -1216,7 +1220,7 @@ and the derived file cooking-units.sty.
 %     \ \ \}
 %   \end{syntax}
 %
-%   If you define new units (see \vref{sec:def-units}) and cannot add
+%   If you define new units (see \cref{sec:def-units}) and cannot add
 %   them to already existing keys you can use
 %   \lstinline|\cudefinekeys| bzw.  \lstinline|\cudefinesinglekey| to
 %   define new keys.
@@ -1478,7 +1482,7 @@ and the derived file cooking-units.sty.
 %   commands printed in \lstinline|\cutext| and \lstinline|\Cutext|
 %   (and \lstinline|\cunum| regarding the symbol) for the specific
 %   \meta{Language}. For details regarding \meta{language} see the
-%   \pkg{translator}-documentation.
+%   \pkg{translation}-documentation.
 %
 %   If the plural form of the name differs from the singular form use
 %   \oarg{plural} to specify the plural form, if no \oarg{plural} is
@@ -1534,7 +1538,7 @@ and the derived file cooking-units.sty.
 %   \lstinline|\cunum| for the specific \meta{language}.  It works
 %   similar as \lstinline|\cudefinename|, but only the symbols (and no
 %   names) can be set.   For details regarding \meta{language} see
-%   the \pkg{translator}-documentation.
+%   the \pkg{translation}-documentation.
 %
 % \end{function}
 %
@@ -1584,9 +1588,9 @@ and the derived file cooking-units.sty.
 % As you can see it may be a bit suboptimal, as there is no plural version allowed.
 % You do it anyway and end up with:
 %  \begin{cuexamplecode}
-%    \cunum{12}{dag} \space weed\\
-%    \cunum{3}{dag} \space nuts\\
-%    \cunum{10}{dag} \space duckmeat
+%    \cunum{12}{dag} & weed\\
+%    \cunum{3}{dag} & nuts\\
+%    \cunum{10}{dag} & duckmeat
 %  \end{cuexamplecode}
 %
 %
@@ -1598,10 +1602,11 @@ and the derived file cooking-units.sty.
 %
 %
 % \subsection{Phrases}
+% \label{sec:phrases}
 %
 % Each language has synonyms for certain (integer) numbers. This package
 % supports those phrases and they can be implemented with the following
-% command and used by \mycs{cuam}:
+% commands and used by \mycs{cuam}:
 %
 % \begin{function}{\cudefinephrase}
 %   \begin{syntax}
@@ -1617,7 +1622,7 @@ and the derived file cooking-units.sty.
 %   with \marg{phrase-1} (plural and gender). The package then checks if the amount
 %   given in \mycs{cuam} is either this number or a \emph{multiple} of it.
 %
-%   If the behavior of checking for a multiple is not wanted you can use the optional
+%   If the behavior of checking for a multiple is not wanted, you can use the optional
 %   star \texttt{*} for a given \marg{integer}
 %
 %   \meta{gender} can be \opt{m}, \opt{f} or \opt{n}. It is \opt{m} by default.
@@ -1625,7 +1630,8 @@ and the derived file cooking-units.sty.
 %   Afterwards the numbers are ordered from highest to lowest so that
 %   the phrase with the highest number is used (if used at all).
 %
-%   Furthermore, if it chooses star (|*|) phrases over non-star phrases.   
+%   Furthermore, it chooses star-(|*|)-phrases over non-star phrases.   
+%
 %   \begin{MyNote}
 %     Numbers with the optional star |*| are stored as negative numbers. 
 %   \end{MyNote}
@@ -1677,7 +1683,7 @@ and the derived file cooking-units.sty.
 % Options in \pkg{cooking-units} can mostly be set globally using
 % \lstinline|\cusetup| or locally using the optional argument of the
 % respective command (but \emph{not} as a package option).  The only
-% exception is the option given in \vref{sec:load-time-options} which
+% exception is the option given in \cref{sec:load-time-options} which
 % needs to be used as a package option.
 %
 % \subsection{Load time options}
@@ -1735,7 +1741,7 @@ and the derived file cooking-units.sty.
 %     \meta{unit-key-1} = \meta{unit-key-2}
 %  \end{syntax}
 %  Convert units from \meta{unit-key-1} to \meta{unit-key-2} (see
-%  \vref{sec:defining-opt} to define new options).
+%  \cref{sec:defining-opt} to define new options).
 % \end{function}
 % 
 % \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>,erase-all-options}
@@ -2094,8 +2100,6 @@ and the derived file cooking-units.sty.
 %   \cunum{1_1/2}{kg} \\
 %   \cunum[kg=g]{1_1/2}{kg} \\
 %   \cunum[kg=g]{-1_1/2}{kg} \\
-%   \cutext[kg=g]{-1_1/2}{kg} \\
-%   \cunum[kg=g]{-?/2}{kg} \\
 % \end{cuexamplecode}
 %
 % \begin{function}{fraction-command}
@@ -2304,7 +2308,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     ref = \meta{label}
 %   \end{syntax}
-%   Instead of using the first optional arguments of the commands in \vref{sec:commands}
+%   Instead of using the first optional arguments of the commands in \cref{sec:commands}
 %   you may use this option. It requires a valid value and throws an error if \meta{label}
 %   is not defined.
 % \end{function}
@@ -2379,7 +2383,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     convert-to-eV = \meta{true/false}
 %   \end{syntax}
-%   Converts (nearly) every unit in \vref{tab:def-units}
+%   Converts (nearly) every unit in \cref{tab:def-units}
 %   to electron volt or the respective derivative. Note that this 
 %   option is:
 %   a) experimental and probably will forever be and b) just a joke, you are not 
@@ -2432,8 +2436,8 @@ and the derived file cooking-units.sty.
 % with the help of the internet, which is not optimal) so if you are
 % able to speak a language not yet implemented and would like to help
 % you can send me a list of the translations of the units given in
-% \vref{sec:pred-units} or (for better overview)
-% \vref{sec:Translations}. I would need
+% \cref{sec:pred-units} or (for better overview)
+% \cref{sec:Translations}. I would need
 % \begin{itemize} 
 %   \item their singular (and plural) form, 
 %   \item the gender, 
@@ -2454,7 +2458,8 @@ and the derived file cooking-units.sty.
 % This section contains the list of available translations. Each table
 % shows the available translations for the printed unit, the unit-name
 % (printed if \mycs{cutext} or \mycs{Cutext} is used)  and
-% the plural form (if different from the singular form).
+% the plural form (if different from the singular form). A second table
+% shows the translations used for phrases (if given).
 %
 % If a translation is not available a \enquote{\translationdoesnotexisttl} is
 % shown.
@@ -2492,10 +2497,10 @@ and the derived file cooking-units.sty.
 %
 % \begin{tabular} { l l @{\space} l l l l }
 % \toprule
-%    \meta{number} &  \multicolumn{2}{c}{Note} & name & (plural) & gender \\ \midrule
-%  60  &(5 Dutzend, & $12*5$) & Schock & & n \\
-%  144 &(12 Dutzend, & $12*12$) & Gros && n \\
-%  1728 &(12 Gro{\ss}, & $12*144$) & Gro{\ss}gros && n \\
+%    \meta{number}  & name &  \multicolumn{2}{c}{Note} & (plural) & gender \\ \midrule
+%  60 & Schock & (5 Dutzend, & $12*5$)  & & n \\
+%  144 & Gros & (12 Dutzend, & $12*12$)  && n \\
+%  1728 & Gro{\ss}gros  &(12 Gro{\ss}, & $12*144$) && n \\
 % \bottomrule
 % \end{tabular}
 %
