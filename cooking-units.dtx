@@ -664,7 +664,9 @@ and the derived file cooking-units.sty.
 %   Please read through the section \enquote{Important Changes}
 % \end{abstract}
 %
-%^^A \tableofcontents
+% \tableofcontents
+%
+%
 % \begin{mycomment}
 % \begin{myde}
 % \cusetup{print-numerals=true,use-phrases=true}
@@ -717,40 +719,41 @@ and the derived file cooking-units.sty.
 % more pleasant than \LaTeXe) and here it is.
 %
 % \begin{comment}
-% \section{Important note}
-%
-% This package uses the \pkg{translator} package to be able to switch
-% between different languages (german, english and french by now).  To
-% do that \pkg{translator} has to know which languages are used. The
-% (I think) easiest way is to specify used languages using the
-% optional argument of the documentclass (you can do this for both
-% \pkg{babel} and \pkg{polyglossia}\footnote{I know that
-% \pkg{polyglossia} doesn't support the \pkg{babel}-way of setting the
-% language by optional argument, but it doesn't harm.}):
-%
-% \begin{lstlisting}
-%  \documentclass[english,french,ngerman]{class}
-%  \usepackage[main=english]{babel} 
-%  \usepackage{cooking-units}
-%  ...
-% \end{lstlisting}
-%
-%  or if you are using \pkg{polyglossia}
-%
-% \begin{lstlisting}
-%  \documentclass[french,ngerman,english]{class}
-%
-%  \usepackage{polyglossia}
-%  \setmainlanguage{english}
-%  \setotherlanguages{german,french}
-%
-%  \usepackage{cooking-units}
-%  ...
-% \end{lstlisting}
-%
-%  At least I hope that this works, dealing with languages is a pain
-%  in the ass\footnote{If you excuse me being blunt about this}.
+%%% \section{Important note}
+%%%
+%%% This package uses the \pkg{translator} package to be able to switch
+%%% between different languages (german, english and french by now).  To
+%%% do that \pkg{translator} has to know which languages are used. The
+%%% (I think) easiest way is to specify used languages using the
+%%% optional argument of the documentclass (you can do this for both
+%%% \pkg{babel} and \pkg{polyglossia}\footnote{I know that
+%%% \pkg{polyglossia} doesn't support the \pkg{babel}-way of setting the
+%%% language by optional argument, but it doesn't harm.}):
+%%%
+%%% \begin{lstlisting}
+%%%  \documentclass[english,french,ngerman]{class}
+%%%  \usepackage[main=english]{babel} 
+%%%  \usepackage{cooking-units}
+%%%  ...
+%%% \end{lstlisting}
+%%%
+%%%  or if you are using \pkg{polyglossia}
+%%%
+%%% \begin{lstlisting}
+%%%  \documentclass[french,ngerman,english]{class}
+%%%
+%%%  \usepackage{polyglossia}
+%%%  \setmainlanguage{english}
+%%%  \setotherlanguages{german,french}
+%%%
+%%%  \usepackage{cooking-units}
+%%%  ...
+%%% \end{lstlisting}
+%%%
+%%%  At least I hope that this works, dealing with languages is a pain
+%%%  in the ass\footnote{If you excuse me being blunt about this}.
 % \end{comment}
+%
 % \subsection{Important Changes}
 %
 % \begin{description}
@@ -783,6 +786,7 @@ and the derived file cooking-units.sty.
 %
 % \section {The Commands}
 % \label{sec:commands}
+%
 %
 % This package offers the following commands for unit printing (and
 % converting):
@@ -1154,14 +1158,14 @@ and the derived file cooking-units.sty.
 % \section{Defining units}
 % \label{sec:def-units}
 %
-% New units can be defined using \lstinline|\declarecookingunit|, 
-% \lstinline|\newcookingunit| and \lstinline|\providecookingunit|:
+% New units can be defined using \mycs{declarecookingunit}, 
+% \mycs{newcookingunit} and \mycs{providecookingunit}:
 %
 % \begin{function}{\declarecookingunit,\newcookingunit,\providecookingunit}
 %   \begin{syntax}
-%     \lstinline|\declarecookingunit|\oarg{symbol}\marg{unit-key}
-%     \lstinline|\newcookingunit|\oarg{symbol}\marg{new-unit-key}
-%     \lstinline|\providecookingunit|\oarg{symbol}\marg{new-unit-key}
+%     \mycs{declarecookingunit}\oarg{symbol}\marg{unit-key}
+%     \mycs{newcookingunit}\oarg{symbol}\marg{new-unit-key}
+%     \mycs{providecookingunit}\oarg{symbol}\marg{new-unit-key}
 %   \end{syntax}
 %   These commands define the unit  \meta{unit-key}. If the 
 %   key is not the same as the printed symbol use \oarg{symbol}.
@@ -1175,14 +1179,13 @@ and the derived file cooking-units.sty.
 % Some examples (note: the definition of the printed degree Celsius is
 % directly copied \& pasted from [a maybe older version of] \pkg{siunitx}):
 %
-% \begin{center}
-% \begin{tabular}{ll}
-%   \lstinline|\declarecookingunit{kg}| \\
-%   \lstinline|\declarecookingunit{g}| \\
-%   \lstinline|\declarecookingunit[Msp.] {Msp}| \\
-%   \lstinline|\declarecookingunit[\ensuremath{{}^{\circ}}\kern-\scriptspace C] {C} |
-% \end{tabular}
-% \end{center}
+% \begin{lstlisting}
+%   \declarecookingunit{kg}
+%   \declarecookingunit{g}
+%   \declarecookingunit[Msp.] {Msp}
+%   \declarecookingunit[\ensuremath{{}^{\circ}}\kern-\scriptspace C] {C}
+% \end{lstlisting}
+%
 %
 % \end{function}
 %
@@ -1193,14 +1196,14 @@ and the derived file cooking-units.sty.
 % Options (to change units) can be newly defined or added to already existing keys
 % using
 % \begin{itemize}
-%   \item \lstinline|\cudefinekeys|
-%   \item \lstinline|\cudefinesinglekey|
-%   \item \lstinline|\cuaddkeys|
-%   \item \lstinline|\cuaddsinglekeys|
-%   \item \lstinline|\cuaddtokeys|
+%   \item \mycs{cudefinekeys}
+%   \item \mycs{cudefinesinglekey}
+%   \item \mycs{cuaddkeys}
+%   \item \mycs{cuaddsinglekeys}
+%   \item \mycs{cuaddtokeys}
 % \end{itemize}
-% I apologize for the (name) inconsistency between \lstinline|\cudefinekeys| and
-% \lstinline|\cudefinesinglekey|.
+% I apologize for the (name) inconsistency between \mycs{cudefinekeys} and
+% \mycs{cudefinesinglekey}.
 %
 % \begin{function}{\cudefinekeys,\cudefinesinglekey}
 %   \begin{syntax}
@@ -1482,7 +1485,7 @@ and the derived file cooking-units.sty.
 %   commands printed in \lstinline|\cutext| and \lstinline|\Cutext|
 %   (and \lstinline|\cunum| regarding the symbol) for the specific
 %   \meta{Language}. For details regarding \meta{language} see the
-%   \pkg{translation}-documentation.
+%   \pkg{translations}-documentation.
 %
 %   If the plural form of the name differs from the singular form use
 %   \oarg{plural} to specify the plural form, if no \oarg{plural} is
@@ -1538,7 +1541,7 @@ and the derived file cooking-units.sty.
 %   \lstinline|\cunum| for the specific \meta{language}.  It works
 %   similar as \lstinline|\cudefinename|, but only the symbols (and no
 %   names) can be set.   For details regarding \meta{language} see
-%   the \pkg{translation}-documentation.
+%   the \pkg{translations}-documentation.
 %
 % \end{function}
 %
@@ -1572,7 +1575,7 @@ and the derived file cooking-units.sty.
 % \end{lstlisting}
 %
 % \begin{cuexample}
-%  Imageine that insetad of the abbrevation \enquote{dag} for \enquote{decagramm}
+%  Imagine that instead of the abbreviation \enquote{dag} for \enquote{decagramm}
 %  you want to use \enquote{ducks} (because \dots\ I don't know). You can easily
 %  do this via
 %  \begin{lstlisting}
@@ -1638,7 +1641,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 % \begin{cuexample}
-%   The following example creates some prahses for the language
+%   The following example creates some phrases for the language
 %   \enquote{German}.
 %   
 % \cudefinephrase {German}
@@ -1653,10 +1656,10 @@ and the derived file cooking-units.sty.
 %    {
 %      { 12 }  {Dutzend} <n> %% implemented by default
 %      { 60 }  {Schock} <n>
-%      { 6  }* {halbes\  Dutzend} <n>
+%      { 6  }* {halbes\ Dutzend} <n>
 %    }
 % \end{lstlisting}
-%   Let's just use them (activating the german language):
+%   Let's just use them (activating the german language and no \opt{use-numerals}):
 %   \begin{myde}
 %   \begin{cuexamplecode}
 %     \cusetup{use-phrases=true} @
@@ -1697,17 +1700,20 @@ and the derived file cooking-units.sty.
 %   \cs{numberstringnum}  for \mycs{cutext}
 %   and \cs{Numberstringnum} for \mycs{Cutext} to write-out numbers below
 %   \opt{use-numerals-below} (13 by default), integers above are
-%   printed as numbers. Please note the keys \opt{one(m)}, \opt{one(f)}
-%   and \opt{one(n)} to change the printed \enquote{one} (as
-%   \enquote{one} is in many languages dependent on the gender of the
-%   following word. E.g in German:  Masculine: ein Baum,
-%   Feminin: eine Pflanze, Neutrum: ein Auto).
-%
-%  You can decide to not print any numerals by setting \opt{print-numerals}.
+%   printed as numbers. 
+%   You can decide to not print any numerals by setting \opt{print-numerals}.
 %
 %   \begin{MyNote}
 %     \opt{use-numerals} is a package option as it needs to load
 %     \pkg{fmtcount} which is not loaded by default.
+%   \end{MyNote}
+%
+%   \begin{MyNote}
+%   Please note the keys \opt{one(m)}, \opt{one(f)}
+%   and \opt{one(n)} to change the printed \enquote{one} (as
+%   \enquote{one} is in many languages dependent on the gender of the
+%   following word. E.g in German:  Masculine: ein Baum,
+%   Feminin: eine Pflanze, Neutrum: ein Auto).
 %   \end{MyNote}
 %
 % \end{function}
@@ -1731,7 +1737,7 @@ and the derived file cooking-units.sty.
 % \lstinline|\cusetup|, but \emph{not}  as load time options.
 % 
 % \begin{function}{\cusetup}
-%   Options can be set  globally using \lstinline|\cusetup|.
+%   Options can be set using \mycs{cusetup}.
 % \end{function}
 % 
 % \subsubsection{Unit Specific options} 
@@ -1814,9 +1820,6 @@ and the derived file cooking-units.sty.
 %   neither change the amounts for a given number of persons nor
 %   change the unit of \cCutext. Both of them are set to \opt{new} by
 %   default.
-%
-%  \cutext[cutext-version=old]{2--6}{kg}
-%  \cutext[cutext-version=old]{2/6}{kg}
 % \end{function}
 %
 % \begin{function}{cutext-change-unit}
@@ -1824,7 +1827,7 @@ and the derived file cooking-units.sty.
 %     cutext-change-unit = \meta{true/false}
 %   \end{syntax}
 %   Set this option to \opt{true} if you do \emph{not} want the units of \cCutext\
-%  to be changed.
+%  to be changed. Set to \true\ by default
 % \end{function}
 % \begin{cuexamplecode}
 %   \cutext[kg=g]{1}{kg} \\
@@ -1837,7 +1840,7 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 %
 %
-% \subsubsection{Input and signs}
+% \subsubsection{Input and Outputs}
 %
 % \begin{function}{set-special-sign,add-special-sign}
 %   \begin{syntax}
@@ -1845,7 +1848,7 @@ and the derived file cooking-units.sty.
 %     add-special-sign = \meta{character(s)}
 %   \end{syntax}
 %   Allows \meta{character(s)} to be used in the first mandatory argument of 
-%  \lstinline!\cunum! without raising an error (you can customize this
+%  \mycs{cunum}, \mycs{cuam} and \cCutext{} without raising an error (you can customize this
 %  behavior, see \opt{set-unknown-message}). By default it is set to \texttt{?}.
 %  Please note that the sign |<| is not allowed as a special sign.
 % \end{function}
@@ -1903,7 +1906,7 @@ and the derived file cooking-units.sty.
 %   active. Prints the name of the numbers for integers used in
 %   \mycs{cutext} and \mycs{Cutext} smaller than
 %   \meta{integer}. \meta{integer} is by default 13. Package
-%   pkg{fmtcount} is used for this purpose.
+%   \pkg{fmtcount} is used for this purpose.
 % \end{function}
 % \cusetup{ print-numerals=true }
 % \begin{cuexamplecode}
@@ -4293,7 +4296,10 @@ and the derived file cooking-units.sty.
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
-    \bool_if:NTF \l_@@_fraction_in_input_bool
+%    \bool_if:NTF \l_@@_fraction_in_input_bool
+    \bool_lazy_or:nnTF
+      { \l_@@_fraction_in_input_bool }
+      { \l_@@_special_sign_bool }
       {
         \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
         \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
@@ -4335,7 +4341,10 @@ and the derived file cooking-units.sty.
     \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_mixed_fraction_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
-    \bool_if:NTF \l_@@_fraction_in_input_bool
+%    \bool_if:NTF \l_@@_fraction_in_input_bool
+    \bool_lazy_or:nnTF
+      { \l_@@_fraction_in_input_bool }
+      { \l_@@_special_sign_bool }
       {
         \@@_formatiere_fractions:nnn
           { \l_@@_mixed_fraction_tl } 
