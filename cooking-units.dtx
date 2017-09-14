@@ -4308,7 +4308,7 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl } 
       }{
-        \tl_set:Nx \l_@@_number_tmpa_tl 
+        \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
         \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
         \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
@@ -4351,7 +4351,7 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl }
       }{
-        \tl_set:Nx \l_@@_number_tmpa_tl
+        \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl
           {
             \bool_if:NTF \l_@@_minus_bool
               { - \l_@@_mixed_fraction_tl - }
