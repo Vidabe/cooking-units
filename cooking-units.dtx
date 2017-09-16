@@ -4254,10 +4254,14 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_parse_number_in_input:n #1
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
-    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
-    \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value
-    \@@_print_input:N \l_@@_number_tmpa_tl
+    \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
+  }
+\cs_new:Npn \@@_process_and_print_number_in_input:N #1
+  {
+    \@@_pre_process_input:NN #1 \q_no_value
+    \@@_calculate_and_store_in:N #1 
+    \@@_post_process_input:NN #1 \q_no_value
+    \@@_print_input:N #1
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4312,10 +4316,7 @@ and the derived file cooking-units.sty.
       }{
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
-        \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
-        \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
-        \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value 
-        \@@_print_input:N \l_@@_number_tmpa_tl
+        \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
       }
   }
 %    \end{macrocode}
@@ -4360,10 +4361,7 @@ and the derived file cooking-units.sty.
               { \l_@@_mixed_fraction_tl + }
             \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl 
           }
-        \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
-        \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
-        \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value 
-        \@@_print_input:N \l_@@_number_tmpa_tl
+        \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
       }
   }
 %    \end{macrocode}
@@ -4480,8 +4478,7 @@ and the derived file cooking-units.sty.
           { 
             \tl_set_eq:NN \l_@@_tmpa_tl #1
             \msg_warning:nnx { cooking-units } { amount-not-known } \l_@@_tmpa_tl 
-          }
-          {
+          }{
             \bool_lazy_and:nnTF
               { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
               { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
