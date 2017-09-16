@@ -4231,9 +4231,9 @@ and the derived file cooking-units.sty.
         \tl_if_in:nnTF {#1} { / }
           {
             \bool_lazy_and:nnTF
-              { ! \l_@@_calc_persons_tmpa_bool }{ ! \l_@@_eval_fractions_bool }
-              { \bool_set_true:N \l_@@_fraction_in_input_bool }
+              { \l_@@_calc_persons_tmpa_bool }{ \l_@@_eval_fractions_bool }
               { \bool_set_false:N \l_@@_fraction_in_input_bool }
+              { \bool_set_true:N \l_@@_fraction_in_input_bool }
             \tl_if_in:nnTF {#1} { _ }
               { \@@_parse_mixed_fraction_in_input:www #1 \q_stop }
               { \@@_parse_fraction_in_input:ww #1 \q_stop }
