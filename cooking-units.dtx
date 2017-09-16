@@ -4852,8 +4852,10 @@ and the derived file cooking-units.sty.
       }
     \tl_if_empty:nF {#2}
       { \keys_set_filter:nnn { cooking-units } { change-unit } {#2} }
-    \bool_set:Nn \l_@@_calc_persons_tmpa_bool 
-      { \l_@@_calc_because_ref_was_given_bool && \l_@@_calc_for_persons_bool }
+    \bool_lazy_and:nnTF
+      { \l_@@_calc_because_ref_was_given_bool } { \l_@@_calc_for_persons_bool }
+      { \bool_set_true:N \l_@@_calc_persons_tmpa_bool }
+      { \bool_set_false:N \l_@@_calc_persons_tmpa_bool }
   }
 %    \end{macrocode}
 % \end{macro}
