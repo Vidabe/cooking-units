@@ -5285,7 +5285,7 @@ and the derived file cooking-units.sty.
       { \g_@@_opt_numeral_bool } { \l_@@_local_numeral_bool }
       {
         \bool_set_eq:NN \l_@@_local_numeral_bool \l_@@_tmpa_bool
-        \bool_if:NT \l_@@_tmpa_bool
+        \bool_if:NT \l_@@_local_numeral_bool
           {
             \bool_if:NTF \l_@@_range_in_input_bool
                {
@@ -5332,13 +5332,13 @@ and the derived file cooking-units.sty.
           }
       }
   }
-\cs_new:Npn \@@_cuam_process_input_get_phrase_name:NnN #1#2#3
+\cs_new:Npn \@@_cuam_get_phrase_name:NnN #1#2#3
   {
     \@@_int_if_equal_one:nTF {#3}
       { \prop_get:NnN \l_@@_phrase_prop {#2} #1 }
       { \prop_get:NnN \l_@@_phrase_prop { #2-pl } #1 }
   }
-\cs_generate_variant:Nn \@@_cuam_process_input_get_phrase_name:NnN { NVN }
+\cs_generate_variant:Nn \@@_cuam_get_phrase_name:NnN { NVN }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
