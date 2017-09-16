@@ -651,7 +651,6 @@ and the derived file cooking-units.sty.
 % \tableofcontents
 %
 %
-% \begin{mycomment}
 % \begin{myde}
 % \cusetup{print-numerals=true,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
@@ -687,7 +686,7 @@ and the derived file cooking-units.sty.
 % \cuam{60} Eier \\
 % \cuam{62} Eier \\
 % \endgroup
-% \end{mycomment}
+%
 % \section{Introduction}
 %
 %
@@ -3808,6 +3807,7 @@ and the derived file cooking-units.sty.
   }
 \cs_generate_variant:Nn \@@_if_integer:nTF { V }
 \cs_generate_variant:Nn \@@_if_integer:nT { V }
+\cs_generate_variant:Nn \@@_if_integer:nF { V }
 \prg_new_protected_conditional:Npnn \@@_if_parse_and_integer:n #1 { TF }
   {
     \bool_if:NTF \l_@@_parse_input_bool
@@ -5234,61 +5234,70 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
+% I should redo this command \dots\ later
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
   {
-    \bool_if:NT \l_@@_use_phrases_bool
+    \@@_if_integer:VTF #1 
+      { \bool_set_true:N \l_@@_tmpa_bool }
+      { \bool_set_false:N \l_@@_tmpa_bool }
+    \bool_lazy_and:nnT 
+      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+      { 
+        \@@_if_integer:VTF #2
+          { \bool_set_true:N \l_@@_tmpa_bool }
+          { \bool_set_false:N \l_@@_tmpa_bool }
+      } 
+    \bool_lazy_and:nnT 
+      { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool }
       {
-        \@@_if_integer:VT #1
+        \@@_if_phrase_list_exists:NT \l_@@_phrase_prop
           {
-            \@@_if_phrase_list_exists:NT \l_@@_phrase_prop
+            \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
+              { phrase-list-list } \c_@@_postfix_phrase_tl
+            \@@_cuam_process_input_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
+            \bool_if:NT \l_@@_check_if_phrase_used_bool
               {
-                \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
-                  { phrase-list-list } \c_@@_postfix_phrase_tl
-                \bool_set_false:N \l_@@_check_if_phrase_used_bool
-                \@@_cuam_process_input_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
-                \bool_if:NT \l_@@_check_if_phrase_used_bool
+                \bool_if:NTF \l_@@_range_in_input_bool
                   {
-                    \bool_if:NTF \l_@@_range_in_input_bool
+                    \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                    \bool_lazy_and:nnTF
+                      { \l_@@_check_if_phrase_used_bool }
+                      { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
+                      { \bool_set_true:N \l_@@_check_if_phrase_used_bool }
+                      { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
+                    \bool_if:NT \l_@@_check_if_phrase_used_bool
                       {
-                        \bool_set_false:N \l_@@_check_if_phrase_used_bool
-                        \@@_if_integer:VT #2
-                          {
-                            \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
-                            \bool_lazy_and:nnTF
-                              { \l_@@_check_if_phrase_used_bool }
-                              { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
-                              { \bool_set_true:N \l_@@_check_if_phrase_used_bool }
-                              { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
-                            \bool_if:NT \l_@@_check_if_phrase_used_bool
-                              {
-                                \tl_set:NV #1 \l_@@_tmpa_int
-                                \tl_set:NV #2 \l_@@_tmpb_int
-                                \@@_cuam_process_input_get_phrase_name:NVN 
-                                  \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
-                              }
-                          }
-                      }{ 
+                        \tl_set:NV #1 \l_@@_tmpa_int
+                        \tl_set:NV #2 \l_@@_tmpb_int
+                        \@@_cuam_process_input_get_phrase_name:NVN 
+                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
+                      }
+                  }{ 
                         \tl_set:NV #1 \l_@@_tmpa_int 
                         \@@_cuam_process_input_get_phrase_name:NVN 
                           \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
-                      }
                   }
               }
           }
       }
-    \bool_if:NTF \l_@@_range_in_input_bool
+    \bool_lazy_and:nnT 
+      { \g_@@_opt_numeral_bool } { \l_@@_local_numeral_bool }
       {
-%        \bool_if:NT \g_@@_opt_numeral_bool
-%          {
-            \bool_lazy_and:nnF
-              { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-              { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-              { \bool_set_false:N \l_@@_local_numeral_bool }
-%          }
-      }{
-        \fp_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
-          { \bool_set_false:N \l_@@_local_numeral_bool }
+        \bool_set_eq:NN \l_@@_local_numeral_bool \l_@@_tmpa_bool
+        \bool_if:NT \l_@@_tmpa_bool
+          {
+            \bool_if:NTF \l_@@_range_in_input_bool
+               {
+                 \bool_lazy_and:nnF
+                   { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+                   { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+                   { \bool_set_false:N \l_@@_local_numeral_bool }
+               }{
+                 \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+                   { \bool_set_false:N \l_@@_local_numeral_bool } 
+               }
+          }
       }
   }
 %    \end{macrocode}
