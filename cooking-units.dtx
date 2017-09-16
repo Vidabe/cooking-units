@@ -4034,7 +4034,7 @@ and the derived file cooking-units.sty.
     \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
       { 
         \bool_set_true:N \l_@@_calc_because_ref_was_given_bool
-        \exp_args:NNv \int_set:Nn \l_@@_number_of_persons_tmpa_int
+        \int_set_eq:Nc \l_@@_number_of_persons_tmpa_int
           { l_@@_number_of_persons_ #1 _int }
       }
       { \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
