@@ -3972,7 +3972,7 @@ and the derived file cooking-units.sty.
 % I think this definition is somewhat stupid, but I don't have a better idea.
 %    \begin{macrocode}
 \cs_new:Npn \@@_rounding_function:n #1 
-  { 
+  {
     #1
       \bool_if:NTF \l_@@_round_commercial_bool
         { 
@@ -5307,13 +5307,13 @@ and the derived file cooking-units.sty.
       }
     \bool_if:NTF \l_@@_range_in_input_bool
       {
-        \bool_if:NT \g_@@_opt_numeral_bool
-          {
+%        \bool_if:NT \g_@@_opt_numeral_bool
+%          {
             \bool_lazy_and:nnF
               { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
               { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
               { \bool_set_false:N \l_@@_local_numeral_bool }
-          }
+%          }
       }{
         \fp_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
           { \bool_set_false:N \l_@@_local_numeral_bool }
@@ -5375,7 +5375,7 @@ and the derived file cooking-units.sty.
               { \l_@@_phrase_number_tl -phrase-gender }
             \l_@@_translation_tmpa_tl 
           }
-          { \exp_args:NV \numberstringnum #1 } %% ToDo: Dokumentieren
+          { \exp_args:NV \numberstringnum #1 } 
       }{ \@@_print_numerical_input:N #1 }
   }
 %    \end{macrocode}
