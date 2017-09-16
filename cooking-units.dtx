@@ -167,19 +167,13 @@ and the derived file cooking-units.sty.
 
 \newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
 
-%\NewDocumentCommand \Mynote { m }
+%\NewDocumentCommand \cunote { m }
 %  {
 %    Note: #1
 %  }
 
 \ExplSyntaxOn
 
-\NewDocumentEnvironment {MyNote} { }
-  {
-    \textbf{Note:}
-  }{
-  
-  }
 
 
 \clist_new:N \l_cooking_units_list_of_defined_befehlen_clist
@@ -318,15 +312,20 @@ and the derived file cooking-units.sty.
 
 
 \NewDocumentEnvironment { cuexample } { }
-  { \paragraph{Example:} }
+  { 
+    \paragraph{Example:} 
+%    \par \bigskip \noindent
+%    \mbox{}
+%    \marginpar{\raggedleft\textbf{Example}}\
+%    \ignorespaces
+  }
   { }
 
-%\NewDocumentCommand\cuinterest{ m }
-%  { 
-%    \par \bigskip
-%    \mbox{}\marginpar{\raggedleft\opt{#1}}
-%    \ignorespaces
-%  }
+\NewDocumentEnvironment { cunote } { }
+  {
+    \paragraph{Note:}
+  }{ }
+
 
 \NewDocumentEnvironment { cuinterest } { m }
   { 
@@ -719,39 +718,39 @@ and the derived file cooking-units.sty.
 % more pleasant than \LaTeXe) and here it is.
 %
 % \begin{comment}
-%%% \section{Important note}
-%%%
-%%% This package uses the \pkg{translator} package to be able to switch
-%%% between different languages (german, english and french by now).  To
-%%% do that \pkg{translator} has to know which languages are used. The
-%%% (I think) easiest way is to specify used languages using the
-%%% optional argument of the documentclass (you can do this for both
-%%% \pkg{babel} and \pkg{polyglossia}\footnote{I know that
-%%% \pkg{polyglossia} doesn't support the \pkg{babel}-way of setting the
-%%% language by optional argument, but it doesn't harm.}):
-%%%
-%%% \begin{lstlisting}
-%%%  \documentclass[english,french,ngerman]{class}
-%%%  \usepackage[main=english]{babel} 
-%%%  \usepackage{cooking-units}
-%%%  ...
-%%% \end{lstlisting}
-%%%
-%%%  or if you are using \pkg{polyglossia}
-%%%
-%%% \begin{lstlisting}
-%%%  \documentclass[french,ngerman,english]{class}
-%%%
-%%%  \usepackage{polyglossia}
-%%%  \setmainlanguage{english}
-%%%  \setotherlanguages{german,french}
-%%%
-%%%  \usepackage{cooking-units}
-%%%  ...
-%%% \end{lstlisting}
-%%%
-%%%  At least I hope that this works, dealing with languages is a pain
-%%%  in the ass\footnote{If you excuse me being blunt about this}.
+% \section{Important note}
+%
+% This package uses the \pkg{translator} package to be able to switch
+% between different languages (german, english and french by now).  To
+% do that \pkg{translator} has to know which languages are used. The
+% (I think) easiest way is to specify used languages using the
+% optional argument of the documentclass (you can do this for both
+% \pkg{babel} and \pkg{polyglossia}\footnote{I know that
+% \pkg{polyglossia} doesn't support the \pkg{babel}-way of setting the
+% language by optional argument, but it doesn't harm.}):
+%
+% \begin{lstlisting}
+%  \documentclass[english,french,ngerman]{class}
+%  \usepackage[main=english]{babel} 
+%  \usepackage{cooking-units}
+%  ...
+% \end{lstlisting}
+%
+%  or if you are using \pkg{polyglossia}
+%
+% \begin{lstlisting}
+%  \documentclass[french,ngerman,english]{class}
+%
+%  \usepackage{polyglossia}
+%  \setmainlanguage{english}
+%  \setotherlanguages{german,french}
+%
+%  \usepackage{cooking-units}
+%  ...
+% \end{lstlisting}
+%
+%  At least I hope that this works, dealing with languages is a pain
+%  in the ass\footnote{If you excuse me being blunt about this}.
 % \end{comment}
 %
 % \subsection{Important Changes}
@@ -990,10 +989,10 @@ and the derived file cooking-units.sty.
 %   \opt{use-numerals-below} be printed by \pkg{fmtcount}.
 %   You can still decide if numerals should be printed or not with \opt{print-numerals}.
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %     \opt{use-numerals} is a package option as it needs to load
 %     \pkg{fmtcount} which is not loaded by default. 
-%   \end{MyNote}
+%   \end{cunote}
 %
 % \end{cuinterest}
 %
@@ -1034,10 +1033,10 @@ and the derived file cooking-units.sty.
 %   \end{myde}
 %
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %     Curently only the lower-case variant for \opt{use-numerals} is
 %     supported. Furthermore this feature is only available for \mycs{cuam}.
-%   \end{MyNote}
+%   \end{cunote}
 %
 %
 %  \end{cuinterest}
@@ -1635,14 +1634,14 @@ and the derived file cooking-units.sty.
 %
 %   Furthermore, it chooses star-(|*|)-phrases over non-star phrases.   
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %     Numbers with the optional star |*| are stored as negative numbers. 
-%   \end{MyNote}
+%   \end{cunote}
 % \end{function}
 %
 % \begin{cuexample}
 %   The following example creates some phrases for the language
-%   \enquote{German}.
+%   \enquote{German}:
 %   
 % \cudefinephrase {German}
 %    {
@@ -1703,18 +1702,18 @@ and the derived file cooking-units.sty.
 %   printed as numbers. 
 %   You can decide to not print any numerals by setting \opt{print-numerals}.
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %     \opt{use-numerals} is a package option as it needs to load
 %     \pkg{fmtcount} which is not loaded by default.
-%   \end{MyNote}
+%   \end{cunote}
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %   Please note the keys \opt{one(m)}, \opt{one(f)}
 %   and \opt{one(n)} to change the printed \enquote{one} (as
 %   \enquote{one} is in many languages dependent on the gender of the
 %   following word. E.g in German:  Masculine: ein Baum,
 %   Feminin: eine Pflanze, Neutrum: ein Auto).
-%   \end{MyNote}
+%   \end{cunote}
 %
 % \end{function}
 % 
@@ -2062,11 +2061,11 @@ and the derived file cooking-units.sty.
 %
 % It is set to \opt{default} by \dots\ default.
 %
-%  \begin{MyNote}
+%  \begin{cunote}
 %    \opt{default} actually refers to the fact that it is the default
 %    rounding algorightm used by \cs{fp\_eval:n \{ round( ) \}}
 %    without a third argument.
-%  \end{MyNote}
+%  \end{cunote}
 %
 % \end{function}
 %
@@ -2413,9 +2412,9 @@ and the derived file cooking-units.sty.
 % \begin{function}{use-phrases}
 %   Language depended,
 %
-%   \begin{MyNote}
+%   \begin{cunote}
 %     Sorted by size! At first 144, then 60, then 12.
-%   \end{MyNote}
+%   \end{cunote}
 % \end{function}
 % 
 % 
@@ -3777,6 +3776,18 @@ and the derived file cooking-units.sty.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { unknown-gender } 
+  { 
+    '#1' \ is \ not \ allowed \ to \ be \ used \ as \ a \ gender-specification.
+    Only \ 'm', \ 'f' \ or \ 'n' \ are \ allowed
+  }{ 
+    Please \ remove \ spaces \ if \ there \ are \ some.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
 % \end{macro}
 %
 % \section {Helper Macros}
@@ -3855,6 +3866,21 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro} \end{macro}
 %
+%
+%
+% \begin{macro}{ \@@_check_if_correct_gender_input:n }
+%    \begin{macrocode}
+\cs_new:Npn \@@_check_if_correct_gender_input:n #1
+  {
+    \str_case:nnF {#1}
+      {
+        { m } {}
+        { f } {}
+        { n } {}
+      } { \msg_error:nnn { cooking-units } { unknown-gender } {#1} } 
+  }
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
@@ -6058,14 +6084,15 @@ and the derived file cooking-units.sty.
           \c_@@_postfix_unitname_pl_tl {#2}
       }
     \peek_meaning_ignore_spaces:NTF <
-      { \@@_cuname_parse_arrows:nw {#1} }
-      { \@@_cuname_parse_arrows:nw {#1} <m> }
+      { \@@_cuname_parse_gender:nw {#1} }
+      { \@@_cuname_parse_gender:nw {#1} <m> }
   }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuname_parse_arrows:nw #1 <#2>
+\cs_new:Npn \@@_cuname_parse_gender:nw #1 <#2>
   {
+    \@@_check_if_correct_gender_input:n {#2}
     \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl {#1} 
       \c_@@_postfix_gender_tl {#2}
@@ -6235,6 +6262,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_chuphrase_parse_gender:nw #1 <#2>
   {
+    \@@_check_if_correct_gender_input:n {#2}
     \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl { #1-phrase-gender } 
       \c_@@_postfix_gender_tl {#2}
