@@ -3,9 +3,6 @@
 % !TEX program  = pdfLaTeX
 %
 % Lizenz updaten (Datum).
-% Füge hinzu: Star für expandierbar, etc.
-% dag -> ducks
-% stick
 %
 %<*internal>
 \iffalse
@@ -95,7 +92,7 @@ version. The latest version of this license is in:
 
 	http://www.latex-project.org/lppl.txt 
 
-and version 1.3c or later is part of all distributions of 
+and version 1.3 or later is part of all distributions of 
 LaTeX version 2008-05-04 or later. 
 
 This work has the LPPL maintenance status `maintained'.
@@ -162,15 +159,8 @@ and the derived file cooking-units.sty.
 
 %\EnableCrossrefs
 
-%\labelformat{table}{table~#1}
-%\labelformat{section}{section~#1}
 
-\newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
-
-%\NewDocumentCommand \cunote { m }
-%  {
-%    Note: #1
-%  }
+%\newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
 
 \ExplSyntaxOn
 
@@ -439,29 +429,24 @@ and the derived file cooking-units.sty.
       } 
   }
 
-\NewDocumentCommand \CreateTableForPhrases { m }
+\NewDocumentCommand \CreateTableForPhrases { >{\TrimSpaces}  m }
   {
-    \__cooking_units_translate_let:nNxx
-      {#1}
-      \l__cooking_units_phrase_numbers_clist 
-      { phrase-list-list } 
-      \c__cooking_units_postfix_phrase_tl
-    \__cooking_units_translate_let:nNxx
-      {#1}
-      \l__cooking_units_phrase_prop
-      { phrase-list } 
-      \c__cooking_units_postfix_phrase_tl
-    \clist_gset_eq:NN \l_tmpa_clist \l__cooking_units_phrase_numbers_clist
+    \tl_set:Nn \l_tmpa_tl {#1}
+    \__cooking_units_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
+      { 
+          \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_clist 
+            { phrase-list-list } \c__cooking_units_postfix_phrase_tl
+      }
+      { \ERROR }
+    
+    
     \clist_gput_right:Nn \l_tmpa_clist { THEEND }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
-%    \__cooking_units_if_no_phrases_for_language:F
-%      {
         \begin{tabular}{ l l l l l }
           \toprule 
           \meta{unit-key} &  unit-name & (plural) & gender 
-%          \CreatePhraseTableRow {#1} 
+          \CreatePhraseTableRow {#1} 
         \end{tabular}
-%      }
   }
 
 \NewDocumentCommand \CreatePhraseTableRow { m }
@@ -2409,28 +2394,21 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{function}{use-phrases}
-%   Language depended,
-%
-%   \begin{cunote}
-%     Sorted by size! At first 144, then 60, then 12.
-%   \end{cunote}
-% \end{function}
 % 
 % 
 % \section{Bugs \& Feedback}
 % \label{sec:bug-feed}
 %
-% Bug reports  are always welcome. If you are sending a bug report
+% Bug reports  are always welcome. If you are sending a bug report 
 % please include a minimal working example showing the bug and a short
-% description. Furthermore please add  \enquote{cooking-units} 
+% description. If you use mail please add  \pkg{cooking-units} 
 % to the e-mail header. GMX has the habit of putting e-mails into the 
-% spam account and adding  \enquote{cooking-units} to the header makes
+% spam account and adding  \pkg{cooking-units} to the header makes
 % it easier to recognize those e-mails. 
 %
 % Feedback and requests (commands, units) are most welcome.  Please
 % also add (if possible) an example of the desired output into the
-% minimal example (and also add \enquote{cooking-units} to the
+% minimal example (and -- if by mail -- add \pkg{cooking-units} to the
 % header).
 %
 % Furthermore, as you can see I am not able to speak too many
@@ -2447,8 +2425,6 @@ and the derived file cooking-units.sty.
 %   \item \texttt{decimal-mark} and \texttt{one(m)}, \texttt{one(f)}, \texttt{one(n)}
 % \end{itemize}
 %
-% Oh yeah, if someone has a better idea of how to deal with languages
-% I am happy to know.
 %
 %
 %
@@ -2493,7 +2469,7 @@ and the derived file cooking-units.sty.
 %
 % \bigskip
 %
-%^^A   \CreateTableForPhrases { German }
+%   \CreateTableForPhrases { German }
 %
 % \bigskip
 %
@@ -4279,7 +4255,7 @@ and the derived file cooking-units.sty.
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
-    \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
+    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
     \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value
     \@@_print_input:N \l_@@_number_tmpa_tl
   }
@@ -4297,8 +4273,8 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl    
     \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
-    \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
-    \@@_calculate_and_store_in:NN \l_@@_number_tmpb_tl \l_@@_number_tmpb_tl
+    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
+    \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl 
     \@@_post_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl 
     \@@_print_input:N \l_@@_number_tmpa_tl
     \bool_if:NTF \l_@@_using_cutext_bool
@@ -4337,7 +4313,7 @@ and the derived file cooking-units.sty.
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
         \@@_pre_process_input:NN \l_@@_number_tmpa_tl \q_no_value
-        \@@_calculate_and_store_in:NN \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
+        \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
         \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value 
         \@@_print_input:N \l_@@_number_tmpa_tl
       }
@@ -4385,8 +4361,7 @@ and the derived file cooking-units.sty.
             \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl 
           }
         \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
-        \@@_calculate_and_store_in:NN 
-          \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
+        \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
         \@@_post_process_input:NN \l_@@_number_tmpa_tl \q_no_value 
         \@@_print_input:N \l_@@_number_tmpa_tl
       }
@@ -4486,7 +4461,7 @@ and the derived file cooking-units.sty.
 %
 % \subsection {Formatiere \& Calculiere}
 %
-% \begin{macro}{ \@@_calculate_and_store_in:NN }
+% \begin{macro}{ \@@_calculate_and_store_in:N }
 %   
 %   \changes {v0.98a} {2016/06/11} {Added warning to show if an unknown value is used.}
 %   
@@ -4497,7 +4472,7 @@ and the derived file cooking-units.sty.
 %   otherwise it is calulcated and stored in \lstinline|\l_@@_tmpa_tl|. The input
 %   \#1 can be either a token or a number.
 %    \begin{macrocode}
-\cs_new:Npn \@@_calculate_and_store_in:NN #1#2
+\cs_new:Npn \@@_calculate_and_store_in:N #1
   {
     \bool_if:NF \l_@@_error_bool
       {
@@ -4516,7 +4491,7 @@ and the derived file cooking-units.sty.
             \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_check_temperature_limit:N \l_@@_tmpa_tl
           }
-        \tl_set_eq:NN #2 \l_@@_tmpa_tl
+        \tl_set_eq:NN #1 \l_@@_tmpa_tl
       }
   }
 %    \end{macrocode}
