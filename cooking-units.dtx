@@ -2982,7 +2982,7 @@ and the derived file cooking-units.sty.
 % \l_@@_cuam_old_bool,
 % \l_@@_calc_for_persons_bool,
 % \l_@@_calc_because_ref_was_given_bool,
-% \l_@@_calc_persons_tmpa_bool,
+% \l_@@_calc_persons_bool,
 % \l_@@_cutext_to_cunum_bool,
 % \l_@@_cutext_old_bool,
 % \l_@@_cutext_change_unit_bool,
@@ -3008,7 +3008,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_cuam_old_bool
 \bool_new:N \l_@@_calc_for_persons_bool
 \bool_new:N \l_@@_calc_because_ref_was_given_bool
-\bool_new:N \l_@@_calc_persons_tmpa_bool
+\bool_new:N \l_@@_calc_persons_bool
 \bool_new:N \l_@@_cutext_to_cunum_bool
 \bool_new:N \l_@@_cutext_old_bool
 \bool_new:N \l_@@_cutext_change_unit_bool
@@ -4230,8 +4230,8 @@ and the derived file cooking-units.sty.
       { 
         \tl_if_in:nnTF {#1} { / }
           {
-            \bool_lazy_and:nnTF
-              { \l_@@_calc_persons_tmpa_bool }{ \l_@@_eval_fractions_bool }
+            \bool_lazy_or:nnTF
+              { \l_@@_calc_persons_bool }{ \l_@@_eval_fractions_bool }
               { \bool_set_false:N \l_@@_fraction_in_input_bool }
               { \bool_set_true:N \l_@@_fraction_in_input_bool }
             \tl_if_in:nnTF {#1} { _ }
@@ -4483,7 +4483,7 @@ and the derived file cooking-units.sty.
               { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
               { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
               { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
-            \bool_if:NT \l_@@_calc_persons_tmpa_bool
+            \bool_if:NT \l_@@_calc_persons_bool
               { \@@_calc_for_number_of_persons_and_store_in:NN \l_@@_tmpa_tl \l_@@_tmpa_tl }
             \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_check_temperature_limit:N \l_@@_tmpa_tl
@@ -4854,8 +4854,8 @@ and the derived file cooking-units.sty.
       { \keys_set_filter:nnn { cooking-units } { change-unit } {#2} }
     \bool_lazy_and:nnTF
       { \l_@@_calc_because_ref_was_given_bool } { \l_@@_calc_for_persons_bool }
-      { \bool_set_true:N \l_@@_calc_persons_tmpa_bool }
-      { \bool_set_false:N \l_@@_calc_persons_tmpa_bool }
+      { \bool_set_true:N \l_@@_calc_persons_bool }
+      { \bool_set_false:N \l_@@_calc_persons_bool }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5272,13 +5272,13 @@ and the derived file cooking-units.sty.
                       {
                         \tl_set:NV #1 \l_@@_tmpa_int
                         \tl_set:NV #2 \l_@@_tmpb_int
-                        \@@_cuam_process_input_get_phrase_name:NVN 
+                        \@@_cuam_get_phrase_name:NVN 
                           \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
                       }
                   }{ 
-                        \tl_set:NV #1 \l_@@_tmpa_int 
-                        \@@_cuam_process_input_get_phrase_name:NVN 
-                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
+                      \tl_set:NV #1 \l_@@_tmpa_int 
+                      \@@_cuam_get_phrase_name:NVN 
+                        \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
                   }
               }
           }
