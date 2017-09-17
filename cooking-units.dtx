@@ -207,7 +207,7 @@ and the derived file cooking-units.sty.
 
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
-    #1 & % \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
+    #1 & 
     \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } 
   }
 
@@ -396,7 +396,6 @@ and the derived file cooking-units.sty.
                  \clist_if_in:NnTF \l_list_of_textunits_clist {##1}
                    { \l_translation_does_not_exist_tl }
                    { 
-%                     \SaveTranslationFor \l_tmpa_tl {#1} { ##1 (cu-unit) } 
                      \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unit_tl 
                      \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
                        { \l_translation_does_not_exist_tl }
@@ -404,13 +403,10 @@ and the derived file cooking-units.sty.
                    }
                & 
                \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
-%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) } 
                \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
                  { \l_translation_does_not_exist_tl }
                  { \l_tmpa_tl }
                & 
-%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitname) }
-%               \SaveTranslation\l_tmpb_tl{#1}{ ##1 (cu-unitname-pl) }
                \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
                \_cook_use:n { translate_let:nNxx } {#1} \l_tmpb_tl {##1} \c__cooking_units_postfix_unitname_pl_tl 
                \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
@@ -420,7 +416,6 @@ and the derived file cooking-units.sty.
                      { (\l_tmpb_tl)  }
                  }
                &
-%               \SaveTranslation\l_tmpa_tl{#1}{ ##1 (cu-unitgender) } 
                \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_gender_tl 
                \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
                  { \l_translation_does_not_exist_tl }
@@ -438,8 +433,6 @@ and the derived file cooking-units.sty.
             { phrase-list-list } \c__cooking_units_postfix_phrase_tl
       }
       { \ERROR }
-    
-    
     \clist_gput_right:Nn \l_tmpa_clist { THEEND }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
         \begin{tabular}{ l l l l l }
@@ -2735,6 +2728,22 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{\@@_print_numeral:n , \@@_print_Numeral:n}
+% This command is used to print the fractions and can be changed
+% accordingly.
+%    \begin{macrocode}
+\cs_new:Npn \@@_print_numeral:n #1 {}
+\cs_new:Npn \@@_print_Numeral:n #1 {}
+\bool_if:NT \g_@@_opt_numeral_bool
+  {
+    \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
+    \cs_set_eq:NN \@@_print_Numeral:n \Numberstringnum
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % \begin{macro}{ \l_@@_change_unit_prop }
 % Conversions of units are stored within this property list.
 % If someone requests that \texttt{kg} should be changed into \texttt{g},
@@ -3421,6 +3430,17 @@ and the derived file cooking-units.sty.
     print-numerals .default:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
+%
+%
+% \begin{macro}{ numeral-function , Numeral-function }
+%
+%    \begin{macrocode}
+    numeral-function .code:n = { \cs_set_eq:NN \@@_print_numeral:n #1 } ,
+    Numeral-function .code:n = { \cs_set_eq:NN \@@_print_Numeral:n #1 } ,
+%    \end{macrocode}
+% \end{macro}
+%
+%
 %
 % Ending the definition of keys.
 %    \begin{macrocode}
@@ -4344,7 +4364,6 @@ and the derived file cooking-units.sty.
     \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_mixed_fraction_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
-%    \bool_if:NTF \l_@@_fraction_in_input_bool
     \bool_lazy_or:nnTF
       { \l_@@_fraction_in_input_bool }
       { \l_@@_special_sign_bool }
@@ -4631,7 +4650,7 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_set_process_and_print_for_cuam: 
   { 
     \cs_set_eq:NN \@@_print_input:N \@@_cuam_print_numerical_input:N
-    \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unitphrase:
+    \cs_set_eq:NN \@@_print_correct_unit: \@@_cuam_print_correct_unitphrase:
     \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
     \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_post_process_input:NN
   }
@@ -5062,8 +5081,8 @@ and the derived file cooking-units.sty.
               { \l_@@_translation_tmpa_tl }
           }{ 
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
-              { \Numberstringnum {#1} }
-              { \numberstringnum {#1} }
+              { \@@_print_Numeral:n {#1} }
+              { \@@_print_numeral:n {#1} }
           }
       }
       { \@@_print_numerical_input:N #1 }
@@ -5358,13 +5377,13 @@ and the derived file cooking-units.sty.
               { \l_@@_phrase_number_tl -phrase-gender }
             \l_@@_translation_tmpa_tl 
           }
-          { \exp_args:NV \numberstringnum #1 } 
+          { \exp_args:NV \@@_print_numeral:n #1 } 
       }{ \@@_print_numerical_input:N #1 }
   }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cunum_print_correct_unitphrase:
+\cs_new:Npn \@@_cuam_print_correct_unitphrase:
   {
     \bool_if:NT \l_@@_check_if_phrase_used_bool
       {
