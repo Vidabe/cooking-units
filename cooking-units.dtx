@@ -3270,6 +3270,19 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+% \begin{macro}{ set-unknown-message }
+%   Sets the message for a special-sign to error, warning or none.
+%    \begin{macrocode}
+    set-cutext-translation-message .choices:nn =
+      { error , warning , none }
+      {
+        \msg_redirect_name:nnn { cooking-units } { cutext-no-translation-available } 
+          { \l_keys_choice_tl }
+      } ,
+    set-cutext-translation-message .default:n = { warning } ,
+%    \end{macrocode}
+%\end{macro}
+%
 %
 %\begin{macro}{ erase-all-options }
 %  Erasing all preset options.
