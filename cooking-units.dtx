@@ -133,7 +133,7 @@ and the derived file cooking-units.sty.
         ngerman,
         french,
         english, %french, naustrian
-%        onlydoc,
+        onlydoc,
 %        check-declarations,
 ]{l3doc}
 \usepackage[utf8]{inputenc}
@@ -379,7 +379,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \CreateTableHeader { m }
   {
      \meta{unit-key} & 
-     printed \ unit & unit-name & (plural) & gender
+     printed \ unit & unit name & (plural) & gender
   }
 \NewDocumentCommand \CreateTableRow { m }
   {
@@ -1431,7 +1431,7 @@ and the derived file cooking-units.sty.
 % \section{Language support}
 % \label{sec:language}
 %
-% Unit-names and symbols depend on the language.  To change the
+% Unit names and symbols depend on the language.  To change the
 % name depending on the language you can use \lstinline|\cudefinename|
 % and to only change symbols use \lstinline|\cudefinesymbol|.
 %
@@ -1997,8 +1997,24 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 %
 % \begin{function} {use-phrases}
-%  \TODODODODODODODODOD
+%   \begin{syntax}
+%     use-phrases = \meta{true/false}
+%   \end{syntax}
+%  Setting this option to \true\ replaces certain integers (see \cref{sec:phrases} for
+%  more information) with their phrase counterpart. This option is set to \false\ by default.
 % \end{function}
+%
+% \begin{myde}
+% \begin{cuexamplecode}
+%   \cuam{12} \\
+%   \cuam{12--24} \\
+%   \cuam{36} \\
+%   \cusetup{use-phrases=true} @
+%   \cuam{12} \\
+%   \cuam{12--24} \\
+%   \cuam{36} \\
+% \end{cuexamplecode}
+% \end{myde}
 %
 %
 % \subsubsection{Rounding options}
@@ -2455,7 +2471,6 @@ and the derived file cooking-units.sty.
 %
 %
 % 
-% \CONTINUE reading 
 % \section{Bugs \& Feedback}
 % \label{sec:bug-feed}
 %
@@ -2475,17 +2490,12 @@ and the derived file cooking-units.sty.
 % languages (german and english to be precise; I managed to add french
 % with the help of the internet, which is not optimal) so if you are
 % able to speak a language not yet implemented and would like to help
-% you can send me a some of the translations of the units given in
-% \cref{sec:pred-units} or (for better overview)
-% \cref{sec:Translations}. I would need
-% \begin{itemize} 
-%   \item their singular (and plural) form, 
-%   \item the gender, 
-%   \item the printed symbol (if different),
-%   \item \texttt{decimal-mark} and \texttt{one(m)}, \texttt{one(f)}, \texttt{one(n)}
-% \end{itemize}
-% \TODODODO
-% As it can happen that not all translations are available, you can send the parts you know.
+% you can send me  the translations known to you. A list of all units
+% (and their current translations) is given in \cref{sec:Translations}.
+% 
+%
+%
+%
 %
 %
 %
@@ -2495,7 +2505,7 @@ and the derived file cooking-units.sty.
 % \section{Translations} 
 % \label{sec:Translations}
 % This section contains the list of available translations. Each table
-% shows the available translations for the printed unit, the unit-name
+% shows the available translations regarding the unit symbol, the unit name
 % (printed if \mycs{cutext} or \mycs{Cutext} is used)  and
 % the plural form (if different from the singular form). A second table
 % shows the translations used for phrases (if given).
