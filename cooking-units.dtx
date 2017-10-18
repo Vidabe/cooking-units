@@ -205,6 +205,14 @@ and the derived file cooking-units.sty.
 %    &
 %    \GetTranslation{ #1 (cu-unitname) }
   }
+\NewDocumentCommand \PrintUnits { m m }
+  {
+    \PrintUnit{#1} & \PrintUnit{#2}
+  }
+\NewDocumentCommand \PrintUnitss { m m m }
+  {
+    \PrintUnit{#1} & \PrintUnit{#2} & \PrintUnit{#3}
+  }
 
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
@@ -1002,41 +1010,19 @@ and the derived file cooking-units.sty.
 %   are shown in \cref{sec:Translations}.
 %   Note that \enquote{electron volt} exists just for fun.
 % }
-%   \begin{tabular}{ lll }
+%   \begin{tabular}{ ll @{\hspace{1cm}} ll @{\hspace{1cm}} ll }
 %       \toprule
-%       unit-key &   default-symbol \\ \midrule
-%     \PrintUnit {kg} \\
-%     \PrintUnit {dag} \\
-%     \PrintUnit {g} \\
-%     \PrintUnit {oz} \\ 
-%     \PrintUnit {lb} \\ \addlinespace
-%       
-%     \PrintUnit {C} \\
-%     \PrintUnit {F} \\
-%     \PrintUnit {Re} \\
-%     \PrintUnit {K} \\ \addlinespace
+%       unit-key &   default-symbol & unit-key &   default-symbol & unit-key &   default-symbol \\ \midrule
+%     \PrintUnitss {kg}{m} {cal} \\
+%     \PrintUnitss {dag}{dm} {kcal} \\
+%     \PrintUnitss {g}{cm} {J} \\
+%     \PrintUnitss {oz}{mm} {kJ}\\ 
+%     \PrintUnitss {lb}{in} {eV}\\ \addlinespace
 %
-%     \PrintUnit {d} \\
-%     \PrintUnit {h} \\
-%     \PrintUnit {min} \\
-%     \PrintUnit {s} \\ \addlinespace
-%
-%     \PrintUnit {m} \\
-%     \PrintUnit {dm} \\
-%     \PrintUnit {cm} \\
-%     \PrintUnit {mm} \\
-%     \PrintUnit {in} \\ \addlinespace
-%
-%     \PrintUnit {l} \\
-%     \PrintUnit {dl} \\
-%     \PrintUnit {cl} \\
-%     \PrintUnit {ml} \\ \addlinespace
-%
-%     \PrintUnit {cal} \\
-%     \PrintUnit {kcal} \\
-%     \PrintUnit {J} \\
-%     \PrintUnit {kJ} \\ 
-%     \PrintUnit {eV} 
+%     \PrintUnitss {d} {l} {C} \\
+%     \PrintUnitss {h} {dl} {F} \\
+%     \PrintUnitss {min} {cl} {Re}\\
+%     \PrintUnitss {s} {ml} {K}
 %
 %    \\  \bottomrule
 %   \end{tabular}
