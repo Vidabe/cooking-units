@@ -2185,9 +2185,9 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 %  \cusetup{use-phrases=false}
 %
-% \begin{function}{value-unit-space}
+% \begin{function}{amount-unit-space}
 %   \begin{syntax}
-%     value-unit-space = \meta{string}
+%     amount-unit-space = \meta{string}
 %   \end{syntax}
 %   Change the spacing for \mycs{cunum} between the printed amount(s) and
 %   the unit. The default value is |\thinspace|.
@@ -2198,15 +2198,15 @@ and the derived file cooking-units.sty.
 %   \cunum{1}{kg}\\
 %   \cunum{1/2}{kg}\\
 %   \cunum{1--2}{kg}\\
-%   \cusetup { value-unit-space = {\hspace{1em}} } @
+%   \cusetup { amount-unit-space = {\hspace{1em}} } @
 %   \cunum{1}{kg}\\
 %   \cunum{1/2}{kg}\\
 %   \cunum{1--2}{kg}\\
-%   \cusetup { value-unit-space = {} } @
+%   \cusetup { amount-unit-space = {} } @
 %   \cunum{1}{kg}\\
 %   \cunum{1/2}{kg}\\
 %   \cunum{1--2}{kg}\\
-%   \cusetup { value-unit-space = {qwe} } @
+%   \cusetup { amount-unit-space = {qwe} } @
 %   \cunum{1}{kg}\\
 %   \cunum{1/2}{kg}\\
 %   \cunum{1--2}{kg}\\
@@ -3159,11 +3159,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-%\begin{macro}{ value-unit-space }
+%\begin{macro}{ amount-unit-space }
 %  Setting the space between the value and the printed unit.
 %    \begin{macrocode}
-    value-unit-space .tl_set:N = \l_@@_value_unit_space_tl ,
-    value-unit-space .default:n = { \thinspace } ,
+    amount-unit-space .tl_set:N = \l_@@_value_unit_space_tl ,
+    amount-unit-space .default:n = { \thinspace } ,
 %    \end{macrocode}
 %\end{macro}
 %
