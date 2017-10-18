@@ -742,7 +742,7 @@ and the derived file cooking-units.sty.
 %     measures} in english, but I am not sure).
 %   \item[\cCutext] If no translation is found for a specific language,
 %    \cCutext\ are replaced by \mycs{cunum} with a warning is given.
-%   \item[Commands] Currently, it seems that alowing \meta{label}
+%   \item[Commands] Currently, it seems that allowing \meta{label}
 %     to be set by arrow-brackets was not the best idea as it leads to problems
 %    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
 %    |<| is not allowed as a \enquote{special-sign} anymore as this package
@@ -983,7 +983,7 @@ and the derived file cooking-units.sty.
 %   by phrases for given language
 %   (to define new ones, see \cref{sec:phrases})
 %
-%   Using (for example) langauge \opt{ngerman} (or \opt{naustrian}, etc.) with
+%   Using (for example) language \opt{ngerman} (or \opt{naustrian}, etc.) with
 %   package option \opt{use-phrases=true} gives:
 %   \begin{myde}
 %     \begin{cuexamplecode}
@@ -1012,7 +1012,7 @@ and the derived file cooking-units.sty.
 %
 %
 %   \begin{cunote}
-%     Curently only the lower-case variant for \opt{use-numerals} is
+%     Currently only the lower-case variant for \opt{use-numerals} is
 %     supported. Furthermore this feature is only available for \mycs{cuam}.
 %   \end{cunote}
 %
@@ -1046,13 +1046,13 @@ and the derived file cooking-units.sty.
 %   \caption{The first column shows a list of predefined unit-keys.
 %   The column \enquote{default-symbol} shows the abbreviation used if
 %   for given language no translation is defined. The third column
-%   \enquote{unitname} \emph{is} language dependent and shows the name
+%   \enquote{unit name} \emph{is} language dependent and shows the name
 %   printed while using \cCutext.
 %   Note that \enquote{electron volt} exists just for fun.
 % }
 %   \begin{tabular}{ lll }
 %       \toprule
-%       unit-key &   default-symbol & unitname \\ \midrule
+%       unit-key &   default-symbol & unit name \\ \midrule
 %     \PrintUnit {kg} \\
 %     \PrintUnit {dag} \\
 %     \PrintUnit {g} \\
@@ -1101,7 +1101,7 @@ and the derived file cooking-units.sty.
 %   units known to you.}
 %   \begin{tabular}{ lll }
 %     \toprule
-%     unitname & unit-key & default symbol \\ \midrule
+%     unit name & unit-key & default symbol \\ \midrule
 %     \PrintUnit {pn} \\ \addlinespace
 %     \PrintUnit {EL} \\
 %     \PrintUnit {TL} \\
@@ -1556,7 +1556,7 @@ and the derived file cooking-units.sty.
 % \end{lstlisting}
 %
 % \begin{cuexample}
-%  Imagine that instead of the abbreviation \enquote{dag} for \enquote{decagramm}
+%  Imagine that instead of the abbreviation \enquote{dag} for \enquote{decagramme}
 %  you want to use \enquote{ducks} (because \dots\ I don't know). You can easily
 %  do this via
 %  \begin{lstlisting}
@@ -1654,7 +1654,7 @@ and the derived file cooking-units.sty.
 %   \end{myde}
 %
 % As you can see, \enquote{Schock} ($60$) is preferred over \enquote{Dutzend} ($12$)
-% as it linked to the higher number. Furhtermore, for $6$ the phrase \enquote{halbes
+% as it linked to the higher number. Furthermore, for $6$ the phrase \enquote{halbes
 % Dutzend}  (half a dozen) is used, but because it is a star version it is \emph{not}
 % used for $18$.
 %
@@ -1860,9 +1860,9 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     set-cutext-translation-message = \meta{error/warning/none}
 %   \end{syntax}
-%   If a translation for \cCutext\ is not avalalable the commands are replaced
+%   If a translation for \cCutext\ is not available the commands are replaced
 %   by \mycs{cunum}. Currently -- if this is happening -- a warning is shown,
-%  you may change the bahvior of the message (error, warning or not showing at all)
+%  you may change the behavior of the message (error, warning or not showing at all)
 %  using this option.
 % \end{function}
 %
@@ -2087,7 +2087,7 @@ and the derived file cooking-units.sty.
 %
 %  \begin{cunote}
 %    \opt{default} actually refers to the fact that it is the default
-%    rounding algorightm used by \cs{fp\_eval:n \{ round( ) \}}
+%    rounding algorithm used by \cs{fp\_eval:n \{ round( ) \}}
 %    without a third argument.
 %  \end{cunote}
 %
