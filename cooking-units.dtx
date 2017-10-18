@@ -214,7 +214,6 @@ and the derived file cooking-units.sty.
 
 
 
-\NewEnviron { mycomment } { }
 
 %% Allyourwhitespacearebelongtous (too long)
 %% 42
@@ -696,41 +695,6 @@ and the derived file cooking-units.sty.
 % units. I expanded the code, rewrote it in \LaTeX3 (which is much
 % more pleasant than \LaTeXe) and here it is.
 %
-% \begin{comment}
-% \section{Important note}
-%
-% This package uses the \pkg{translator} package to be able to switch
-% between different languages (german, english and french by now).  To
-% do that \pkg{translator} has to know which languages are used. The
-% (I think) easiest way is to specify used languages using the
-% optional argument of the documentclass (you can do this for both
-% \pkg{babel} and \pkg{polyglossia}\footnote{I know that
-% \pkg{polyglossia} doesn't support the \pkg{babel}-way of setting the
-% language by optional argument, but it doesn't harm.}):
-%
-% \begin{lstlisting}
-%  \documentclass[english,french,ngerman]{class}
-%  \usepackage[main=english]{babel} 
-%  \usepackage{cooking-units}
-%  ...
-% \end{lstlisting}
-%
-%  or if you are using \pkg{polyglossia}
-%
-% \begin{lstlisting}
-%  \documentclass[french,ngerman,english]{class}
-%
-%  \usepackage{polyglossia}
-%  \setmainlanguage{english}
-%  \setotherlanguages{german,french}
-%
-%  \usepackage{cooking-units}
-%  ...
-% \end{lstlisting}
-%
-%  At least I hope that this works, dealing with languages is a pain
-%  in the ass\footnote{If you excuse me being blunt about this}.
-% \end{comment}
 %
 % \subsection{Important Changes}
 %
@@ -1029,18 +993,6 @@ and the derived file cooking-units.sty.
 % all predefined units.  In \cref{sec:Translations} all translations available
 %  are listed.
 %
-% \begin{comment}
-% I now \emph{did} include a separate key for \enquote{Messerspitze}
-% (Msp.)  and therefore separated \enquote{Pinch} (pn) and
-% \enquote{Messerspitze} (Msp.).  My biggest problems with the units
-% given in \cref{tab:some-more-units} is that they may only exist in
-% one language (or country) and therefore do not exist in another
-% language (I think for example that knife point
-% \enquote{Messerspitze} doesn't exist in english) so translating them
-% would be difficult. Therefore use units known to you and if there
-% are unsupported units or languages feel free to write (see
-% \cref{sec:bug-feed} for more details).
-% \end{comment}
 %
 % \begin{table}[htbp]
 %   \centering
@@ -2570,7 +2522,7 @@ and the derived file cooking-units.sty.
 %
 % \clearpage
 %
-% \begin{mycomment}
+% \begin{comment}
 %^^A \section{Notes and other stuff}
 %^^A This section contains stuff which might or might not be interesting.
 %^^A
@@ -2664,7 +2616,7 @@ and the derived file cooking-units.sty.
 %^^A \sqrt{ \frac{1}{(\SI{299792458}{\m\per\s} )^2} * (\SI{0.0000000098e-19}{\J})^2 } \\
 %^^A &= 
 %^^A \end{align}
-% \end{mycomment}
+% \end{comment}
 %
 %
 %
