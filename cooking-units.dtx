@@ -201,8 +201,9 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \PrintUnit { m }
   {
     #1 &
-    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } &
-    \GetTranslation{ #1 (cu-unitname) }
+    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } 
+%    &
+%    \GetTranslation{ #1 (cu-unitname) }
   }
 
 \NewDocumentCommand \PrintUnitSymbol { m }
@@ -1045,14 +1046,13 @@ and the derived file cooking-units.sty.
 %   \centering
 %   \caption{The first column shows a list of predefined unit-keys.
 %   The column \enquote{default-symbol} shows the abbreviation used if
-%   for given language no translation is defined. The third column
-%   \enquote{unit name} \emph{is} language dependent and shows the name
-%   printed while using \cCutext.
+%   for given language no translation is defined. The translations used for \cCutext\
+%   are shown in \cref{sec:Translations}.
 %   Note that \enquote{electron volt} exists just for fun.
 % }
 %   \begin{tabular}{ lll }
 %       \toprule
-%       unit-key &   default-symbol & unit name \\ \midrule
+%       unit-key &   default-symbol \\ \midrule
 %     \PrintUnit {kg} \\
 %     \PrintUnit {dag} \\
 %     \PrintUnit {g} \\
@@ -1101,7 +1101,7 @@ and the derived file cooking-units.sty.
 %   units known to you.}
 %   \begin{tabular}{ lll }
 %     \toprule
-%     unit name & unit-key & default symbol \\ \midrule
+%     unit name & unit-key  \\ \midrule
 %     \PrintUnit {pn} \\ \addlinespace
 %     \PrintUnit {EL} \\
 %     \PrintUnit {TL} \\
@@ -5783,7 +5783,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_cukeys_define_keys:N , \@@_cukeys_define_keys:V }
 % Defining the keys: It maps through the list of unit-keys and creates a
-% unit key respectively.
+% unit-key respectively.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_define_keys:N #1
   {
