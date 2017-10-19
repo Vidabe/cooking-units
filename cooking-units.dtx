@@ -6331,6 +6331,7 @@ and the derived file cooking-units.sty.
 \newcookingunit { g }
 \newcookingunit { oz }
 \newcookingunit { lb }
+\newcookingunit { stick }
 \newcookingunit [ \ensuremath{ \@@_frac:nn { eV } { c^2 } } ] { eVc-2 }
 %    \end{macrocode}
 %
@@ -6594,10 +6595,10 @@ and the derived file cooking-units.sty.
     { dag }{ 100 }
     { g }  { 1000 }
     { oz } { 35.27399 } 
-    { lb } { 2.204 622 6 } %% 2.204 622 6
+    { lb } { 2.2046226 } %% 2.204 622 6
+    { stick } { 8.81849 }
     { eVc-2 } { 560958865.0e+27 } %% 560958865.0 +- 3.5 e+27
   }
-%\cuaddtokeys { kg } { eVc-2 } { 1.78266173e-16 }
 %    \end{macrocode}
 %    \begin{macrocode}
 \cudefinekeys { d }
