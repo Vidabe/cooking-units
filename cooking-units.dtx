@@ -155,6 +155,7 @@ and the derived file cooking-units.sty.
 \DeclareSIUnit{\lb}{\pound}
 \DeclareSIUnit{\stone}{st}
 \DeclareSIUnit{\st}{\stone}
+\DeclareSIUnit{\stick}{st}
 \cusetup{print-numerals=false}
 
 %\EnableCrossrefs
@@ -202,11 +203,9 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \PrintUnit { o m }
   {
     \SaveTranslation \l_tmpa_tl { #2 (cu-unitname) }
-    \tl_if_eq:NNTF \l_tmpa_tl \q__cooking_units_no_translation
-      { 
-        \IfNoValueF {#1} {#1}
-      }
+    \tl_if_eq:NNF \l_tmpa_tl \q__cooking_units_no_translation
       { \l_tmpa_tl }
+    \IfNoValueF {#1} {#1}
     &
     \texttt {#2}
     &
@@ -643,7 +642,6 @@ and the derived file cooking-units.sty.
 %   cookery books (and not e.g. scientific texts).\footnote{I did hide  some 
 %   grammatical and spelling errors for easter egg hunters \Winkey.}
 %
-%
 %   Please read through the section \enquote{Important Changes}
 % \end{abstract}
 %
@@ -994,28 +992,43 @@ and the derived file cooking-units.sty.
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
 %
+% \begin{comment}
 % In \cref{tab:def-units} and \cref{tab:some-more-units} (and \cref{tab:strange-units})
 % you can find
 % all predefined units.  In \cref{sec:Translations} all translations available
 %  are listed.
+% \end{comment}
+%
+% In \cref{tab:def-units} and you can find all predefined units which can be
+% transformed into each other (sorted by group). Other predefined units
+% which cannot be used for transformation) are shown in \cref{tab:some-more-units}.
+% \Cref{tab:strange-units} pretty much exists just for fun.
 %
 %
 % \begin{table}[htbp]
 %   \centering
-%   \caption{The first column shows a list of predefined unit-keys.
-%   The column \enquote{default symbol} shows the abbreviation used if
+%   \caption{^^A
+%^^A    The first column shows a list of predefined unit-keys.
+%^^A   The column \enquote{default} shows the abbreviation used if
+%^^A   for given language no translation is defined. The translations used for \cCutext\
+%^^A   are shown in \cref{sec:Translations}.
+%^^A   Note that \enquote{electron volt} exists just for fun.
+%^^A
+%   This table shows all units which  can transformed into each other, sorted
+%   by group. The columns \enquote{default symbol} show the abbreviations used if
 %   for given language no translation is defined. The translations used for \cCutext\
-%   are shown in \cref{sec:Translations}.
+%   are shown in \cref{sec:Translations}. 
 %   Note that \enquote{electron volt} exists just for fun.
 % }
-%   \begin{tabular}{ lcc @{\hspace{1cm}} lcc  }
+%   \begin{tabular}{ lll @{\hspace{1cm}} lll  }
 %       \toprule
-%      name & key & default & name & key & default \\ \midrule
+%      description & key & default & description & key & default \\ \midrule
 %     \PrintUnit {kg} & \PrintUnit{m}  \\
 %     \PrintUnit {dag} & \PrintUnit{dm}  \\
 %     \PrintUnit {g} & \PrintUnit{cm}  \\
 %     \PrintUnit {oz} & \PrintUnit{mm} \\ 
-%     \PrintUnit {lb} & \PrintUnit{in} \\ \addlinespace
+%     \PrintUnit {lb} & \PrintUnit{in} \\ 
+%     \PrintUnit [ (of butter)] {stick} \\ \addlinespace
 %
 %     \PrintUnit {d} & \PrintUnit {l}  \\
 %     \PrintUnit {h} & \PrintUnit {dl}  \\
@@ -1043,7 +1056,7 @@ and the derived file cooking-units.sty.
 %   units known to you.}
 %   \begin{tabular}{ lll }
 %     \toprule
-%     name & key & symbol \\ \midrule
+%     description & key & symbol \\ \midrule
 %     \PrintUnit {pn} \\ \addlinespace
 %     \PrintUnit {EL} \\
 %     \PrintUnit {TL} \\
@@ -1058,8 +1071,8 @@ and the derived file cooking-units.sty.
 % 
 % \begin{table}[htbp]
 %   \centering
-%   \caption{List of nonsense units (exist just for fun, there will be
-%   no support for those units).}
+%   \caption{List of (not really) nonsense units (exist just for fun, there will be
+%   no support for those units; unless you really want it).}
 %   \begin{tabular}{ ll }
 %    \toprule
 %      unit-key & symbol \\ \midrule
@@ -1367,6 +1380,35 @@ and the derived file cooking-units.sty.
 % \cunum[st=kg]{16}{st} 
 % \end{cuexamplecode}
 % \end{cuexample}
+%
+% \begin{comment}
+% \begin{cuexample}
+% Implementation of \texttt{stick}.  From https://cooking.stackexchange.com/questions/784/translating-cooking-terms-between-us-uk-au-ca-nz
+% we know that 
+% \[ \SI{1}{\stick} = \SI{0.25}{\lb} \]
+%
+% There are two ways to implement \texttt{stick}:
+% either use \mycs{cuaddkeys} or \mycs{cuaddtokeys}.
+%
+% The easier way (in this case) is \mycs{cuaddtokeys} which is pretty straight forward:
+% \begin{lstlisting}
+%   \cuaddtokeys { lb } { st } { 0.25 }
+% \end{lstlisting}
+% \dots\ and finished
+% 
+% \end{cuexample}
+% \end{comment}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 %
 %
 %
@@ -6454,6 +6496,7 @@ and the derived file cooking-units.sty.
     { g } { gramme }
     { oz } { ounce } 
     { lb } { pound } [ pounds ]
+    { stick } { stick } [ sticks ]
 %    \end{macrocode}
 %    \begin{macrocode}
     { d } { day } [ days ]
