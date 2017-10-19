@@ -198,6 +198,7 @@ and the derived file cooking-units.sty.
 \newcommand\true{\opt{true}}
 \newcommand\false{\opt{false}}
 
+%: \PrintUnit
 \NewDocumentCommand \PrintUnit { o m }
   {
     \SaveTranslation \l_tmpa_tl { #2 (cu-unitname) }
@@ -207,13 +208,13 @@ and the derived file cooking-units.sty.
       }
       { \l_tmpa_tl }
     &
-    \texttt{#2}
+    \texttt {#2}
     &
     \tl_use:c { l__cooking_units_default_unit_ #2 _tl }
   }
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
-    #1 & 
+    \texttt {#1} & 
     \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
   }
 
