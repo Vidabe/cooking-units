@@ -198,26 +198,23 @@ and the derived file cooking-units.sty.
 \newcommand\true{\opt{true}}
 \newcommand\false{\opt{false}}
 
-\NewDocumentCommand \PrintUnit { m }
+\NewDocumentCommand \PrintUnit { o m }
   {
-    #1 &
-    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } 
-%    &
-%    \GetTranslation{ #1 (cu-unitname) }
+    \SaveTranslation \l_tmpa_tl { #2 (cu-unitname) }
+    \tl_if_eq:NNTF \l_tmpa_tl \q__cooking_units_no_translation
+      { 
+        \IfNoValueF {#1} {#1}
+      }
+      { \l_tmpa_tl }
+    &
+    \texttt{#2}
+    &
+    \tl_use:c { l__cooking_units_default_unit_ #2 _tl }
   }
-\NewDocumentCommand \PrintUnits { m m }
-  {
-    \PrintUnit{#1} & \PrintUnit{#2}
-  }
-\NewDocumentCommand \PrintUnitss { m m m }
-  {
-    \PrintUnit{#1} & \PrintUnit{#2} & \PrintUnit{#3}
-  }
-
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
     #1 & 
-    \GetTranslationFor {Nonexistentlanguagesthatfallbackisused}{ #1 ( cu-unit ) } 
+    \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
   }
 
 
@@ -1010,19 +1007,25 @@ and the derived file cooking-units.sty.
 %   are shown in \cref{sec:Translations}.
 %   Note that \enquote{electron volt} exists just for fun.
 % }
-%   \begin{tabular}{ ll @{\hspace{1em}} ll @{\hspace{1em}} ll }
+%   \begin{tabular}{ lcc @{\hspace{1cm}} lcc  }
 %       \toprule
-%       unit-key &   default symbol & unit-key &   default symbol & unit-key &   default symbol \\ \midrule
-%     \PrintUnitss {kg}{m} {cal} \\
-%     \PrintUnitss {dag}{dm} {kcal} \\
-%     \PrintUnitss {g}{cm} {J} \\
-%     \PrintUnitss {oz}{mm} {kJ}\\ 
-%     \PrintUnitss {lb}{in} {eV}\\ \addlinespace
+%      name & key & default & name & key & default \\ \midrule
+%     \PrintUnit {kg} & \PrintUnit{m}  \\
+%     \PrintUnit {dag} & \PrintUnit{dm}  \\
+%     \PrintUnit {g} & \PrintUnit{cm}  \\
+%     \PrintUnit {oz} & \PrintUnit{mm} \\ 
+%     \PrintUnit {lb} & \PrintUnit{in} \\ \addlinespace
 %
-%     \PrintUnitss {d} {l} {C} \\
-%     \PrintUnitss {h} {dl} {F} \\
-%     \PrintUnitss {min} {cl} {Re}\\
-%     \PrintUnitss {s} {ml} {K}
+%     \PrintUnit {d} & \PrintUnit {l}  \\
+%     \PrintUnit {h} & \PrintUnit {dl}  \\
+%     \PrintUnit {min} & \PrintUnit {cl} \\
+%     \PrintUnit {s} & \PrintUnit{ml} \\ \addlinespace
+%
+%     \PrintUnit{cal} & \PrintUnit{C} \\
+%     \PrintUnit{kcal} & \PrintUnit{F} \\
+%     \PrintUnit{J} & \PrintUnit{Re} \\
+%     \PrintUnit{kJ} & \PrintUnit{K} \\
+%     \PrintUnit{eV} 
 %
 %    \\  \bottomrule
 %   \end{tabular}
@@ -1039,14 +1042,14 @@ and the derived file cooking-units.sty.
 %   units known to you.}
 %   \begin{tabular}{ lll }
 %     \toprule
-%     unit name & unit-key  \\ \midrule
+%     name & key & symbol \\ \midrule
 %     \PrintUnit {pn} \\ \addlinespace
 %     \PrintUnit {EL} \\
 %     \PrintUnit {TL} \\
 %     \PrintUnit {dsp} \\ 
 %     \PrintUnit {csp} \\ 
 %     \PrintUnit {ssp} \\ \addlinespace
-%     \PrintUnit {Msp} \\
+%     \PrintUnit [Messerpsitze] {Msp} \\
 %     \bottomrule
 %   \end{tabular}
 %   \label{tab:some-more-units}
