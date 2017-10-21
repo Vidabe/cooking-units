@@ -2,7 +2,6 @@
 % !TEX encoding = UTF-8 Unicode
 % !TEX program  = pdfLaTeX
 %
-% Lizenz updaten (Datum).
 %
 %<*internal>
 \iffalse
@@ -108,7 +107,6 @@ and the derived file cooking-units.sty.
 \usedir{tex/latex/cooking-units}
 \generate{
   \file{\jobname.sty}{\from{\jobname.dtx}{package}}
-  \file{LOSCHEN/\jobname.sty}{\from{\jobname.dtx}{package}} %% ToDo
 }
 %</install>
 %<install>\endbatchfile
@@ -705,7 +703,7 @@ and the derived file cooking-units.sty.
 % \begin{description}
 %   \item[Language] I am now using the \pkg{translations} package
 %     and I hope it makes things easier. As such, declaring the used language
-%     through class-options shouldn't be necessary anymore.
+%     through class options shouldn't be necessary anymore.
 %   \item[Phrases] This package now supports the usage of \enquote{phrases}
 %     (words used instead of certain integers) (which I think are called \enquote{counting
 %     measures} in english, but I am not sure).
@@ -715,7 +713,7 @@ and the derived file cooking-units.sty.
 %     to be set by arrow-brackets was not the best idea as it leads to problems
 %    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
 %    |<| is not allowed as a \enquote{special-sign} anymore as this package
-%   tries to \enquote{fix} this (at least make it work). If any problems occur
+%   tries to \enquote{fix} this idea (at least make it work). If any problems occur
 %   (for this specific case or in general) please feel free to contact me.
 % \end{description}
 %
@@ -754,7 +752,7 @@ and the derived file cooking-units.sty.
 % \cref{sec:def-units} for further information.}.  It furthermore
 % allows the sign \texttt{?} to be used as a placeholder for not known
 % amounts and raises a warning to remind that this amount needs a
-% checkup\footnote{You can customize this behavior, see
+% check-up\footnote{You can customize this behavior, see
 % \cref{sec:options}}. \oarg{space} adds a space between the number
 % and the unit using \lstinline|\phantom|.
 %
@@ -816,7 +814,7 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 % \cusetup{print-numerals=false}
 % Furthermore,
-% since v1.10 \cCutext\ also allows their units to be changed (this behavior
+% since v1.10 \cCutext\ also allow their units to be changed (this behavior
 % can be altered using \opt{cutext-change-unit}):
 % \begin{cuexamplecode}
 %   \cusetup{ l=ml } @
@@ -949,7 +947,7 @@ and the derived file cooking-units.sty.
 %   In German you may say instead of
 %   \enquote{12}: \enquote{ein Dutzend}. Using this option you can tell this
 %   package to replace predefined integers used in \mycs{cuam} 
-%   by phrases for given language
+%   by phrases for the currently used language
 %   (to define new ones, see \cref{sec:phrases})
 %
 %   Using (for example) language \opt{ngerman} (or \opt{naustrian}, etc.) with
@@ -1001,7 +999,7 @@ and the derived file cooking-units.sty.
 %
 % In \cref{tab:def-units} and you can find all predefined units which can be
 % transformed into each other (sorted by group). Other predefined units
-% which cannot be used for transformation) are shown in \cref{tab:some-more-units}.
+% (which cannot be used for transformation) are shown in \cref{tab:some-more-units}.
 % \Cref{tab:strange-units} pretty much exists just for fun.
 %
 %
@@ -1014,8 +1012,8 @@ and the derived file cooking-units.sty.
 %^^A   are shown in \cref{sec:Translations}.
 %^^A   Note that \enquote{electron volt} exists just for fun.
 %^^A
-%   This table shows all units which  can transformed into each other, sorted
-%   by group. The columns \enquote{default symbol} show the abbreviations used if
+%   This table shows all units which  can be transformed into each other, sorted
+%   by group. The columns \enquote{default} show the abbreviations used if
 %   for given language no translation is defined. The translations used for \cCutext\
 %   are shown in \cref{sec:Translations}. 
 %   Note that \enquote{electron volt} exists just for fun.
@@ -1063,7 +1061,7 @@ and the derived file cooking-units.sty.
 %     \PrintUnit {dsp} \\ 
 %     \PrintUnit {csp} \\ 
 %     \PrintUnit {ssp} \\ \addlinespace
-%     \PrintUnit [Messerpsitze] {Msp} \\
+%     \PrintUnit [Messerpsitze (point of a knife)] {Msp} \\
 %     \bottomrule
 %   \end{tabular}
 %   \label{tab:some-more-units}
@@ -1072,7 +1070,7 @@ and the derived file cooking-units.sty.
 % \begin{table}[htbp]
 %   \centering
 %   \caption{List of (not really) nonsense units (exist just for fun, there will be
-%   no support for those units; unless you really want it).}
+%   no support for those units; unless -- of course -- you really want it).}
 %   \begin{tabular}{ ll }
 %    \toprule
 %      unit-key & symbol \\ \midrule
@@ -1433,7 +1431,7 @@ and the derived file cooking-units.sty.
 %   gender of the following word (e.g. \enquote{ein Baum} (m),
 %   \enquote{eine Pflanze} (f) and \enquote{ein Auto} (n)). To set the
 %   written-out 1 to be correct with the gender of the used unit, use
-%   these\footnote{those?} keys (see also examples below)
+%   these keys (see also examples below)
 % \end{function}
 %
 % \begin{function}{\cudefinename}
@@ -1447,14 +1445,14 @@ and the derived file cooking-units.sty.
 %   \end{syntax}
 %   
 %   This command defines the names (and optionally the symbol) of the
-%   commands printed in \lstinline|\cutext| and \lstinline|\Cutext|
+%   units printed in \lstinline|\cutext| and \lstinline|\Cutext|
 %   (and \lstinline|\cunum| regarding the symbol) for the specific
 %   \meta{Language}. For details regarding \meta{language} see the
 %   \pkg{translations} documentation.
 %
 %   If the plural form of the name differs from the singular form use
 %   \oarg{plural} to specify the plural form, if no \oarg{plural} is
-%   given the plural will be set equal to its singular. The singular
+%   given the plural will be set equal to its singular. The singular form
 %   is only used if the number in \lstinline|\cutext| and
 %   \lstinline|\Cutext| is equal to 1.
 %
@@ -1574,7 +1572,7 @@ and the derived file cooking-units.sty.
 %
 % Each language has synonyms for certain (integer) numbers. This package
 % supports those phrases and they can be implemented with the following
-% commands and used by \mycs{cuam}:
+% command and used by \mycs{cuam}:
 %
 % \begin{function}{\cudefinephrase}
 %   \begin{syntax}
@@ -1989,6 +1987,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 % \begin{myde}
+% For the German langauge:
 % \begin{cuexamplecode}
 %   \cuam{12} \\
 %   \cuam{12--24} \\
@@ -2215,8 +2214,9 @@ and the derived file cooking-units.sty.
 %  if you want to e.g.\ insert an unbreakable space.
 % \end{function}
 %  \cusetup{use-phrases=true}
+% \begin{myde}
+% (Switching to german)
 % \begin{cuexamplecode}
-%   \selectlanguage{ngerman} @
 %   \cuam{12}\\
 %   \cuam{144}\\
 %   \cusetup { phrase-space = ~ } @
@@ -2229,6 +2229,7 @@ and the derived file cooking-units.sty.
 %   \cuam{12}\\
 %   \cuam{144}\\
 % \end{cuexamplecode}
+% \end{myde}
 %  \cusetup{use-phrases=false}
 %
 % \begin{function}{amount-unit-space}
@@ -2436,7 +2437,7 @@ and the derived file cooking-units.sty.
 %   doesn't support the arrangement of such huge numbers). Also you may
 %   want to check the values if you really want to use them, just to be sure
 %   (I've checked them several times and hope they are finally correct, but mistakes
-%   happen\footnote{And to prevent those, this package was essentially created}).
+%   happen).
 %
 % \end{function}
 %
@@ -2465,7 +2466,7 @@ and the derived file cooking-units.sty.
 % spam account and adding  \pkg{cooking-units} to the header makes
 % it easier to recognize those e-mails. 
 %
-% Feedback and requests (commands, units) are most welcome.  Please
+% Feedback and requests (commands, units, etc.) are also  welcome.  Please
 % also add (if possible) an example of the desired output into the
 % minimal example (and -- if by mail -- add \pkg{cooking-units} to the
 % header).
