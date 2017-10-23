@@ -59,3 +59,4 @@ This material is subject to the LaTeX Project Public License. See
 
 for the details of that license.
 
+%%

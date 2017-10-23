@@ -620,7 +620,27 @@ and the derived file cooking-units.sty.
 % \changes {2017/03/10} {1.11} {Removed things like 'cu-unit' from translate input
 %   and placed them into separate tl's.}
 % 
+% \changes {2017/10/23} {1.2} {Replaced \pkg{translator} by \pkg{translations}.}
+% \changes {2017/10/23} {1.2} {Added \enquote{phrases}.}
+% \changes {2017/10/23} {1.2} {Added unit \enquote{stick} (of butter).}
+% \changes {2017/10/23} {1.2} {|<| is not allowed as a special sign anymore.}
+% \changes {2017/10/23} {1.2} {New option: \opt{set-cutext-translation-message}.}
+% \changes {2017/10/23} {1.2} {New option: \opt{print-numerals}.}
+% \changes {2017/10/23} {1.2} {New option: \opt{use-phrases}.}
+% \changes {2017/10/23} {1.2} {New option: \opt{phrase-space}.}
+% \changes {2017/10/23} {1.2} {New option: \opt{amount-unit-space}.}
+% \changes {2017/10/23} {1.2} {Now checks for ranges if both values can be printed as numerals (if activated) (bug fix).}
+% \changes {2017/10/23} {1.2} {Reworked quite a lot of code.}
 %
+%
+%
+%
+%
+%
+%
+%
+%
+%%
 % \GetFileInfo{\jobname.sty}
 % 
 %\title{The \pkg{\jobname} package^^A
@@ -1104,7 +1124,9 @@ and the derived file cooking-units.sty.
 %   \mycs{newcookingunit} raises an error if the unit is already defined,
 %   \mycs{declarecookingunit} creates or (if given) overwrites  \meta{symbol} 
 %   and \mycs{providecookingunit} does nothing if the unit is already
-%   defined.
+%   defined. 
+%
+%   All units have male gender |m| by default.
 %
 % Some examples:
 %
@@ -2158,7 +2180,7 @@ and the derived file cooking-units.sty.
 %   \cunum{1_2/3}{kg} 
 % \end{cuexamplecode}
 %
-% \subsubsection{spaces}
+% \subsubsection{Spaces}
 %
 % \begin{function}{mixed-fraction-space}
 %   \begin{syntax}
@@ -2693,7 +2715,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2017/10/21}
+  {2017/10/23}
   {1.2}
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
@@ -6763,6 +6785,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 % \end{implementation}
+%
 %
 % \endinput
 %
