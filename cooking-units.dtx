@@ -4345,11 +4345,11 @@ and the derived file cooking-units.sty.
 %
 % This section contains macros helping an checking the input.
 %
-% \begin{macro}{ \@@_parse_input:N, \@@_parse_input:V }
+% \begin{macro}{ \@@_parse_input:n, \@@_parse_input:V }
 % Splits the input into   fractions or ranges (\lstinline|q_@@_range|).
 % Depending on the input on of the four macros are used.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_input:N #1
+\cs_new:Npn \@@_parse_input:n #1
   {
     \bool_if:NTF \l_@@_range_in_input_bool
       { \@@_parse_range_in_input:ww #1 \q_stop }
@@ -4367,7 +4367,7 @@ and the derived file cooking-units.sty.
           { \@@_parse_number_in_input:n {#1} }
       }
   }
-\cs_generate_variant:Nn \@@_parse_input:N { V }
+\cs_generate_variant:Nn \@@_parse_input:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4663,7 +4663,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
-% \begin{macro}{\@@_check_number_for_rounding:n,\@@_check_number_after_dot_aux:w}
+% \begin{macro}{\@@_check_number_for_rounding:n,\@@_check_number_after_dot_aux:ww}
 %   Getting the number after the decimal point.  If it doesn't exist
 %   the boolean is set to false, otherwise it checks how many tokens
 %   are within the number after the decimal point.  If the number of
@@ -4678,11 +4678,11 @@ and the derived file cooking-units.sty.
       { 
         \bool_set_true:N \l_@@_round_decimal_part_bool
       }{
-        \@@_check_number_after_dot_aux:w #1 . \q_recursion_tail .
+        \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
         \q_recursion_stop
       }
   }
-\cs_new:Npn \@@_check_number_after_dot_aux:w #1. #2 .
+\cs_new:Npn \@@_check_number_after_dot_aux:ww #1. #2 .
   {
     \quark_if_recursion_tail_stop:n {#2}
     \bool_if:NTF \l_@@_round_to_int_bool
@@ -4696,14 +4696,14 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_round_calculated_input:NN,\@@_round_calculated_input:NV }
+% \begin{macro}{ \@@_round_calculated_input:Nn,\@@_round_calculated_input:NV }
 %   After calculating the numbers are rounded (if needed, safed inside \cs{l_tmpa_bool}). 
 %   We test at first  if
 %   the input needs to be rounded by comparing the number of tokens after the 
 %   decimal with the number of significant figures plus one. Afterwards the 
 %   input is expanded and stored in \#1. If rounding needs to be done it happens now.
 %    \begin{macrocode}
-\cs_new:Npn \@@_round_calculated_input:NN #1#2
+\cs_new:Npn \@@_round_calculated_input:Nn #1#2
   {
     \@@_check_number_for_rounding:n {#2}
     \tl_set:Nx #1 
@@ -4713,7 +4713,7 @@ and the derived file cooking-units.sty.
           {#2}
      }
   }
-\cs_generate_variant:Nn \@@_round_calculated_input:NN { NV }
+\cs_generate_variant:Nn \@@_round_calculated_input:Nn { NV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4815,7 +4815,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{\@@_check_temperature_limit:n}
+% \begin{macro}{\@@_check_temperature_limit:N}
 %   If \lstinline|check_temperature_bool| is set to true it  now checks
 %   if the value is below the absolute temperature. \lstinline|\clist_if_in:nVT|
 %   is needed due to \texttt{Re}, a \lstinline|\tl_if_in:nVT| would also check for \texttt{R}
@@ -5298,11 +5298,11 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_old_cutext_parse_range:Nn #1 #2
+\cs_new:Npn \@@_old_cutext_parse_range:nn #1 #2
   {
     \@@_old_cutext_parse_range_aux:nww {#2} #1 \q_stop
   }
-\cs_generate_variant:Nn \@@_old_cutext_parse_range:Nn { V }
+\cs_generate_variant:Nn \@@_old_cutext_parse_range:nn { V }
 \cs_new:Npn \@@_old_cutext_parse_range_aux:nww #1 #2 \q_@@_range #3 \q_stop
   {
     \tl_set:Nn \l_@@_tmpa_tl {#2}
@@ -5794,11 +5794,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_cukeys_define_keys:N , \@@_cukeys_define_keys:V }
+% \begin{macro}{ \@@_cukeys_define_keys:n , \@@_cukeys_define_keys:V }
 % Defining the keys: It maps through the list of unit-keys and creates a
 % unit-key respectively.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cukeys_define_keys:N #1
+\cs_new:Npn \@@_cukeys_define_keys:n #1
   {
    \seq_map_inline:Nn \l_@@_tmpa_seq
      {
@@ -5826,7 +5826,7 @@ and the derived file cooking-units.sty.
          }
      }
   }
-\cs_generate_variant:Nn \@@_cukeys_define_keys:N { V }
+\cs_generate_variant:Nn \@@_cukeys_define_keys:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5894,7 +5894,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cukeys_define_singlekey:nN #1#2
+\cs_new:Npn \@@_cukeys_define_singlekey:nn #1#2
   {
     \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1} 
       {  \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
@@ -5919,7 +5919,7 @@ and the derived file cooking-units.sty.
            #1 .groups:n = { change-unit } ,
          }
   }
-\cs_generate_variant:Nn \@@_cukeys_define_singlekey:nN { nV }
+\cs_generate_variant:Nn \@@_cukeys_define_singlekey:nn { nV }
 %    \end{macrocode}
 %
 %
