@@ -4632,7 +4632,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_calculate_input_and_store_in:nN #1#2
   {
     \fp_set:Nn \l_@@_tmpa_fp {#1}
-    \tl_if_in:cnTF { l_@@_tmpa_ \l_@@_given_unit_tl  _ tl } { \l_@@_tmpa_fp }
+    \tl_if_in:cnTF { l_@@_tmpa_ \l_@@_given_unit_tl _ tl } { \l_@@_tmpa_fp }
       { 
         \@@_tl_set_fp_and_eval:Nc #2 { l_@@_tmpa_ \l_@@_given_unit_tl  _ tl }
       }{ 
