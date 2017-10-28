@@ -4871,7 +4871,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_check_number_for_rounding:n #1
   {
     \bool_set_false:N \l_@@_round_decimal_part_bool
-    \@@_check_number_after_dot_aux:w #1 . \q_recursion_tail .
+    \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
     \q_recursion_stop
   }
 \cs_new:Npn \@@_check_number_after_dot_aux:ww #1. #2 .
