@@ -4345,7 +4345,10 @@ and the derived file cooking-units.sty.
 % (\mycs{cunum}, \cCutext, \mycs{cuam}), hence the name.
 % 
 %
-% \begin{macro}{ \@@_initialise_default:n }
+% \begin{macro}{ \@@_initialise_default:n , 
+%     \@@_initialise_unit_change:nnn , 
+%     \@@_initialise_after_unit_change:nn 
+%   }
 %   Function shared by all initialization functions:
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_initialise_default:nnn #1#2#3
@@ -4398,21 +4401,6 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_do_not_parse:n }
-%   If the input shoudn't be parsed this function is used to print the
-%   input without error messages (mostly concerning the \_). Spaces are still ignored.
-%    \begin{macrocode}
-\cs_new:Npn \@@_do_not_parse:n #1
-  {
-    \tl_set_rescan:Nnn \l_@@_number_tmpa_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N \ %
-      } {#1}
-    \l_@@_number_tmpa_tl
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 % \begin{macro}{ \@@_parse_input:n }
@@ -4438,6 +4426,117 @@ and the derived file cooking-units.sty.
           }
         \@@_parse_input_and_split:V \l_@@_tmpa_tl
       }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_do_not_parse:n }
+%   If the input shoudn't be parsed this function is used to print the
+%   input without error messages (mostly concerning the \_). Spaces are still ignored.
+%    \begin{macrocode}
+\cs_new:Npn \@@_do_not_parse:n #1
+  {
+    \tl_set_rescan:Nnn \l_@@_number_tmpa_tl
+      {
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_ignore:N \ %
+      } {#1}
+    \l_@@_number_tmpa_tl
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{ \@@_print_input:N , \@@_print_correct_unit: , 
+%   \@@_post_process_input:NN , \@@_pre_process_input:NN}
+%   Wrapper macro for printing the (not)calculated output. Note that if no
+%   calculation happens in \mycs{cutext} (and \mycs{Cutext}) \cs{l_@@_option_unit_tl}
+%   is set to \cs{l_@@_given_unit_tl} (the unit given in the second argument of 
+%   \mycs{cutext} or \mycs{Cutext}) by default.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_print_input:N #1 { }
+\cs_new_protected:Npn \@@_print_correct_unit: { }
+\cs_new_protected:Npn \@@_do_not_process_input:NN #1#2 { }
+\cs_new_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
+\cs_new_eq:NN \@@_post_process_input:NN \@@_do_not_process_input:NN
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro} 
+%  { 
+%    \@@_set_process_and_print_for_cunum: ,
+%    \@@_set_process_and_print_for_cutext: ,
+%    \@@_set_process_and_print_for_cuam:
+%  }
+%  It is handy to set the \enquote{print} and \enquote{process}
+%  command all in one go. It's also less to use messy.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_set_process_and_print_for_cunum: 
+  { 
+    \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
+    \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
+    \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
+    \cs_set_eq:NN \@@_post_process_input:NN \@@_do_not_process_input:NN
+  }
+\cs_new_protected:Npn \@@_set_process_and_print_for_cutext: 
+  { 
+    \cs_set_eq:NN \@@_print_input:N \@@_cutext_print_input:N
+    \cs_set_eq:NN \@@_print_correct_unit: \@@_cutext_print_correct_unitname:
+    \cs_set_eq:NN \@@_pre_process_input:NN \@@_cutext_pre_process_input:NN
+    \cs_set_eq:NN \@@_post_process_input:NN \@@_cutext_post_process_input:NN
+  }
+\cs_new_protected:Npn \@@_set_process_and_print_for_cuam: 
+  { 
+    \cs_set_eq:NN \@@_print_input:N \@@_cuam_print_numerical_input:N
+    \cs_set_eq:NN \@@_print_correct_unit: \@@_cuam_print_correct_unitphrase:
+    \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
+    \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_post_process_input:NN
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
+% \begin{macro}{ \@@_print_numerical_input:N }
+%   Prints the nummerical output (if it is not a fraction).
+%
+%   Changed \lstinline|\l_@@_tmpa_tl| by |\l_@@_translation_tmpa_tl|, it's better that way.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_print_numerical_input:N #1
+  {
+    \tl_if_in:NnT #1 { . }
+      {
+        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl 
+          { decimal-mark } \c_@@_postfix_unitname_tl
+        \tl_replace_once:Nnn #1 { . } { \l_@@_translation_tmpa_tl }
+      }
+    \tl_if_in:NnT #1 { - }
+      { \tl_replace_once:NnV #1 { - } \c_@@_minus_tl }
+    #1
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{ \@@_formatiere_fractions:nnn }
+%   The name of this function is the name of the game: It prints fractions.
+%   Furthermore it sets the boolean \lstinline|fraction_in_input_bool| to true
+%   so that the correct unit is printed. Instead of \lstinline|\kern| I used the
+%   \lstinline|\hbox_to_wd:nn| command (I don't have a better idea).
+%
+%  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
+%    \begin{macrocode}
+\cs_new:Npn \@@_formatiere_fractions:nnn #1#2#3
+  {
+    \bool_if:NT \l_@@_minus_bool { \c_@@_minus_tl }
+    \tl_if_empty:nF {#1} 
+      { 
+        #1 
+        \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+      }
+    \@@_frac:nn {#2} {#3}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4720,10 +4819,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}
-%   { 
-%     \@@_calculate_input_and_store_in:nN ,
-%   }
+% \begin{macro}{ \@@_calculate_input_and_store_in:nN }
 % Well \dots\ this function calculates the input. First checks if the
 % wanted conversion contains a \lstinline|\l_@@_tmpa_fp| (ergo a \#1 in
 % the key definition). If true the conversion token (which already has
@@ -4744,7 +4840,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%
+% \begin{macro}{ \@@_calc_for_number_of_persons_and_store_in:NN }
 %    \begin{macrocode}
 \cs_new:Npn \@@_calc_for_number_of_persons_and_store_in:NN #1#2
   {
@@ -4762,7 +4858,7 @@ and the derived file cooking-units.sty.
       }
   }
 %    \end{macrocode}
-%
+% \end{macro}
 %
 % \begin{macro}{\@@_check_number_for_rounding:n,\@@_check_number_after_dot_aux:ww}
 %   Getting the number after the decimal point.  If it doesn't exist
@@ -4816,99 +4912,8 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}
-%  { \@@_print_input:N , \@@_print_correct_unit: , \@@_post_process_input:NN , \@@_pre_process_input:NN}
-%   Wrapper macro for printing the (not)calculated output. Note that if no
-%   calculation happens in \mycs{cutext} (and \mycs{Cutext}) \cs{l_@@_option_unit_tl}
-%   is set to \cs{l_@@_given_unit_tl} (the unit given in the second argument of 
-%   \mycs{cutext} or \mycs{Cutext}) by default.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_print_input:N #1 { }
-\cs_new_protected:Npn \@@_print_correct_unit: { }
-\cs_new_protected:Npn \@@_do_not_process_input:NN #1#2 { }
-\cs_new_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
-\cs_new_eq:NN \@@_post_process_input:NN \@@_do_not_process_input:NN
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro} 
-%  { 
-%    \@@_set_process_and_print_for_cunum: ,
-%    \@@_set_process_and_print_for_cutext: ,
-%    \@@_set_process_and_print_for_cuam:
-%  }
-%  It is handy to set the \enquote{print} and \enquote{process}
-%  command all in one go. It's also less to use messy.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_set_process_and_print_for_cunum: 
-  { 
-    \cs_set_eq:NN \@@_print_input:N \@@_print_numerical_input:N
-    \cs_set_eq:NN \@@_print_correct_unit: \@@_cunum_print_correct_unit:
-    \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
-    \cs_set_eq:NN \@@_post_process_input:NN \@@_do_not_process_input:NN
-  }
-\cs_new_protected:Npn \@@_set_process_and_print_for_cutext: 
-  { 
-    \cs_set_eq:NN \@@_print_input:N \@@_cutext_print_input:N
-    \cs_set_eq:NN \@@_print_correct_unit: \@@_cutext_print_correct_unitname:
-    \cs_set_eq:NN \@@_pre_process_input:NN \@@_cutext_pre_process_input:NN
-    \cs_set_eq:NN \@@_post_process_input:NN \@@_cutext_post_process_input:NN
-  }
-\cs_new_protected:Npn \@@_set_process_and_print_for_cuam: 
-  { 
-    \cs_set_eq:NN \@@_print_input:N \@@_cuam_print_numerical_input:N
-    \cs_set_eq:NN \@@_print_correct_unit: \@@_cuam_print_correct_unitphrase:
-    \cs_set_eq:NN \@@_pre_process_input:NN \@@_do_not_process_input:NN
-    \cs_set_eq:NN \@@_post_process_input:NN \@@_cuam_post_process_input:NN
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
-%
-%
-%
-% \begin{macro}{ \@@_print_numerical_input:N }
-%   Prints the nummerical output (if it is not a fraction).
-%
-%   Changed \lstinline|\l_@@_tmpa_tl| by |\l_@@_translation_tmpa_tl|, it's better that way.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_print_numerical_input:N #1
-  {
-    \tl_if_in:NnT #1 { . }
-      {
-        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl 
-          { decimal-mark } \c_@@_postfix_unitname_tl
-        \tl_replace_once:Nnn #1 { . } { \l_@@_translation_tmpa_tl }
-      }
-    \tl_if_in:NnT #1 { - }
-      { \tl_replace_once:NnV #1 { - } \c_@@_minus_tl }
-    #1
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{ \@@_formatiere_fractions:nnn }
-%   The name of this function is the name of the game: It prints fractions.
-%   Furthermore it sets the boolean \lstinline|fraction_in_input_bool| to true
-%   so that the correct unit is printed. Instead of \lstinline|\kern| I used the
-%   \lstinline|\hbox_to_wd:nn| command (I don't have a better idea).
-%
-%  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
-%    \begin{macrocode}
-\cs_new:Npn \@@_formatiere_fractions:nnn #1#2#3
-  {
-    \bool_if:NT \l_@@_minus_bool { \c_@@_minus_tl }
-    \tl_if_empty:nF {#1} 
-      { 
-        #1 
-        \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
-      }
-    \@@_frac:nn {#2} {#3}
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 % \begin{macro}{\@@_check_temperature_limit:N}
