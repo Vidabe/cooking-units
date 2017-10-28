@@ -5524,7 +5524,9 @@ and the derived file cooking-units.sty.
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N\ %
       } {#1}
-    \@@_cuam_old_parse:V \l_@@_tmpa_tl
+    \bool_if:NTF \l_@@_parse_input_bool
+      { \l_@@_tmpa_tl }
+      { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
   }
 %    \end{macrocode}
 % \end{macro}
