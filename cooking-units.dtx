@@ -3072,7 +3072,7 @@ and the derived file cooking-units.sty.
 % \l_@@_round_decimal_part_bool,
 % \l_@@_error_bool,
 % \l_@@_eval_fractions_bool,
-% \l_@@_parse_input_bool,
+% \l_@@_draft_bool,
 % \l_@@_round_to_int_bool,
 % \l_@@_special_sign_bool,
 % \l_@@_single_key_bool,
@@ -3098,7 +3098,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_round_decimal_part_bool
 \bool_new:N \l_@@_error_bool
 \bool_new:N \l_@@_eval_fractions_bool
-\bool_new:N \l_@@_parse_input_bool
+\bool_new:N \l_@@_draft_bool
 \bool_new:N \l_@@_round_to_int_bool
 \bool_new:N \l_@@_special_sign_bool
 \bool_new:N \l_@@_single_key_bool
@@ -3133,7 +3133,6 @@ and the derived file cooking-units.sty.
 %
 % Setting some of them to \texttt{true} or another boolean respectively.
 %    \begin{macrocode}
-\bool_set_true:N \l_@@_parse_input_bool
 \bool_set_true:N \l_@@_cutext_change_unit_bool
 \bool_set_eq:NN \l_@@_local_numeral_bool \g_@@_opt_numeral_bool
 %    \end{macrocode}
@@ -3262,9 +3261,9 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 %\begin{macro}{ parse-number }
-% Parse the numbers? If no the input is printed as is (after some safetyparsing).
+% Parse the input? If no the input is printed as is (after some safety parsing).
 %    \begin{macrocode}
-    parse-number .bool_set:N = \l_@@_parse_input_bool , 
+    parse-number .bool_set_inverse:N = \l_@@_draft_bool , 
     parse-number .default:n= { true } ,
 %    \end{macrocode}
 %\end{macro}
@@ -3936,13 +3935,13 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_if_integer:nF { V }
 \prg_new_protected_conditional:Npnn \@@_if_parse_and_integer:n #1 { TF }
   {
-    \bool_if:NTF \l_@@_parse_input_bool
+    \bool_if:NTF \l_@@_draft_bool
+      { \prg_return_false: }
       {
         \@@_if_integer:nTF {#1}
           { \prg_return_true: } 
           { \prg_return_false: }
       }
-      { \prg_return_false: }
   }
 \cs_generate_variant:Nn \@@_if_parse_and_integer:nTF { V }
 %    \end{macrocode}
@@ -3951,7 +3950,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}[TF]{ \@@_fp_if_equal_one:n}
-% \begin{macro}[TF]{ \@@_int_if_equal_one:n}
+% \begin{macro}[TF]{ \@@_int_if_equal_one:n}f
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_fp_if_equal_one:n #1 { TF }
   {
@@ -4418,7 +4417,7 @@ and the derived file cooking-units.sty.
         \char_set_catcode_other:N ? %
       } {#1}
     \bool_lazy_or:nnTF
-      { ! \l_@@_parse_input_bool }
+      { \l_@@_draft_bool }
       { \tl_if_empty_p:N \l_@@_tmpa_tl }
       {
         \l_@@_tmpa_tl
@@ -5048,9 +5047,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cunum_parse_numerical_input:n #1
   {
-    \bool_if:NTF \l_@@_parse_input_bool
-      { \@@_parse_input:n {#1} }
+    \bool_if:NTF \l_@@_draft_bool
       { \@@_do_not_parse:n {#1} }
+      { \@@_parse_input:n {#1} }
   }
 %    \end{macrocode}
 %
@@ -5074,7 +5073,7 @@ and the derived file cooking-units.sty.
       {
         { \l_@@_fraction_in_input_bool }
         { \l_@@_special_sign_bool }
-        { ! \l_@@_parse_input_bool }
+        { \l_@@_draft_bool }
       }
       { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unit_tl }
       { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unit_tl }
@@ -5147,8 +5146,12 @@ and the derived file cooking-units.sty.
 % #1: label, #2: Options, #3: Values, #4: unit
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
-    \bool_if:NTF \l_@@_parse_input_bool
+    \bool_if:NTF \l_@@_draft_bool
       {
+        \@@_do_not_parse:n {#3}
+        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
+        \@@_cutext_print_correct_unitname: 
+      }{
         \bool_if:NTF \l_@@_cutext_old_bool
           {
             \@@_old_cutext_default:nnn {#2} {#3} {#4}
@@ -5158,10 +5161,6 @@ and the derived file cooking-units.sty.
             \@@_parse_input:n {#3}
             \@@_print_correct_unit:
           }
-      }{
-        \@@_do_not_parse:n {#3}
-        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
-        \@@_cutext_print_correct_unitname: 
       }
   }
 %    \end{macrocode}
@@ -5224,7 +5223,7 @@ and the derived file cooking-units.sty.
       {
         { \l_@@_fraction_in_input_bool }
         { \l_@@_special_sign_bool }
-        { ! \l_@@_parse_input_bool }
+        { \l_@@_draft_bool }
       }
       { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unitname_pl_tl }
       {
@@ -5266,7 +5265,7 @@ and the derived file cooking-units.sty.
       {
         { \l_@@_fraction_in_input_bool }
         { \l_@@_special_sign_bool }
-        { ! \l_@@_parse_input_bool }
+        { \l_@@_draft_bool }
       }
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl }
@@ -5292,7 +5291,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_old_cutext_default:nnn #1#2#3
   {
-    \bool_if:NTF \l_@@_parse_input_bool
+    \bool_if:NTF \l_@@_draft_bool
+      {#2}
       {
         \tl_set:Nn \l_@@_cutext_last_value_tl {#2}
         \tl_if_in:NVTF \l_@@_cutext_last_value_tl \l_@@_input_range_sign_tl
@@ -5304,7 +5304,6 @@ and the derived file cooking-units.sty.
             \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#3}
           }
       }
-      {#2}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5355,7 +5354,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam:n #1
   {
-    \bool_if:NTF \l_@@_parse_input_bool
+    \bool_if:NTF \l_@@_draft_bool
+      { \@@_do_not_parse:n {#1} }
       {
         \bool_if:NTF \l_@@_cuam_old_bool
           { \@@_cuam_old:n {#1} }
@@ -5364,7 +5364,6 @@ and the derived file cooking-units.sty.
             \@@_print_correct_unit:
           }
       }
-      { \@@_do_not_parse:n {#1} }
   }
 %    \end{macrocode}
 %
@@ -5527,9 +5526,9 @@ and the derived file cooking-units.sty.
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N\ %
       } {#1}
-    \bool_if:NTF \l_@@_parse_input_bool
-      { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
+    \bool_if:NTF \l_@@_draft_bool
       { \l_@@_tmpa_tl }
+      { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
   }
 %    \end{macrocode}
 % \end{macro}
