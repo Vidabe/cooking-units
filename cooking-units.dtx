@@ -3067,7 +3067,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}
 %   {
 % \l_@@_minus_bool,
-% \l_@@_round_decimal_part_bool,
+% \l_@@_round_number_bool,
 % \l_@@_error_bool,
 % \l_@@_eval_fractions_bool,
 % \l_@@_draft_bool,
@@ -3093,7 +3093,7 @@ and the derived file cooking-units.sty.
 % Some booleans we need later.
 %    \begin{macrocode}
 \bool_new:N \l_@@_minus_bool
-\bool_new:N \l_@@_round_decimal_part_bool
+\bool_new:N \l_@@_round_number_bool
 \bool_new:N \l_@@_error_bool
 \bool_new:N \l_@@_eval_fractions_bool
 \bool_new:N \l_@@_draft_bool
@@ -4861,28 +4861,36 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{\@@_check_number_for_rounding:n,\@@_check_number_after_dot_aux:ww}
-%   Getting the number after the decimal point.  If it doesn't exist
-%   the boolean is set to false, otherwise it checks how many tokens
-%   are within the number after the decimal point.  If the number of
-%   tokens is greater than significant\_figures\_plus\_one the bool is
-%   set to true (which tells the package later that the number should
-%   be rounded). This should be safe as the input was already checked.
+%   Check if rounding is needed. The auxilary function splits the number into
+%   the integer and non-integer part ($12.45$ to $12$ and $45$). 
+%   
+%  If the non-integer part exists its number of digits $n$ are counted checked
+%  if it is smaller then $a$, which depends on |\l_@@_round_to_int_bool|.
+%  
 %    \begin{macrocode}
 \cs_new:Npn \@@_check_number_for_rounding:n #1
   {
-    \bool_set_false:N \l_@@_round_decimal_part_bool
+    \bool_set_false:N \l_@@_round_number_bool
     \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
     \q_recursion_stop
   }
 \cs_new:Npn \@@_check_number_after_dot_aux:ww #1. #2 .
   {
-    \quark_if_recursion_tail_stop:n {#2}
-    \bool_if:NTF \l_@@_round_to_int_bool
-      { \int_zero:N \l_tmpa_int }
-      { \int_set_eq:NN \l_tmpa_int \l_@@_significant_figures_plus_one_int }
-    \int_compare:nNnF 
-      { \tl_count:n {#2} } < { \l_tmpa_int }
-      { \bool_set_true:N \l_@@_round_decimal_part_bool }
+    \quark_if_recursion_tail_stop_do:nn {#2}
+      {
+        \bool_lazy_or:nnF
+          { \int_compare_p:nNn { \l_@@_significant_figures_plus_one_int } > { 0 } }
+          { \l_@@_round_to_int_bool }
+          { \bool_set_true:N \l_@@_round_number_bool }
+      }
+        \int_compare:nNnF 
+          { \tl_count:n {#2} } < 
+          { 
+            \bool_if:NTF \l_@@_round_to_int_bool
+              { 1 }
+              { \l_@@_significant_figures_plus_one_int }
+          }
+          { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
   }
 %    \end{macrocode}
@@ -4899,8 +4907,8 @@ and the derived file cooking-units.sty.
   {
     \@@_check_number_for_rounding:n {#2}
     \tl_set:Nx #1 
-      {  
-        \bool_if:NTF \l_@@_round_decimal_part_bool
+      {
+        \bool_if:NTF \l_@@_round_number_bool
           { \fp_eval:n { round ( \@@_rounding_function:n {#2} ) } }
           {#2}
      }
