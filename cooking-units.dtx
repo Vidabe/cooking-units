@@ -4368,7 +4368,7 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_initialise_unit_change:nnn #1#2#3
   {
     \tl_if_empty:nF {#2}
-      { 
+      {
         \keys_set_groups:nnn { cooking-units } { change-unit } {#2}  
       }
     \bool_if:NT \l_@@_convert_to_eV_bool { \@@_convert_to_eV: }
@@ -4417,10 +4417,14 @@ and the derived file cooking-units.sty.
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
       } {#1}
-    \tl_if_empty:NF \l_@@_tmpa_tl
+    \bool_lazy_or:nnTF
+      { ! \l_@@_parse_input_bool }
+      { \tl_if_empty_p:N \l_@@_tmpa_tl }
       {
+        \l_@@_tmpa_tl
+      }{
         \tl_if_in:NVT \l_@@_tmpa_tl \l_@@_input_range_sign_tl
-          { 
+          {
             \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range } 
             \bool_set_true:N \l_@@_range_in_input_bool            
           }
@@ -4628,7 +4632,6 @@ and the derived file cooking-units.sty.
   {
     \@@_parse_input_and_split_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_split_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
-%    \bool_if:NTF \l_@@_fraction_in_input_bool
     \bool_lazy_or:nnTF
       { \l_@@_fraction_in_input_bool }
       { \l_@@_special_sign_bool }
@@ -5525,8 +5528,8 @@ and the derived file cooking-units.sty.
         \char_set_catcode_ignore:N\ %
       } {#1}
     \bool_if:NTF \l_@@_parse_input_bool
-      { \l_@@_tmpa_tl }
       { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
+      { \l_@@_tmpa_tl }
   }
 %    \end{macrocode}
 % \end{macro}
