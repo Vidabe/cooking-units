@@ -4434,21 +4434,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_do_not_parse:n }
-%   If the input shoudn't be parsed this function is used to print the
-%   input without error messages (mostly concerning the \_). Spaces are still ignored.
-%    \begin{macrocode}
-\cs_new:Npn \@@_do_not_parse:n #1
-  {
-    \tl_set_rescan:Nnn \l_@@_number_tmpa_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N \ %
-      } {#1}
-    \l_@@_number_tmpa_tl
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 % \begin{macro}{ \@@_print_input:N , \@@_print_correct_unit: , 
