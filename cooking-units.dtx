@@ -5143,7 +5143,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext_do:nnnn #1#2#3#4
   {
     \bool_if:NTF \l_@@_cutext_to_cunum_bool
-      { \cunum <#1> [#2] {#3} {#4} }
+      { 
+        \bool_set_false:N \l_@@_using_cutext_bool
+        \cunum <#1> [#2] {#3} {#4} 
+      }
       {
         \@@_cutext:nnnn {#1} {#2} {#3} {#4}
       }
