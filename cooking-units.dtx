@@ -4351,9 +4351,9 @@ and the derived file cooking-units.sty.
 %   }
 %   Functions shared by all initialization functions:
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_initialise_default:nnn #1#2#3
+\cs_new_protected:Npn \@@_initialise_default:n #1
   {
-    \tl_set:Nn \l_@@_given_unit_tl {#3}
+    \tl_set:Nn \l_@@_given_unit_tl {#1}
     \@@_error_if_unit_not_defined:V \l_@@_given_unit_tl
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_error_bool
@@ -5043,7 +5043,7 @@ and the derived file cooking-units.sty.
   {
     \@@_set_process_and_print_for_cunum:
     \tl_set:Nn \l_@@_phantom_tl {#4}
-    \@@_initialise_default:nnn {#1} {#2} {#5}
+    \@@_initialise_default:n {#5}
     \@@_initialise_unit_change:nnn {#1} {#2} {#5}
     \@@_initialise_after_unit_change:nn {#1} {#2}
   }
@@ -5117,7 +5117,7 @@ and the derived file cooking-units.sty.
   {
     \bool_set_true:N \l_@@_using_cutext_bool
     \@@_set_process_and_print_for_cutext:
-    \@@_initialise_default:nnn {#1} {#2} {#3}
+    \@@_initialise_default:n {#3}
     \bool_if:NTF \l_@@_cutext_change_unit_bool
       { \@@_initialise_unit_change:nnn {#1} {#2} {#3} }
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
