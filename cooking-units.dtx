@@ -5020,7 +5020,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cunum:nnnnn #1#2#3#4#5
   {
     \@@_cunum_initialise:nnnnn {#1} {#2} {#3} {#4} {#5}
-    \@@_cunum_parse_numerical_input:n {#3}
+    \@@_parse_input:n {#3}
     \@@_print_correct_unit:
   }
 %    \end{macrocode}
@@ -5052,14 +5052,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%    \begin{macrocode}
-\cs_new:Npn \@@_cunum_parse_numerical_input:n #1
-  {
-    \bool_if:NTF \l_@@_draft_bool
-      { \@@_do_not_parse:n {#1} }
-      { \@@_parse_input:n {#1} }
-  }
-%    \end{macrocode}
 %
 %
 %
