@@ -5354,16 +5354,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam:n #1
   {
-    \bool_if:NTF \l_@@_draft_bool
-      { \@@_do_not_parse:n {#1} }
-      {
-        \bool_if:NTF \l_@@_cuam_old_bool
-          { \@@_cuam_old:n {#1} }
-          { 
-            \@@_parse_input:n {#1}  
-            \@@_print_correct_unit:
-          }
-      }
+    \bool_if:NTF \l_@@_cuam_old_bool
+        { \@@_cuam_old:n {#1} }
+        { 
+          \@@_parse_input:n {#1}  
+          \@@_print_correct_unit:
+        }
   }
 %    \end{macrocode}
 %
@@ -5373,6 +5369,7 @@ and the derived file cooking-units.sty.
     \@@_set_process_and_print_for_cuam:
     \tl_set_eq:NN \l_@@_given_unit_tl \c_@@_cuam_marker_tl
     \tl_set_eq:NN \l_@@_option_unit_tl \c_@@_cuam_marker_tl
+    \bool_set_false:N \l_@@_check_if_phrase_used_bool
     \@@_initialise_after_unit_change:nn {#1} {#2}
   }
 %    \end{macrocode}
