@@ -5154,22 +5154,14 @@ and the derived file cooking-units.sty.
 % #1: label, #2: Options, #3: Values, #4: unit
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
-    \bool_if:NTF \l_@@_draft_bool
+    \bool_if:NTF \l_@@_cutext_old_bool
       {
-        \@@_do_not_parse:n {#3}
         \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
-        \@@_cutext_print_correct_unitname: 
+        \@@_old_cutext_default:nnn {#2} {#3} {#4}
       }{
-        \bool_if:NTF \l_@@_cutext_old_bool
-          {
-            \@@_old_cutext_default:nnn {#2} {#3} {#4}
-            \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
-            \@@_cutext_print_correct_unitname: 
-          }{
-            \@@_parse_input:n {#3}
-            \@@_print_correct_unit:
-          }
+        \@@_parse_input:n {#3}
       }
+    \@@_print_correct_unit:
   }
 %    \end{macrocode}
 %
