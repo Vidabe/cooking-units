@@ -5090,7 +5090,7 @@ and the derived file cooking-units.sty.
         \group_begin:
         \@@_cutext_initialise:nnn {#1} {#2} {#4}
         \bool_set_false:N \l_@@_cutext_uppercase_word_bool
-        \@@_cutext_do:nnnn {#1} {#2} {#3} {#4}
+        \@@_cutext:nnnn {#1} {#2} {#3} {#4}
         \group_end:
       }
   }
@@ -5124,33 +5124,24 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
-% Besser benennen.
-%    \begin{macrocode}
-\cs_new:Npn \@@_cutext_do:nnnn #1#2#3#4
-  {
-    \bool_if:NTF \l_@@_cutext_to_cunum_bool
-      { 
-        \bool_set_false:N \l_@@_using_cutext_bool
-        \cunum <#1> [#2] {#3} {#4} 
-      }
-      {
-        \@@_cutext:nnnn {#1} {#2} {#3} {#4}
-      }
-  }
-%    \end{macrocode}
-%
 %    \begin{macrocode}
 % #1: label, #2: Options, #3: Values, #4: unit
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
-    \bool_if:NTF \l_@@_cutext_old_bool
+    \bool_if:NTF \l_@@_cutext_to_cunum_bool
       {
-        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
-        \@@_old_cutext_default:nnn {#2} {#3} {#4}
+        \bool_set_false:N \l_@@_using_cutext_bool
+        \cunum <#1> [#2] {#3} {#4} 
       }{
-        \@@_parse_input:n {#3}
+        \bool_if:NTF \l_@@_cutext_old_bool
+          {
+            \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
+            \@@_old_cutext_default:nnn {#2} {#3} {#4}
+          }{
+            \@@_parse_input:n {#3}
+          }
+        \@@_print_correct_unit:
       }
-    \@@_print_correct_unit:
   }
 %    \end{macrocode}
 %
