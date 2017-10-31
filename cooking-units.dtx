@@ -4401,41 +4401,6 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-%
-%
-% \begin{macro}{ \@@_parse_input:n }
-%   Rescans the input to get rid of spaces and  to make \_ and ? inactive
-%   (french with babel makes ? active and changes the definition of it).
-%   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
-%   (if not empty). Afterwards the units are printed.
-%    \begin{macrocode}
-\cs_new:Npn \@@_parse_input:n #1
-  {
-    \tl_set_rescan:Nnn \l_@@_tmpa_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N \ %
-        \char_set_catcode_other:N ? %
-      } {#1}
-    \bool_lazy_or:nnTF
-      { \l_@@_draft_bool }
-      { \tl_if_empty_p:N \l_@@_tmpa_tl }
-      {
-        \l_@@_tmpa_tl
-      }{
-        \tl_if_in:NVT \l_@@_tmpa_tl \l_@@_input_range_sign_tl
-          {
-            \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range } 
-            \bool_set_true:N \l_@@_range_in_input_bool            
-          }
-        \@@_parse_input_and_split:V \l_@@_tmpa_tl
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-%
-%
 % \begin{macro}{ \@@_print_input:N , \@@_print_correct_unit: , 
 %   \@@_post_process_input:NN , \@@_pre_process_input:NN}
 %   Wrapper macro for printing the (not)calculated output. Note that if no
@@ -4530,9 +4495,46 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%
+%
+%
+%
+%
 % \subsection {Parsing and checking numbers}
 %
 % This subsection contains macros helping an checking the input.
+%
+% \begin{macro}{ \@@_parse_input:n }
+%   Rescans the input to get rid of spaces and  to make \_ and ? inactive
+%   (french with babel makes ? active and changes the definition of it).
+%   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
+%   (if not empty). Afterwards the units are printed.
+%    \begin{macrocode}
+\cs_new:Npn \@@_parse_input:n #1
+  {
+    \tl_set_rescan:Nnn \l_@@_tmpa_tl
+      {
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_ignore:N \ %
+        \char_set_catcode_other:N ? %
+      } {#1}
+    \bool_lazy_or:nnTF
+      { \l_@@_draft_bool }
+      { \tl_if_empty_p:N \l_@@_tmpa_tl }
+      {
+        \l_@@_tmpa_tl
+      }{
+        \tl_if_in:NVT \l_@@_tmpa_tl \l_@@_input_range_sign_tl
+          {
+            \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range } 
+            \bool_set_true:N \l_@@_range_in_input_bool            
+          }
+        \@@_parse_input_and_split:V \l_@@_tmpa_tl
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{ \@@_parse_input_and_split:n, \@@_parse_input_and_split:V }
 % Splits the input into   fractions or ranges (\lstinline|q_@@_range|).
@@ -4559,6 +4561,93 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_parse_input_and_split:n { V }
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{ \@@_parse_input_and_split_and_safe_in:nN }
+%   Used to check the input. \lstinline|\l_@@_tmpa_tl| is cleared
+%   at the beginning. At first it checks if the first token 
+%   is a sign or not. The parsed input is stored into \lstinline|\l_@@_tmpa_tl|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_parse_input_and_split_and_safe_in:nN #1 #2
+  {
+    \tl_clear:N \l_@@_tmpa_tl
+    \bool_set_false:N \l_@@_decimal_in_input_bool
+    \@@_parse_vorzeichen_and_rest:Nw #1 \q_stop
+    \bool_if:NTF \l_@@_error_bool
+      { \tl_set:Nn #2 {#1} }
+      { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
+  }  
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_vorzeichen_and_rest:Nw }
+%   This function seperates the input into two parts with the first
+%   part being the first token. This token is checked whetever or not
+%   it is a sign.  If it is a sign it is put into
+%   \lstinline|\l_@@_tmpa_tl|, if not it is checked normally by
+%   \lstinline|\@@_parse_input_and_split_for_safety_aux:N|.  \#2 (the other
+%   tokens) is then given to \lstinline|\tl_map_function:nN|. This
+%   also works if the input only conists of one token with \#2 being
+%   empty (hopefully).
+%    \begin{macrocode}
+\cs_new:Npn \@@_parse_vorzeichen_and_rest:Nw #1#2 \q_stop
+  {
+    \tl_if_in:NnTF \l_@@_input_value_signs_tl {#1}
+      { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
+      { 
+        \tl_map_function:nN {#1} \@@_parse_input_and_split_for_safety_aux:N
+      }
+    \bool_if:NF \l_@@_error_bool
+      { \tl_map_function:nN {#2} \@@_parse_input_and_split_for_safety_aux:N }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_input_and_split_for_safety_aux:N }
+%   Parses the input. It also is more or less copied from
+%   \texttt{siunitx}.  Checks if the input consists only of numbers,
+%   one decimal-sign and the allowed special input. If an allowed
+%   token is found the boolean \lstinline|\l_@@_special_sign_bool| is
+%   set to true.
+%    \begin{macrocode}
+\cs_new:Npn \@@_parse_input_and_split_for_safety_aux:N #1
+  {
+    \tl_if_in:NnTF \l_@@_input_digits_tl {#1}
+      { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
+      {
+        \tl_if_in:NnTF \l_@@_input_decimal_mark_tl {#1}
+          { 
+            \bool_if:NT \l_@@_decimal_in_input_bool 
+              { 
+                \msg_error:nn { cooking-units } 
+                  { Second-decimal-sign-not-allowed } 
+              }
+            \bool_set_true:N \l_@@_decimal_in_input_bool 
+            \tl_put_right:Nn \l_@@_tmpa_tl { . }
+          }{
+            \tl_if_in:NnTF \l_@@_input_allowed_special_signs_tl {#1}
+              { 
+                \bool_set_true:N \l_@@_special_sign_bool 
+                \tl_put_right:Nn \l_@@_tmpa_tl {#1}
+              }{ 
+                \bool_if:NTF \l_@@_range_in_input_bool
+                  {
+                    \tl_if_in:nnTF { / _ } {#1}
+                      { \msg_error:nnn { cooking-units } { fraction-not-allowed-with-range } {#1} }
+                      { \msg_error:nnn { cooking-units } { Token-not-allowed } {#1} }
+                  }{
+                    \tl_if_in:nnTF { _ } {#1}
+                      { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
+                      { \msg_error:nnn { cooking-units } { Token-not-allowed } {#1} }
+                   }
+                \bool_set_true:N \l_@@_error_bool
+                \tl_map_break:
+              }
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\@@_parse_number_in_input:n}
 %   If no  fractions and ranges are used this macro activated.
@@ -4684,91 +4773,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ \@@_parse_input_and_split_and_safe_in:nN }
-%   Used to check the input. \lstinline|\l_@@_tmpa_tl| is cleared
-%   at the beginning. At first it checks if the first token 
-%   is a sign or not. The parsed input is stored into \lstinline|\l_@@_tmpa_tl|.
-%    \begin{macrocode}
-\cs_new:Npn \@@_parse_input_and_split_and_safe_in:nN #1 #2
-  {
-    \tl_clear:N \l_@@_tmpa_tl
-    \bool_set_false:N \l_@@_decimal_in_input_bool
-    \@@_parse_vorzeichen_and_rest:Nw #1 \q_stop
-    \bool_if:NTF \l_@@_error_bool
-      { \tl_set:Nn #2 {#1} }
-      { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
-  }  
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_parse_vorzeichen_and_rest:Nw }
-%   This function seperates the input into two parts with the first
-%   part being the first token. This token is checked whetever or not
-%   it is a sign.  If it is a sign it is put into
-%   \lstinline|\l_@@_tmpa_tl|, if not it is checked normally by
-%   \lstinline|\@@_parse_input_and_split_for_safety_aux:N|.  \#2 (the other
-%   tokens) is then given to \lstinline|\tl_map_function:nN|. This
-%   also works if the input only conists of one token with \#2 being
-%   empty (hopefully).
-%    \begin{macrocode}
-\cs_new:Npn \@@_parse_vorzeichen_and_rest:Nw #1#2 \q_stop
-  {
-    \tl_if_in:NnTF \l_@@_input_value_signs_tl {#1}
-      { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
-      { 
-        \tl_map_function:nN {#1} \@@_parse_input_and_split_for_safety_aux:N
-      }
-    \bool_if:NF \l_@@_error_bool
-      { \tl_map_function:nN {#2} \@@_parse_input_and_split_for_safety_aux:N }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_parse_input_and_split_for_safety_aux:N }
-%   Parses the input. It also is more or less copied from
-%   \texttt{siunitx}.  Checks if the input consists only of numbers,
-%   one decimal-sign and the allowed special input. If an allowed
-%   token is found the boolean \lstinline|\l_@@_special_sign_bool| is
-%   set to true.
-%    \begin{macrocode}
-\cs_new:Npn \@@_parse_input_and_split_for_safety_aux:N #1
-  {
-    \tl_if_in:NnTF \l_@@_input_digits_tl {#1}
-      { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
-      {
-        \tl_if_in:NnTF \l_@@_input_decimal_mark_tl {#1}
-          { 
-            \bool_if:NT \l_@@_decimal_in_input_bool 
-              { 
-                \msg_error:nn { cooking-units } 
-                  { Second-decimal-sign-not-allowed } 
-              }
-            \bool_set_true:N \l_@@_decimal_in_input_bool 
-            \tl_put_right:Nn \l_@@_tmpa_tl { . }
-          }{
-            \tl_if_in:NnTF \l_@@_input_allowed_special_signs_tl {#1}
-              { 
-                \bool_set_true:N \l_@@_special_sign_bool 
-                \tl_put_right:Nn \l_@@_tmpa_tl {#1}
-              }{ 
-                \bool_if:NTF \l_@@_range_in_input_bool
-                  {
-                    \tl_if_in:nnTF { / _ } {#1}
-                      { \msg_error:nnn { cooking-units } { fraction-not-allowed-with-range } {#1} }
-                      { \msg_error:nnn { cooking-units } { Token-not-allowed } {#1} }
-                  }{
-                    \tl_if_in:nnTF { _ } {#1}
-                      { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
-                      { \msg_error:nnn { cooking-units } { Token-not-allowed } {#1} }
-                   }
-                \bool_set_true:N \l_@@_error_bool
-                \tl_map_break:
-              }
-          }
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 % \subsection {Formatiere \& Calculiere}
 %
