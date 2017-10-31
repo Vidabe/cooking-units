@@ -4529,18 +4529,18 @@ and the derived file cooking-units.sty.
             \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range } 
             \bool_set_true:N \l_@@_range_in_input_bool            
           }
-        \@@_parse_input_and_split:V \l_@@_tmpa_tl
+        \@@_split_input:V \l_@@_tmpa_tl
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_parse_input_and_split:n, \@@_parse_input_and_split:V }
+% \begin{macro}{ \@@_split_input:n, \@@_split_input:V }
 % Splits the input into   fractions or ranges (\lstinline|q_@@_range|).
 % Depending on the input on of the four macros are used.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_input_and_split:n #1
+\cs_new:Npn \@@_split_input:n #1
   {
     \bool_if:NTF \l_@@_range_in_input_bool
       { \@@_parse_range_in_input:ww #1 \q_stop }
@@ -4558,20 +4558,20 @@ and the derived file cooking-units.sty.
           { \@@_parse_number_in_input:n {#1} }
       }
   }
-\cs_generate_variant:Nn \@@_parse_input_and_split:n { V }
+\cs_generate_variant:Nn \@@_split_input:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_input_and_split_and_safe_in:nN }
+% \begin{macro}{ \@@_parse_input_and_safe_in:nN }
 %   Used to check the input. \lstinline|\l_@@_tmpa_tl| is cleared
 %   at the beginning. At first it checks if the first token 
 %   is a sign or not. The parsed input is stored into \lstinline|\l_@@_tmpa_tl|.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_input_and_split_and_safe_in:nN #1 #2
+\cs_new:Npn \@@_parse_input_and_safe_in:nN #1 #2
   {
     \tl_clear:N \l_@@_tmpa_tl
     \bool_set_false:N \l_@@_decimal_in_input_bool
-    \@@_parse_vorzeichen_and_rest:Nw #1 \q_stop
+    \@@_parse_sign_and_loop:Nw #1 \q_stop
     \bool_if:NTF \l_@@_error_bool
       { \tl_set:Nn #2 {#1} }
       { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
@@ -4579,37 +4579,37 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_vorzeichen_and_rest:Nw }
+% \begin{macro}{ \@@_parse_sign_and_loop:Nw }
 %   This function seperates the input into two parts with the first
 %   part being the first token. This token is checked whetever or not
 %   it is a sign.  If it is a sign it is put into
 %   \lstinline|\l_@@_tmpa_tl|, if not it is checked normally by
-%   \lstinline|\@@_parse_input_and_split_for_safety_aux:N|.  \#2 (the other
+%   \lstinline|\@@_parse_input_loop_aux:N|.  \#2 (the other
 %   tokens) is then given to \lstinline|\tl_map_function:nN|. This
 %   also works if the input only conists of one token with \#2 being
 %   empty (hopefully).
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_vorzeichen_and_rest:Nw #1#2 \q_stop
+\cs_new:Npn \@@_parse_sign_and_loop:Nw #1#2 \q_stop
   {
     \tl_if_in:NnTF \l_@@_input_value_signs_tl {#1}
       { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
       { 
-        \tl_map_function:nN {#1} \@@_parse_input_and_split_for_safety_aux:N
+        \tl_map_function:nN {#1} \@@_parse_input_loop_aux:N
       }
     \bool_if:NF \l_@@_error_bool
-      { \tl_map_function:nN {#2} \@@_parse_input_and_split_for_safety_aux:N }
+      { \tl_map_function:nN {#2} \@@_parse_input_loop_aux:N }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_input_and_split_for_safety_aux:N }
+% \begin{macro}{ \@@_parse_input_loop_aux:N }
 %   Parses the input. It also is more or less copied from
 %   \texttt{siunitx}.  Checks if the input consists only of numbers,
 %   one decimal-sign and the allowed special input. If an allowed
 %   token is found the boolean \lstinline|\l_@@_special_sign_bool| is
 %   set to true.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_input_and_split_for_safety_aux:N #1
+\cs_new:Npn \@@_parse_input_loop_aux:N #1
   {
     \tl_if_in:NnTF \l_@@_input_digits_tl {#1}
       { \tl_put_right:Nn \l_@@_tmpa_tl {#1} }
@@ -4657,7 +4657,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_number_in_input:n #1
   {
-    \@@_parse_input_and_split_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
+    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
   }
 \cs_new:Npn \@@_process_and_print_number_in_input:N #1
@@ -4678,8 +4678,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_range_in_input:ww #1 \q_@@_range #2 \q_stop
   {
-    \@@_parse_input_and_split_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_parse_input_and_split_and_safe_in:nN {#2} \l_@@_number_tmpb_tl    
+    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
+    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl    
     \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
     \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
     \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl 
@@ -4704,8 +4704,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_fraction_in_input:ww #1/#2 \q_stop
   {
-    \@@_parse_input_and_split_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_parse_input_and_split_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
+    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
+    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \bool_lazy_or:nnTF
       { \l_@@_fraction_in_input_bool }
       { \l_@@_special_sign_bool }
@@ -4741,9 +4741,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_mixed_fraction_in_input:www #1_#2/#3 \q_stop
   {
-    \@@_parse_input_and_split_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
-    \@@_parse_input_and_split_and_safe_in:nN {#2} \l_@@_number_tmpa_tl
-    \@@_parse_input_and_split_and_safe_in:nN {#3} \l_@@_number_tmpb_tl
+    \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
+    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpa_tl
+    \@@_parse_input_and_safe_in:nN {#3} \l_@@_number_tmpb_tl
     \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_mixed_fraction_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
