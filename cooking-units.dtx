@@ -3117,7 +3117,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_check_if_phrase_used_bool
 \bool_new:N \l_@@_local_numeral_bool
-\bool_new:N \l_@@_significant_fugures_greater_zero_bool
+\bool_new:N \l_@@_significant_figures_positive_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -3198,7 +3198,7 @@ and the derived file cooking-units.sty.
       {
         \int_set:Nn \l_@@_significant_figures_int {#1}
         \int_set:Nn \l_@@_significant_figures_plus_one_int { #1 + \c_one }
-        \bool_set:Nn \l_@@_significant_fugures_greater_zero_bool
+        \bool_set:Nn \l_@@_significant_figures_positive_bool
           { \int_compare_p:nNn \l_@@_significant_figures_plus_one_int > 0 }
       } ,
     round-precision .default:n = { 2 } ,
@@ -4874,7 +4874,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
         \bool_lazy_or:nnF
-          { \l_@@_significant_fugures_greater_zero_bool }
+          { \l_@@_significant_figures_positive_bool }
           { \l_@@_round_to_int_bool }
           { \bool_set_true:N \l_@@_round_number_bool }
       }
