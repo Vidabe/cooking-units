@@ -2967,18 +2967,12 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \l_@@_significant_figures_plus_one_int }
+% \begin{macro}{ \l_@@_significant_figures_int }
 %   Stores the round-precision inside. Not sure if 'significant
-%   figures' is the correct therm for this. Also computes the number
-%   plus 1, later I will count the tokens after the colon in a number
-%   (sorry, can't explain. If you have 123.4567, it gets
-%   \enquote{4567}, 4 tokens, larger then the number plus 1, needs to
-%   be rounded).
+%   figures' is the correct therm for this. .
 %    \begin{macrocode}
 \int_new:N \l_@@_significant_figures_int
-%\int_new:N \l_@@_significant_figures_plus_one_int
 \int_set:Nn \l_@@_significant_figures_int { 2 }
-%\int_set:Nn \l_@@_significant_figures_plus_one_int { 2 + 1 }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3116,7 +3110,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_check_if_phrase_used_bool
 \bool_new:N \l_@@_local_numeral_bool
-\bool_new:N \l_@@_significant_figures_greater_zero_bool
+\bool_new:N \l_@@_significant_figures_positive_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -3196,10 +3190,9 @@ and the derived file cooking-units.sty.
     round-precision .code:n = 
       {
         \int_set:Nn \l_@@_significant_figures_int {#1}
-%        \int_set:Nn \l_@@_significant_figures_plus_one_int { #1 + \c_one }
         \int_compare:nNnT {#1} < { 0 }
-          { \bool_set_false:N \l_@@_significant_figures_greater_zero_bool }
-          { \bool_set_true:N \l_@@_significant_figures_greater_zero_bool }
+          { \bool_set_false:N \l_@@_significant_figures_positive_bool }
+          { \bool_set_true:N \l_@@_significant_figures_positive_bool }
       } ,
     round-precision .default:n = { 2 } ,
 %    \end{macrocode}
@@ -4874,7 +4867,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
         \bool_lazy_or:nnF
-          { \l_@@_significant_figures_greater_zero_bool }
+          { \l_@@_significant_figures_positive_bool }
           { \l_@@_round_to_int_bool }
           { \bool_set_true:N \l_@@_round_number_bool }
       }
