@@ -3117,6 +3117,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_check_if_phrase_used_bool
 \bool_new:N \l_@@_local_numeral_bool
+\bool_new:N \l_@@_significant_fugures_greater_zero_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -3197,6 +3198,8 @@ and the derived file cooking-units.sty.
       {
         \int_set:Nn \l_@@_significant_figures_int {#1}
         \int_set:Nn \l_@@_significant_figures_plus_one_int { #1 + \c_one }
+        \bool_set:Nn \l_@@_significant_fugures_greater_zero_bool
+          { \int_compare_p:nNn \l_@@_significant_figures_plus_one_int > 0 }
       } ,
     round-precision .default:n = { 2 } ,
 %    \end{macrocode}
@@ -4423,7 +4426,7 @@ and the derived file cooking-units.sty.
 %    \@@_set_process_and_print_for_cuam:
 %  }
 %  It is handy to set the \enquote{print} and \enquote{process}
-%  command all in one go. It's also less to use messy.
+%  command all in one go. It's also less messy to use.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_process_and_print_for_cunum: 
   { 
@@ -4871,7 +4874,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
         \bool_lazy_or:nnF
-          { \int_compare_p:nNn { \l_@@_significant_figures_plus_one_int } > { 0 } }
+          { \l_@@_significant_fugures_greater_zero_bool }
           { \l_@@_round_to_int_bool }
           { \bool_set_true:N \l_@@_round_number_bool }
       }
