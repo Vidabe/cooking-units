@@ -2977,9 +2977,9 @@ and the derived file cooking-units.sty.
 %   be rounded).
 %    \begin{macrocode}
 \int_new:N \l_@@_significant_figures_int
-\int_new:N \l_@@_significant_figures_plus_one_int
+%\int_new:N \l_@@_significant_figures_plus_one_int
 \int_set:Nn \l_@@_significant_figures_int { 2 }
-\int_set:Nn \l_@@_significant_figures_plus_one_int { 2 + 1 }
+%\int_set:Nn \l_@@_significant_figures_plus_one_int { 2 + 1 }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3117,7 +3117,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_check_if_phrase_used_bool
 \bool_new:N \l_@@_local_numeral_bool
-\bool_new:N \l_@@_significant_figures_positive_bool
+\bool_new:N \l_@@_significant_figures_greater_zero_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -3197,9 +3197,10 @@ and the derived file cooking-units.sty.
     round-precision .code:n = 
       {
         \int_set:Nn \l_@@_significant_figures_int {#1}
-        \int_set:Nn \l_@@_significant_figures_plus_one_int { #1 + \c_one }
-        \bool_set:Nn \l_@@_significant_figures_positive_bool
-          { \int_compare_p:nNn \l_@@_significant_figures_plus_one_int > 0 }
+%        \int_set:Nn \l_@@_significant_figures_plus_one_int { #1 + \c_one }
+        \int_compare:nNnT {#1} < { 0 }
+          { \bool_set_false:N \l_@@_significant_figures_greater_zero_bool }
+          { \bool_set_true:N \l_@@_significant_figures_greater_zero_bool }
       } ,
     round-precision .default:n = { 2 } ,
 %    \end{macrocode}
@@ -4874,16 +4875,16 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
         \bool_lazy_or:nnF
-          { \l_@@_significant_figures_positive_bool }
+          { \l_@@_significant_figures_greater_zero_bool }
           { \l_@@_round_to_int_bool }
           { \bool_set_true:N \l_@@_round_number_bool }
       }
-        \int_compare:nNnF 
-          { \tl_count:n {#2} } < 
+        \int_compare:nNnT 
+          { \tl_count:n {#2} } >
           { 
             \bool_if:NTF \l_@@_round_to_int_bool
-              { 1 }
-              { \l_@@_significant_figures_plus_one_int }
+              { 0 }
+              { \l_@@_significant_figures_int }
           }
           { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
