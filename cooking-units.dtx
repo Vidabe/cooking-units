@@ -4462,7 +4462,7 @@ and the derived file cooking-units.sty.
   {
     \tl_if_in:NnT #1 { . }
       {
-        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl 
+        \@@_translate_let:Nxx \l_@@_translation_tmpa_tl
           { decimal-mark } \c_@@_postfix_unitname_tl
         \tl_replace_once:Nnn #1 { . } { \l_@@_translation_tmpa_tl }
       }
@@ -4474,7 +4474,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_formatiere_fractions:nnn }
+% \begin{macro}{ \@@_print_fractions:nnn }
 %   The name of this function is the name of the game: It prints fractions.
 %   Furthermore it sets the boolean \lstinline|fraction_in_input_bool| to true
 %   so that the correct unit is printed. Instead of \lstinline|\kern| I used the
@@ -4482,7 +4482,7 @@ and the derived file cooking-units.sty.
 %
 %  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
 %    \begin{macrocode}
-\cs_new:Npn \@@_formatiere_fractions:nnn #1#2#3
+\cs_new:Npn \@@_print_fractions:nnn #1#2#3
   {
     \bool_if:NT \l_@@_minus_bool { \c_@@_minus_tl }
     \tl_if_empty:nF {#1} 
@@ -4699,7 +4699,7 @@ and the derived file cooking-units.sty.
 %   If fractions should be evaluated the input is \dots\ well, 
 %   evaluated and printed. Otherwise the input is given to 
 %   another function which prints the fractions. Note that the empty
-%   argument in \lstinline|\@@_formatiere_fractions:nnn| indicates a
+%   argument in \lstinline|\@@_print_fractions:nnn| indicates a
 %   \enquote{normal} fraction.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_fraction_in_input:ww #1/#2 \q_stop
@@ -4712,7 +4712,7 @@ and the derived file cooking-units.sty.
       {
         \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
         \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
-        \@@_formatiere_fractions:nnn 
+        \@@_print_fractions:nnn 
           { } 
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl } 
@@ -4751,7 +4751,7 @@ and the derived file cooking-units.sty.
       { \l_@@_fraction_in_input_bool }
       { \l_@@_special_sign_bool }
       {
-        \@@_formatiere_fractions:nnn
+        \@@_print_fractions:nnn
           { \l_@@_mixed_fraction_tl } 
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl }
@@ -4898,7 +4898,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_round_calculated_input:Nn #1#2
   {
     \@@_check_number_for_rounding:n {#2}
-    \tl_set:Nx #1 
+    \tl_set:Nf #1 
       {
         \bool_if:NTF \l_@@_round_number_bool
           { \fp_eval:n { round ( \@@_rounding_function:n {#2} ) } }
