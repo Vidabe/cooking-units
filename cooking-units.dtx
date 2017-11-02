@@ -650,7 +650,6 @@ and the derived file cooking-units.sty.
 %
 %
 % \maketitle
-% 
 %
 % \begin{documentation}
 % \begin{abstract}
@@ -5203,22 +5202,26 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_pre_process_input:NN #1#2
   {
-    \@@_cutext_check_unitname_consequences:NN #1#2
+    \bool_if:NF \l_@@_special_sign_bool
+      { \@@_cutext_check_unitname_consequences:NN #1#2 }
   }
 \cs_new:Npn \@@_cutext_post_process_input:NN #1#2
   {
-    \bool_if:NTF \l_@@_range_in_input_bool
-      { 
-        \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 
-        \bool_if:NT \g_@@_opt_numeral_bool
-          {
-            \bool_lazy_and:nnF
-              { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-              { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-              { \bool_set_false:N \l_@@_local_numeral_bool }
+    \bool_if:NF \l_@@_special_sign_bool
+      {
+        \bool_if:NTF \l_@@_range_in_input_bool
+          { 
+            \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 
+            \bool_if:NT \g_@@_opt_numeral_bool
+              {
+              \bool_lazy_and:nnF
+                { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+                { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+                { \bool_set_false:N \l_@@_local_numeral_bool }
+              }
           }
+          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
       }
-      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
   }
 %    \end{macrocode}
 %
@@ -5343,6 +5346,11 @@ and the derived file cooking-units.sty.
 % I should redo this command \dots\ later
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
+  {
+    \bool_if:NF \l_@@_special_sign_bool
+      { \@@_cuam_post_process_input_aux:NN #1 #2 }
+  }
+\cs_new:Npn \@@_cuam_post_process_input_aux:NN #1#2
   {
     \@@_if_integer:VTF #1 
       { \bool_set_true:N \l_@@_tmpa_bool }
