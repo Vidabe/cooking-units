@@ -2986,12 +2986,12 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \l_@@_number_of_persons_tmpa_int }
+% \begin{macro}{ \l_@@_local_number_of_persons_int }
 % Each recipe defined by \cs{culabel} defines a counter to
 % store the number of persons the recipe is for. For calculation
 % the value is retrived and stored inside this temporal counter.
 %    \begin{macrocode}
-\int_new:N \l_@@_number_of_persons_tmpa_int
+\int_new:N \l_@@_local_number_of_persons_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4131,7 +4131,7 @@ and the derived file cooking-units.sty.
     \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
       { 
         \bool_set_true:N \l_@@_calc_because_ref_was_given_bool
-        \int_set_eq:Nc \l_@@_number_of_persons_tmpa_int
+        \int_set_eq:Nc \l_@@_local_number_of_persons_int
           { l_@@_number_of_persons_ #1 _int }
       }
       { \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
@@ -4834,12 +4834,12 @@ and the derived file cooking-units.sty.
     \int_compare:nNnF 
       { \l_@@_calc_for_number_of_persons_int }
       =
-      { \l_@@_number_of_persons_tmpa_int }
+      { \l_@@_local_number_of_persons_int }
       {
         \@@_tl_set_fp_and_eval:Nn #1
           {
             \l_@@_calc_for_number_of_persons_int /  
-            \l_@@_number_of_persons_tmpa_int * 
+            \l_@@_local_number_of_persons_int * 
             #2
           }
       }
