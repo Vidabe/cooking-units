@@ -2995,13 +2995,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \l_@@_calc_for_number_of_persons_int }
+% \begin{macro}{ \l_@@_wanted_number_of_persons_int }
 %   Not only the number of persons are recipe is for is needed
 %   for calculation, but also the number of persons you want
 % the recipe to be. This information is stored here.
 %    \begin{macrocode}
-\int_new:N \l_@@_calc_for_number_of_persons_int
-\int_set:Nn \l_@@_calc_for_number_of_persons_int { 4 }
+\int_new:N \l_@@_wanted_number_of_persons_int
+\int_set:Nn \l_@@_wanted_number_of_persons_int { 4 }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3402,7 +3402,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ set-number-of-persons }
 % Setting the number of persons the recipe should be for.
 %    \begin{macrocode}
-    set-number-of-persons .int_set:N = \l_@@_calc_for_number_of_persons_int ,
+    set-number-of-persons .int_set:N = \l_@@_wanted_number_of_persons_int ,
     set-number-of-persons .default:n = { 4 } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4146,7 +4146,7 @@ and the derived file cooking-units.sty.
     \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
       {
         \bool_if:NTF \l_@@_calc_for_persons_bool
-          { \int_use:N \l_@@_calc_for_number_of_persons_int }
+          { \int_use:N \l_@@_wanted_number_of_persons_int }
           { \int_use:c { l_@@_number_of_persons_ #1 _int } }
       }{ \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
   }
@@ -4832,13 +4832,13 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_calc_for_number_of_persons_and_store_in:NN #1#2
   {
     \int_compare:nNnF 
-      { \l_@@_calc_for_number_of_persons_int }
+      { \l_@@_wanted_number_of_persons_int }
       =
       { \l_@@_local_number_of_persons_int }
       {
         \@@_tl_set_fp_and_eval:Nn #1
           {
-            \l_@@_calc_for_number_of_persons_int /  
+            \l_@@_wanted_number_of_persons_int /  
             \l_@@_local_number_of_persons_int * 
             #2
           }
