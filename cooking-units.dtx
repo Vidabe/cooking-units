@@ -3383,6 +3383,45 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%\begin{macro}{ erase-options-for }
+%  Erasing options.
+%    \begin{macrocode}
+    erase-options-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_erase_options_for:n
+          \@@_erase_options_for_error:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+%\begin{macro}{ set-options-for }
+%  Setting options.
+%    \begin{macrocode}
+    set-options-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_set_options_for:n
+          \@@_set_options_for:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+%\begin{macro}{ add-options-for }
+%  Setting options.
+%    \begin{macrocode}
+    add-options-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_add_options_for:n
+          \@@_add_options_for:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{ round-half }
 %  Choosing between \enquote{normal} rounding to even and commercial rounding and sets the boolean accordingly.
 %    \begin{macrocode}
@@ -3449,7 +3488,7 @@ and the derived file cooking-units.sty.
       {
         \int_case:nn { \l_keys_choice_int }
           {
-            { 1 } { \bool_set_false:N \l_@@_cuam_old_bool } 
+            { 1 } { \bool_set_false:N \l_@@_cuam_old_bool }
             { 2 } { \bool_set_true:N \l_@@_cuam_old_bool }
           }
       } ,
@@ -4050,6 +4089,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_temperature_to_check_print_error:n #1
   {
+    \@@_error_if_unit_not_defined:n {#1}
     \msg_error:nn { cooking-units } { No-Value-given }
   }
 \cs_new:Npn \@@_temperatures_to_check_define:nn #1#2
@@ -4061,6 +4101,51 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \l_@@_temperatures_to_check_seq {#1}
         \fp_const:cn { c_@@_ #1 _min_fp } {#2}      
       }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_erase_options_for:n , \@@_erase_options_for_error:nn }
+%    \begin{macrocode}
+\cs_new:Npn \@@_erase_options_for:n #1
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \clist_clear:c { l_@@_predefined_option_##1_clist }
+  }
+\cs_new:Npn \@@_erase_options_for_error:nn #1#2
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \msg_error:nn { cooking-units } { Value-not-allowed }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_set_options_for:n , \@@_set_options_for:nn }
+%    \begin{macrocode}
+\cs_new:Npn \@@_set_options_for:n #1
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \msg_error:nn { cooking-units } { No-Value-given }
+  }
+\cs_new:Npn \@@_set_options_for:nn #1#2
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \clist_set:cn { l_@@_predefined_option_#1_clist } {#2}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_add_options_for:n , \@@_add_options_for:nn }
+%    \begin{macrocode}
+\cs_new:Npn \@@_add_options_for:n #1
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \msg_error:nn { cooking-units } { No-Value-given }
+  }
+\cs_new:Npn \@@_add_options_for:nn #1#2
+  {
+    \@@_error_if_unit_not_defined:n {#1}
+    \clist_put_right:cn { l_@@_predefined_option_#1_clist } {#2}
   }
 %    \end{macrocode}
 % \end{macro}
