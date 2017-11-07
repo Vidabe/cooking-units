@@ -5454,7 +5454,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
   {
-    \@@_phrase_list_if_exists_for_current_langauge:NT \l_@@_phrase_prop
+    \@@_phrase_prop_get_for_current_langauge:NT \l_@@_phrase_prop
       {
         \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
           { phrase-list-list } \c_@@_postfix_phrase_tl
@@ -6247,7 +6247,7 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
       { \prg_return_true: }
   } 
-\prg_new_conditional:Npnn \@@_phrase_list_if_exists_for_current_langauge:N #1 { T }
+\prg_new_conditional:Npnn \@@_phrase_prop_get_for_current_langauge:N #1 { T }
   {
     \@@_translate_let:Nxx \l_tmpa_tl { phrase-list } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF \l_tmpa_tl \q_@@_no_translation
