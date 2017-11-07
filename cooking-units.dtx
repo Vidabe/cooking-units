@@ -5240,7 +5240,16 @@ and the derived file cooking-units.sty.
   }
 \cs_generate_variant:Nn \@@_cutext_print_input:Nn { NV }
 \cs_new_protected:Npn \@@_cutext_print_input:N #1
-  { \@@_cutext_print_input:NV #1 \l_@@_option_unit_tl }
+  { 
+    \bool_lazy_any:nTF
+      {
+        { \l_@@_fraction_in_input_bool }
+        { \l_@@_special_sign_bool }
+        { \l_@@_draft_bool }
+      }
+      { \@@_cutext_print_input:NV #1 \l_@@_given_unit_tl }
+      { \@@_cutext_print_input:NV #1 \l_@@_option_unit_tl }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5280,8 +5289,8 @@ and the derived file cooking-units.sty.
         { \l_@@_special_sign_bool }
         { \l_@@_draft_bool }
       }
-      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
-      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl }
+      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl } %% ToDo: Maybe set given equal to option?
+      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
     \@@_unitname_get:NxF \l_@@_tmpa_tl \l_@@_tmpb_tl
       { 
         \msg_warning:nnx 
