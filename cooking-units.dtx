@@ -5266,8 +5266,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_pre_process_input:NN #1#2
   {
-    \bool_if:NF \l_@@_special_sign_bool
-      { \@@_cutext_check_unitname_consequences:NN #1#2 }
+    \@@_cutext_check_unitname_consequences:NN #1#2
   }
 %    \end{macrocode}
 % It doesn't matter if I check if the singular or the plural translation exists,
