@@ -3984,7 +3984,7 @@ and the derived file cooking-units.sty.
       { \bool_set_true:N #1 }
       { \bool_set_false:N #1 }
     \bool_lazy_and:nnT 
-      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+      { \l_@@_range_in_input_bool } {#1}
       { 
         \@@_if_integer:VTF #3
           { \bool_set_true:N #1 }
