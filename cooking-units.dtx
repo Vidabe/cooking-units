@@ -3975,6 +3975,25 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{ \@@_if_integer:n }
+%   Checking if the input consists only of numbers. 
+%    \begin{macrocode}
+\cs_new:Npn \@@_bool_set_if_integers:NNN #1#2#3
+  {
+    \@@_if_integer:VTF #2
+      { \bool_set_true:N #1 }
+      { \bool_set_false:N #1 }
+    \bool_lazy_and:nnT 
+      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+      { 
+        \@@_if_integer:VTF #3
+          { \bool_set_true:N #1 }
+          { \bool_set_false:N #1 }
+      } 
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 %
 % \begin{macro}[TF]{ \@@_fp_if_equal_one:n}
@@ -4493,9 +4512,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} 
-%  { 
-%    \@@_set_process_and_print_for_cunum: ,
+% \begin{macro} { \@@_set_process_and_print_for_cunum: ,
 %    \@@_set_process_and_print_for_cutext: ,
 %    \@@_set_process_and_print_for_cuam:
 %  }
@@ -5289,7 +5306,7 @@ and the derived file cooking-units.sty.
         { \l_@@_special_sign_bool }
         { \l_@@_draft_bool }
       }
-      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl } %% ToDo: Maybe set given equal to option?
+      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
     \@@_unitname_get:NxF \l_@@_tmpa_tl \l_@@_tmpb_tl
       { 
@@ -5313,18 +5330,21 @@ and the derived file cooking-units.sty.
         \@@_cutext_post_process_input_aux:NN #1#2
       }
   }
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_new:Npn \@@_cutext_post_process_input_aux:NN #1#2
   {
-    \@@_if_integer:VTF #1 
-      { \bool_set_true:N \l_@@_tmpa_bool }
-      { \bool_set_false:N \l_@@_tmpa_bool }
-    \bool_lazy_and:nnT 
-      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
-      { 
-        \@@_if_integer:VTF #2
-          { \bool_set_true:N \l_@@_tmpa_bool }
-          { \bool_set_false:N \l_@@_tmpa_bool }
-      } 
+    \@@_bool_set_if_integers:NNN \l_@@_tmpa_bool #1 #2
+%    \@@_if_integer:VTF #1 
+%      { \bool_set_true:N \l_@@_tmpa_bool }
+%      { \bool_set_false:N \l_@@_tmpa_bool }
+%    \bool_lazy_and:nnT 
+%      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+%      { 
+%        \@@_if_integer:VTF #2
+%          { \bool_set_true:N \l_@@_tmpa_bool }
+%          { \bool_set_false:N \l_@@_tmpa_bool }
+%      } 
     \bool_if:NTF \l_@@_range_in_input_bool
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
@@ -5425,16 +5445,17 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_aux:NN #1#2
   {
-    \@@_if_integer:VTF #1 
-      { \bool_set_true:N \l_@@_tmpa_bool }
-      { \bool_set_false:N \l_@@_tmpa_bool }
-    \bool_lazy_and:nnT 
-      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
-      { 
-        \@@_if_integer:VTF #2
-          { \bool_set_true:N \l_@@_tmpa_bool }
-          { \bool_set_false:N \l_@@_tmpa_bool }
-      } 
+    \@@_bool_set_if_integers:NNN \l_@@_tmpa_bool #1 #2
+%    \@@_if_integer:VTF #1 
+%      { \bool_set_true:N \l_@@_tmpa_bool }
+%      { \bool_set_false:N \l_@@_tmpa_bool }
+%    \bool_lazy_and:nnT 
+%      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+%      { 
+%        \@@_if_integer:VTF #2
+%          { \bool_set_true:N \l_@@_tmpa_bool }
+%          { \bool_set_false:N \l_@@_tmpa_bool }
+%      } 
     \bool_lazy_and:nnT 
       { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool }
       {
