@@ -2018,6 +2018,10 @@ and the derived file cooking-units.sty.
 %   \cuam{12} \\
 %   \cuam{12--24} \\
 %   \cuam{36} \\
+%   \cusetup{use-phrases=true, print-numerals=true} @
+%   \cuam{12} \\
+%   \cuam{12--24} \\
+%   \cuam{36} \\
 % \end{cuexamplecode}
 % \end{myde}
 %
@@ -3081,7 +3085,7 @@ and the derived file cooking-units.sty.
 % \l_@@_cutext_change_unit_bool,
 % \l_@@_round_commercial_bool,
 % \l_@@_use_phrases_bool,
-% \l_@@_check_if_phrase_used_bool
+% \l_@@_lokal_phrase_bool
 %   }
 % Some booleans we need later.
 %    \begin{macrocode}
@@ -3107,8 +3111,9 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_cutext_change_unit_bool
 \bool_new:N \l_@@_round_commercial_bool
 \bool_new:N \l_@@_use_phrases_bool
-\bool_new:N \l_@@_check_if_phrase_used_bool
-\bool_new:N \l_@@_local_numeral_bool
+\bool_new:N \l_@@_lokal_phrase_bool
+\bool_new:N \l_@@_print_numeral_bool
+\bool_new:N \l_@@_lokal_numeral_bool
 \bool_new:N \l_@@_significant_figures_positive_bool
 %    \end{macrocode}
 %
@@ -3126,7 +3131,7 @@ and the derived file cooking-units.sty.
 % Setting some of them to \texttt{true} or another boolean respectively.
 %    \begin{macrocode}
 \bool_set_true:N \l_@@_cutext_change_unit_bool
-\bool_set_eq:NN \l_@@_local_numeral_bool \g_@@_opt_numeral_bool
+\bool_set_eq:NN \l_@@_print_numeral_bool \g_@@_opt_numeral_bool
 %    \end{macrocode}
 %
 %
@@ -3565,7 +3570,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ print-numerals }
 % A not very good name, but I couldn't think of a better name.
 %    \begin{macrocode}
-    print-numerals .bool_set:N = \l_@@_local_numeral_bool ,
+    print-numerals .bool_set:N = \l_@@_print_numeral_bool ,
     print-numerals .default:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4476,6 +4481,10 @@ and the derived file cooking-units.sty.
       { \l_@@_calc_because_ref_was_given_bool } { \l_@@_calc_for_persons_bool }
       { \bool_set_true:N \l_@@_calc_persons_bool }
       { \bool_set_false:N \l_@@_calc_persons_bool }
+    \bool_lazy_and:nnTF
+      { \g_@@_opt_numeral_bool } { \l_@@_print_numeral_bool }
+      { \bool_set_true:N \l_@@_lokal_numeral_bool }
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5220,9 +5229,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N #1 { TF }
   {
-    \bool_lazy_and:nnTF 
-      { \g_@@_opt_numeral_bool } 
-      { \l_@@_local_numeral_bool }
+    \bool_if:NTF \l_@@_lokal_numeral_bool
       {
         \@@_if_parse_and_integer:VTF #1
           {
@@ -5290,26 +5297,7 @@ and the derived file cooking-units.sty.
     \bool_if:NF \l_@@_special_sign_bool
       { \@@_cutext_check_unitname_consequences:NN #1#2 }
   }
-\cs_new:Npn \@@_cutext_post_process_input:NN #1#2
-  {
-    \bool_if:NF \l_@@_special_sign_bool
-      {
-        \bool_if:NTF \l_@@_range_in_input_bool
-          { 
-            \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 
-            \bool_if:NT \g_@@_opt_numeral_bool
-              {
-              \bool_lazy_and:nnF
-                { \fp_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-                { \fp_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-                { \bool_set_false:N \l_@@_local_numeral_bool }
-              }
-          }
-          { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
-      }
-  }
 %    \end{macrocode}
-%
 % It doesn't matter if I check if the singular or the plural translation exists,
 % as the plural one exists if the singular exists and vice versa.
 %    \begin{macrocode}
@@ -5337,46 +5325,57 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
-%
-% \begin{macro} { \@@_old_cutext_default:nnn }
-% \changes {2016/06/11} {0.98a} { New command }
 %    \begin{macrocode}
-\cs_new:Npn \@@_old_cutext_default:nnn #1#2#3
+\cs_new:Npn \@@_cutext_post_process_input:NN #1#2
   {
-    \bool_if:NTF \l_@@_draft_bool
-      {#2}
+    \bool_if:NF \l_@@_special_sign_bool
       {
-        \tl_set:Nn \l_@@_cutext_last_value_tl {#2}
-        \tl_if_in:NVTF \l_@@_cutext_last_value_tl \l_@@_input_range_sign_tl
-          { 
-            \tl_replace_once:NVn \l_@@_cutext_last_value_tl 
-              \l_@@_input_range_sign_tl { \q_@@_range } 
-            \@@_old_cutext_parse_range:Vn \l_@@_cutext_last_value_tl {#3} 
-          }{
-            \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#3}
-          }
+        \@@_cutext_post_process_input_aux:NN #1#2
       }
   }
+\cs_new:Npn \@@_cutext_post_process_input_aux:NN #1#2
+  {
+    \@@_if_integer:VTF #1 
+      { \bool_set_true:N \l_@@_tmpa_bool }
+      { \bool_set_false:N \l_@@_tmpa_bool }
+    \bool_lazy_and:nnT 
+      { \l_@@_range_in_input_bool } { \l_@@_tmpa_bool }
+      { 
+        \@@_if_integer:VTF #2
+          { \bool_set_true:N \l_@@_tmpa_bool }
+          { \bool_set_false:N \l_@@_tmpa_bool }
+      } 
+    \bool_if:NTF \l_@@_range_in_input_bool
+      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
+      { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
+    \bool_if:NT \l_@@_lokal_numeral_bool
+      { \@@_cutext_post_process_input_numerals:NN #1#2 }
+  }
+\cs_new:Npn \@@_cutext_post_process_input_numerals:NN #1#2
+  {
+    \bool_if:NTF \l_@@_tmpa_bool
+      {
+        \bool_if:NTF \l_@@_range_in_input_bool
+          {
+            \bool_lazy_and:nnF
+              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          }{
+            \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool } 
+          }
+      }
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+  }
 %    \end{macrocode}
-% \end{macro}
 %
-%    \begin{macrocode}
-\cs_new:Npn \@@_old_cutext_parse_range:nn #1 #2
-  {
-    \@@_old_cutext_parse_range_aux:nww {#2} #1 \q_stop
-  }
-\cs_generate_variant:Nn \@@_old_cutext_parse_range:nn { V }
-\cs_new:Npn \@@_old_cutext_parse_range_aux:nww #1 #2 \q_@@_range #3 \q_stop
-  {
-    \tl_set:Nn \l_@@_tmpa_tl {#2}
-    \tl_set:Nn \l_@@_cutext_last_value_tl {#3}
-    \@@_cutext_print_input:Nn \l_@@_tmpa_tl {#1}
-    \tl_use:N \l_@@_cutext_range_sign_tl
-    \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#1}
-  }
-%    \end{macrocode}
+%
+%
+%
+%
+%
+%
 %
 %
 % \section{cuam}
@@ -5423,18 +5422,27 @@ and the derived file cooking-units.sty.
     \@@_set_process_and_print_for_cuam:
     \tl_set_eq:NN \l_@@_given_unit_tl \c_@@_cuam_marker_tl
     \tl_set_eq:NN \l_@@_option_unit_tl \c_@@_cuam_marker_tl
-    \bool_set_false:N \l_@@_check_if_phrase_used_bool
+    \bool_set_false:N \l_@@_lokal_phrase_bool
     \@@_initialise_after_unit_change:nn {#1} {#2}
   }
 %    \end{macrocode}
 %
-% I should redo this command \dots\ later
+% Important thing is: This whole process must not acticate if a
+% special sign is in the input. This is due to mathematical comparisons.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
   {
     \bool_if:NF \l_@@_special_sign_bool
       { \@@_cuam_post_process_input_aux:NN #1 #2 }
   }
+%    \end{macrocode}
+%
+% Just a helper macro to tidy up the main macro.  The first thing to
+% do is to check if the nummerical input consits of integers. This
+% is done both both numerical values (if a range exists).
+% Afterwards check if phrases are used and can be used at all. This needs
+% to be done before the numeral check as it can change the input.
+%    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_aux:NN #1#2
   {
     \@@_if_integer:VTF #1 
@@ -5448,75 +5456,98 @@ and the derived file cooking-units.sty.
           { \bool_set_false:N \l_@@_tmpa_bool }
       } 
     \bool_lazy_and:nnT 
-      { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool }
+      { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool } %% Check for printing use_phrases
       {
-        \@@_if_phrase_list_exists:NT \l_@@_phrase_prop
+        \@@_cuam_post_process_input_phrases:NN #1#2
+      }
+    \bool_if:NT \l_@@_lokal_numeral_bool
+      {
+        \@@_cuam_post_process_input_numerals:NN #1#2
+      }
+  }
+%    \end{macrocode}
+%
+% This command is more or less straightforward. Does a list of phrases exist
+% for the current language? If yes, parse the input and check if phrases are used.
+% It is important for ranges to check both values and then decide if phrases
+% are used or not.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
+  {
+    \@@_phrase_list_if_exists_for_current_langauge:NT \l_@@_phrase_prop
+      {
+        \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
+          { phrase-list-list } \c_@@_postfix_phrase_tl
+        \@@_cuam_post_process_input_phrases_aux:NN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
+        \bool_if:NT \l_@@_lokal_phrase_bool
           {
-            \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
-              { phrase-list-list } \c_@@_postfix_phrase_tl
-            \@@_cuam_process_input_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
-            \bool_if:NT \l_@@_check_if_phrase_used_bool
+            \bool_if:NTF \l_@@_range_in_input_bool
               {
-                \bool_if:NTF \l_@@_range_in_input_bool
+                \@@_cuam_post_process_input_phrases_aux:NN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                \bool_lazy_and:nnTF
+                  { \l_@@_lokal_phrase_bool }
+                  { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
+                  { \bool_set_true:N \l_@@_lokal_phrase_bool }
+                  { \bool_set_false:N \l_@@_lokal_phrase_bool }
+                \bool_if:NT \l_@@_lokal_phrase_bool
                   {
-                    \@@_cuam_process_input_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
-                    \bool_lazy_and:nnTF
-                      { \l_@@_check_if_phrase_used_bool }
-                      { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
-                      { \bool_set_true:N \l_@@_check_if_phrase_used_bool }
-                      { \bool_set_false:N \l_@@_check_if_phrase_used_bool }
-                    \bool_if:NT \l_@@_check_if_phrase_used_bool
-                      {
-                        \tl_set:NV #1 \l_@@_tmpa_int
-                        \tl_set:NV #2 \l_@@_tmpb_int
-                        \@@_cuam_get_phrase_name:NVN 
-                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
-                      }
-                  }{ 
-                      \tl_set:NV #1 \l_@@_tmpa_int 
-                      \@@_cuam_get_phrase_name:NVN 
-                        \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
+                    \tl_set:NV #1 \l_@@_tmpa_int
+                    \tl_set:NV #2 \l_@@_tmpb_int
+                    \@@_cuam_get_phrase_name:NVN 
+                      \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
                   }
+              }{ 
+                \tl_set:NV #1 \l_@@_tmpa_int 
+                \@@_cuam_get_phrase_name:NVN 
+                  \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpa_int
               }
           }
       }
-    \bool_lazy_and:nnT 
-      { \g_@@_opt_numeral_bool } { \l_@@_local_numeral_bool }
+  }
+%    \end{macrocode}
+%
+% Processing numerals. This function only happens if numerals are used
+% and because numerals have to be integers I can set the numeral boolean
+% false if there is no integer. 
+%
+% Furthermore, due to knowing that we have integers we can use
+% |\int_compare_p:nNn| instead of the |fp|-equivalent.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_post_process_input_numerals:NN #1#2
+  {
+    \bool_if:NTF \l_@@_tmpa_bool
       {
-        \bool_set_eq:NN \l_@@_local_numeral_bool \l_@@_tmpa_bool
-        \bool_if:NT \l_@@_local_numeral_bool
+        \bool_if:NTF \l_@@_range_in_input_bool
           {
-            \bool_if:NTF \l_@@_range_in_input_bool
-               {
-                 \bool_lazy_and:nnF
-                   { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-                   { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-                   { \bool_set_false:N \l_@@_local_numeral_bool }
-               }{
-                 \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
-                   { \bool_set_false:N \l_@@_local_numeral_bool } 
-               }
+            \bool_lazy_and:nnF
+              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          }{
+            \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool } 
           }
       }
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
   }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_cuam_check_if_larger:nn #1#2 { F }
-  {
-    \int_compare:nNnTF {#1} > {#2}
-      { \prg_return_true: }
-      { \prg_return_false: }
-  }
+%\prg_new_conditional:Npnn \@@_cuam_check_if_larger:nn #1#2 { F }
+%  {
+%    \int_compare:nNnTF {#1} > {#2}
+%      { \prg_return_true: }
+%      { \prg_return_false: }
+%  }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuam_process_input_aux:NNN #1#2#3
+\cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NN #1#2#3
   {
-    \bool_set_false:N \l_@@_check_if_phrase_used_bool
+    \bool_set_false:N \l_@@_lokal_phrase_bool
     \clist_map_inline:Nn \l_@@_phrase_numbers_clist
       {
-        \@@_cuam_check_if_larger:nnF { \int_abs:n {##1} } {#1}
+        \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
             \int_compare:nNnTF {##1} < { \c_zero }
               { \int_set_eq:NN \l_tmpa_int \c_one }
@@ -5525,7 +5556,7 @@ and the derived file cooking-units.sty.
               {
                 \int_set_eq:NN #2 \l_tmpa_int
                 \tl_set:Nn #3 {##1}
-                \bool_set_true:N \l_@@_check_if_phrase_used_bool
+                \bool_set_true:N \l_@@_lokal_phrase_bool
                 \clist_map_break:
               }
           }
@@ -5540,15 +5571,18 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_cuam_get_phrase_name:NnN { NVN }
 %    \end{macrocode}
 %
+% Note: THis command checks if \emph{both} a phrase and a numeral is 
+% used to decide whetever or not to print numerals. This is due to
+% the $1$ being dependent (in some languages) depending on the gender
+% of the following word. Currently testing only |\l_@@_lokal_numeral_bool| doesn't
+% work due to the   $1$ having a special parsing.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_print_numerical_input:N #1
   {
-    \bool_lazy_all:nTF
+    \bool_lazy_and:nnTF
+      { \l_@@_lokal_phrase_bool } 
+      { \l_@@_lokal_numeral_bool }
       {
-        { \l_@@_check_if_phrase_used_bool }
-        { \g_@@_opt_numeral_bool }
-        { \l_@@_local_numeral_bool }
-      }{
         \@@_int_if_equal_one:nTF {#1}
           {
             \@@_translate_one_to_and_check_existance:Nx \l_@@_translation_tmpa_tl
@@ -5563,7 +5597,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_print_correct_unitphrase:
   {
-    \bool_if:NT \l_@@_check_if_phrase_used_bool
+    \bool_if:NT \l_@@_lokal_phrase_bool
       {
         \l_@@_cuphrase_space_tl 
         \l_@@_phrase_phrase_tl
@@ -5589,107 +5623,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_cuam_old_parse:n #1
-  {
-    \tl_if_in:nVTF {#1} \l_@@_input_range_sign_tl
-      {
-        \tl_set:Nn \l_@@_tmpa_tl {#1}
-        \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range }
-        \@@_cuam_old_parse_range:V \l_@@_tmpa_tl
-      }{
-        \tl_if_in:nnTF {#1} { / }
-          {
-            \tl_if_in:nnTF {#1} { _ }
-              { \@@_cuam_old_parse_mixed_frac:www #1 \q_stop }
-              { \@@_cuam_old_parse_frac:ww #1 \q_stop }
-          }{ 
-            \tl_if_in:nnTF {#1} { _ }
-              { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
-              { \@@_cuam_old_parse_scale:n {#1} }
-          }
-      }
-  }
-\cs_generate_variant:Nn \@@_cuam_old_parse:n { V }
-%    \end{macrocode}
 %
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_old_parse_range:n #1
-  {
-    \@@_cuam_old_parse_range_aux:ww #1 \q_nil
-  }
-\cs_generate_variant:Nn \@@_cuam_old_parse_range:n { V }
-\cs_new:Npn \@@_cuam_old_parse_range_aux:ww #1 \q_@@_range #2 \q_nil
-  {
-    #1 \l_@@_cunum_range_sign_tl #2
-  }
-%    \end{macrocode}
-%
-%
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_old_parse_scale:n #1 {#1}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_old_parse_frac:ww #1/#2 \q_stop
-  { \@@_frac:nn {#1} {#2} }
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_old_parse_mixed_frac:www #1_#2/#3 \q_stop
-  { 
-    #1 
-    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
-    \@@_frac:nn {#2} {#3} 
-  }
-%    \end{macrocode}
-%
-% \section {cufrac}
-%
-% Obsolete.
-%    \begin{macrocode}
-\NewDocumentCommand \cufrac { O{} m }
-  {
-    \msg_error:nnnn { cooking-units } { obsolete-command } { \cufrac } { \cuam }
-    \group_begin:
-    \tl_if_empty:nF {#1}
-      { \keys_set:nn { cooking-units } {#1} }
-    \@@_cufrac:n {#2}
-    \group_end:
-  }
-\cs_new:Npn \@@_cufrac:n #1
-  {
-    \tl_set_rescan:Nnn \l_@@_tmpa_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N\ %
-      } {#1}
-    \@@_cufrac_parse:V \l_@@_tmpa_tl
-  }
-\cs_new:Npn \@@_cufrac_parse:n #1
-  {
-    \tl_if_in:nnTF {#1} { / }
-      {
-        \tl_if_in:nnTF {#1} { _ }
-          { \@@_cufrac_parse_mixed_frac:www #1 \q_stop }
-          { \@@_cufrac_parse_frac:ww #1 \q_stop }
-      }{ 
-        \tl_if_in:nnTF {#1} { _ }
-          { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
-          { \@@_cufrac_parse_scale:n {#1} }
-      }
-  }
-\cs_generate_variant:Nn \@@_cufrac_parse:n { V }
-\cs_new:Npn \@@_cufrac_parse_scale:n #1 {#1}
-\cs_new:Npn \@@_cufrac_parse_frac:ww #1/#2 \q_stop
-  { \@@_frac:nn {#1} {#2} }
-\cs_new:Npn \@@_cufrac_parse_mixed_frac:www #1_#2/#3 \q_stop
-  { 
-    #1 
-    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
-    \@@_frac:nn {#2} {#3} 
-  }
-%    \end{macrocode}
 %
 % \section {cukeys}
 %
@@ -6333,7 +6267,7 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
       { \prg_return_true: }
   } 
-\prg_new_conditional:Npnn \@@_if_phrase_list_exists:N #1 { TF , T , F }
+\prg_new_conditional:Npnn \@@_phrase_list_if_exists_for_current_langauge:N #1 { T }
   {
     \@@_translate_let:Nxx \l_tmpa_tl { phrase-list } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF \l_tmpa_tl \q_@@_no_translation
@@ -6451,6 +6385,156 @@ and the derived file cooking-units.sty.
     \@@_cuphrase_parse:n
   }
 %    \end{macrocode}
+%
+%
+%
+%
+% \subsection{Old stuff}
+%
+% \begin{macro} { \@@_old_cutext_default:nnn }
+% \changes {2016/06/11} {0.98a} { New command }
+%    \begin{macrocode}
+\cs_new:Npn \@@_old_cutext_default:nnn #1#2#3
+  {
+    \bool_if:NTF \l_@@_draft_bool
+      {#2}
+      {
+        \tl_set:Nn \l_@@_cutext_last_value_tl {#2}
+        \tl_if_in:NVTF \l_@@_cutext_last_value_tl \l_@@_input_range_sign_tl
+          { 
+            \tl_replace_once:NVn \l_@@_cutext_last_value_tl 
+              \l_@@_input_range_sign_tl { \q_@@_range } 
+            \@@_old_cutext_parse_range:Vn \l_@@_cutext_last_value_tl {#3} 
+          }{
+            \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#3}
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_old_cutext_parse_range:nn #1 #2
+  {
+    \@@_old_cutext_parse_range_aux:nww {#2} #1 \q_stop
+  }
+\cs_generate_variant:Nn \@@_old_cutext_parse_range:nn { V }
+\cs_new:Npn \@@_old_cutext_parse_range_aux:nww #1 #2 \q_@@_range #3 \q_stop
+  {
+    \tl_set:Nn \l_@@_tmpa_tl {#2}
+    \tl_set:Nn \l_@@_cutext_last_value_tl {#3}
+    \@@_cutext_print_input:Nn \l_@@_tmpa_tl {#1}
+    \tl_use:N \l_@@_cutext_range_sign_tl
+    \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#1}
+  }
+%    \end{macrocode} 
+%
+%
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_cuam_old_parse:n #1
+  {
+    \tl_if_in:nVTF {#1} \l_@@_input_range_sign_tl
+      {
+        \tl_set:Nn \l_@@_tmpa_tl {#1}
+        \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range }
+        \@@_cuam_old_parse_range:V \l_@@_tmpa_tl
+      }{
+        \tl_if_in:nnTF {#1} { / }
+          {
+            \tl_if_in:nnTF {#1} { _ }
+              { \@@_cuam_old_parse_mixed_frac:www #1 \q_stop }
+              { \@@_cuam_old_parse_frac:ww #1 \q_stop }
+          }{ 
+            \tl_if_in:nnTF {#1} { _ }
+              { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
+              { \@@_cuam_old_parse_scale:n {#1} }
+          }
+      }
+  }
+\cs_generate_variant:Nn \@@_cuam_old_parse:n { V }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_old_parse_range:n #1
+  {
+    \@@_cuam_old_parse_range_aux:ww #1 \q_nil
+  }
+\cs_generate_variant:Nn \@@_cuam_old_parse_range:n { V }
+\cs_new:Npn \@@_cuam_old_parse_range_aux:ww #1 \q_@@_range #2 \q_nil
+  {
+    #1 \l_@@_cunum_range_sign_tl #2
+  }
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_old_parse_scale:n #1 {#1}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_old_parse_frac:ww #1/#2 \q_stop
+  { \@@_frac:nn {#1} {#2} }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_old_parse_mixed_frac:www #1_#2/#3 \q_stop
+  { 
+    #1 
+    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+    \@@_frac:nn {#2} {#3} 
+  }
+%    \end{macrocode}
+%
+%
+% \subsubsection {cufrac}
+%
+% Obsolete.
+%    \begin{macrocode}
+\NewDocumentCommand \cufrac { O{} m }
+  {
+    \msg_error:nnnn { cooking-units } { obsolete-command } { \cufrac } { \cuam }
+    \group_begin:
+    \tl_if_empty:nF {#1}
+      { \keys_set:nn { cooking-units } {#1} }
+    \@@_cufrac:n {#2}
+    \group_end:
+  }
+\cs_new:Npn \@@_cufrac:n #1
+  {
+    \tl_set_rescan:Nnn \l_@@_tmpa_tl
+      {
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_ignore:N\ %
+      } {#1}
+    \@@_cufrac_parse:V \l_@@_tmpa_tl
+  }
+\cs_new:Npn \@@_cufrac_parse:n #1
+  {
+    \tl_if_in:nnTF {#1} { / }
+      {
+        \tl_if_in:nnTF {#1} { _ }
+          { \@@_cufrac_parse_mixed_frac:www #1 \q_stop }
+          { \@@_cufrac_parse_frac:ww #1 \q_stop }
+      }{ 
+        \tl_if_in:nnTF {#1} { _ }
+          { \msg_error:nnn { cooking-units } { missing-slash } {#1} }
+          { \@@_cufrac_parse_scale:n {#1} }
+      }
+  }
+\cs_generate_variant:Nn \@@_cufrac_parse:n { V }
+\cs_new:Npn \@@_cufrac_parse_scale:n #1 {#1}
+\cs_new:Npn \@@_cufrac_parse_frac:ww #1/#2 \q_stop
+  { \@@_frac:nn {#1} {#2} }
+\cs_new:Npn \@@_cufrac_parse_mixed_frac:www #1_#2/#3 \q_stop
+  { 
+    #1 
+    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+    \@@_frac:nn {#2} {#3} 
+  }
+%    \end{macrocode}
+%
+%
+%
 %
 % \subsection {cusetup}
 %
