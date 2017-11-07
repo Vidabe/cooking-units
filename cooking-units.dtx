@@ -3955,9 +3955,8 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ \@@_if_integer:n , \@@_if_parse_and_integer:n}
-%   Checking if the input consists only of numbers. Furthermore tests if
-%   the input should be parsed at all.
+% \begin{macro}{ \@@_if_integer:n }
+%   Checking if the input consists only of numbers. 
 %    \begin{macrocode}
 \prg_new_protected_conditional:Npnn \@@_if_integer:n #1 { TF , F , T }
   {
@@ -3973,17 +3972,6 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_if_integer:nTF { V }
 \cs_generate_variant:Nn \@@_if_integer:nT { V }
 \cs_generate_variant:Nn \@@_if_integer:nF { V }
-\prg_new_protected_conditional:Npnn \@@_if_parse_and_integer:n #1 { TF }
-  {
-    \bool_if:NTF \l_@@_draft_bool
-      { \prg_return_false: }
-      {
-        \@@_if_integer:nTF {#1}
-          { \prg_return_true: } 
-          { \prg_return_false: }
-      }
-  }
-\cs_generate_variant:Nn \@@_if_parse_and_integer:nTF { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5225,29 +5213,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
-% \begin{macro} {\@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N}
-%    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N #1 { TF }
-  {
-    \bool_if:NTF \l_@@_lokal_numeral_bool
-      {
-        \@@_if_parse_and_integer:VTF #1
-          {
-            \int_compare:nNnTF {#1} < { \l_@@_print_numerals_below_int }
-              { \prg_return_true: }
-              { \prg_return_false: }
-          }{ \prg_return_false: }
-      }{ \prg_return_false: }
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 % \begin{macro} {\@@_cutext_print_input:Nn , \@@_cutext_print_input:NV}
 % \changes {2016/06/11} {0.99} {New.}
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cutext_print_input:Nn #1#2
   {
-    \@@_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:NTF #1
+    \bool_if:NTF \l_@@_lokal_numeral_bool
       {
         \@@_int_if_equal_one:nTF {#1}
           {
@@ -5456,7 +5428,7 @@ and the derived file cooking-units.sty.
           { \bool_set_false:N \l_@@_tmpa_bool }
       } 
     \bool_lazy_and:nnT 
-      { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool } %% Check for printing use_phrases
+      { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool }
       {
         \@@_cuam_post_process_input_phrases:NN #1#2
       }
@@ -6406,9 +6378,49 @@ and the derived file cooking-units.sty.
               \l_@@_input_range_sign_tl { \q_@@_range } 
             \@@_old_cutext_parse_range:Vn \l_@@_cutext_last_value_tl {#3} 
           }{
-            \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#3}
+            \@@_old_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#3}
           }
       }
+  }
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_old_cutext_print_input:Nn #1#2
+  {
+    \@@_old_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:NTF #1
+      {
+        \@@_int_if_equal_one:nTF {#1}
+          {
+            \@@_translate_one_to_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
+            \bool_if:NTF \l_@@_cutext_uppercase_word_bool
+              {
+                \exp_args:Nx \tl_upper_case:n { \tl_head:V \l_@@_translation_tmpa_tl }
+                \tl_tail:V \l_@@_translation_tmpa_tl
+              }
+              { \l_@@_translation_tmpa_tl }
+          }{ 
+            \bool_if:NTF \l_@@_cutext_uppercase_word_bool
+              { \@@_print_Numeral:n {#1} }
+              { \@@_print_numeral:n {#1} }
+          }
+      }
+      { \@@_print_numerical_input:N #1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro} {\@@_old_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N}
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \@@_old_cutext_if_numeral_is_int_and_parse_and_smaller_then_print_numerals:N #1 { TF }
+  {
+    \bool_if:NTF \l_@@_lokal_numeral_bool
+      {
+        \@@_if_integer:VTF #1
+          {
+            \int_compare:nNnTF {#1} < { \l_@@_print_numerals_below_int }
+              { \prg_return_true: }
+              { \prg_return_false: }
+          }{ \prg_return_false: }
+      }{ \prg_return_false: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -6423,9 +6435,9 @@ and the derived file cooking-units.sty.
   {
     \tl_set:Nn \l_@@_tmpa_tl {#2}
     \tl_set:Nn \l_@@_cutext_last_value_tl {#3}
-    \@@_cutext_print_input:Nn \l_@@_tmpa_tl {#1}
+    \@@_old_cutext_print_input:Nn \l_@@_tmpa_tl {#1}
     \tl_use:N \l_@@_cutext_range_sign_tl
-    \@@_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#1}
+    \@@_old_cutext_print_input:Nn \l_@@_cutext_last_value_tl {#1}
   }
 %    \end{macrocode} 
 %
