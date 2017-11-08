@@ -3877,7 +3877,7 @@ and the derived file cooking-units.sty.
 % -- instead of printing the keyname (see  \pkg{translations}) -- we fall back
 % to \cs{cunum}.
 %    \begin{macrocode}
-\msg_new:nnnn { cooking-units } { cutext-no-translation-available } %% ToDo
+\msg_new:nnnn { cooking-units } { cutext-no-translation-available }
   { 
     For \ the \ unit \ '#1' \ there \ exists \ no \ translation \ to \ be \ used \
     for \ \cutext and \ \Cutext. \
@@ -5489,34 +5489,6 @@ and the derived file cooking-units.sty.
       }
   }
 %    \end{macrocode}
-%
-% Processing numerals. This function only happens if numerals are used
-% and because numerals have to be integers I can set the numeral boolean
-% false if there is no integer. 
-%
-% Furthermore, due to knowing that we have integers we can use
-% |\int_compare_p:nNn| instead of the |fp|-equivalent.
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_post_process_input_numerals:NN #1#2
-  {
-    \bool_if:NTF \l_@@_tmpa_bool
-      {
-        \bool_if:NTF \l_@@_range_in_input_bool
-          {
-            \bool_lazy_and:nnF
-              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-              { \bool_set_false:N \l_@@_lokal_numeral_bool }
-          }{
-            \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
-              { \bool_set_false:N \l_@@_lokal_numeral_bool } 
-          }
-      }
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
-  }
-%    \end{macrocode}
-%
-%
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NNN #1#2#3
   {
@@ -5547,7 +5519,35 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_cuam_get_phrase_name:NnN { NVN }
 %    \end{macrocode}
 %
-% Note: THis command checks if \emph{both} a phrase and a numeral is 
+%
+% Processing numerals. This function only happens if numerals are used
+% and because numerals have to be integers I can set the numeral boolean
+% false if there is no integer. 
+%
+% Furthermore, due to knowing that we have integers we can use
+% |\int_compare_p:nNn| instead of the |fp|-equivalent.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_post_process_input_numerals:NN #1#2
+  {
+    \bool_if:NTF \l_@@_tmpa_bool
+      {
+        \bool_if:NTF \l_@@_range_in_input_bool
+          {
+            \bool_lazy_and:nnF
+              { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+              { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          }{
+            \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+              { \bool_set_false:N \l_@@_lokal_numeral_bool } 
+          }
+      }
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+  }
+%    \end{macrocode}
+%
+%
+% Note: This command checks if \emph{both} a phrase and a numeral is 
 % used to decide whetever or not to print numerals. This is due to
 % the $1$ being dependent (in some languages) depending on the gender
 % of the following word. Currently testing only |\l_@@_lokal_numeral_bool| doesn't
