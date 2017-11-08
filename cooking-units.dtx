@@ -5458,16 +5458,17 @@ and the derived file cooking-units.sty.
       {
         \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
           { phrase-list-list } \c_@@_postfix_phrase_tl
-        \@@_cuam_post_process_input_phrases_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
+        \@@_cuam_post_process_input_phrases_aux:NNN 
+          #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
         \bool_if:NT \l_@@_lokal_phrase_bool
           {
             \bool_if:NTF \l_@@_range_in_input_bool
               {
-                \@@_cuam_post_process_input_phrases_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
-                \bool_lazy_and:nnTF
+                \@@_cuam_post_process_input_phrases_aux:NNN 
+                  #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                \bool_lazy_and:nnF
                   { \l_@@_lokal_phrase_bool }
                   { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
-                  { \bool_set_true:N \l_@@_lokal_phrase_bool }
                   { \bool_set_false:N \l_@@_lokal_phrase_bool }
                 \bool_if:NT \l_@@_lokal_phrase_bool
                   {
