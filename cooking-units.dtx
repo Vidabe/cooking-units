@@ -5457,10 +5457,10 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
   {
-    \@@_phrase_prop_get_for_current_langauge:NT \l_@@_phrase_prop
+    \@@_get_phrase_for_current_langauge:NNT 
+      \l_@@_phrase_prop 
+      \l_@@_phrase_numbers_clist
       {
-        \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
-          { phrase-list-list } \c_@@_postfix_phrase_tl
         \@@_cuam_post_process_input_phrases_aux:NNN 
           #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
         \bool_if:NT \l_@@_lokal_phrase_bool
@@ -6228,12 +6228,15 @@ and the derived file cooking-units.sty.
       { \prg_return_false: }
       { \prg_return_true: }
   } 
-\prg_new_conditional:Npnn \@@_phrase_prop_get_for_current_langauge:N #1 { T }
+\prg_new_conditional:Npnn \@@_get_phrase_for_current_langauge:NN #1#2 { T }
   {
     \@@_translate_let:Nxx #1 { phrase-list } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF #1 \q_@@_no_translation
       { \prg_return_false: }
-      { \prg_return_true: }
+      { 
+        \@@_translate_let:Nxx #2 { phrase-list-list } \c_@@_postfix_phrase_tl
+        \prg_return_true: 
+      }
   } 
 %    \end{macrocode}
 %    \begin{macrocode}
