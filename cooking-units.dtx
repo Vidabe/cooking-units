@@ -5458,12 +5458,12 @@ and the derived file cooking-units.sty.
       {
         \@@_translate_let:Nxx \l_@@_phrase_numbers_clist 
           { phrase-list-list } \c_@@_postfix_phrase_tl
-        \@@_cuam_post_process_input_phrases_aux:NN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
+        \@@_cuam_post_process_input_phrases_aux:NNN #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
         \bool_if:NT \l_@@_lokal_phrase_bool
           {
             \bool_if:NTF \l_@@_range_in_input_bool
               {
-                \@@_cuam_post_process_input_phrases_aux:NN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
+                \@@_cuam_post_process_input_phrases_aux:NNN #2 \l_@@_tmpb_int \l_@@_tmpb_tl
                 \bool_lazy_and:nnTF
                   { \l_@@_lokal_phrase_bool }
                   { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
@@ -5514,7 +5514,7 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NN #1#2#3
+\cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NNN #1#2#3
   {
     \bool_set_false:N \l_@@_lokal_phrase_bool
     \clist_map_inline:Nn \l_@@_phrase_numbers_clist
@@ -6016,7 +6016,7 @@ and the derived file cooking-units.sty.
 %
 % \section {Names}
 %
-%
+% Stolen from \pkg{l3keys.dtx}
 %    \begin{macrocode}
 \tl_new:N \l_@@_sanitise_tl
 \cs_new_protected:Npn \@@_sanitise_aux:w #1 \q_mark
