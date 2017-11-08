@@ -4894,7 +4894,10 @@ and the derived file cooking-units.sty.
               { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
               { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
             \bool_if:NT \l_@@_calc_persons_bool
-              { \@@_calc_for_number_of_persons_and_store_in:NN \l_@@_tmpa_tl \l_@@_tmpa_tl }
+              { 
+                \@@_calc_for_number_of_persons_and_store_in:NN 
+                  \l_@@_tmpa_tl \l_@@_tmpa_tl 
+              }
             \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_check_temperature_limit:N \l_@@_tmpa_tl
           }
