@@ -6221,7 +6221,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_phrase_prop_get_for:NN #1#2 { TF }
+\prg_new_conditional:Npnn \@@_phrase_list_get_for:NN #1#2 { TF }
   {
     \@@_translate_let:VNxx #2 #1 { phrase-prop } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF #1 \q_@@_no_translation
@@ -6249,7 +6249,7 @@ and the derived file cooking-units.sty.
     \tl_set:Nn \l_@@_language_tl {#1}
 %    \end{macrocode}
 %    \begin{macrocode}
-      \@@_phrase_prop_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
+      \@@_phrase_list_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
         {
           \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
             { phrase-clist } \c_@@_postfix_phrase_tl
