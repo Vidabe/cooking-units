@@ -6230,8 +6230,8 @@ and the derived file cooking-units.sty.
   } 
 \prg_new_conditional:Npnn \@@_phrase_prop_get_for_current_langauge:N #1 { T }
   {
-    \@@_translate_let:Nxx \l_tmpa_tl { phrase-list } \c_@@_postfix_phrase_tl
-    \tl_if_eq:NNTF \l_tmpa_tl \q_@@_no_translation
+    \@@_translate_let:Nxx #1 { phrase-list } \c_@@_postfix_phrase_tl
+    \tl_if_eq:NNTF #1 \q_@@_no_translation
       { \prg_return_false: }
       { \prg_return_true: }
   } 
