@@ -5579,21 +5579,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{\@@_cuam_old:n}
-%    \begin{macrocode}
-\cs_new:Npn \@@_cuam_old:n #1
-  {
-    \tl_set_rescan:Nnn \l_@@_tmpa_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N\ %
-      } {#1}
-    \bool_if:NTF \l_@@_draft_bool
-      { \l_@@_tmpa_tl }
-      { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 %
@@ -6441,6 +6426,22 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode} 
 %
+%
+% \begin{macro}{\@@_cuam_old:n}
+%    \begin{macrocode}
+\cs_new:Npn \@@_cuam_old:n #1
+  {
+    \tl_set_rescan:Nnn \l_@@_tmpa_tl
+      {
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_ignore:N\ %
+      } {#1}
+    \bool_if:NTF \l_@@_draft_bool
+      { \l_@@_tmpa_tl }
+      { \@@_cuam_old_parse:V \l_@@_tmpa_tl }
+  }
+%    \end{macrocode}
+% \end{macro}
 %
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_old_parse:n #1
