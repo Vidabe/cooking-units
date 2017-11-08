@@ -3143,11 +3143,11 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 % \begin{macro}{ \q_@@_no_translation }
-% Note the spelling mistake in \enquote{available}.
 %    \begin{macrocode}
 \quark_new:N \q_@@_no_translation
 %    \end{macrocode}
 %\end{macro}
+%
 %
 %
 % \begin{macro}{
@@ -4104,6 +4104,26 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_tl_set_fp_and_eval:Nn { Nc }
 %    \end{macrocode}
 % \end{macro}
+%
+%
+%
+% \begin{macro}{  }
+% I am using this construction often enough, so \dots\ yeah.
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \@@_change_unit: { TF }
+  { 
+    \bool_lazy_any:nTF
+      {
+        { \l_@@_fraction_in_input_bool }
+        { \l_@@_special_sign_bool }
+        { \l_@@_draft_bool }
+      }
+      { \prg_return_false: }
+      { \prg_return_true: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\@@_temperature_to_check_print_error:n,\@@_temperatures_to_check_define:nn}
 % Commands used in the option \texttt{temperature-to-check}.
@@ -5162,14 +5182,9 @@ and the derived file cooking-units.sty.
   {
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
     \tl_use:N \l_@@_value_unit_space_tl
-    \bool_lazy_any:nTF
-      {
-        { \l_@@_fraction_in_input_bool }
-        { \l_@@_special_sign_bool }
-        { \l_@@_draft_bool }
-      }
-      { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unit_tl }
+    \@@_change_unit:TF
       { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unit_tl }
+      { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unit_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5273,14 +5288,9 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_cutext_print_input:Nn { NV }
 \cs_new_protected:Npn \@@_cutext_print_input:N #1
   { 
-    \bool_lazy_any:nTF
-      {
-        { \l_@@_fraction_in_input_bool }
-        { \l_@@_special_sign_bool }
-        { \l_@@_draft_bool }
-      }
-      { \@@_cutext_print_input:NV #1 \l_@@_given_unit_tl }
+    \@@_change_unit:TF
       { \@@_cutext_print_input:NV #1 \l_@@_option_unit_tl }
+      { \@@_cutext_print_input:NV #1 \l_@@_given_unit_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5289,18 +5299,13 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext_print_correct_unitname:
   {
     \l_@@_cutext_space_tl
-    \bool_lazy_any:nTF
-      {
-        { \l_@@_fraction_in_input_bool }
-        { \l_@@_special_sign_bool }
-        { \l_@@_draft_bool }
-      }
-      { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unitname_pl_tl }
+    \@@_change_unit:TF
       {
         \@@_fp_if_equal_one:nTF { \l_@@_cutext_last_value_tl }
           { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unitname_tl }
           { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unitname_pl_tl }
       }
+      { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unitname_pl_tl }
   }
 %    \end{macrocode}
 %
@@ -5315,14 +5320,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_check_unitname_consequences:NN #1#2
   {
-    \bool_lazy_any:nTF
-      {
-        { \l_@@_fraction_in_input_bool }
-        { \l_@@_special_sign_bool }
-        { \l_@@_draft_bool }
-      }
-      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
+    \@@_change_unit:TF
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
+      { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
     \@@_unitname_get:NxF \l_@@_tmpa_tl \l_@@_tmpb_tl
       { 
         \msg_warning:nnx 
