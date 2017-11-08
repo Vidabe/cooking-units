@@ -433,7 +433,7 @@ and the derived file cooking-units.sty.
     \__cooking_units_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
       { 
           \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_clist 
-            { phrase-list-list } \c__cooking_units_postfix_phrase_tl
+            { phrase-clist } \c__cooking_units_postfix_phrase_tl
       }
       { \ERROR }
     \clist_gput_right:Nn \l_tmpa_clist { THEEND }
@@ -6217,24 +6217,24 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\@@_newtranslation_base:nVn { phrase-list } \c_@@_postfix_phrase_tl { \q_@@_no_translation }
+\@@_newtranslation_base:nVn { phrase-prop } \c_@@_postfix_phrase_tl { \q_@@_no_translation }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_phrase_list_get_for:NN #1#2 { TF , T , F }
   {
-    \@@_translate_let:VNxx #2 #1 { phrase-list } \c_@@_postfix_phrase_tl
+    \@@_translate_let:VNxx #2 #1 { phrase-prop } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF #1 \q_@@_no_translation
       { \prg_return_false: }
       { \prg_return_true: }
   } 
 \prg_new_conditional:Npnn \@@_get_phrase_for_current_langauge:NN #1#2 { T }
   {
-    \@@_translate_let:Nxx #1 { phrase-list } \c_@@_postfix_phrase_tl
+    \@@_translate_let:Nxx #1 { phrase-prop } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF #1 \q_@@_no_translation
       { \prg_return_false: }
       { 
-        \@@_translate_let:Nxx #2 { phrase-list-list } \c_@@_postfix_phrase_tl
+        \@@_translate_let:Nxx #2 { phrase-clist } \c_@@_postfix_phrase_tl
         \prg_return_true: 
       }
   } 
@@ -6252,7 +6252,7 @@ and the derived file cooking-units.sty.
       \@@_phrase_list_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
         {
           \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
-            { phrase-list-list } \c_@@_postfix_phrase_tl
+            { phrase-clist } \c_@@_postfix_phrase_tl
         }{
           \prop_clear:N \l_@@_phrase_prop
           \clist_clear:N \l_@@_phrase_numbers_clist
@@ -6281,11 +6281,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %    \begin{macrocode}
     \@@_deftranslation_to:VxxV
-      \l_@@_language_tl { phrase-list } 
+      \l_@@_language_tl { phrase-prop } 
       \c_@@_postfix_phrase_tl 
       \l_@@_phrase_prop
     \@@_deftranslation_to:VxxV 
-      \l_@@_language_tl { phrase-list-list } 
+      \l_@@_language_tl { phrase-clist } 
       \c_@@_postfix_phrase_tl \l_@@_phrase_numbers_clist
   }  
 %    \end{macrocode}
