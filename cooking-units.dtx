@@ -5312,14 +5312,6 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_pre_process_input:NN #1#2
   {
-    \@@_cutext_check_unitname_consequences:NN #1#2
-  }
-%    \end{macrocode}
-% It doesn't matter if I check if the singular or the plural translation exists,
-% as the plural one exists if the singular exists and vice versa.
-%    \begin{macrocode}
-\cs_new:Npn \@@_cutext_check_unitname_consequences:NN #1#2
-  {
     \@@_change_unit:TF
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
       { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
