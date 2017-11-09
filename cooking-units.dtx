@@ -4033,9 +4033,9 @@ and the derived file cooking-units.sty.
   {
     \str_case:nnF {#1}
       {
-        { m } {}
-        { f } {}
-        { n } {}
+        { m } { }
+        { f } { }
+        { n } { }
       } { \msg_error:nnn { cooking-units } { unknown-gender } {#1} } 
   }
 %    \end{macrocode}
