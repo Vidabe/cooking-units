@@ -3971,7 +3971,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ \@@_if_integer:n }
 %   Checking if the input consists only of numbers. 
 %    \begin{macrocode}
-\prg_new_protected_conditional:Npnn \@@_if_integer:n #1 { TF , F , T }
+\prg_new_protected_conditional:Npnn \@@_if_integer:n #1 { TF , F }
   {
     \tl_map_inline:nn {#1} 
       {
@@ -3983,7 +3983,6 @@ and the derived file cooking-units.sty.
     \use_i:nn \prg_return_true: \prg_return_false:
   }
 \cs_generate_variant:Nn \@@_if_integer:nTF { V }
-\cs_generate_variant:Nn \@@_if_integer:nT { V }
 \cs_generate_variant:Nn \@@_if_integer:nF { V }
 %    \end{macrocode}
 % \end{macro}
