@@ -3121,7 +3121,7 @@ and the derived file cooking-units.sty.
 % booleans a lot.
 %    \begin{macrocode}
 \bool_new:N \l_@@_range_in_input_bool
-\bool_new:N \l_@@_fraction_in_input_bool
+\bool_new:N \l_@@_lokal_fraction_bool
 \bool_new:N \l_@@_decimal_in_input_bool
 %    \end{macrocode}
 % \end{macro}
@@ -4130,7 +4130,7 @@ and the derived file cooking-units.sty.
   { 
     \bool_lazy_any:nTF
       {
-        { \l_@@_fraction_in_input_bool }
+        { \l_@@_lokal_fraction_bool }
         { \l_@@_special_sign_bool }
         { \l_@@_draft_bool }
       }
@@ -4498,7 +4498,7 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_error_bool
     \bool_set_false:N \l_@@_range_in_input_bool
-    \bool_set_false:N \l_@@_fraction_in_input_bool
+    \bool_set_false:N \l_@@_lokal_fraction_bool
   }
 %    \end{macrocode}
 % Some units have options added to them. To get those options it is first
@@ -4691,8 +4691,8 @@ and the derived file cooking-units.sty.
           {
             \bool_lazy_or:nnTF
               { \l_@@_lokal_persons_bool }{ \l_@@_eval_fractions_bool }
-              { \bool_set_false:N \l_@@_fraction_in_input_bool }
-              { \bool_set_true:N \l_@@_fraction_in_input_bool }
+              { \bool_set_false:N \l_@@_lokal_fraction_bool }
+              { \bool_set_true:N \l_@@_lokal_fraction_bool }
             \tl_if_in:nnTF {#1} { _ }
               { \@@_parse_mixed_fraction_in_input:www #1 \q_stop }
               { \@@_parse_fraction_in_input:ww #1 \q_stop }
@@ -4849,7 +4849,7 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \bool_lazy_or:nnTF
-      { \l_@@_fraction_in_input_bool }
+      { \l_@@_lokal_fraction_bool }
       { \l_@@_special_sign_bool }
       {
         \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
@@ -4890,7 +4890,7 @@ and the derived file cooking-units.sty.
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
     \bool_lazy_or:nnTF
-      { \l_@@_fraction_in_input_bool }
+      { \l_@@_lokal_fraction_bool }
       { \l_@@_special_sign_bool }
       {
         \@@_print_fractions:nnn
