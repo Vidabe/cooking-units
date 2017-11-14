@@ -2811,6 +2811,7 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \prop_get:cVN { cVc }
 \cs_generate_variant:Nn \int_abs:n { c }
 \cs_generate_variant:Nn \tl_show:n { x , f }
+\cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2903,6 +2904,8 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_phantom_tl
 \tl_new:N \l_@@_phrase_phrase_tl
 \tl_new:N \l_@@_unit_key_not_allowed_tl
+\tl_new:N \l_@@_expand_amount_tl
+\tl_new:N \l_@@_expand_unit_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2917,6 +2920,8 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_input_decimal_mark_tl { . , }
 \tl_set:Nn \l_@@_input_value_signs_tl { + - }
 \tl_set:Nn \l_@@_input_allowed_special_signs_tl { ? }
+\tl_set:Nn \l_@@_expand_amount_tl { n }
+\tl_set:Nn \l_@@_expand_unit_tl { n }
 \tl_set_rescan:Nnn \c_@@_input_str_hash_one_tl
   { \char_set_catcode_letter:N \# } {#1}
 %    \end{macrocode}
@@ -3596,17 +3601,18 @@ and the derived file cooking-units.sty.
     expand-input .choices:nn =
       { n , o , f , x }
       {
-        
+        \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
+        \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
       } ,
     expand-amount .choices:nn =
       { n , o , f , x }
       {
-        
+        \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
       } ,
     expand-unit .choices:nn =
       { n , o , f , x }
       {
-        
+        \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
       } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4493,7 +4499,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_initialise_default:n #1
   {
-    \tl_set:Nn \l_@@_given_unit_tl {#1}
+    \use:c { tl_set:N \l_@@_expand_unit_tl } \l_@@_given_unit_tl {#1}
+%    \tl_set:Nn \l_@@_given_unit_tl {#1}
     \@@_error_if_unit_not_defined:V \l_@@_given_unit_tl
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_error_bool
@@ -4654,12 +4661,13 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_input:n #1
   {
-    \tl_set_rescan:Nnn \l_@@_tmpa_tl
+    \use:c { tl_set:N \l_@@_expand_amount_tl } \l_@@_tmpa_tl {#1}
+    \tl_set_rescan:NnV \l_@@_tmpa_tl
       {
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
-      } {#1}
+      } \l_@@_tmpa_tl
     \bool_lazy_or:nnTF
       { \l_@@_draft_bool }
       { \tl_if_empty_p:N \l_@@_tmpa_tl }
@@ -5303,7 +5311,7 @@ and the derived file cooking-units.sty.
   }
 \cs_generate_variant:Nn \@@_cutext_print_input:Nn { NV }
 \cs_new_protected:Npn \@@_cutext_print_input:N #1
-  { 
+  {
     \@@_change_unit:TF
       { \@@_cutext_print_input:NV #1 \l_@@_option_unit_tl }
       { \@@_cutext_print_input:NV #1 \l_@@_given_unit_tl }
