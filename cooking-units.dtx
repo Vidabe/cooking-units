@@ -4050,13 +4050,13 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_fp_if_equal_one:n #1 { TF }
   {
-    \fp_compare:nNnTF {#1} = { \c_one_fp }
+    \fp_compare:nNnTF {#1} = { 1.0 }
       { \prg_return_true: }
       { \prg_return_false: }
   }
 \prg_new_conditional:Npnn \@@_int_if_equal_one:n #1 { TF }
   {
-    \int_compare:nNnTF {#1} = { \c_one }
+    \int_compare:nNnTF {#1} = { 1 }
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -5442,7 +5442,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \tl_const:Nn \c_@@_cuam_marker_tl { @@_cunum }
 \tl_new:c { l_@@_tmpa_ \c_@@_cuam_marker_tl  _ tl }
-\tl_set:cn { l_@@_tmpa_ \c_@@_cuam_marker_tl  _ tl } { \c_one_fp }
+\tl_set:cn { l_@@_tmpa_ \c_@@_cuam_marker_tl  _ tl } { 1.0 }
 \clist_new:c { l_@@_predefined_option_ \c_@@_cuam_marker_tl _clist }
 %    \end{macrocode}
 %
@@ -5565,7 +5565,7 @@ and the derived file cooking-units.sty.
         \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
             \int_compare:nNnTF {##1} < { \c_zero }
-              { \int_set_eq:NN \l_tmpa_int \c_one }
+              { \int_set:Nn \l_tmpa_int { 1 } }
               { \int_set:Nn \l_tmpa_int { \int_div_truncate:nn {#1} {##1} } }
             \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_int } = {#1}
               {
@@ -5696,11 +5696,11 @@ and the derived file cooking-units.sty.
           {
             \@@_cukeys_parse_and_create_single_key:nn {#1} {#2}
           }{
-            \fp_set_eq:NN \l_@@_tmpa_fp \c_one_fp
+            \fp_set:Nn \l_@@_tmpa_fp { 1.0 }
             \tl_set:Nn \l_@@_given_unit_tl {#1}
             \@@_cukeys_parse_and_create_keys:nn {#1} 
               { 
-                {#1} { \c_one_fp } #2 
+                {#1} { 1.0 } #2 
               } 
           }
       }
@@ -5807,7 +5807,7 @@ and the derived file cooking-units.sty.
     \seq_map_inline:Nn \l_@@_tmpa_seq
       {
         \prop_set_eq:cN { l_@@_cukeys_ ##1 _prop } \l_@@_tmpb_prop
-        \tl_set_eq:cN   { l_@@_tmpa_ ##1 _tl } \c_one_fp
+        \tl_set:cn   { l_@@_tmpa_ ##1 _tl } { 1.0 }
         \seq_map_inline:Nn \l_@@_tmpa_seq
           {
             \prop_put:cnx { l_@@_cukeys_ ##1 _prop }
@@ -5883,7 +5883,7 @@ and the derived file cooking-units.sty.
       {
         \char_set_catcode_letter:N \# %
         \char_set_catcode_ignore:N\ %
-      } { {#1} { \c_one_fp } #2 }
+      } { {#1} { 1.0 } #2 }
     \@@_cusinglekeys_parse_input:V \l_@@_tmpa_tl
     \@@_cusinglekeys_create_key_prop:n {#1}
     \clist_set_from_seq:NN \l_@@_tmpa_clist \l_@@_tmpa_seq
@@ -5916,7 +5916,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cusinglekeys_create_key_prop:n #1
   {
-    \tl_set_eq:cN { l_@@_tmpa_ #1 _tl } \c_one_fp
+    \tl_set:cn { l_@@_tmpa_ #1 _tl } { 1.0 }
     \prop_set_eq:cN { l_@@_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnn { l_@@_cukeys_ #1 _prop } { Erstes Ding } {#1}
     \prop_put:cnV { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
@@ -5983,7 +5983,7 @@ and the derived file cooking-units.sty.
   {
     \bool_set_false:N \l_@@_single_key_bool
     \tl_set:Nn \l_@@_tmpa_tl {#1}
-    \tl_set:Nn \l_@@_tmpb_tl { {#2} { \fp_eval:n { \c_one_fp / (#3) } } }
+    \tl_set:Nn \l_@@_tmpb_tl { {#2} { \fp_eval:n { 1.0 / (#3) } } }
     \@@_cukeys_add_keys_or_single_keys:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
   }
 %    \end{macrocode}
@@ -6055,7 +6055,7 @@ and the derived file cooking-units.sty.
       {
         \seq_put_right:Nn \g_@@_list_of_defined_units_seq {#2}
         \tl_new:c { l_@@_tmpa_  #2 _tl }
-        \tl_set_eq:cN { l_@@_tmpa_  #2 _tl } \c_one_fp
+        \tl_set:cn { l_@@_tmpa_  #2 _tl } { 1.0 }
         \clist_new:c { l_@@_predefined_option_#2_clist } 
         \keys_define:nn { cooking-units }
           {
