@@ -2975,12 +2975,11 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \l_@@_significant_figures_int }
-%   Stores the round-precision inside. Not sure if 'significant
-%   figures' is the correct therm for this. .
+% \begin{macro}{ \l_@@_round_precision_int }
+%   Stores the round-precision inside.
 %    \begin{macrocode}
-\int_new:N \l_@@_significant_figures_int
-\int_set:Nn \l_@@_significant_figures_int { 2 }
+\int_new:N \l_@@_round_precision_int
+\int_set:Nn \l_@@_round_precision_int { 2 }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3119,7 +3118,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_lokal_phrase_bool
 \bool_new:N \l_@@_print_numeral_bool
 \bool_new:N \l_@@_lokal_numeral_bool
-\bool_new:N \l_@@_significant_figures_positive_bool
+\bool_new:N \l_@@_round_precision_positive_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -3198,10 +3197,10 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     round-precision .code:n = 
       {
-        \int_set:Nn \l_@@_significant_figures_int {#1}
+        \int_set:Nn \l_@@_round_precision_int {#1}
         \int_compare:nNnT {#1} < { 0 }
-          { \bool_set_false:N \l_@@_significant_figures_positive_bool }
-          { \bool_set_true:N \l_@@_significant_figures_positive_bool }
+          { \bool_set_false:N \l_@@_round_precision_positive_bool }
+          { \bool_set_true:N \l_@@_round_precision_positive_bool }
       } ,
     round-precision .default:n = { 2 } ,
 %    \end{macrocode}
@@ -4227,10 +4226,10 @@ and the derived file cooking-units.sty.
           ,
           \bool_if:NTF \l_@@_round_to_int_bool 
             { \c_zero_fp } 
-            { \l_@@_significant_figures_int } 
+            { \l_@@_round_precision_int } 
           , #1 
         }
-        { \bool_if:NF \l_@@_round_to_int_bool { , \l_@@_significant_figures_int } }
+        { \bool_if:NF \l_@@_round_to_int_bool { , \l_@@_round_precision_int } }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5024,7 +5023,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
         \bool_lazy_or:nnF
-          { \l_@@_significant_figures_positive_bool }
+          { \l_@@_round_precision_positive_bool }
           { \l_@@_round_to_int_bool }
           { \bool_set_true:N \l_@@_round_number_bool }
       }
@@ -5033,7 +5032,7 @@ and the derived file cooking-units.sty.
           { 
             \bool_if:NTF \l_@@_round_to_int_bool
               { 0 }
-              { \l_@@_significant_figures_int }
+              { \l_@@_round_precision_int }
           }
           { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
@@ -5045,7 +5044,7 @@ and the derived file cooking-units.sty.
 %   After calculating the numbers are rounded (if needed, safed inside \cs{l_tmpa_bool}). 
 %   We test at first  if
 %   the input needs to be rounded by comparing the number of tokens after the 
-%   decimal with the number of significant figures plus one. Afterwards the 
+%   decimal with the round precision. Afterwards the 
 %   input is expanded and stored in \#1. If rounding needs to be done it happens now.
 %    \begin{macrocode}
 \cs_new:Npn \@@_round_calculated_input:Nn #1#2
