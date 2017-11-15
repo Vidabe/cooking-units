@@ -3160,7 +3160,7 @@ and the derived file cooking-units.sty.
 %    \l_@@_tmpb_prop ,
 %    \l_@@_tmpa_seq ,
 %  }
-% Some temporal stores which are used thoughout the code.
+% Some temporal stores which are used throughout the code.
 %    \begin{macrocode}
 \fp_new:N \l_@@_tmpa_fp
 \clist_new:N \l_@@_tmpa_clist
@@ -3629,6 +3629,14 @@ and the derived file cooking-units.sty.
     temperature .groups:n = { change-unit } ,
     energie .groups:n = { change-unit } ,
     time .groups:n = { change-unit } ,
+    add-unit-to-group .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_add_unit_to_group:n 
+          \@@_add_unit_to_group:nn 
+          {#1} 
+      },
+    add-unit-to-group .default:n = {} ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3767,11 +3775,22 @@ and the derived file cooking-units.sty.
   { 
     The \ key \ '#1' \ only \ accepts \ only \ 
     '#3' \ as \ a \ set \ of \ choices \ and \ '#2' \ is \ non \ of \ these.
-  } 
-  { 
-    The \ key \ accepts \ accepts\ only \ a \ fixed \ set \ of \ choices. \
+  }{ 
+    The \ key \ accepts \ only \ a \ fixed \ set \ of \ choices. \
     You \ can \ add \ new \ choices \ via \ \cuaddkeys, \ \cuaddsinglekeys \
     and \ \cuaddtokeys.
+    \msg_see_documentation_text:n {cooking-units} 
+  }
+%    \end{macrocode}
+% Adding a message for unit-groups.
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { group-choice-not-allowed } 
+  { 
+    The \ group \ key \ '#1' \ accepts \ only \ 
+    '#3' \ as \ a \ set \ of \ choices \ and \ '#2' \ is \ non \ of \ these.
+  }{ 
+    The \ key \ accepts\ only \ a \ fixed \ set \ of \ choices. \
+    You \ can \ add \ new \ choices \ via \ option \ 'add-unit-to-group'.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -3790,6 +3809,17 @@ and the derived file cooking-units.sty.
     specific\  ingredient\  is\  (was) \ not\  known\  to\  you. This\  message\ 
     reminds\  you\  about\  that\  fact.
     \msg_see_documentation_text:n {cooking-units}
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { group-key-unknown }
+  { 
+    The \ group \ key \ '#1' \ is \ not \ defined. \ Perhaps
+    \ you \ misspelled \ it?
+  }{ 
+    The \ group \ key \ is \ not \ defined.
+    \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
 %
@@ -4079,11 +4109,20 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_convert_to:n}
+% \begin{macro}{\@@_set_unit_groups:nn}
 %    \begin{macrocode}
 \cs_new:Npn \@@_set_unit_groups:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#2}
+    \seq_if_in:cnF { l_@@_ #1 _seq } {#2} 
+      { 
+        \msg_error:nnxxx 
+          { cooking-units } 
+          { group-choice-not-allowed }
+          {#1} 
+          {#2} 
+          { \seq_use:cnnn { l_@@_ #1 _seq } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
+      }
     \seq_map_inline:cn { l_@@_ #1 _seq }
       {
         \@@_keys_set:nnn { cooking-units } {##1} {#2}
@@ -4101,6 +4140,21 @@ and the derived file cooking-units.sty.
 \seq_set_split:Nnn \l_@@_temperature_seq { , } { C , F , Re , K }
 \seq_set_split:Nnn \l_@@_energie_seq { , } { cal, kcal , J , kJ , eV }
 \seq_set_split:Nnn \l_@@_time_seq { , } { d , h , min , s }
+\cs_new:Npn \@@_add_unit_to_group:n #1 
+  {
+    \msg_error:nn { cooking-units } { No-Value-given }
+  }
+\cs_new:Npn \@@_add_unit_to_group:nn #1#2 
+  { 
+     \seq_if_exist:cF { l_@@_ #1 _seq } 
+       { \msg_error:nn { cooking-units} { group-key-unknown } }
+     \clist_map_inline:nn {#2}
+       {
+         \@@_error_if_unit_not_defined:n {##1} 
+         \seq_if_in:cnF { l_@@_ #1 _seq }
+           { \seq_put_right:cn { l_@@_ #1 _seq } {##1} }
+       }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4725,7 +4779,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{ \@@_split_input:n, \@@_split_input:V }
-% Splits the input into   fractions or ranges (\lstinline|q_@@_range|).
+% Splits the input into   fractions or ranges.
 % Depending on the input on of the four macros are used.
 %    \begin{macrocode}
 \cs_new:Npn \@@_split_input:n #1
