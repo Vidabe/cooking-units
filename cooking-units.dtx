@@ -3197,7 +3197,7 @@ and the derived file cooking-units.sty.
     round-precision .code:n = 
       {
         \int_set:Nn \l_@@_round_precision_int {#1}
-        \int_compare:nNnT {#1} < { 0 }
+        \int_compare:nNnTF {#1} < { 0 }
           { \bool_set_false:N \l_@@_round_precision_positive_bool }
           { \bool_set_true:N \l_@@_round_precision_positive_bool }
       } ,
