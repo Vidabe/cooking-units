@@ -3604,16 +3604,25 @@ and the derived file cooking-units.sty.
         \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
         \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
       } ,
+    expand-input .default:n = { n } ,
+%    \end{macrocode}
+%    \begin{macrocode}
     expand-amount .choices:nn =
       { n , o , f , x }
       {
         \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
       } ,
+    expand-amount .default:n = { n } ,
+%    \end{macrocode}
+%    \begin{macrocode}
     expand-unit .choices:nn =
       { n , o , f , x }
       {
         \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
       } ,
+    expand-unit .default:n = { n } ,
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{ expand-input , expand-amount, expand-unit }
 %    \begin{macrocode}
