@@ -4380,14 +4380,14 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culabel:nn #1#2
   { 
-    \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
+    \int_if_exist:cTF { g_@@_number_of_persons_ #1 _int }
       {
         \msg_error:nnn { cooking-units } { label-already-defined } {#1}
       }{
         \@@_if_integer:nTF {#2}
           {
-            \int_new:c { l_@@_number_of_persons_ #1 _int }
-            \int_gset:cn { l_@@_number_of_persons_ #1 _int } {#2}
+            \int_new:c { g_@@_number_of_persons_ #1 _int }
+            \int_gset:cn { g_@@_number_of_persons_ #1 _int } {#2}
           }
           { \msg_error:nnn { cooking-units } { Number-of-persons-is-not-an-integer } {#2} }      
       }
@@ -4399,11 +4399,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_reference_label_and_persons:n #1
   { 
-    \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
+    \int_if_exist:cTF { g_@@_number_of_persons_ #1 _int }
       { 
         \bool_set_true:N \l_@@_calc_because_ref_was_given_bool
         \int_set_eq:Nc \l_@@_local_number_of_persons_int
-          { l_@@_number_of_persons_ #1 _int }
+          { g_@@_number_of_persons_ #1 _int }
       }
       { \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
   }
@@ -4414,11 +4414,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_curef:n #1
   { 
-    \int_if_exist:cTF { l_@@_number_of_persons_ #1 _int }
+    \int_if_exist:cTF { g_@@_number_of_persons_ #1 _int }
       {
         \bool_if:NTF \l_@@_calc_for_persons_bool
           { \int_use:N \l_@@_wanted_number_of_persons_int }
-          { \int_use:c { l_@@_number_of_persons_ #1 _int } }
+          { \int_use:c { g_@@_number_of_persons_ #1 _int } }
       }{ \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
   }
 %    \end{macrocode}
