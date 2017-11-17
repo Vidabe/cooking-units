@@ -286,7 +286,7 @@ and the derived file cooking-units.sty.
                   {
                     \token_if_parameter:NTF ##1
                       { 
-                        \int_compare:nNnTF { \l_tmpa_int } = { \c_zero }
+                        \int_compare:nNnTF { \l_tmpa_int } = { 0 }
                           { 
                             \c_hash_str 
                             \int_incr:N \l_tmpa_int
@@ -4334,7 +4334,7 @@ and the derived file cooking-units.sty.
         { 
           ,
           \bool_if:NTF \l_@@_round_to_int_bool 
-            { \c_zero_fp } 
+            { 0.0 } 
             { \l_@@_round_precision_int } 
           , #1 
         }
@@ -5640,7 +5640,7 @@ and the derived file cooking-units.sty.
       {
         \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
-            \int_compare:nNnTF {##1} < { \c_zero }
+            \int_compare:nNnTF {##1} < { 0 }
               { \int_set:Nn \l_tmpa_int { 1 } }
               { \int_set:Nn \l_tmpa_int { \int_div_truncate:nn {#1} {##1} } }
             \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_int } = {#1}
