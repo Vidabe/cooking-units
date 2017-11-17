@@ -3105,7 +3105,7 @@ and the derived file cooking-units.sty.
 % \l_@@_error_for_unknown_value_bool,
 % \l_@@_using_cutext_bool,
 % \l_@@_cuam_old_bool,
-% \l_@@_calc_for_persons_bool,
+% \l_@@_change_number_of_persons_bool,
 % \l_@@_calc_because_ref_was_given_bool,
 % \l_@@_lokal_persons_bool,
 % \l_@@_cutext_to_cunum_bool,
@@ -3131,7 +3131,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_error_for_unknown_value_bool
 \bool_new:N \l_@@_using_cutext_bool
 \bool_new:N \l_@@_cuam_old_bool
-\bool_new:N \l_@@_calc_for_persons_bool
+\bool_new:N \l_@@_change_number_of_persons_bool
 \bool_new:N \l_@@_calc_because_ref_was_given_bool
 \bool_new:N \l_@@_lokal_persons_bool
 \bool_new:N \l_@@_cutext_to_cunum_bool
@@ -3545,7 +3545,7 @@ and the derived file cooking-units.sty.
 % is not enough; it is also needed to tell the package to
 % recalculate the amounts.
 %    \begin{macrocode}
-    recalculate-amount .bool_set:N = \l_@@_calc_for_persons_bool ,
+    recalculate-amount .bool_set:N = \l_@@_change_number_of_persons_bool ,
     recalculate-amount .default:n = { false } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4416,7 +4416,7 @@ and the derived file cooking-units.sty.
   { 
     \int_if_exist:cTF { g_@@_number_of_persons_ #1 _int }
       {
-        \bool_if:NTF \l_@@_calc_for_persons_bool
+        \bool_if:NTF \l_@@_change_number_of_persons_bool
           { \int_use:N \l_@@_wanted_number_of_persons_int }
           { \int_use:c { g_@@_number_of_persons_ #1 _int } }
       }{ \msg_error:nnn { cooking-units } { label-not-defined } {#1} }
@@ -4660,7 +4660,7 @@ and the derived file cooking-units.sty.
     \tl_if_empty:nF {#2}
       { \keys_set_filter:nnn { cooking-units } { change-unit } {#2} }
     \bool_lazy_and:nnTF
-      { \l_@@_calc_because_ref_was_given_bool } { \l_@@_calc_for_persons_bool }
+      { \l_@@_calc_because_ref_was_given_bool } { \l_@@_change_number_of_persons_bool }
       { \bool_set_true:N \l_@@_lokal_persons_bool }
       { \bool_set_false:N \l_@@_lokal_persons_bool }
     \bool_lazy_and:nnTF
