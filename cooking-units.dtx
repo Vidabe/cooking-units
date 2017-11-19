@@ -2823,6 +2823,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_set_amount:Nn,\@@_set_unit:Nn}
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_set_amount:Nn \tl_set:Nn
+\cs_new_eq:NN \@@_set_unit:Nn \tl_set:Nn
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \begin{macro}{\@@_print_numeral:n , \@@_print_Numeral:n}
 % This command is used to print the fractions and can be changed
@@ -2904,8 +2911,6 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_phantom_tl
 \tl_new:N \l_@@_phrase_phrase_tl
 \tl_new:N \l_@@_unit_key_not_allowed_tl
-\tl_new:N \l_@@_expand_amount_tl
-\tl_new:N \l_@@_expand_unit_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2920,8 +2925,6 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_input_decimal_mark_tl { . , }
 \tl_set:Nn \l_@@_input_value_signs_tl { + - }
 \tl_set:Nn \l_@@_input_allowed_special_signs_tl { ? }
-\tl_set:Nn \l_@@_expand_amount_tl { n }
-\tl_set:Nn \l_@@_expand_unit_tl { n }
 \tl_set_rescan:Nnn \c_@@_input_str_hash_one_tl
   { \char_set_catcode_letter:N \# } {#1}
 %    \end{macrocode}
@@ -3053,6 +3056,13 @@ and the derived file cooking-units.sty.
 % Stores units which should be tested if \opt{check-temperature} equals true.
 %    \begin{macrocode}
 \seq_new:N \l_@@_temperatures_to_check_seq
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro} { \l_@@_curef_do_not_change_seq }
+% This contains the units which shouldn't be changed.
+%    \begin{macrocode}
+\seq_new:N \l_@@_curef_do_not_change_seq
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3201,6 +3211,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \subsection {Keys}
+
 %
 % Let's define some keys.
 %    \begin{macrocode}
@@ -3503,7 +3514,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ ref }
-% The <> option for keys.
+% The |<>| option for keys.
 %    \begin{macrocode}
     ref .code:n = 
       { 
@@ -3625,8 +3636,8 @@ and the derived file cooking-units.sty.
     expand-input .choices:nn =
       { n , o , f , x }
       {
-        \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
-        \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
+        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
       } ,
     expand-input .default:n = { n } ,
 %    \end{macrocode}
@@ -3634,7 +3645,7 @@ and the derived file cooking-units.sty.
     expand-amount .choices:nn =
       { n , o , f , x }
       {
-        \tl_set_eq:NN \l_@@_expand_amount_tl \l_keys_choice_tl
+        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
       } ,
     expand-amount .default:n = { n } ,
 %    \end{macrocode}
@@ -3642,7 +3653,7 @@ and the derived file cooking-units.sty.
     expand-unit .choices:nn =
       { n , o , f , x }
       {
-        \tl_set_eq:NN \l_@@_expand_unit_tl \l_keys_choice_tl
+        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
       } ,
     expand-unit .default:n = { n } ,
 %    \end{macrocode}
@@ -4619,8 +4630,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_initialise_default:n #1
   {
-    \use:c { tl_set:N \l_@@_expand_unit_tl } \l_@@_given_unit_tl {#1}
-%    \tl_set:Nn \l_@@_given_unit_tl {#1}
+    \@@_set_unit:Nn \l_@@_given_unit_tl {#1}
     \@@_error_if_unit_not_defined:V \l_@@_given_unit_tl
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_error_bool
@@ -4783,7 +4793,7 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NTF \l_@@_fourty_two_bool
       { \tl_clear:N \l_@@_tmpa_tl  }
-      { \use:c { tl_set:N \l_@@_expand_amount_tl } \l_@@_tmpa_tl {#1} }
+      { \@@_set_amount:Nn \l_@@_tmpa_tl {#1} }
     \tl_set_rescan:NnV \l_@@_tmpa_tl
       {
         \char_set_catcode_letter:N \_ %
