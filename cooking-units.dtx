@@ -4353,15 +4353,12 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_rounding_function:n #1 
   {
     #1
+      \bool_if:NTF \l_@@_round_to_int_bool
+        { , 0.0 }
+        { , \l_@@_round_precision_int }
       \bool_if:NTF \l_@@_round_commercial_bool
-        { 
-          ,
-          \bool_if:NTF \l_@@_round_to_int_bool 
-            { 0.0 } 
-            { \l_@@_round_precision_int } 
-          , #1 
-        }
-        { \bool_if:NF \l_@@_round_to_int_bool { , \l_@@_round_precision_int } }
+        { , #1 }
+        {  }
   }
 %    \end{macrocode}
 % \end{macro}
