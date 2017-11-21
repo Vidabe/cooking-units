@@ -4165,18 +4165,17 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_unit_groups:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#2}
-    \seq_if_in:cnF { l_@@_ #1 _seq } {#2} 
-      { 
+    \seq_if_in:cnTF { l_@@_ #1 _seq } {#2} 
+      {
+        \seq_map_inline:cn { l_@@_ #1 _seq }
+          { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
+      }{ 
         \msg_error:nnxxx 
           { cooking-units } 
           { group-choice-not-allowed }
           {#1} 
           {#2} 
           { \seq_use:cnnn { l_@@_ #1 _seq } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
-      }
-    \seq_map_inline:cn { l_@@_ #1 _seq }
-      {
-        \@@_keys_set:nnn { cooking-units } {##1} {#2}
       }
   }
 \cs_new:Npn \@@_add_unit_to_group:n #1 
