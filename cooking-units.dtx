@@ -650,7 +650,7 @@ and the derived file cooking-units.sty.
 %\date{October 23, 2017}%
 %
 % \maketitle
-%
+% 
 % \begin{documentation}
 % \begin{abstract}
 %   This package enables user to globally format units, to switch
@@ -3732,8 +3732,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { missing-slash }
   { 
-    You \ cannot \ use \ '_'  \ without \
-    '/' \ in \  '#1'.
+    You \ cannot \ use \ '_'  \ without \ '/'!
   }{ 
     You \ cannot \ have \ a \ mixed \ fraction \ ('_') \ without \
     a \ normal \ fraction \ ('/').
@@ -3796,19 +3795,19 @@ and the derived file cooking-units.sty.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
-% A second decimal sign is not allowed (No na net).
+% 
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Second-fraction-sign-not-allowed } 
-  { A \ second \ decimal \ fraction \ is \ not \ allowed. } 
+  { A \ second  \ fraction \ sign \ is \ not \ allowed. } 
   { 
     Perhaps \ you \ didn't \ type \ it \ correctly.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
-% A second decimal sign is not allowed (No na net).
+% 
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Second-mixed-fraction-sign-not-allowed } 
-  { A \ second \ decimal \ mixed \ fraction \ is \ not \ allowed. } 
+  { A \ second  \ mixed \ fraction \ sign \ is \ not \ allowed. } 
   { 
     Perhaps \ you \ didn't \ type \ it \ correctly.
     \msg_see_documentation_text:n {cooking-units} 
@@ -5012,7 +5011,7 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NTF #2 
       {
-        \tl_case;NnF #1
+        \tl_case:NnF #1
           {
             \c_@@_decimal_text_tl 
               { 
@@ -5028,9 +5027,8 @@ and the derived file cooking-units.sty.
                   { Second-mixed-fraction-sign-not-allowed }
               }
           } { \msg_error:nn { cooking-units } { internal-error } }
-      }{
-        \bool_set_true:N #2
       }
+      { \bool_set_true:N #2 }
   }
 %    \end{macrocode}
 % \end{macro}
