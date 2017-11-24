@@ -2836,8 +2836,8 @@ and the derived file cooking-units.sty.
 % This command is used to print the fractions and can be changed
 % accordingly.
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_numeral:n #1 {}
-\cs_new:Npn \@@_print_Numeral:n #1 {}
+\cs_new:Npn \@@_print_numeral:n #1 { }
+\cs_new:Npn \@@_print_Numeral:n #1 { }
 \bool_if:NT \g_@@_opt_numeral_bool
   {
     \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
@@ -3734,6 +3734,14 @@ and the derived file cooking-units.sty.
   { 
     You \ cannot \ use \ '_'  \ without \
     '/' \ in \  '#1'.
+  }{ 
+    You \ cannot \ have \ a \ mixed \ fraction \ ('_') \ without \
+    a \ normal \ fraction \ ('/').
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+\msg_new:nnnn { cooking-units } { slash-missing }
+  { 
+    You \ cannot \ use \ '/'  \ before \ '_'.
   }{ 
     You \ cannot \ have \ a \ mixed \ fraction \ ('_') \ without \
     a \ normal \ fraction \ ('/').
@@ -4881,6 +4889,8 @@ and the derived file cooking-units.sty.
           { \@@_parse_mixed_fraction_in_input: }
           { \@@_parse_fraction_in_input: }
       }{
+        \bool_if:NT \l_@@_lokal_mixed_fraction_bool
+          { \msg_error:nnx { cooking-units } { missing-slash } { \l_@@_tmpb_tl } }
         \bool_if:NTF \l_@@_range_in_input_bool
           {
             \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_tmpa_tl
@@ -4991,7 +5001,7 @@ and the derived file cooking-units.sty.
                               \c_@@_mixed_frac_text_tl 
                               \l_@@_lokal_mixed_fraction_bool
                             \bool_if:NT \l_@@_lokal_fraction_bool 
-                              { \msg_error:nn { cooking-units } { missing-slash } }
+                              { \msg_error:nn { cooking-units } { slash-missing } }
                             \tl_set_eq:NN \l_@@_mixed_fraction_tl \l_@@_tmpa_tl
                             \cs_set_eq:NN \@@_parse:N \@@_start_loop:N
                           }{
