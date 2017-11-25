@@ -3318,9 +3318,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     add-special-sign .code:n = 
       { 
-        \str_if_eq:nnTF {#1} { < }
-          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-          { \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+        \tl_map_inline:nn {#1} 
+          {
+            \str_if_eq:nnTF {##1} { < }
+              { 
+                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
+              }{
+                \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {##1}
+              }
+          }
+%        \str_if_eq:nnTF {#1} { < }
+%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+%          { \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
       } ,
     add-special-sign .default:n = { } ,
 %    \end{macrocode}
@@ -3331,9 +3340,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     set-special-sign .code:n = 
       { 
-        \str_if_eq:nnTF {#1} { < }
-          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-          { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+        \tl_map_inline:nn {#1} 
+          {
+            \str_if_eq:nnT {##1} { < }
+              { 
+                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
+                \tl_map_break:n { \use_none:nn }
+              }
+          }
+        \use:n { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+%        \str_if_eq:nnTF {#1} { < }
+%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+%          { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
       } ,
 %    \end{macrocode}
 %\end{macro}
