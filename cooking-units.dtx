@@ -3757,7 +3757,7 @@ and the derived file cooking-units.sty.
     a \ normal \ fraction \ ('/').
     \msg_see_documentation_text:n { cooking-units } 
   }
-\msg_new:nnnn { cooking-units } { slash-missing }
+\msg_new:nnnn { cooking-units } { fraction-wrong-order }
   { 
     You \ cannot \ use \ '/'  \ before \ '_'.
   }{ 
@@ -4074,7 +4074,7 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\msg_new:nnnn { cooking-units } { Translation-not-available } %% ToDo
+\msg_new:nnnn { cooking-units } { Translation-not-available }
   { 
     The \ translation \ for \ #1 \ does \ not \ exist. 
     Please \ define \ it \ using \ \cudefinename.
@@ -4899,7 +4899,6 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_lokal_fraction_bool
       {
         \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_tmpa_tl
-%%     Figure out special sign
         \bool_lazy_or:nnT
           { \l_@@_lokal_persons_bool }{ \l_@@_eval_fractions_bool }
           { \bool_set_false:N \l_@@_lokal_fraction_bool }
@@ -5019,7 +5018,7 @@ and the derived file cooking-units.sty.
                               \c_@@_mixed_frac_text_tl 
                               \l_@@_lokal_mixed_fraction_bool
                             \bool_if:NT \l_@@_lokal_fraction_bool 
-                              { \msg_error:nn { cooking-units } { slash-missing } }
+                              { \msg_error:nn { cooking-units } { fraction-wrong-order } }
                             \tl_set_eq:NN \l_@@_mixed_fraction_tl \l_@@_tmpa_tl
                             \cs_set_eq:NN \@@_parse:N \@@_start_loop:N
                           }{
