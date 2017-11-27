@@ -4315,7 +4315,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_tl_set_fp_and_eval:Nn #1#2
   { \tl_set:Nf #1 { \fp_eval:n {#2} } }
-\cs_generate_variant:Nn \@@_tl_set_fp_and_eval:Nn { Nc }
+\cs_generate_variant:Nn \@@_tl_set_fp_and_eval:Nn { Nv }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5230,7 +5230,7 @@ and the derived file cooking-units.sty.
     \fp_set:Nn \l_@@_tmpa_fp {#1}
     \tl_if_in:cnTF { l_@@_tmpa_ \l_@@_given_unit_tl _ tl } { \l_@@_tmpa_fp }
       { 
-        \@@_tl_set_fp_and_eval:Nc #2 { l_@@_tmpa_ \l_@@_given_unit_tl  _ tl }
+        \@@_tl_set_fp_and_eval:Nv #2 { l_@@_tmpa_ \l_@@_given_unit_tl  _ tl }
       }{ 
         \@@_tl_set_fp_and_eval:Nn #2 
           { \l_@@_tmpa_fp * \tl_use:c { l_@@_tmpa_ \l_@@_given_unit_tl _ tl }  }
