@@ -2795,7 +2795,7 @@ and the derived file cooking-units.sty.
 %  \tl_if_in:nVTF ,
 %  \tl_if_in:NVTF ,
 %  \tl_if_in:NVT ,
-%  \fp_compare:cNnT ,
+%  \fp_compare:vNnT ,
 %  \fp_eval:c ,
 %  \prop_get:cVc ,
 %  \int_abs:c ,
@@ -2807,11 +2807,8 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \tl_if_in:nnTF { nVTF , xnTF }
 \cs_generate_variant:Nn \tl_if_in:NnTF { NVTF  }
 \cs_generate_variant:Nn \tl_if_in:NnT { NVT }
-\cs_generate_variant:Nn \fp_compare:nNnT { cNnT }
-\cs_generate_variant:Nn \fp_eval:n { c }
+\cs_generate_variant:Nn \fp_compare:nNnT { vNnT }
 \cs_generate_variant:Nn \prop_get:cVN { cVc }
-\cs_generate_variant:Nn \int_abs:n { c }
-\cs_generate_variant:Nn \tl_show:n { x , f }
 \cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
 %    \end{macrocode}
 % \end{macro}
@@ -2878,7 +2875,6 @@ and the derived file cooking-units.sty.
 % \l_@@_input_allowed_special_signs_tl ,
 % \c_@@_input_str_hash_one_tl ,
 % \l_@@_input_range_sign_tl,
-% \l_@@_input_times_persons_sign,
 % \l_@@_cutext_space_tl,
 % \l_@@_cuphrase_space_tl,
 % \l_@@_translation_tmpa_tl,
@@ -2904,7 +2900,6 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_input_allowed_special_signs_tl 
 \tl_new:N \c_@@_input_str_hash_one_tl 
 \tl_new:N \l_@@_input_range_sign_tl
-\tl_new:N \l_@@_input_times_persons_sign
 \tl_new:N \l_@@_cutext_space_tl
 \tl_new:N \l_@@_cuphrase_space_tl
 \tl_new:N \l_@@_translation_tmpa_tl
@@ -2923,7 +2918,6 @@ and the derived file cooking-units.sty.
 % (You will see, I didn't have a better idea)
 %    \begin{macrocode}
 \tl_set:Nn \l_@@_input_digits_tl { 0123456789 }
-\tl_set:Nn \l_@@_input_times_persons_sign { * }
 \tl_set:Nn \l_@@_input_range_sign_tl { -- }
 \tl_set:Nn \l_@@_input_fraction_sign_tl { / }
 \tl_set:Nn \l_@@_input_mixed_fraction_sign_tl { _ }
@@ -5335,7 +5329,7 @@ and the derived file cooking-units.sty.
       {
         \seq_if_in:NVT \l_@@_temperatures_to_check_seq \l_@@_option_unit_tl
           { 
-            \fp_compare:cNnT 
+            \fp_compare:vNnT 
               { c_@@_ \l_@@_option_unit_tl _min_fp } > {#1}
               { 
                 \msg_error:nnxx { cooking-units } 
