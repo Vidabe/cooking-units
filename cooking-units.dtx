@@ -4970,7 +4970,7 @@ and the derived file cooking-units.sty.
         \tl_if_in:NnTF \l_@@_input_decimal_mark_tl {#1}
           { 
             \@@_check_repitition:NN 
-              \c_@@_decimal_text_tl 
+              \q_@@_decimal 
               \l_@@_decimal_in_input_bool
             \tl_put_right:Nn \l_@@_tmpa_tl { . }
           }{
@@ -5000,7 +5000,7 @@ and the derived file cooking-units.sty.
                     \tl_if_in:NnTF \l_@@_input_fraction_sign_tl {#1}
                       {
                         \@@_check_repitition:NN 
-                          \c_@@_frac_text_tl 
+                          \q_@@_frac 
                           \l_@@_lokal_fraction_bool
                         \tl_set_eq:NN \l_@@_number_tmpa_tl \l_@@_tmpa_tl
                         \cs_set_eq:NN \@@_parse:N \@@_start_loop:N
@@ -5008,7 +5008,7 @@ and the derived file cooking-units.sty.
                         \tl_if_in:NnTF \l_@@_input_mixed_fraction_sign_tl {#1}
                           {
                             \@@_check_repitition:NN 
-                              \c_@@_mixed_frac_text_tl 
+                              \q_@@_mixed_frac 
                               \l_@@_lokal_mixed_fraction_bool
                             \bool_if:NT \l_@@_lokal_fraction_bool 
                               { \msg_error:nn { cooking-units } { fraction-wrong-order } }
@@ -5025,29 +5025,22 @@ and the derived file cooking-units.sty.
           }
       }
   }
-\tl_const:Nn \c_@@_decimal_text_tl { decimal }
-\tl_const:Nn \c_@@_frac_text_tl { fraction }
-\tl_const:Nn \c_@@_mixed_frac_text_tl { mixed fraction }
+\quark_new:N \q_@@_decimal
+\quark_new:N \q_@@_frac
+\quark_new:N \q_@@_mixed_frac
 \cs_new:Npn \@@_check_repitition:NN #1#2
   {
     \bool_if:NTF #2 
       {
         \tl_case:NnF #1
           {
-            \c_@@_decimal_text_tl 
-              { 
-                \msg_error:nn { cooking-units } { Second-decimal-sign-not-allowed }
-              }
-            \c_@@_frac_text_tl 
-              { 
-                \msg_error:nn { cooking-units } { Second-fraction-sign-not-allowed }
-              }
-            \c_@@_mixed_frac_text_tl 
-              { 
-                \msg_error:nn { cooking-units } 
-                  { Second-mixed-fraction-sign-not-allowed }
-              }
-          } { \msg_error:nn { cooking-units } { internal-error } }
+            \q_@@_decimal 
+              { \msg_error:nn { cooking-units } { Second-decimal-sign-not-allowed } }
+            \q_@@_frac 
+              { \msg_error:nn { cooking-units } { Second-fraction-sign-not-allowed } }
+            \q_@@_mixed_frac 
+              { \msg_error:nn { cooking-units } { Second-mixed-fraction-sign-not-allowed } }
+          }{ \msg_error:nn { cooking-units } { internal-error } }
       }
       { \bool_set_true:N #2 }
   }
