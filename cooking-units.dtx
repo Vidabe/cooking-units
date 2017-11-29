@@ -3190,7 +3190,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-%
+% \begin{macro}{ \q_@@_decimal , \q_@@_frac , \q_@@_mixed_frac }
+%    \begin{macrocode}
+\quark_new:N \q_@@_decimal
+\quark_new:N \q_@@_frac
+\quark_new:N \q_@@_mixed_frac
+%    \end{macrocode}
+%\end{macro}
 %
 % \begin{macro}{
 %    \l_@@_tmpa_fp ,
@@ -5028,9 +5034,6 @@ and the derived file cooking-units.sty.
           }
       }
   }
-\quark_new:N \q_@@_decimal
-\quark_new:N \q_@@_frac
-\quark_new:N \q_@@_mixed_frac
 \cs_new:Npn \@@_check_repitition:NN #1#2
   {
     \bool_if:NTF #2 
