@@ -5111,6 +5111,8 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl } 
       }{
+        \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
+          { \msg_error:nnn { cooking-units } { Division-by-zero } }
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
         \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
@@ -5147,6 +5149,8 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpa_tl } 
           { \l_@@_number_tmpb_tl }
       }{
+        \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
+          { \msg_error:nnn { cooking-units } { Division-by-zero } }
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl
           {
             \bool_if:NTF \l_@@_minus_bool
