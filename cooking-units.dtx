@@ -2810,6 +2810,8 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \fp_compare:nNnT { vNnT }
 \cs_generate_variant:Nn \prop_get:cVN { cVc }
 \cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
+\cs_generate_variant:Nn \msg_error:nnnn { nnnV }
+\cs_generate_variant:Nn \msg_error:nnn { nnV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -2888,6 +2890,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_tmpa_tl
 \tl_new:N \l_@@_tmpb_tl
 \tl_new:N \l_@@_mixed_fraction_tl
+\tl_new:N \l_@@_given_amount_tl
 \tl_new:N \l_@@_given_unit_tl
 \tl_new:N \l_@@_option_unit_tl
 \tl_new:N \l_@@_language_tl
@@ -3753,7 +3756,7 @@ and the derived file cooking-units.sty.
   }
 \msg_new:nnnn { cooking-units } { fraction-wrong-order }
   { 
-    You \ cannot \ use \ '/'  \ before \ '_'.
+    You \ cannot \ use \ '/'  \ before \ '_' \ in \ '#1'.
   }{ 
     You \ cannot \ have \ a \ mixed \ fraction \ ('_') \ without \
     a \ normal \ fraction \ ('/').
@@ -3795,13 +3798,13 @@ and the derived file cooking-units.sty.
 % If fractions are evaluated division by zero is not allowed.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Division-by-zero } 
-  { Division\ by \ zero \ is \ not \ allowed. } 
+  { Division\ by \ zero \ is \ not \ allowed \ in \ #1. } 
   { See \ a \ math \ book \ of \ your \ choice \ or \ for \ example \ Wikipedia. }
 %    \end{macrocode}
 % Showing the not allowed token in the input. Hope this helps.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Token-not-allowed } 
-  { The \ token \ '#1' \ is \ not \ allowed. } 
+  { The \ token \ '#1' \ is \ not \ allowed \ in \ '#2'. } 
   { 
     The \ command \ accepts \ only \ a \ fixed \ number \ of \ tokens. 
     \msg_see_documentation_text:n {cooking-units} 
@@ -3810,7 +3813,7 @@ and the derived file cooking-units.sty.
 % A second decimal sign is not allowed (No na net).
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Second-decimal-sign-not-allowed } 
-  { A \ second \ decimal \ sign \ is \ not \ allowed. } 
+  { A \ second \ decimal \ sign \ is \ not \ allowed \ in \ '#1'. } 
   { 
     Perhaps \ you \ didn't \ type \ it \ correctly.
     \msg_see_documentation_text:n {cooking-units} 
@@ -3819,7 +3822,7 @@ and the derived file cooking-units.sty.
 % 
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Second-fraction-sign-not-allowed } 
-  { A \ second  \ fraction \ sign \ is \ not \ allowed. } 
+  { A \ second  \ fraction \ sign \ is \ not \ allowed \ in \ '#1'. } 
   { 
     Perhaps \ you \ didn't \ type \ it \ correctly.
     \msg_see_documentation_text:n {cooking-units} 
@@ -3828,7 +3831,7 @@ and the derived file cooking-units.sty.
 % 
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Second-mixed-fraction-sign-not-allowed } 
-  { A \ second  \ mixed \ fraction \ sign \ is \ not \ allowed. } 
+  { A \ second  \ mixed \ fraction \ sign \ is \ not \ allowed \ in \ '#1'. } 
   { 
     Perhaps \ you \ didn't \ type \ it \ correctly.
     \msg_see_documentation_text:n {cooking-units} 
@@ -4844,28 +4847,28 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_parse_input:n #1
   {
     \bool_if:NTF \l_@@_fourty_two_bool
-      { \tl_clear:N \l_@@_tmpb_tl  }
-      { \@@_set_amount:Nn \l_@@_tmpb_tl {#1} }
-    \tl_set_rescan:NnV \l_@@_tmpb_tl
+      { \tl_clear:N \l_@@_given_amount_tl  }
+      { \@@_set_amount:Nn \l_@@_given_amount_tl {#1} }
+    \tl_set_rescan:NnV \l_@@_given_amount_tl
       {
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
-      } \l_@@_tmpb_tl
+      } \l_@@_given_amount_tl
     \bool_lazy_or:nnTF
       { \l_@@_draft_bool }
-      { \tl_if_empty_p:N \l_@@_tmpb_tl }
+      { \tl_if_empty_p:N \l_@@_given_amount_tl }
       {
         \bool_if:NTF \l_@@_fourty_two_bool
           { 42 } 
-          { \l_@@_tmpb_tl }
+          { \l_@@_given_amount_tl }
       }{
-        \tl_if_in:NVT \l_@@_tmpb_tl \l_@@_input_range_sign_tl
+        \tl_if_in:NVT \l_@@_given_amount_tl \l_@@_input_range_sign_tl
           {
-            \tl_replace_once:NVn \l_@@_tmpb_tl \l_@@_input_range_sign_tl { \q_@@_range } 
+            \tl_replace_once:NVn \l_@@_given_amount_tl \l_@@_input_range_sign_tl { \q_@@_range } 
             \bool_set_true:N \l_@@_range_in_input_bool            
           }
-        \@@_parsing_amount_input:V \l_@@_tmpb_tl
+        \@@_parsing_amount_input:V \l_@@_given_amount_tl
         \@@_split_input:
       }
   }
@@ -4900,7 +4903,7 @@ and the derived file cooking-units.sty.
           { \@@_parse_fraction_in_input: }
       }{
         \bool_if:NT \l_@@_lokal_mixed_fraction_bool
-          { \msg_error:nnx { cooking-units } { missing-slash } { \l_@@_tmpb_tl } }
+          { \msg_error:nnV { cooking-units } { missing-slash } \l_@@_given_amount_tl }
         \bool_if:NTF \l_@@_range_in_input_bool
           {
             \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_tmpa_tl
@@ -4991,8 +4994,8 @@ and the derived file cooking-units.sty.
                             \exp_not:V \l_@@_input_fraction_sign_tl 
                             \exp_not:V \l_@@_input_mixed_fraction_sign_tl 
                           } {#1}
-                          { \msg_error:nnn { cooking-units } { fraction-not-allowed-with-range } {#1} }
-                          { \msg_error:nnn { cooking-units } { Token-not-allowed } {#1} }
+                          { \msg_error:nnV { cooking-units } { fraction-not-allowed-with-range } \l_@@_given_amount_tl  }
+                          { \msg_error:nnnV { cooking-units } { Token-not-allowed } {#1} \l_@@_given_amount_tl }
                         \bool_set_true:N \l_@@_error_bool
                         \tl_map_break:
                       }
@@ -5011,11 +5014,11 @@ and the derived file cooking-units.sty.
                               \q_@@_mixed_frac 
                               \l_@@_lokal_mixed_fraction_bool
                             \bool_if:NT \l_@@_lokal_fraction_bool 
-                              { \msg_error:nn { cooking-units } { fraction-wrong-order } }
+                              { \msg_error:nnV { cooking-units } { fraction-wrong-order } \l_@@_given_amount_tl }
                             \tl_set_eq:NN \l_@@_mixed_fraction_tl \l_@@_tmpa_tl
                             \cs_set_eq:NN \@@_parse:N \@@_start_loop:N
                           }{
-                            \msg_error:nnn { cooking-units } { Token-not-allowed } {#1}
+                            \msg_error:nnnV { cooking-units } { Token-not-allowed } {#1} \l_@@_given_amount_tl
                             \bool_set_true:N \l_@@_error_bool
                             \tl_map_break:
                           }
@@ -5032,15 +5035,17 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NTF #2 
       {
-        \tl_case:NnF #1
+        \tl_case:NnTF #1
           {
             \q_@@_decimal 
-              { \msg_error:nn { cooking-units } { Second-decimal-sign-not-allowed } }
+              { \msg_error:nnV { cooking-units } { Second-decimal-sign-not-allowed } \l_@@_given_amount_tl }
             \q_@@_frac 
-              { \msg_error:nn { cooking-units } { Second-fraction-sign-not-allowed } }
+              { \msg_error:nnV { cooking-units } { Second-fraction-sign-not-allowed } \l_@@_given_amount_tl }
             \q_@@_mixed_frac 
-              { \msg_error:nn { cooking-units } { Second-mixed-fraction-sign-not-allowed } }
-          }{ \msg_error:nn { cooking-units } { internal-error } }
+              { \msg_error:nnV { cooking-units } { Second-mixed-fraction-sign-not-allowed } \l_@@_given_amount_tl }
+          }
+          { \bool_set_true:N \l_@@_error_bool }
+          { \msg_error:nn { cooking-units } { internal-error } }
       }
       { \bool_set_true:N #2 }
   }
@@ -5112,7 +5117,7 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpb_tl } 
       }{
         \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
-          { \msg_error:nnn { cooking-units } { Division-by-zero } }
+          { \msg_error:nnV { cooking-units } { Division-by-zero } \l_@@_given_amount_tl }
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl 
           { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
         \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
@@ -5150,7 +5155,7 @@ and the derived file cooking-units.sty.
           { \l_@@_number_tmpb_tl }
       }{
         \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
-          { \msg_error:nnn { cooking-units } { Division-by-zero } }
+          { \msg_error:nnV { cooking-units } { Division-by-zero } \l_@@_given_amount_tl }
         \@@_tl_set_fp_and_eval:Nn \l_@@_number_tmpa_tl
           {
             \bool_if:NTF \l_@@_minus_bool
@@ -5371,7 +5376,7 @@ and the derived file cooking-units.sty.
     \str_if_eq:nnTF {#1} { < }
       {  
         \tl_if_in:NoT \l_@@_input_allowed_special_signs_tl { < }
-          { \msg_error:nn {cooking-units} { <-not-allowed-as-special-sign } }
+          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
         \tl_clear:N \l_@@_tmpa_tl
         \tl_put_right:Nx \l_@@_tmpa_tl { \tl_to_str:N < }
         \@@_grab_arrows_for_safety_do_afterwards:nN
