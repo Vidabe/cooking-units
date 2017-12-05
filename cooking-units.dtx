@@ -2909,7 +2909,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_cutext_last_value_tl
 \tl_new:N \l_@@_phantom_tl
 \tl_new:N \l_@@_phrase_phrase_tl
-\tl_new:N \l_@@_unit_key_not_allowed_tl
+\tl_new:N \l_@@_unit_letter_not_allowed_tl
 \tl_new:N \l_@@_input_fraction_sign_tl
 \tl_new:N \l_@@_input_mixed_fraction_sign_tl
 %    \end{macrocode}
@@ -2936,7 +2936,7 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_value_unit_space_tl { \thinspace }
 \tl_set:Nn \l_@@_cutext_space_tl { \space }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
-\tl_set:Nn \l_@@_unit_key_not_allowed_tl { , / }
+\tl_set:Nn \l_@@_unit_letter_not_allowed_tl { , / }
 %    \end{macrocode}
 %
 % Flat out stolen from \pkg{siunitx}
@@ -3765,6 +3765,17 @@ and the derived file cooking-units.sty.
   { 
     The \ unit-key \ is \ already \ defined. \ Please \ use \ a \ different \
     key \ for \ a \ new \ unit.
+    \msg_see_documentation_text:n {cooking-units} 
+  }
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { character-not-allowed } 
+  { 
+    Unit-keys \ are \ not \ allowed \ to \ neither \ contain \ ',' \ nor \ '/' \ 
+    in \ '#1'. 
+  }{ 
+    The \ unit-key \ is \ not \ allowed \ to \ contain \ ',' \ or \ '/'.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -6260,6 +6271,11 @@ and the derived file cooking-units.sty.
     \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#2} 
       { \msg_error:nnn { cooking-units } { unit-already-defined } {#2} }
       {
+        \tl_map_inline:nn {#2}
+          {
+            \tl_if_in:NnT \l_@@_unit_letter_not_allowed_tl {##1}
+              { \msg_error:nnn { cooking-units } { character-not-allowed } {#2} }
+          }
         \seq_put_right:Nn \g_@@_list_of_defined_units_seq {#2}
         \tl_new:c { l_@@_tmpa_  #2 _tl }
         \tl_set:cn { l_@@_tmpa_  #2 _tl } { 1.0 }
