@@ -4856,12 +4856,12 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_fourty_two_bool
       { \tl_clear:N \l_@@_given_amount_tl  }
       { \@@_set_amount:Nn \l_@@_given_amount_tl {#1} }
-    \tl_set_rescan:NnV \l_@@_given_amount_tl
+    \tl_set_rescan:NnV \l_@@_tmpa_tl
       {
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
-      } \l_@@_tmpa_tl
+      } \l_@@_given_amount_tl
     \bool_lazy_or:nnTF
       { \l_@@_draft_bool }
       { \tl_if_empty_p:N \l_@@_tmpa_tl }
