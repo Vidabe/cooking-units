@@ -4861,21 +4861,21 @@ and the derived file cooking-units.sty.
         \char_set_catcode_letter:N \_ %
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
-      } \l_@@_given_amount_tl
+      } \l_@@_tmpa_tl
     \bool_lazy_or:nnTF
       { \l_@@_draft_bool }
-      { \tl_if_empty_p:N \l_@@_given_amount_tl }
+      { \tl_if_empty_p:N \l_@@_tmpa_tl }
       {
         \bool_if:NTF \l_@@_fourty_two_bool
           { 42 } 
-          { \l_@@_given_amount_tl }
+          { \l_@@_tmpa_tl }
       }{
-        \tl_if_in:NVT \l_@@_given_amount_tl \l_@@_input_range_sign_tl
+        \tl_if_in:NVT \l_@@_tmpa_tl \l_@@_input_range_sign_tl
           {
-            \tl_replace_once:NVn \l_@@_given_amount_tl \l_@@_input_range_sign_tl { \q_@@_range } 
+            \tl_replace_once:NVn \l_@@_tmpa_tl \l_@@_input_range_sign_tl { \q_@@_range } 
             \bool_set_true:N \l_@@_range_in_input_bool            
           }
-        \@@_parsing_amount_input:V \l_@@_given_amount_tl
+        \@@_parsing_amount_input:V \l_@@_tmpa_tl
         \@@_split_input:
       }
   }
