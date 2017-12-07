@@ -4830,6 +4830,7 @@ and the derived file cooking-units.sty.
       { 
         #1 
         \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+        \tex_kern:D \l_@@_mixed_frac_dim
       }
     \@@_frac:nn {#2} {#3}
   }
@@ -6790,7 +6791,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuam_old_parse_mixed_frac:www #1_#2/#3 \q_stop
   { 
     #1 
-    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+    \tex_kern:D \l_@@_mixed_frac_dim
     \@@_frac:nn {#2} {#3} 
   }
 %    \end{macrocode}
@@ -6838,7 +6839,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cufrac_parse_mixed_frac:www #1_#2/#3 \q_stop
   { 
     #1 
-    \hbox_to_wd:nn { \l_@@_mixed_frac_dim } { } 
+    \tex_kern:D \l_@@_mixed_frac_dim
     \@@_frac:nn {#2} {#3} 
   }
 %    \end{macrocode}
