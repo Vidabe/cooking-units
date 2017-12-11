@@ -2815,6 +2815,15 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{ \@@_dim_horizontal:N }
+% Using this command (which is essential |\tex_kern:D| until an official
+% command exists.
+%    \begin{macrocode}
+\cs_new:Npn \@@_dim_horizontal:N #1 { \tex_kern:D #1 }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_frac:nn}
 % This command is used to print the fractions and can be changed
 % accordingly.
@@ -4829,7 +4838,7 @@ and the derived file cooking-units.sty.
     \tl_if_empty:nF {#1} 
       { 
         #1 
-        \tex_kern:D \l_@@_mixed_frac_dim
+        \@@_dim_horizontal:N \l_@@_mixed_frac_dim
       }
     \@@_frac:nn {#2} {#3}
   }
@@ -6790,7 +6799,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuam_old_parse_mixed_frac:www #1_#2/#3 \q_stop
   { 
     #1 
-    \tex_kern:D \l_@@_mixed_frac_dim
+    \@@_dim_horizontal:N \l_@@_mixed_frac_dim
     \@@_frac:nn {#2} {#3} 
   }
 %    \end{macrocode}
@@ -6838,7 +6847,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cufrac_parse_mixed_frac:www #1_#2/#3 \q_stop
   { 
     #1 
-    \tex_kern:D \l_@@_mixed_frac_dim
+    \@@_dim_horizontal:N \l_@@_mixed_frac_dim
     \@@_frac:nn {#2} {#3} 
   }
 %    \end{macrocode}
