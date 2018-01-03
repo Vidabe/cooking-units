@@ -2725,7 +2725,7 @@ and the derived file cooking-units.sty.
 %
 % Checking if \pkg{expl3} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2017/09/18 }
+\@ifpackagelater { expl3 } { 2017/12/05 }
   { }
   {
     \PackageError { cooking-units } { Support~package~expl3~too~old }
@@ -4416,7 +4416,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \clist_put_right:cn { l_@@_predefined_option_#1_clist } {#2}
+    \clist_put_right:cn { l_@@_predefined_option_ #1 _clist } {#2}
   }
 %    \end{macrocode}
 % \end{macro}
