@@ -3955,12 +3955,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { No-Value-given } 
   { 
-    Please \ input \ a \ value \ for \ option \ '#1'
+    Please \ input \ a \ value \ for \ the \ key-value \ list \ in \ '#1'
 %    Please \ input \ a \ number \ to \ check \ for \ 
 %    'check-temperature'.
   } 
   { 
-    This \ option \ needs \ a \ value.
+    Each \ element \ of \ the \ list \ needs \ a \ value.
 %    A \ minimum \ value \ is \ needed \ for \ testing \ if \
 %    'check-temperature' \ is \ active.
     \msg_see_documentation_text:n { cooking-units } 
@@ -3970,12 +3970,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Value-not-allowed } 
   { 
-    The \ option \ '#1' \ does \ not \ take \ a \ value.
+    The \ key-list \ in \ '#1' \ does \ not \ take \ a \ value.
   } 
   { 
 %    A \ minimum \ value \ is \ needed \ for \ testing \ if \
 %    'check-temperature' \ is \ active.
-    This \ option \ does \ not \ take \ a \ value. \ The \
+    This \ key-list \ does \ not \ take \ a \ value. \ The \
     given \ value \ will \ be \ ignored.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4270,7 +4270,7 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_add_unit_to_group:n #1 
   {
-    \msg_error:nn { cooking-units } { No-Value-given } { add-unit-to-group }
+    \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group }
   }
 \cs_new:Npn \@@_add_unit_to_group:nn #1#2 
   { 
@@ -4376,7 +4376,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_temperature_to_check_print_error:n #1
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nn { cooking-units } { No-Value-given } { add-temperature-to-check }
+    \msg_error:nnn { cooking-units } { No-Value-given } { add-temperature-to-check }
   }
 \cs_new:Npn \@@_temperatures_to_check_define:nn #1#2
   {
@@ -4401,7 +4401,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_erase_options_for_error:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nn { cooking-units } { Value-not-allowed } { erase-options-for }
+    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-options-for }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4411,7 +4411,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_options_for:n #1
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nn { cooking-units } { No-Value-given } { set-options-for }
+    \msg_error:nnn { cooking-units } { No-Value-given } { set-options-for }
   }
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
@@ -4426,7 +4426,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_add_options_for:n #1
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nn { cooking-units } { No-Value-given } { add-options-for }
+    \msg_error:nnn { cooking-units } { No-Value-given } { add-options-for }
   }
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
