@@ -524,7 +524,7 @@ and the derived file cooking-units.sty.
 \cusetup 
   {
     set-option-for-Ro = { round-to-int = true }  ,
-    erase-options-for = { F=F }
+    erase-option-for = { F=F }
   }
 
 %: \cusetup
@@ -1772,6 +1772,11 @@ and the derived file cooking-units.sty.
 % You can \enquote{delete} the  options by setting
 % an empty value for a specific \meta{unit-key} (or use
 % \opt{erase-all-options} to erase all options for all \meta{unit-key}s)
+%
+%
+% \begin{function}{set-option-for,add-options-for,erase-option-for}
+%   Benenne in \enquote{options} (anstatt \enquote{option}) und setze meta key und kreire alten obsoleten key.
+% \end{function}
 %
 % \subsubsection{Command behavior}
 %
@@ -3442,10 +3447,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%\begin{macro}{ erase-options-for }
+%\begin{macro}{ erase-option-for }
 %  Erasing options.
 %    \begin{macrocode}
-    erase-options-for .code:n = 
+    erase-option-for .code:n = 
       { 
         \keyval_parse:NNn 
           \@@_erase_options_for:n
@@ -3455,10 +3460,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%\begin{macro}{ set-options-for }
+%\begin{macro}{ set-option-for }
 %  Setting options.
 %    \begin{macrocode}
-    set-options-for .code:n = 
+    set-option-for .code:n = 
       { 
         \keyval_parse:NNn 
           \@@_set_options_for:n
@@ -4401,7 +4406,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_erase_options_for_error:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-options-for }
+    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-option-for }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4411,7 +4416,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_options_for:n #1
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nnn { cooking-units } { No-Value-given } { set-options-for }
+    \msg_error:nnn { cooking-units } { No-Value-given } { set-option-for }
   }
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
