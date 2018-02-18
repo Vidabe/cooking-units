@@ -3222,13 +3222,239 @@ and the derived file cooking-units.sty.
   {
 %    \end{macrocode}
 %
-%\begin{macro}{ eval-fraction }
-% If set to true the fractions are evaluated.
+%
+%
+%\begin{macro}{ set-option-for }
+%  Setting options.
 %    \begin{macrocode}
-    eval-fraction .bool_set:N = \l_@@_eval_fractions_bool ,
-    eval-fraction .default:n = { false } ,
+    set-option-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_set_options_for:n
+          \@@_set_options_for:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ erase-all-options }
+%  Erasing all preset options.
+%    \begin{macrocode}
+    erase-all-options .code:n = 
+      { 
+        \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
+          {
+            \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
+          }
+        },
+%    \end{macrocode}
+% \end{macro}
+%
+%\begin{macro}{ add-option-for }
+%  Setting options.
+%    \begin{macrocode}
+    add-option-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_add_options_for:n
+          \@@_add_options_for:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%\begin{macro}{ erase-options-for }
+%  Erasing options.
+%    \begin{macrocode}
+    erase-options-for .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_erase_options_for:n
+          \@@_erase_options_for_error:nn
+          {#1}
+      },
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
+%
+% \begin{macro}{ cutext-to-cunum }
+% Don't want any \mycs{cutext} (or \mycs{Cutext}) in your
+% document? Use this option!
+%    \begin{macrocode}
+    cutext-to-cunum .bool_set:N = \l_@@_cutext_to_cunum_bool ,
+    cutext-to-cunum .default:n = { false } ,
+    cutext-to-cunum .groups:n = { command } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ cutext-change-unit }
+% Do not wanna change units in \mycs{cutext}? Use this option.
+%    \begin{macrocode}
+    cutext-change-unit .bool_set:N = \l_@@_cutext_change_unit_bool ,
+    cutext-change-unit .default:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ cuam-version  , cutext-version}
+% Some keys with horrible option names. Reverts 
+% the respective command back to its older state (pre v1.10).
+%    \begin{macrocode}
+    cuam-version .choices:nn = 
+      { new , old }
+      {
+        \int_case:nn { \l_keys_choice_int }
+          {
+            { 1 } { \bool_set_false:N \l_@@_cuam_old_bool }
+            { 2 } { \bool_set_true:N \l_@@_cuam_old_bool }
+          }
+      } ,
+    cuam-version .default:n = { new } ,
+    cutext-version .choices:nn = 
+      { new , old }
+      {
+        \int_case:nn { \l_keys_choice_int }
+          {
+            { 1 } { \bool_set_false:N \l_@@_cutext_old_bool } 
+            { 2 } { \bool_set_true:N \l_@@_cutext_old_bool }
+          }
+      } ,
+    cutext-version .default:n = { new } ,
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
+%
+%\begin{macro}{ set-special-sign }
+% Doing the same as above but also overrides the old signs.
+%    \begin{macrocode}
+    set-special-sign .code:n = 
+      { 
+        \tl_map_inline:nn {#1} 
+          {
+            \str_if_eq:nnT {##1} { < }
+              { 
+                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
+                \tl_map_break:n { \use_none:nn }
+              }
+          }
+        \use:n { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+%        \str_if_eq:nnTF {#1} { < }
+%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+%          { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+      } ,
 %    \end{macrocode}
 %\end{macro}
+%\begin{macro}{ add-special-sign }
+% Adding a (some) special sign(s) which is (are)  allowed in the input.
+%    \begin{macrocode}
+    add-special-sign .code:n = 
+      { 
+        \tl_map_inline:nn {#1} 
+          {
+            \str_if_eq:nnTF {##1} { < }
+              { 
+                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
+              }{
+                \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {##1}
+              }
+          }
+%        \str_if_eq:nnTF {#1} { < }
+%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
+%          { \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+      } ,
+    add-special-sign .default:n = { } ,
+%    \end{macrocode}
+%\end{macro}
+%
+%
+% \begin{macro}{ set-unknown-message }
+%   Sets the message for a special-sign to error, warning or none.
+%    \begin{macrocode}
+    set-unknown-message .choices:nn =
+      { error , warning , none }
+      {
+        \msg_redirect_name:nnn { cooking-units } { amount-not-known } 
+          { \l_keys_choice_tl }
+      } ,
+    set-unknown-message .default:n = { set-cutext-translation-message } ,
+%    \end{macrocode}
+%\end{macro}
+%
+% \begin{macro}{ set-unknown-message }
+%   Sets the message for a special-sign to error, warning or none.
+%    \begin{macrocode}
+    set-cutext-translation-message .choices:nn =
+      { error , warning , none }
+      {
+        \msg_redirect_name:nnn { cooking-units } { cutext-no-translation-available } 
+          { \l_keys_choice_tl }
+      } ,
+    set-cutext-translation-message .default:n = { warning } ,
+%    \end{macrocode}
+%\end{macro}
+%
+%
+% \begin{macro}{ print-numerals }
+% A not very good name, but I couldn't think of a better name.
+%    \begin{macrocode}
+    print-numerals .bool_set:N = \l_@@_print_numeral_bool ,
+    print-numerals .default:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ use-numerals-below }
+%   Use numerals if the intger is below the integer set by this option.
+%    \begin{macrocode}
+    use-numerals-below .int_set:N = \l_@@_print_numerals_below_int ,
+    use-numerals-below .default:n = { 13 } ,
+%    \end{macrocode}
+%\end{macro}
+%
+%\begin{macro}{ parse-number }
+% Parse the input? If no the input is printed as is (after some safety parsing).
+%    \begin{macrocode}
+    parse-number .bool_set_inverse:N = \l_@@_draft_bool , 
+    parse-number .default:n= { true } ,
+%    \end{macrocode}
+%\end{macro}
+%
+%\begin{macro}{ range-sign }
+%  Setting the printed range sign and make a difference between cunum
+%  and c(C)utext.
+%    \begin{macrocode}
+    range-sign .meta:n = 
+      {  
+        cunum-range-sign = {#1} ,
+        cutext-range-sign = {#1}
+      } ,
+    range-sign .default:n = { -- } ,
+    cunum-range-sign .tl_set:N = \l_@@_cunum_range_sign_tl ,
+    cunum-range-sign .default:n = { -- } ,
+    cutext-range-sign .tl_set:N = \l_@@_cutext_range_sign_tl ,
+    cutext-range-sign .default:n = { -- } ,
+%    \end{macrocode}
+%\end{macro}
+%
+% \begin{macro}{ use-phrases }
+% Do not wanna use phrases in \mycs{cuam}? Use this option!
+%    \begin{macrocode}
+    use-phrases .bool_set:N = \l_@@_use_phrases_bool ,
+    use-phrases .default:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
 %
 %\begin{macro}{ round-precision }
 %  Setting the round-precision. Setting those two at once to 
@@ -3253,28 +3479,28 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-%\begin{macro}{ range-sign }
-%  Setting the printed range sign and make a difference between cunum
-%  and c(C)utext.
+% \begin{macro}{ round-half }
+%  Choosing between \enquote{normal} rounding to even 
+%  and commercial rounding and sets the boolean accordingly.
 %    \begin{macrocode}
-    range-sign .meta:n = 
-      {  
-        cunum-range-sign = {#1} ,
-        cutext-range-sign = {#1}
-      } ,
-    range-sign .default:n = { -- } ,
-    cunum-range-sign .tl_set:N = \l_@@_cunum_range_sign_tl ,
-    cunum-range-sign .default:n = { -- } ,
-    cutext-range-sign .tl_set:N = \l_@@_cutext_range_sign_tl ,
-    cutext-range-sign .default:n = { -- } ,
+    round-half .choices:nn =
+      { default , commercial }
+      {
+        \int_case:nn { \l_keys_choice_int }
+          {
+            { 1 } { \bool_set_false:N \l_@@_round_commercial_bool }
+            { 2 } { \bool_set_true:N \l_@@_round_commercial_bool }
+          }
+      },
+    round-half .default:n = { default },
 %    \end{macrocode}
-%\end{macro}
+% \end{macro}
 %
-%\begin{macro}{ amount-unit-space }
-%  Setting the space between the value and the printed unit.
+%\begin{macro}{ eval-fraction }
+% If set to true the fractions are evaluated.
 %    \begin{macrocode}
-    amount-unit-space .tl_set:N = \l_@@_value_unit_space_tl ,
-    amount-unit-space .default:n = { \thinspace } ,
+    eval-fraction .bool_set:N = \l_@@_eval_fractions_bool ,
+    eval-fraction .default:n = { false } ,
 %    \end{macrocode}
 %\end{macro}
 %
@@ -3294,6 +3520,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+%
+%
+%
+%
+%
 %\begin{macro}{ mixed-fraction-space }
 % Setting the space between the mixed fraction part and the fraction.
 %    \begin{macrocode}
@@ -3302,205 +3533,43 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-%\begin{macro}{ parse-number }
-% Parse the input? If no the input is printed as is (after some safety parsing).
+% \begin{macro}{ cutext-space }
+% The space used in \mycs{cutext} between the number (or numeral)
+% and unit.
 %    \begin{macrocode}
-    parse-number .bool_set_inverse:N = \l_@@_draft_bool , 
-    parse-number .default:n= { true } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%\begin{macro}{ add-special-sign }
-% Adding a (some) special sign(s) which is (are)  allowed in the input.
-%    \begin{macrocode}
-    add-special-sign .code:n = 
-      { 
-        \tl_map_inline:nn {#1} 
-          {
-            \str_if_eq:nnTF {##1} { < }
-              { 
-                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
-              }{
-                \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {##1}
-              }
-          }
-%        \str_if_eq:nnTF {#1} { < }
-%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-%          { \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
-      } ,
-    add-special-sign .default:n = { } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%\begin{macro}{ set-special-sign }
-% Doing the same as above but also overrides the old signs.
-%    \begin{macrocode}
-    set-special-sign .code:n = 
-      { 
-        \tl_map_inline:nn {#1} 
-          {
-            \str_if_eq:nnT {##1} { < }
-              { 
-                \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
-                \tl_map_break:n { \use_none:nn }
-              }
-          }
-        \use:n { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
-%        \str_if_eq:nnTF {#1} { < }
-%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-%          { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
-      } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%
-% \begin{macro}{ input-range-sign }
-% Don't wanna use \verb|--| as a range sperator in \mycs{cunum}? 
-% Use this option.
-%    \begin{macrocode}
-    input-range-sign .tl_set:N = \l_@@_input_range_sign_tl ,
-    input-range-sign .default:n = { -- } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%
-%\begin{macro}{ check-temperature }
-%  Weird option. Checking the temperature, if the temperature is below the absolute zero temperature
-%  it raises an error.
-%    \begin{macrocode}
-    check-temperature .bool_set:N = \l_@@_check_temperature_bool ,
-    check-temperature .default:n = { true } ,
-%    \end{macrocode}
-%
-%\begin{macro}{ add-temperature-to-check }
-%  Adds a temperature to check for \texttt{check-temperature}.
-% It uses the \cs{keyval\_parse:NNn} command as this
-% macro is used to parse keys (which is what I need).
-%    \begin{macrocode}
-    add-temperature-to-check .code:n = 
-      { 
-        \keyval_parse:NNn
-          \@@_temperature_to_check_print_error:n
-          \@@_temperatures_to_check_define:nn
-          {#1}
-      },
-    temperature-to-check .value_required:n = { true } ,
-%    \end{macrocode}
-% \end{macro} 
-%
-%\begin{macro}{ convert-to-eV }
-%  Another weird option, converts pretty much any unit defined by this
-%  package to electron volt or the respective derivative.
-% As this is a unit transfrmation, it needs to be inside the
-% group.
-%    \begin{macrocode}
-    convert-to-eV .bool_set:N = \l_@@_convert_to_eV_bool ,
-    convert-to-eV .default:n = { true } ,
-    convert-to-eV .groups:n = { change-unit } ,
-%    \end{macrocode}
-%\end{macro}
-%
-% \begin{macro}{ use-numerals-below }
-%   Use numerals if the intger is below the integer set by this option.
-%    \begin{macrocode}
-    use-numerals-below .int_set:N = \l_@@_print_numerals_below_int ,
-    use-numerals-below .default:n = { 13 } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%
-% \begin{macro}{ set-unknown-message }
-%   Sets the message for a special-sign to error, warning or none.
-%    \begin{macrocode}
-    set-unknown-message .choices:nn =
-      { error , warning , none }
-      {
-        \msg_redirect_name:nnn { cooking-units } { amount-not-known } 
-          { \l_keys_choice_tl }
-      } ,
-    set-unknown-message .default:n = { warning } ,
-%    \end{macrocode}
-%\end{macro}
-%
-% \begin{macro}{ set-unknown-message }
-%   Sets the message for a special-sign to error, warning or none.
-%    \begin{macrocode}
-    set-cutext-translation-message .choices:nn =
-      { error , warning , none }
-      {
-        \msg_redirect_name:nnn { cooking-units } { cutext-no-translation-available } 
-          { \l_keys_choice_tl }
-      } ,
-    set-cutext-translation-message .default:n = { warning } ,
-%    \end{macrocode}
-%\end{macro}
-%
-%
-%\begin{macro}{ erase-all-options }
-%  Erasing all preset options.
-%    \begin{macrocode}
-    erase-all-options .code:n = 
-      { 
-        \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
-          {
-            \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
-          }
-        },
+    cutext-space .tl_set:N = \l_@@_cutext_space_tl ,
+    cutext-space .default:n = { \space } ,
 %    \end{macrocode}
 % \end{macro}
 %
-%\begin{macro}{ erase-options-for }
-%  Erasing options.
+% \begin{macro}{ phrase-space }
+% Same as before, but for phrases
 %    \begin{macrocode}
-    erase-options-for .code:n = 
-      { 
-        \keyval_parse:NNn 
-          \@@_erase_options_for:n
-          \@@_erase_options_for_error:nn
-          {#1}
-      },
+    phrase-space .tl_set:N = \l_@@_cuphrase_space_tl ,
+    phrase-space .default:n = { \space } ,
 %    \end{macrocode}
 % \end{macro}
 %
-%\begin{macro}{ set-option-for }
-%  Setting options.
+%\begin{macro}{ amount-unit-space }
+%  Setting the space between the value and the printed unit.
 %    \begin{macrocode}
-    set-option-for .code:n = 
-      { 
-        \keyval_parse:NNn 
-          \@@_set_options_for:n
-          \@@_set_options_for:nn
-          {#1}
-      },
+    amount-unit-space .tl_set:N = \l_@@_value_unit_space_tl ,
+    amount-unit-space .default:n = { \thinspace } ,
 %    \end{macrocode}
-% \end{macro}
+%\end{macro}
 %
-%\begin{macro}{ add-option-for }
-%  Setting options.
-%    \begin{macrocode}
-    add-option-for .code:n = 
-      { 
-        \keyval_parse:NNn 
-          \@@_add_options_for:n
-          \@@_add_options_for:nn
-          {#1}
-      },
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ round-half }
-%  Choosing between \enquote{normal} rounding to even and commercial rounding and sets the boolean accordingly.
+%
+%
+%
+%
+% \begin{macro}{ recalculate-amount }
+% Setting the number of persons your recipes should be for
+% is not enough; it is also needed to tell the package to
+% recalculate the amounts.
 %    \begin{macrocode}
-    round-half .choices:nn =
-      { default , commercial }
-      {
-        \int_case:nn { \l_keys_choice_int }
-          {
-            { 1 } { \bool_set_false:N \l_@@_round_commercial_bool }
-            { 2 } { \bool_set_true:N \l_@@_round_commercial_bool }
-          }
-      },
-    round-half .default:n = { default },
+    recalculate-amount .bool_set:N = \l_@@_change_number_of_persons_bool ,
+    recalculate-amount .default:n = { false } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3545,93 +3614,74 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ cuam-version  , cutext-version}
-% Some keys with horrible option names. Reverts 
-% the respective command back to its older state (pre v1.10).
-%    \begin{macrocode}
-    cuam-version .choices:nn = 
-      { new , old }
-      {
-        \int_case:nn { \l_keys_choice_int }
-          {
-            { 1 } { \bool_set_false:N \l_@@_cuam_old_bool }
-            { 2 } { \bool_set_true:N \l_@@_cuam_old_bool }
-          }
-      } ,
-    cuam-version .default:n = { new } ,
-    cutext-version .choices:nn = 
-      { new , old }
-      {
-        \int_case:nn { \l_keys_choice_int }
-          {
-            { 1 } { \bool_set_false:N \l_@@_cutext_old_bool } 
-            { 2 } { \bool_set_true:N \l_@@_cutext_old_bool }
-          }
-      } ,
-    cutext-version .default:n = { new } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ recalculate-amount }
-% Setting the number of persons your recipes should be for
-% is not enough; it is also needed to tell the package to
-% recalculate the amounts.
-%    \begin{macrocode}
-    recalculate-amount .bool_set:N = \l_@@_change_number_of_persons_bool ,
-    recalculate-amount .default:n = { false } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ cutext-to-cunum }
-% Don't want any \mycs{cutext} (or \mycs{Cutext}) in your
-% document? Use this option!
-%    \begin{macrocode}
-    cutext-to-cunum .bool_set:N = \l_@@_cutext_to_cunum_bool ,
-    cutext-to-cunum .default:n = { false } ,
-    cutext-to-cunum .groups:n = { command } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ cutext-space }
-% The space used in \mycs{cutext} between the number (or numeral)
-% and unit.
-%    \begin{macrocode}
-    cutext-space .tl_set:N = \l_@@_cutext_space_tl ,
-    cutext-space .default:n = { \space } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ phrase-space }
-% Same as before, but for phrases
-%    \begin{macrocode}
-    phrase-space .tl_set:N = \l_@@_cuphrase_space_tl ,
-    phrase-space .default:n = { \space } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ cutext-change-unit }
-% Do not wanna change units in \mycs{cutext}? Use this option.
+%\begin{macro}{ check-temperature }
+%  Weird option. Checking the temperature, if the temperature is below the absolute zero temperature
+%  it raises an error.
 %    \begin{macrocode}
-    cutext-change-unit .bool_set:N = \l_@@_cutext_change_unit_bool ,
-    cutext-change-unit .default:n = { true } ,
+    check-temperature .bool_set:N = \l_@@_check_temperature_bool ,
+    check-temperature .default:n = { true } ,
 %    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ use-phrases }
-% Do not wanna use phrases in \mycs{cuam}? Use this option!
+%\begin{macro}{ add-temperature-to-check }
+%  Adds a temperature to check for \texttt{check-temperature}.
+% It uses the \cs{keyval\_parse:NNn} command as this
+% macro is used to parse keys (which is what I need).
 %    \begin{macrocode}
-    use-phrases .bool_set:N = \l_@@_use_phrases_bool ,
-    use-phrases .default:n = { true } ,
+    add-temperature-to-check .code:n = 
+      { 
+        \keyval_parse:NNn
+          \@@_temperature_to_check_print_error:n
+          \@@_temperatures_to_check_define:nn
+          {#1}
+      },
+    temperature-to-check .value_required:n = { true } ,
 %    \end{macrocode}
-% \end{macro}
+% \end{macro} 
 %
-% \begin{macro}{ print-numerals }
-% A not very good name, but I couldn't think of a better name.
+%\begin{macro}{ convert-to-eV }
+%  Another weird option, converts pretty much any unit defined by this
+%  package to electron volt or the respective derivative.
+% As this is a unit transfrmation, it needs to be inside the
+% group.
 %    \begin{macrocode}
-    print-numerals .bool_set:N = \l_@@_print_numeral_bool ,
-    print-numerals .default:n = { true } ,
+    convert-to-eV .bool_set:N = \l_@@_convert_to_eV_bool ,
+    convert-to-eV .default:n = { true } ,
+    convert-to-eV .groups:n = { change-unit } ,
 %    \end{macrocode}
-% \end{macro}
+%\end{macro}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+% \begin{macro}{ input-range-sign }
+% Don't wanna use \verb|--| as a range sperator in \mycs{cunum}? 
+% Use this option.
+%    \begin{macrocode}
+    input-range-sign .tl_set:N = \l_@@_input_range_sign_tl ,
+    input-range-sign .default:n = { -- } ,
+%    \end{macrocode}
+%\end{macro}
 %
 % \begin{macro}{ numeral-function , Numeral-function }
 %    \begin{macrocode}
@@ -3680,7 +3730,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ expand-input , expand-amount, expand-unit }
+% \begin{macro}{ 42 }
 %    \begin{macrocode}
     42 .bool_set:N = \l_@@_fourty_two_bool ,
     42 .default:n = { true } ,
