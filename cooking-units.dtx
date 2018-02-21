@@ -3795,20 +3795,8 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ weight , length , volume , temperature , energy , time }
+% \begin{macro}{ add-unit-to-group }
 %    \begin{macrocode}
-%    weight .code:n = { \@@_set_unit_group:nn { weight } {#1} },
-%    weight .groups:n = { change-unit } ,
-%    length .code:n = { \@@_set_unit_group:nn { length } {#1} },
-%    length .groups:n = { change-unit } ,
-%    volume .code:n = { \@@_set_unit_group:nn { volume } {#1} },
-%    volume .groups:n = { change-unit } ,
-%    temperature .code:n = { \@@_set_unit_group:nn { temperature } {#1} },
-%    temperature .groups:n = { change-unit } ,
-%    energy .code:n = { \@@_set_unit_group:nn { energy } {#1} },
-%    energy .groups:n = { change-unit } ,
-%    time .code:n = { \@@_set_unit_group:nn { time } {#1} },
-%    time .groups:n = { change-unit } ,
     add-unit-to-group .code:n = 
       { 
         \keyval_parse:NNn 
