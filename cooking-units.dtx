@@ -4367,10 +4367,21 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_error_if_group_not_defined:n}
+%    \begin{macrocode}
+\cs_new:Npn \@@_error_if_group_not_defined:n #1
+  {
+     \clist_if_exist:cF { l_@@_group_ #1 _clist } 
+       { \msg_error:nn { cooking-units} { group-key-unknown } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\@@_unit_group_convert_units:nn}
 %    \begin{macrocode}
 \cs_new:Npn \@@_unit_group_convert_units:nn #1#2
   {
+    \@@_error_if_group_not_defined:n {#1}
     \@@_error_if_unit_not_defined:n {#2}
     \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2}
       {
@@ -4385,11 +4396,6 @@ and the derived file cooking-units.sty.
           { \clist_use:cnnn { l_@@_group_ #1 _clist } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
       }
   }
-%\cs_new:Npn \@@_create_unit_group:nn #1#2
-%  {
-%    \clist_new:c { l_@@_group_ #1 _clist }
-%    \clist_set:cn { l_@@_group_ #1 _clist } {#2}
-%  }
 \@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
 \@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
 \@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
@@ -4401,30 +4407,13 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{\@@_unit_group_add_unit:n , \@@_unit_group_add_unit:nn }
 %    \begin{macrocode}
-%\cs_new:Npn \@@_set_unit_group:nn #1#2
-%  {
-%    \@@_error_if_unit_not_defined:n {#2}
-%    \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2} 
-%      {
-%        \clist_map_inline:cn { l_@@_group_ #1 _clist }
-%          { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
-%      }{ 
-%        \msg_error:nnxxx 
-%          { cooking-units } 
-%          { group-choice-not-allowed }
-%          {#1} 
-%          {#2} 
-%          { \clist_use:cnnn { l_@@_group_ #1 _clist } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
-%      }
-%  }
 \cs_new:Npn \@@_unit_group_add_unit:n #1 
   {
     \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group }
   }
 \cs_new:Npn \@@_unit_group_add_unit:nn #1#2 
   { 
-     \clist_if_exist:cF { l_@@_group_ #1 _clist } 
-       { \msg_error:nn { cooking-units} { group-key-unknown } }
+     \@@_error_if_group_not_defined:n {#1}
      \clist_map_inline:nn {#2}
        {
          \@@_error_if_unit_not_defined:n {##1} 
