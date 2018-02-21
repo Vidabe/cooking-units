@@ -2543,7 +2543,6 @@ and the derived file cooking-units.sty.
 %
 % \newpage
 % \subsection{american}
-%^^A Only differences from \enquote{English} are defined.
 %
 % \begin{tabular}{ l l l l l }
 %   \toprule
@@ -2689,12 +2688,17 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
-%
-%
 % \end{documentation}
-%  
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 % \begin{implementation}
 %
 % \section{Implementation}
@@ -3655,6 +3659,12 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+% \begin{macro}{ 42 }
+%    \begin{macrocode}
+    42 .bool_set:N = \l_@@_fourty_two_bool ,
+    42 .default:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
@@ -3730,26 +3740,20 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ 42 }
-%    \begin{macrocode}
-    42 .bool_set:N = \l_@@_fourty_two_bool ,
-    42 .default:n = { true } ,
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ expand-input , expand-amount, expand-unit }
+% \begin{macro}{ weight , length , volume , temperature , energy , time }
 %    \begin{macrocode}
     weight .code:n = { \@@_set_unit_group:nn { weight } {#1} },
-    length .code:n = { \@@_set_unit_group:nn { length } {#1} },
-    volume .code:n = { \@@_set_unit_group:nn { volume } {#1} },
-    temperature .code:n = { \@@_set_unit_group:nn { temperature } {#1} },
-    energie .code:n = { \@@_set_unit_group:nn { energie } {#1} },
-    time .code:n = { \@@_set_unit_group:nn { time } {#1} },
     weight .groups:n = { change-unit } ,
+    length .code:n = { \@@_set_unit_group:nn { length } {#1} },
     length .groups:n = { change-unit } ,
+    volume .code:n = { \@@_set_unit_group:nn { volume } {#1} },
     volume .groups:n = { change-unit } ,
+    temperature .code:n = { \@@_set_unit_group:nn { temperature } {#1} },
     temperature .groups:n = { change-unit } ,
-    energie .groups:n = { change-unit } ,
+    energy .code:n = { \@@_set_unit_group:nn { energy } {#1} },
+    energy .groups:n = { change-unit } ,
+    time .code:n = { \@@_set_unit_group:nn { time } {#1} },
     time .groups:n = { change-unit } ,
     add-unit-to-group .code:n = 
       { 
@@ -3757,7 +3761,7 @@ and the derived file cooking-units.sty.
           \@@_add_unit_to_group:n 
           \@@_add_unit_to_group:nn 
           {#1} 
-      },
+      } ,
     add-unit-to-group .default:n = {} ,
 %    \end{macrocode}
 % \end{macro}
@@ -4305,7 +4309,7 @@ and the derived file cooking-units.sty.
 \@@_create_unit_group:nn { length } { m , dm , cm , mm , in }
 \@@_create_unit_group:nn { volume } { l , dl , cl  , ml }
 \@@_create_unit_group:nn { temperature } { C , F , Re , K }
-\@@_create_unit_group:nn { energie } { cal, kcal , J , kJ , eV }
+\@@_create_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
 \@@_create_unit_group:nn { time } { d , h , min , s }
 %    \end{macrocode}
 %    \begin{macrocode}
