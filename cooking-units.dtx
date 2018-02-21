@@ -1729,12 +1729,20 @@ and the derived file cooking-units.sty.
 % 
 % \subsubsection{Unit Specific options} 
 %
-% \begin{function}{unit}
+% \begin{function}{<unit>}
 %   \begin{syntax}
 %     \meta{unit-key-1} = \meta{unit-key-2}
 %  \end{syntax}
 %  Change unit \meta{unit-key-1} to \meta{unit-key-2} (see
 %  \cref{sec:defining-opt} to define new options).
+% \end{function}
+%
+% \begin{function}{<group>}
+%   \begin{syntax}
+%     \meta{group} = \meta{unit-key}
+%  \end{syntax}
+%  Changes each unit contained in \meta{group} to \meta{unit-key} (\meta{unit-key}
+%  must be part of \meta{group}).
 % \end{function}
 % 
 % \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>,erase-all-options}
@@ -2483,6 +2491,14 @@ and the derived file cooking-units.sty.
 %   \cunum{1}{C} \\
 %   \cunum{1}{s}
 % \end{cuexamplecode}
+%
+% \begin{function}{add-natural-unit}
+%   \begin{syntax}
+%     add-natural-unit = \meta{unit-key}
+%   \end{syntax}
+%   This option adds \meta{unit-key} to the list of units \opt{convert-to-eV}
+%   uses to determine how a unit is transformed if \true.
+% \end{function}
 %
 %
 %
