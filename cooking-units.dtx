@@ -3286,7 +3286,7 @@ and the derived file cooking-units.sty.
     set-option-for .code:n = 
       { 
         \keyval_parse:NNn 
-          \@@_set_options_for:n
+          \@@_set_options_for_error:n 
           \@@_set_options_for:nn
           {#1}
       },
@@ -3312,7 +3312,7 @@ and the derived file cooking-units.sty.
     add-option-for .code:n = 
       { 
         \keyval_parse:NNn 
-          \@@_add_options_for:n
+          \@@_add_options_for_error:n
           \@@_add_options_for:nn
           {#1}
       },
@@ -3800,7 +3800,7 @@ and the derived file cooking-units.sty.
     add-unit-to-group .code:n = 
       { 
         \keyval_parse:NNn 
-          \@@_unit_group_add_unit:n 
+          \@@_unit_group_add_unit_error:n 
           \@@_unit_group_add_unit:nn 
           {#1} 
       } ,
@@ -4359,8 +4359,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_error_if_group_not_defined:n #1
   {
-     \clist_if_exist:cF { l_@@_group_ #1 _clist } 
-       { \msg_error:nn { cooking-units} { group-key-unknown } }
+    \clist_if_exist:cF { l_@@_group_ #1 _clist } 
+      { \msg_error:nn { cooking-units} { group-key-unknown } }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -4393,9 +4393,9 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_unit_group_add_unit:n , \@@_unit_group_add_unit:nn }
+% \begin{macro}{\@@_unit_group_add_unit_error:n , \@@_unit_group_add_unit:nn }
 %    \begin{macrocode}
-\cs_new:Npn \@@_unit_group_add_unit:n #1 
+\cs_new:Npn \@@_unit_group_add_unit_error:n #1 
   {
     \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group }
   }
@@ -4532,9 +4532,9 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_set_options_for:n , \@@_set_options_for:nn }
+% \begin{macro}{ \@@_set_options_for_error:n  , \@@_set_options_for:nn }
 %    \begin{macrocode}
-\cs_new:Npn \@@_set_options_for:n #1
+\cs_new:Npn \@@_set_options_for_error:n  #1
   {
     \@@_error_if_unit_not_defined:n {#1}
     \msg_error:nnn { cooking-units } { No-Value-given } { set-option-for }
@@ -4547,9 +4547,9 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_add_options_for:n , \@@_add_options_for:nn }
+% \begin{macro}{ \@@_add_options_for_error:n , \@@_add_options_for:nn }
 %    \begin{macrocode}
-\cs_new:Npn \@@_add_options_for:n #1
+\cs_new:Npn \@@_add_options_for_error:n #1
   {
     \@@_error_if_unit_not_defined:n {#1}
     \msg_error:nnn { cooking-units } { No-Value-given } { add-option-for }
