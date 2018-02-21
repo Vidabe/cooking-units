@@ -2471,7 +2471,7 @@ and the derived file cooking-units.sty.
 %     convert-to-eV = \meta{true/false}
 %   \end{syntax}
 %   Converts (nearly) every unit in \cref{tab:def-units}
-%   to electron volt or the respective derivative. Note that this 
+%   to electron volt or the respective derivative (if possible). Note that this 
 %   option is:
 %   a) experimental and probably will forever be and b) just a joke, you are not 
 %   supposed to use this units in a cookery book (and as you see this package
@@ -3270,7 +3270,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \subsection {Keys}
-
+%
 %
 % Let's define some keys.
 %    \begin{macrocode}
@@ -3757,7 +3757,9 @@ and the derived file cooking-units.sty.
     add-natural-unit .code:n = 
       {
         \@@_error_if_unit_not_defined:n {#1}
-        \seq_put_right:Nn \g_@@_natural_units_seq {#1} 
+        \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+        \seq_concat:NNN \g_@@_natural_units_seq \g_@@_natural_units_seq \l_@@_tmpa_seq
+%        \seq_put_right:Nn \g_@@_natural_units_seq {#1} 
         \seq_remove_duplicates:N \g_@@_natural_units_seq
       } ,
     add-natural-unit .value_required:n = { true } ,
@@ -3795,23 +3797,23 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ weight , length , volume , temperature , energy , time }
 %    \begin{macrocode}
-    weight .code:n = { \@@_set_unit_group:nn { weight } {#1} },
-    weight .groups:n = { change-unit } ,
-    length .code:n = { \@@_set_unit_group:nn { length } {#1} },
-    length .groups:n = { change-unit } ,
-    volume .code:n = { \@@_set_unit_group:nn { volume } {#1} },
-    volume .groups:n = { change-unit } ,
-    temperature .code:n = { \@@_set_unit_group:nn { temperature } {#1} },
-    temperature .groups:n = { change-unit } ,
-    energy .code:n = { \@@_set_unit_group:nn { energy } {#1} },
-    energy .groups:n = { change-unit } ,
-    time .code:n = { \@@_set_unit_group:nn { time } {#1} },
-    time .groups:n = { change-unit } ,
+%    weight .code:n = { \@@_set_unit_group:nn { weight } {#1} },
+%    weight .groups:n = { change-unit } ,
+%    length .code:n = { \@@_set_unit_group:nn { length } {#1} },
+%    length .groups:n = { change-unit } ,
+%    volume .code:n = { \@@_set_unit_group:nn { volume } {#1} },
+%    volume .groups:n = { change-unit } ,
+%    temperature .code:n = { \@@_set_unit_group:nn { temperature } {#1} },
+%    temperature .groups:n = { change-unit } ,
+%    energy .code:n = { \@@_set_unit_group:nn { energy } {#1} },
+%    energy .groups:n = { change-unit } ,
+%    time .code:n = { \@@_set_unit_group:nn { time } {#1} },
+%    time .groups:n = { change-unit } ,
     add-unit-to-group .code:n = 
       { 
         \keyval_parse:NNn 
-          \@@_add_unit_to_group:n 
-          \@@_add_unit_to_group:nn 
+          \@@_unit_group_add_unit:n 
+          \@@_unit_group_add_unit:nn 
           {#1} 
       } ,
     add-unit-to-group .default:n = {} ,
@@ -4350,29 +4352,31 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_set_unit_group:nn}
+% \begin{macro}{\@@_define_unit_group:nn}
 %    \begin{macrocode}
-\cs_new:Npn \@@_create_unit_group:nn #1#2
+\cs_new:Npn \@@_define_unit_group:nn #1#2
   {
     \clist_new:c { l_@@_group_ #1 _clist }
     \clist_set:cn { l_@@_group_ #1 _clist } {#2}
+    \keys_define:nn { cooking-units }
+      { 
+        #1 .code:n = { \@@_unit_group_convert_units:nn {#1} {##1} } ,
+        #1 .groups:n = { change-unit }
+      }
   }
-\@@_create_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
-\@@_create_unit_group:nn { length } { m , dm , cm , mm , in }
-\@@_create_unit_group:nn { volume } { l , dl , cl  , ml }
-\@@_create_unit_group:nn { temperature } { C , F , Re , K }
-\@@_create_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
-\@@_create_unit_group:nn { time } { d , h , min , s }
 %    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_unit_group_convert_units:nn}
 %    \begin{macrocode}
-\cs_new:Npn \@@_set_unit_group:nn #1#2
+\cs_new:Npn \@@_unit_group_convert_units:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#2}
-    \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2} 
+    \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2}
       {
         \clist_map_inline:cn { l_@@_group_ #1 _clist }
           { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
-      }{ 
+      }{
         \msg_error:nnxxx 
           { cooking-units } 
           { group-choice-not-allowed }
@@ -4381,11 +4385,43 @@ and the derived file cooking-units.sty.
           { \clist_use:cnnn { l_@@_group_ #1 _clist } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
       }
   }
-\cs_new:Npn \@@_add_unit_to_group:n #1 
+%\cs_new:Npn \@@_create_unit_group:nn #1#2
+%  {
+%    \clist_new:c { l_@@_group_ #1 _clist }
+%    \clist_set:cn { l_@@_group_ #1 _clist } {#2}
+%  }
+\@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
+\@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
+\@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
+\@@_define_unit_group:nn { temperature } { C , F , Re , K }
+\@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
+\@@_define_unit_group:nn { time } { d , h , min , s }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_unit_group_add_unit:n , \@@_unit_group_add_unit:nn }
+%    \begin{macrocode}
+%\cs_new:Npn \@@_set_unit_group:nn #1#2
+%  {
+%    \@@_error_if_unit_not_defined:n {#2}
+%    \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2} 
+%      {
+%        \clist_map_inline:cn { l_@@_group_ #1 _clist }
+%          { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
+%      }{ 
+%        \msg_error:nnxxx 
+%          { cooking-units } 
+%          { group-choice-not-allowed }
+%          {#1} 
+%          {#2} 
+%          { \clist_use:cnnn { l_@@_group_ #1 _clist } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
+%      }
+%  }
+\cs_new:Npn \@@_unit_group_add_unit:n #1 
   {
     \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group }
   }
-\cs_new:Npn \@@_add_unit_to_group:nn #1#2 
+\cs_new:Npn \@@_unit_group_add_unit:nn #1#2 
   { 
      \clist_if_exist:cF { l_@@_group_ #1 _clist } 
        { \msg_error:nn { cooking-units} { group-key-unknown } }
