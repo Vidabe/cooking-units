@@ -516,15 +516,12 @@ and the derived file cooking-units.sty.
   }
 
 \newcookingunit {st}
+\newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 
 \cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
   }        
-
-
-\newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
-
 \cuaddsinglekeys {C}
   {
     {Ro} { #1*21/40 + 7.5 }
@@ -532,7 +529,7 @@ and the derived file cooking-units.sty.
 \cusetup 
   {
     set-option-for-Ro = { round-to-int = true }  ,
-%    erase-options-for = { F }
+%    add-unit-to-group = { weight = {st} , temperature = {Ro} }
   }
 
 %: \cusetup
@@ -1764,8 +1761,50 @@ and the derived file cooking-units.sty.
 %    \PrintGroup{time} \\  \bottomrule
 %  \end{tabular}
 %  \end{center}
-%
 % \end{function}
+%
+% \begin{cuexamplecode}
+%  \cusetup{weight=g} @
+%  \cunum{1}{kg} \\
+%  \cunum{1}{dag} \\
+%  \cunum{1}{g} \\
+%  \cunum{1}{oz} \\
+%  \cunum{1}{lb} \\
+%  \cunum{1}{stick} \\
+% \end{cuexamplecode}
+%
+%
+%
+%
+% \begin{function}{add-unit-to-group}
+%   \begin{syntax}
+%     \meta{add-unit-to-group} = \marg{group1=unit-key-list,\dots}
+%  \end{syntax}
+%  Adds each \meta{unit-key} in \meta{unit-keys-list} to \meta{group}.
+% \end{function}
+% \begin{cuexample}
+%   This example adds the unit \myunit{st} to the group \mygroup{weight}
+%   and \myunit{Ro} to \mygroup{temperature}.
+% \begin{lstlisting}
+%  \cusetup 
+%    { 
+%      add-unit-to-group = { weight = {st} , temperature = {Ro} }
+%    }
+% \end{lstlisting}
+%
+%  \cusetup{ add-unit-to-group = { weight = {st} } }
+%
+% \begin{cuexamplecode}
+%  \cusetup{weight=st} @
+%  \cunum{1}{kg} \\
+%  \cunum{1}{dag} \\
+%  \cunum{1}{g} \\
+%  \cunum{1}{oz} \\
+%  \cunum{1}{lb} \\
+%  \cunum{1}{stick} \\
+% \end{cuexamplecode}
+% \end{cuexample}
+%
 % 
 % \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>,erase-all-options}
 %   \begin{syntax}
@@ -4428,7 +4467,7 @@ and the derived file cooking-units.sty.
      \clist_map_inline:nn {#2}
        {
          \@@_error_if_unit_not_defined:n {##1} 
-         \clist_if_in:cnF { l_@@_group_ #1 _clist }
+         \clist_if_in:cnF { l_@@_group_ #1 _clist } {##1}
            { \clist_put_right:cn { l_@@_group_ #1 _clist } {##1} }
        }
   }
