@@ -194,6 +194,9 @@ and the derived file cooking-units.sty.
       { \ERROR }
   }
 \newcommand\opt{\texttt}
+\newcommand\myunit{\texttt}
+\newcommand\mygroup{\texttt}
+\newcommand\myaarg[1]{\texttt{<}\meta{#1}\texttt{>}}
 \newcommand\true{\opt{true}}
 \newcommand\false{\opt{false}}
 
@@ -213,6 +216,11 @@ and the derived file cooking-units.sty.
   {
     \texttt {#1} & 
     \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
+  }
+\NewDocumentCommand \PrintGroup { m }
+  {
+    \mygroup {#1} & 
+    \clist_use:cn { l__cooking_units_group_ #1 _clist } { ,~ }
   }
 
 
@@ -758,10 +766,10 @@ and the derived file cooking-units.sty.
 % converting):
 %
 % \begin{itemize}
-%   \item \mycs{cunum}\meta{label}\oarg{options}\marg{amount}\oarg{space}\marg{unit-key}
-%   \item \mycs{cutext}\meta{label}\oarg{options}\marg{amount}\marg{unit-key}
-%   \item \mycs{Cutext}\meta{label}\oarg{options}\marg{amount}\marg{unit-key}
-%   \item \mycs{cuam}\meta{label}\oarg{options} \marg{amount}
+%   \item \mycs{cunum}\myaarg{label}\oarg{options}\marg{amount}\oarg{space}\marg{unit-key}
+%   \item \mycs{cutext}\myaarg{label}\oarg{options}\marg{amount}\marg{unit-key}
+%   \item \mycs{Cutext}\myaarg{label}\oarg{options}\marg{amount}\marg{unit-key}
+%   \item \mycs{cuam}\myaarg{label}\oarg{options} \marg{amount}
 %   \item \mycs{cusetup}\marg{options}
 % \end{itemize}
 %
@@ -1743,6 +1751,20 @@ and the derived file cooking-units.sty.
 %  \end{syntax}
 %  Changes each unit contained in \meta{group} to \meta{unit-key} (\meta{unit-key}
 %  must be part of \meta{group}).
+%
+%  \begin{center}
+%  \begin{tabular}{ll}
+%    \toprule
+%    \meta{group} & \meta{unit-key}s \\ \midrule
+%    \PrintGroup{weight}  \\ 
+%    \PrintGroup{length} \\ 
+%    \PrintGroup{volume} \\ 
+%    \PrintGroup{temperature} \\ 
+%    \PrintGroup{energy} \\ 
+%    \PrintGroup{time} \\  \bottomrule
+%  \end{tabular}
+%  \end{center}
+%
 % \end{function}
 % 
 % \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>,erase-all-options}
@@ -3213,6 +3235,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \bool_new:N \l_@@_range_in_input_bool
 \bool_new:N \l_@@_lokal_fraction_bool
+\bool_new:N \l_@@_print_fraction_bool
 \bool_new:N \l_@@_lokal_mixed_fraction_bool
 \bool_new:N \l_@@_decimal_in_input_bool
 %    \end{macrocode}
@@ -4387,7 +4410,7 @@ and the derived file cooking-units.sty.
 \@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
 \@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
 \@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
-\@@_define_unit_group:nn { temperature } { C , F , Re , K }
+\@@_define_unit_group:nn { temperature } { C , F , K , Re }
 \@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
 \@@_define_unit_group:nn { time } { d , h , min , s }
 %    \end{macrocode}
@@ -5116,7 +5139,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ \@@_parse_input_loop_aux:N }
-%   Parses the input. It also is more or less copied from
+%   Parses the input. It also is more or less (more less then more) copied from
 %   \texttt{siunitx}.  Checks if the input consists only of numbers,
 %   one decimal-sign and the allowed special input. If an allowed
 %   token is found the boolean \lstinline|\l_@@_special_sign_bool| is
