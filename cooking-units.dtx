@@ -1752,7 +1752,7 @@ and the derived file cooking-units.sty.
 %  \begin{center}
 %  \begin{tabular}{ll}
 %    \toprule
-%    \meta{group} & \meta{unit-key}s \\ \midrule
+%    \meta{group} & default \meta{unit-key}s \\ \midrule
 %    \PrintGroup{weight}  \\ 
 %    \PrintGroup{length} \\ 
 %    \PrintGroup{volume} \\ 
@@ -1778,7 +1778,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{add-unit-to-group}
 %   \begin{syntax}
-%     \meta{add-unit-to-group} = \marg{group1=unit-key-list,\dots}
+%     \meta{add-unit-to-group} = \marg{group1 = \{unit-key-list\},\dots}
 %  \end{syntax}
 %  Adds each \meta{unit-key} in \meta{unit-keys-list} to \meta{group}.
 % \end{function}
@@ -1806,11 +1806,10 @@ and the derived file cooking-units.sty.
 % \end{cuexample}
 %
 % 
-% \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>,erase-all-options}
+% \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>}
 %   \begin{syntax}
 %     set-option-for-\meta{unit-key} = \meta{key1=value1,\dots}
 %     add-option-for-\meta{unit-key} = \meta{key1=value1,\dots}
-%    erase-all-options
 %  \end{syntax}
 %  Sets and adds \meta{key1=value1,\dots} to a specific
 %  \meta{unit-key},
@@ -1823,11 +1822,16 @@ and the derived file cooking-units.sty.
 %  unit). Setting options overwrites old options. Adding options, well
 %  \dots\ adds the options to the old ones.
 %  
-%  The following rounds the values to integers for \texttt{F}, \texttt{C}, 
-%  \texttt{K} and \texttt{Re}.
+% You can \enquote{delete} the  options by setting
+% an empty value for a specific \meta{unit-key} (or use
+% \opt{erase-all-options} (or \opt{erase-all-options-for} )
+% (see below) to erase all options for all \meta{unit-key}s)
 %  
 % \end{function}
 % 
+% \begin{cuexample}
+%  The following rounds the values to integers for \texttt{F}, \texttt{C}, 
+%  \texttt{K} and \texttt{Re}:
 % \begin{lstlisting}
 %  \cusetup 
 %    { 
@@ -1838,14 +1842,68 @@ and the derived file cooking-units.sty.
 %    }
 % \end{lstlisting}
 %
-% You can \enquote{delete} the  options by setting
-% an empty value for a specific \meta{unit-key} (or use
-% \opt{erase-all-options} to erase all options for all \meta{unit-key}s)
+%^^A  The following code rounds the units to the tens:
+%^^A \begin{lstlisting}
+%^^A  \cusetup 
+%^^A    { 
+%^^A      set-option-for-F  = { round-precision = -1 } ,
+%^^A      set-option-for-C  = { round-precision = -1 } ,
+%^^A      set-option-for-K  = { round-precision = -1 } ,
+%^^A      set-option-for-Re = { round-precision = -1 } 
+%^^A    }
+%^^A \end{lstlisting}
+% \end{cuexample}
 %
 %
-% \begin{function}{set-option-for,add-option-for,erase-options-for}
-%   Benenne in \enquote{options} (anstatt \enquote{option}) und setze meta key und kreire alten obsoleten key. Vielleicht.
+% \begin{function}{set-option-for, add-option-for}
+%   \begin{syntax}
+%     set-option-for = \meta{unit-key1=\{keys=vals\}, unit-key2=\{keys=vals\},\dots}
+%     add-option-for = \meta{unit-key1=\{keys=vals\}, unit-key2=\{keys=vals\},\dots}
+%  \end{syntax}
+%  Sets/adds each \meta{keys=vals} to the specific \meta{unit-key}. Works pretty much
+%  the same way their \opt{set-option-for-\meta{unit-key}} and
+% \opt{add-option-for-\meta{unit-key}} counterparts.
+%
+% The following example does the same as the example above: 
+%
 % \end{function}
+%
+% \begin{lstlisting}
+%  \cusetup 
+%    { 
+%      set-option-for = 
+%        { 
+%          F  = { round-to-int = true } ,
+%          C  = { round-to-int = true } ,
+%          K  = { round-to-int = true } ,
+%          Re = { round-to-int = true }
+%        }
+%    }
+% \end{lstlisting}
+%
+% \begin{function}{erase-all-options, erase-all-options-for}
+%   \begin{syntax}
+%     erase-all-options
+%     erase-all-options-for = \marg{unit-key1, unit-key2, \dots}
+%   \end{syntax}
+%   Erase options added to units. \opt{erase-all-options} erases all options
+%   for \emph{all} \meta{unit-key}s.
+%
+%  If you only want to erase options for specific \meta{unit-key}s, you may
+%  use \opt{erase-all-options-for}.
+%
+% \end{function}
+%
+% \begin{cuexample}
+%  The following code erases all added options from \myunit{C}, \myunit{F}, 
+%  \myunit{K} and \myunit{Re}:
+%
+%   \begin{lstlisting}
+%     \cusetup{ erase-all-options-for = {C , F, K, Re} }
+%   \end{lstlisting}
+% \end{cuexample}
+%
+%
 %
 % \subsubsection{Command behavior}
 %
@@ -1902,6 +1960,24 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 % \subsubsection{Input and Outputs}
+%
+%
+% \begin{function}{expand-both , expand-amount, expand-unit}
+%   \begin{syntax}
+%     expand-both = \meta{n/o/f/x}
+%     expand-amount = \meta{n/o/f/x}
+%     expand-unit = \meta{n/o/f/x}
+%   \end{syntax}
+%   By default the commands \mycs{cunum}, \cCutext{} and \mycs{cunum}
+%   do \emph{not} expand their input. You can change the expansion of
+%   the \meta{amount} and/or \meta{unit-key} using the options specified
+%   above. The meaning of the available values are the same as specified
+%  in the \LaTeX3\ document \enquote{interface3}:
+%
+% \end{function}
+%
+%
+%
 %
 % \begin{function}{set-special-sign,add-special-sign}
 %   \begin{syntax}
@@ -2586,9 +2662,9 @@ and the derived file cooking-units.sty.
 % 
 %
 %
+%^^A \section{Notes}
 %
-%
-%
+%^^A There is a unit called \enquote{Batman}.
 % 
 %
 %
@@ -3341,6 +3417,18 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
+% \begin{macro}{ add-unit-to-group }
+%    \begin{macrocode}
+    add-unit-to-group .code:n = 
+      { 
+        \keyval_parse:NNn 
+          \@@_unit_group_add_unit_error:n 
+          \@@_unit_group_add_unit:nn 
+          {#1} 
+      } ,
+    add-unit-to-group .default:n = {} ,
+%    \end{macrocode}
+% \end{macro}
 %
 %\begin{macro}{ set-option-for }
 %  Setting options.
@@ -3352,19 +3440,6 @@ and the derived file cooking-units.sty.
           \@@_set_options_for:nn
           {#1}
       },
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ erase-all-options }
-%  Erasing all preset options.
-%    \begin{macrocode}
-    erase-all-options .code:n = 
-      { 
-        \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
-          {
-            \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
-          }
-        },
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3381,17 +3456,31 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{ erase-all-options }
+%  Erasing all preset options.
+%    \begin{macrocode}
+    erase-all-options .code:n = 
+      { 
+        \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
+          {
+            \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
+          }
+        },
+    erase-all-options .value_forbidden:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
 %
-%\begin{macro}{ erase-options-for }
+%\begin{macro}{ erase-all-options-for }
 %  Erasing options.
 %    \begin{macrocode}
-    erase-options-for .code:n = 
+    erase-all-options-for .code:n = 
       { 
         \keyval_parse:NNn 
           \@@_erase_options_for:n
           \@@_erase_options_for_error:nn
           {#1}
       },
+    erase-all-options-for  .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3445,6 +3534,33 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{ expand-both , expand-amount, expand-unit }
+%    \begin{macrocode}
+    expand-both .choices:nn =
+      { n , o , f , x }
+      {
+        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
+      } ,
+    expand-both .default:n = { n } ,
+%    \end{macrocode}
+%    \begin{macrocode}
+    expand-amount .choices:nn =
+      { n , o , f , x }
+      {
+        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
+      } ,
+    expand-amount .default:n = { n } ,
+%    \end{macrocode}
+%    \begin{macrocode}
+    expand-unit .choices:nn =
+      { n , o , f , x }
+      {
+        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
+      } ,
+    expand-unit .default:n = { n } ,
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
@@ -3773,6 +3889,19 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+% \begin{macro}{ add-natural-unit }
+%    \begin{macrocode}
+    add-natural-unit .code:n = 
+      {
+        \@@_error_if_unit_not_defined:n {#1}
+        \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+        \seq_concat:NNN \g_@@_natural_units_seq \g_@@_natural_units_seq \l_@@_tmpa_seq
+        \seq_remove_duplicates:N \g_@@_natural_units_seq
+      } ,
+    add-natural-unit .value_required:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{ 42 }
 %    \begin{macrocode}
     42 .bool_set:N = \l_@@_fourty_two_bool ,
@@ -3814,61 +3943,8 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ add-natural-unit }
-%    \begin{macrocode}
-    add-natural-unit .code:n = 
-      {
-        \@@_error_if_unit_not_defined:n {#1}
-        \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-        \seq_concat:NNN \g_@@_natural_units_seq \g_@@_natural_units_seq \l_@@_tmpa_seq
-%        \seq_put_right:Nn \g_@@_natural_units_seq {#1} 
-        \seq_remove_duplicates:N \g_@@_natural_units_seq
-      } ,
-    add-natural-unit .value_required:n = { true } ,
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ expand-input , expand-amount, expand-unit }
-%    \begin{macrocode}
-    expand-input .choices:nn =
-      { n , o , f , x }
-      {
-        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
-        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
-      } ,
-    expand-input .default:n = { n } ,
-%    \end{macrocode}
-%    \begin{macrocode}
-    expand-amount .choices:nn =
-      { n , o , f , x }
-      {
-        \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
-      } ,
-    expand-amount .default:n = { n } ,
-%    \end{macrocode}
-%    \begin{macrocode}
-    expand-unit .choices:nn =
-      { n , o , f , x }
-      {
-        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
-      } ,
-    expand-unit .default:n = { n } ,
-%    \end{macrocode}
-% \end{macro}
 %
 %
-% \begin{macro}{ add-unit-to-group }
-%    \begin{macrocode}
-    add-unit-to-group .code:n = 
-      { 
-        \keyval_parse:NNn 
-          \@@_unit_group_add_unit_error:n 
-          \@@_unit_group_add_unit:nn 
-          {#1} 
-      } ,
-    add-unit-to-group .default:n = {} ,
-%    \end{macrocode}
-% \end{macro}
 %
 %
 %
@@ -4589,7 +4665,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_erase_options_for_error:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-options-for }
+    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-all-options-for }
   }
 %    \end{macrocode}
 % \end{macro}
