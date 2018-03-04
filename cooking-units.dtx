@@ -806,8 +806,8 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode} 
 %
 % Decimal numbers are automatically rounded to 2 digits after the
-% colon, temperatures (\texttt{C}, \texttt{F}, \texttt{K} and
-% \texttt{Re}) are automatically rounded to integers.\footnote{You can
+% colon, temperatures (\myunit{C}, \myunit{F}, \myunit{K} and
+% \myunit{Re}) are automatically rounded to integers.\footnote{You can
 % -- of course -- change this behavior, see \cref{sec:options}.}
 % 
 %
@@ -919,10 +919,9 @@ and the derived file cooking-units.sty.
 %   \cunum{180}{C} & (\cunum[C=F]{180}{C}) & open & fire
 % \end{cuexamplecode}
 %
-% Now with combination of the option \opt{set-number-of-persons}
-% and setting \opt{recalculate-amount} to \opt{true} you can have this recipe
+% In combination with the option \opt{set-number-of-persons}
+% and  \opt{recalculate-amount}  you can have this recipe
 % changed to four persons:
-%
 % \begin{lstlisting}
 %   \culabel{recipe}{2}
 %   %% adding options:
@@ -1114,8 +1113,12 @@ and the derived file cooking-units.sty.
 % \section{Defining units}
 % \label{sec:def-units}
 %
-% New units can be defined using \mycs{declarecookingunit}, 
-% \mycs{newcookingunit} and \mycs{providecookingunit}:
+% New units can be defined using 
+% \begin{itemize}
+%   \item \mycs{declarecookingunit}
+%   \item \mycs{newcookingunit}  
+%   \item \mycs{providecookingunit}
+% \end{itemize}
 %
 % \begin{function}{\declarecookingunit,\newcookingunit,\providecookingunit}
 %   \begin{syntax}
@@ -1165,7 +1168,7 @@ and the derived file cooking-units.sty.
 %   \item \mycs{cuaddtokeys}
 % \end{itemize}
 % I apologize for the (name) inconsistency between \mycs{cudefinekeys} and
-% \mycs{cudefinesinglekey} (although they are named similarly they work different).
+% \mycs{cudefinesinglekey} (although they are named similarly, they work different).
 %
 % \begin{function}{\cudefinekeys,\cudefinesinglekey}
 %   \begin{syntax}
@@ -1214,16 +1217,16 @@ and the derived file cooking-units.sty.
 %
 % This example defines following keys with their respective value:
 % \begin{itemize}
-% \item the key \texttt{kg} with the values \texttt{kg}, \texttt{dag},
-%   \texttt{g} and \texttt{oz}
-% \item the key \texttt{dag} with the values \texttt{kg},
-%   \texttt{dag}, \texttt{g} and \texttt{oz}
-% \item the key \texttt{g} with the values \texttt{kg}, \texttt{dag},
-%   \texttt{g} and \texttt{oz}
-% \item the key \texttt{oz} with the values \texttt{kg}, \texttt{dag},
-%   \texttt{g} and \texttt{oz}
-% \item the key \texttt{d} with the values \texttt{d}, \texttt{h},
-%   \texttt{min} and \texttt{s}
+% \item the key \myunit{kg} with the values \myunit{kg}, \myunit{dag},
+%   \myunit{g} and \myunit{oz}
+% \item the key \myunit{dag} with the values \myunit{kg},
+%   \myunit{dag}, \myunit{g} and \myunit{oz}
+% \item the key \myunit{g} with the values \myunit{kg}, \myunit{dag},
+%   \myunit{g} and \myunit{oz}
+% \item the key \myunit{oz} with the values \myunit{kg}, \myunit{dag},
+%   \myunit{g} and \myunit{oz}
+% \item the key \myunit{d} with the values \myunit{d}, \myunit{h},
+%   \myunit{min} and \myunit{s}
 % \item \dots
 % \end{itemize}
 %
@@ -1262,8 +1265,8 @@ and the derived file cooking-units.sty.
 % \end{align*}
 % with $T_F$ being the input temperature in degree Fahrenheit and
 % $T_C$ being the same temperature in degree Celsius, etc. Using
-% \lstinline|\cudefinesinglekey| the key \texttt{F} with values
-% \texttt{C}, \texttt{K} and \texttt{Re} is defined:
+% \lstinline|\cudefinesinglekey| the key \myunit{F} with values
+% \myunit{C}, \myunit{K} and \myunit{Re} is defined:
 % 
 % \begin{lstlisting}
 %  \cudefinesinglekey {F}
@@ -1274,8 +1277,8 @@ and the derived file cooking-units.sty.
 %    }
 % \end{lstlisting}
 %
-% This defines the key \texttt{F} with the values \texttt{F}, \texttt{C}, 
-% \texttt{K} and \texttt{Re}.
+% This defines the key \myunit{F} with the values \myunit{F}, \myunit{C}, 
+% \myunit{K} and \myunit{Re}.
 %
 % \end{cuexample}
 %
@@ -1314,7 +1317,7 @@ and the derived file cooking-units.sty.
 %   If the conversion is more complicated use
 %   \lstinline|\cuaddsinglekeys|.  It adds \meta{unit-key-2}, etc. as
 %   values to \meta{unit-key-1}.  The numerical input can be placed
-%   using \texttt{\#1} (see \lstinline|\cudefinesinglekey|).  This
+%   using \myunit{\#1} (see \lstinline|\cudefinesinglekey|).  This
 %   command neither defines new keys nor does it add values to other
 %   keys than \meta{unit-key-1}.
 %
@@ -1409,11 +1412,11 @@ and the derived file cooking-units.sty.
 %
 % \begin{comment}
 % \begin{cuexample}
-% Implementation of \texttt{stick}.  From https://cooking.stackexchange.com/questions/784/translating-cooking-terms-between-us-uk-au-ca-nz
+% Implementation of \myunit{stick}.  From https://cooking.stackexchange.com/questions/784/translating-cooking-terms-between-us-uk-au-ca-nz
 % we know that 
 % \[ \SI{1}{\stick} = \SI{0.25}{\lb} \]
 %
-% There are two ways to implement \texttt{stick}:
+% There are two ways to implement \myunit{stick}:
 % either use \mycs{cuaddkeys} or \mycs{cuaddtokeys}.
 %
 % The easier way (in this case) is \mycs{cuaddtokeys} which is pretty straight forward:
@@ -1813,7 +1816,7 @@ and the derived file cooking-units.sty.
 %  \end{syntax}
 %  Sets and adds \meta{key1=value1,\dots} to a specific
 %  \meta{unit-key},
-%  \texttt{erase-all-options} is used to erase all options for all
+%  \opt{erase-all-options} is used to erase all options for all
 %  \meta{unit-key}s.
 %  
 %  You may want to attach some options to a special
@@ -1830,8 +1833,8 @@ and the derived file cooking-units.sty.
 % \end{function}
 % 
 % \begin{cuexample}
-%  The following rounds the values to integers for \texttt{F}, \texttt{C}, 
-%  \texttt{K} and \texttt{Re}:
+%  The following rounds the values to integers for \myunit{F}, \myunit{C}, 
+%  \myunit{K} and \myunit{Re}:
 % \begin{lstlisting}
 %  \cusetup 
 %    { 
@@ -1889,8 +1892,11 @@ and the derived file cooking-units.sty.
 %   Erase options added to units. \opt{erase-all-options} erases all options
 %   for \emph{all} \meta{unit-key}s.
 %
-%  If you only want to erase options for specific \meta{unit-key}s, you may
-%  use \opt{erase-all-options-for}.
+%^^A  If you only want to erase options for specific \meta{unit-key}s, you may
+%^^A  use \opt{erase-all-options-for}.
+%
+% \opt{erase-all-options-for} is used to remove added options from 
+% the specified \meta{unit-key}s.
 %
 % \end{function}
 %
@@ -1899,7 +1905,7 @@ and the derived file cooking-units.sty.
 %  \myunit{K} and \myunit{Re}:
 %
 %   \begin{lstlisting}
-%     \cusetup{ erase-all-options-for = {C , F, K, Re} }
+%     \cusetup{ erase-all-options-for = {C, F, K, Re} }
 %   \end{lstlisting}
 % \end{cuexample}
 %
@@ -1940,7 +1946,7 @@ and the derived file cooking-units.sty.
 %   \cutext[kg=g]{1}{kg} \\
 %   \cutext[kg=g]{1/2}{kg} \\
 %   \cutext[kg=g]{1--2}{kg} \\
-%   \cusetup{cutext-change-unit=false } @
+%   \cusetup{cutext-change-unit = false } @
 %   \cutext[kg=g]{1}{kg} \\
 %   \cutext[kg=g]{1/2}{kg} \\
 %   \cutext[kg=g]{1--2}{kg}
@@ -2084,10 +2090,10 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     parse-number = \meta{true/false}
 %   \end{syntax}
-%   If set to \texttt{false} prints the number of \lstinline!\cunum!,
+%   If set to \false\ prints the number of \lstinline!\cunum!,
 %   \lstinline!\cutext!, \lstinline!\Cutext! and \mycs{cuam} as they
 %   are (after some \dots\ well \dots\ parsing due to
-%   \enquote{\lstinline|_|}). Is set to \texttt{true} by default.
+%   \enquote{\lstinline|_|}). Is set to \true\ by default.
 % \end{function}
 %
 % \begin{cuexamplecode}
@@ -2184,8 +2190,8 @@ and the derived file cooking-units.sty.
 %    round-precision = \meta{integer}
 %  \end{syntax}
 %  Rounds the amount automatically to \meta{integer} digits after the
-%  colon.  Note that units like \texttt{C}, \texttt{F}, \texttt{K} and
-%  \texttt{Re} are still rounded to integers due to
+%  colon.  Note that units like \myunit{C}, \myunit{F}, \myunit{K} and
+%  \myunit{Re} are still rounded to integers due to
 %  \texttt{set-option-for-<unit-key>}.
 % \end{function}
 %
@@ -2222,7 +2228,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     round-to-int = \meta{true/false}
 %   \end{syntax}
-%   Rounds the amount to an integer if set \texttt{true}.
+%   Rounds the amount to an integer if set \true.
 % \end{function}
 %
 %
@@ -2273,8 +2279,8 @@ and the derived file cooking-units.sty.
 %  \begin{syntax}
 %    eval-fraction = \meta{true/false}
 %  \end{syntax}
-%   This option takes \texttt{true} or \texttt{false} as values.
-%   If set to \texttt{true} fractions are evaluated. Please note that divisions
+%   This option takes \true\ or \false\ as values.
+%   If set to \true\ fractions are evaluated. Please note that divisions
 %  through zero are not allowed.
 % \end{function}
 %
@@ -2319,7 +2325,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     fraction-inline = \meta{input containing \#1 and \#2}
 %   \end{syntax}
-%   Similar to \texttt{fraction-command} only that you don't have to 
+%   Similar to \opt{fraction-command} only that you don't have to 
 %   define a command  to alter the output of the fraction.
 % \end{function}
 % 
@@ -2552,9 +2558,9 @@ and the derived file cooking-units.sty.
 %     check-temperature = \meta{true/false}
 %   \end{syntax}
 %   Checks if the used temperature is below  absolute zero.
-%  Currently \texttt{C}, \texttt{F}, \texttt{K} and \texttt{Re} are supported. 
+%  Currently \myunit{C}, \myunit{F}, \myunit{K} and \myunit{Re} are supported. 
 %  While \lstinline|\cunum{0}{K}| is ok, \lstinline!\cunum{-1}{K}! raises an error, 
-%  same for the others. Is set to \texttt{false} by default. To add new units
+%  same for the others. Is set to \false\ by default. To add new units
 %  see \opt{add-temperature-to-check}.
 % \end{function}
 %
@@ -2575,7 +2581,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 %   For example, this package implements the allowed minimum values for the
-%  temperatures \texttt{C}, \texttt{F}, \texttt{K} and \texttt{Re} to be checked if
+%  temperatures \myunit{C}, \myunit{F}, \myunit{K} and \myunit{Re} to be checked if
 %  \opt{check-temperature} is active using:
 % \begin{lstlisting}
 %   \cusetup
@@ -3058,9 +3064,9 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \l_@@_change_unit_prop }
 % Conversions of units are stored within this property list.
-% If someone requests that \texttt{kg} should be changed into \texttt{g},
-% \texttt{kg} is stored as a key with the value \texttt{g}. If someone
-% then uses the unit \texttt{kg} the value \texttt{g} is restored and  the unit
+% If someone requests that \myunit{kg} should be changed into \myunit{g},
+% \myunit{kg} is stored as a key with the value \myunit{g}. If someone
+% then uses the unit \myunit{kg} the value \myunit{g} is restored and  the unit
 % is changed accordingly.
 %    \begin{macrocode}
 \prop_new:N \l_@@_change_unit_prop
@@ -3358,7 +3364,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% Setting some of them to \texttt{true} or another boolean respectively.
+% Setting some of them to \true\ or another boolean respectively.
 %    \begin{macrocode}
 \bool_set_true:N \l_@@_cutext_change_unit_bool
 \bool_set_eq:NN \l_@@_print_numeral_bool \g_@@_opt_numeral_bool
@@ -5614,8 +5620,8 @@ and the derived file cooking-units.sty.
 % \begin{macro}{\@@_check_temperature_limit:N}
 %   If \lstinline|check_temperature_bool| is set to true it  now checks
 %   if the value is below the absolute temperature. \lstinline|\clist_if_in:nVT|
-%   is needed due to \texttt{Re}, a \lstinline|\tl_if_in:nVT| would also check for \texttt{R}
-%   and \texttt{e} instead of only \texttt{Re}.
+%   is needed due to \myunit{Re}, a \lstinline|\tl_if_in:nVT| would also check for \myunit{R}
+%   and \myunit{e} instead of only \myunit{Re}.
 %    \begin{macrocode}
 \cs_new:Npn \@@_check_temperature_limit:N #1
   {
@@ -6271,11 +6277,11 @@ and the derived file cooking-units.sty.
 % \end{align*}
 %
 % Therefore the property list for \lstinline|kg| contains the keys and values: 
-% \texttt{kg}=\texttt{1}
-% \texttt{dag}=\texttt{100}, \texttt{g}=\texttt{1000} and \texttt{oz}= \texttt{35.27399}.
+% \myunit{kg}=\myunit{1}
+% \myunit{dag}=\myunit{100}, \myunit{g}=\myunit{1000} and \myunit{oz}= \myunit{35.27399}.
 %
-% For the next unit (\texttt{dag} in this case) a new property list is created, relation above
-% stored inside etc. The  condition now is that \texttt{dag}=\texttt{1}, therefore every number
+% For the next unit (\myunit{dag} in this case) a new property list is created, relation above
+% stored inside etc. The  condition now is that \myunit{dag}=\texttt{1}, therefore every number
 % is divided the the number \texttt{100}:
 %
 % \begin{align*}
@@ -6285,7 +6291,7 @@ and the derived file cooking-units.sty.
 %  \SI{1}{\deka\gram}&=  \SI{0.3527399}{\oz} 
 % \end{align*}
 %
-% Same for \texttt{g}:
+% Same for \myunit{g}:
 %
 % \begin{align*}
 %  \SI{1}{\g}&=  \SI{0.001}{\kg} \\
@@ -6294,7 +6300,7 @@ and the derived file cooking-units.sty.
 %  \SI{1}{\g}&=  \SI{0.03527399}{oz} 
 % \end{align*}
 %
-% and \texttt{oz}
+% and \myunit{oz}
 %
 % \begin{align*}
 %  \SI{1}{oz}&=  \SI{0.0283495}{\kg} \\
