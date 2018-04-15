@@ -639,6 +639,22 @@ and the derived file cooking-units.sty.
 % \changes {2017/10/23} {1.20} {Now checks for ranges if both values can be printed as numerals (if activated) (bug fix).}
 % \changes {2017/10/23} {1.20} {Reworked quite a lot of code.}
 %
+% \changes {vDATEv} {vNEWv} {}
+% \changes {vDATEv} {vNEWv} {Allow round precision to be negative.}
+% \changes {vDATEv} {vNEWv} {Fix argument specifiers.}
+% \changes {vDATEv} {vNEWv} {Change large portions of code.}
+% \changes {vDATEv} {vNEWv} {Option: \opt{add-natural-unit}.}
+% \changes {vDATEv} {vNEWv} {New Option: \opt{42}.}
+% \changes {vDATEv} {vNEWv} {New options: \opt{expand-both}, \opt{expand-amount}, \opt{expand-unit}.}
+% \changes {vDATEv} {vNEWv} {Introduce key-groups (weight, volume, etc.).}
+% \changes {vDATEv} {vNEWv} {New option: \opt{add-unit-to-group}}
+% \changes {vDATEv} {vNEWv} {New parsing algorithm. Hopefully better
+%   error recovery (if signs for fractions are in wrong order e.g.)}
+% \changes {vDATEv} {vNEWv} {Add \enquote{Division-by-zero} error.}
+% \changes {vDATEv} {vNEWv} {Cooking Units-keys are not allowed to contain
+%   either \enquote{,} or \enquote{/}.}
+% \changes {vDATEv} {vNEWv} {New options: \opt{set-option-for} \& \opt{add-option-for}.}
+% \changes {vDATEv} {vNEWv} {New option: \opt{erase-all-options-for}}
 %
 %
 %
@@ -2926,8 +2942,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2017/10/23}
-  {1.20}
+  {2017/10/23} %% vDATEv
+  {1.20} %% vNEWv
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
