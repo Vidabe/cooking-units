@@ -5142,8 +5142,7 @@ and the derived file cooking-units.sty.
           { decimal-mark } \c_@@_postfix_unitname_tl
         \tl_replace_once:Nnn #1 { . } { \l_@@_translation_tmpa_tl }
       }
-    \tl_if_in:NnT #1 { - }
-      { \tl_replace_once:NnV #1 { - } \c_@@_minus_tl }
+    \tl_replace_once:Nnn #1 { - } \c_@@_minus_tl
     #1
   }
 %    \end{macrocode}
@@ -5608,7 +5607,7 @@ and the derived file cooking-units.sty.
     \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
     \q_recursion_stop
   }
-\cs_new:Npn \@@_check_number_after_dot_aux:ww #1. #2 .
+\cs_new:Npn \@@_check_number_after_dot_aux:ww #1 . #2 .
   {
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
