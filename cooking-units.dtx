@@ -3129,6 +3129,12 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_input_fraction_sign_tl
 \tl_new:N \l_@@_input_mixed_fraction_sign_tl
 %    \end{macrocode}
+%    \begin{macrocode}
+\tl_new:N \l_@@_cunum_hook_tl
+\tl_new:N \l_@@_cutext_hook_tl
+\tl_new:N \l_@@_Cutext_hook_tl
+\tl_new:N \l_@@_cuam_hook_tl
+%    \end{macrocode}
 % \end{macro}
 %
 %
@@ -3952,6 +3958,14 @@ and the derived file cooking-units.sty.
 %
 %
 %
+% \begin{macro}{hooks}
+%    \begin{macrocode}
+    cunum-add-hook .code:n = { \tl_put_right:Nn \l_@@_cunum_hook_tl {#1} } , 
+    cutext-add-hook .code:n = { \tl_put_right:Nn \l_@@_cutext_hook_tl {#1} } , 
+    Cutext-add-hook .code:n = { \tl_put_right:Nn \l_@@_Cutext_hook_tl {#1} } , 
+    cuam-add-hook .code:n = { \tl_put_right:Nn \l_@@_cuam_hook_tl {#1} } , 
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
@@ -5738,6 +5752,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cunum:nnnnn #1#2#3#4#5
   {
     \@@_cunum_initialise:nnnnn {#1} {#2} {#3} {#4} {#5}
+    \l_@@_cunum_hook_tl
     \@@_parse_input:n {#3}
     \@@_print_correct_unit:
   }
@@ -5850,6 +5865,9 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
     \@@_cutext_initialise:nnn {#1} {#2} {#4}
+    \bool_if:NTF \l_@@_cutext_uppercase_word_bool
+      { \l_@@_Cutext_hook_tl }
+      { \l_@@_cutext_hook_tl }
     \bool_if:NTF \l_@@_cutext_old_bool
       { \@@_old_cutext:nnn {#2} {#3} {#4} }
       { \@@_parse_input:n {#3} }
@@ -5992,6 +6010,7 @@ and the derived file cooking-units.sty.
       { 
         \group_begin:
         \@@_cuam_initialise:nn {#1} {#2}
+        \l_@@_cuam_hook_tl
         \@@_cuam:n {#3}
         \group_end:
       }
