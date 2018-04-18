@@ -4021,7 +4021,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { fraction-not-allowed-with-range }
   { 
-    'You' \ cannot \ use \ '/' \ ( and  \ '_' )\ in \ combination \
+    You \ cannot \ use \ '/' \ ( and  \ '_' )\ in \ combination \
     with \ '\l_@@_input_range_sign_tl' \ in \  '#1'.
   }{ 
     You \ cannot \ use \ fractions \ with \ a \ range.
@@ -4044,8 +4044,7 @@ and the derived file cooking-units.sty.
   { 
     You \ cannot \ use \ '/'  \ before \ '_' \ in \ '#1'.
   }{ 
-    You \ cannot \ have \ a \ mixed \ fraction \ ('_') \ without \
-    a \ normal \ fraction \ ('/').
+    You \ can \ only \ use \ '_' \ before \ '/'.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -4054,7 +4053,8 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { unknown-unit }
   { 
     The \ unit \ '#1' \ is \ not \ defined. \ Use \ 
-    \newcookingunit \ to \ define \ new \ units.
+    \newcookingunit ~ (or \ one \ of \ the \ others) \ to \ 
+    define \ new \ units.
   }{ 
     Define \ units \ before \ using \ or \ check \ if \ the \
     unit-key \ is \ written \ correctly.
@@ -4075,10 +4075,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { character-not-allowed } 
   { 
-    Unit-keys \ are \ not \ allowed \ to \ neither \ contain \ ',' \ nor \ '/' \ 
+    Unit-keys \ are \ not \ allowed \ to \ either \ contain \ ',' \ or \ '/' \ 
     in \ '#1'. 
   }{ 
-    The \ unit-key \ is \ not \ allowed \ to \ contain \ ',' \ or \ '/'.
+    The \ unit-key \ is \ not \ allowed \ to \ contain \ ',' \ or \ '/'. \
+    Due \ to \ internal \ reasons.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -4086,7 +4087,7 @@ and the derived file cooking-units.sty.
 % Missing argument in \lstinline|\cudefinesymbols| (et all).
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { missing-argument } 
-  { There \ is \ an \ missing \ argument. } 
+  { There \ is \ a \ missing \ argument. } 
   { 
     You \ probably \ have \ forgotten \ a \ curly-brace \ pair.
     \msg_see_documentation_text:n {cooking-units} 
@@ -4095,7 +4096,7 @@ and the derived file cooking-units.sty.
 % If fractions are evaluated division by zero is not allowed.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Division-by-zero } 
-  { Division\ by \ zero \ is \ not \ allowed \ in \ #1. } 
+  { Division\ by \ zero \ is \ not \ allowed \ in \ '#1'. } 
   { See \ a \ math \ book \ of \ your \ choice \ or \ for \ example \ Wikipedia. }
 %    \end{macrocode}
 % Showing the not allowed token in the input. Hope this helps.
@@ -4138,8 +4139,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Key-not-defined } 
   { 
-    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeys or \
-    \cudefinesinglekey to \ define \ keys. 
+    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeys ~ or \
+    \cudefinesinglekey ~ to \ define \ keys. 
   } 
   { 
     This \ key \ is \ not \ defined, \ perhaps \ you  \ misspelled \ it.
@@ -4157,7 +4158,7 @@ and the derived file cooking-units.sty.
     the \ temperatures \ 
     '\seq_use:Nnnn \l_@@_temperatures_to_check_seq 
       { ', ~ ' } { ', ~ ' } { ' ~ and ~ ' }' \
-    are \ rounded \ to \ integers. 
+    are \ rounded \ to \ integers \ by \ default. 
     \\\\
     You \ can \ disable \ the \ option \ 'check-temperature' \ to \
     disable \ this \ error.
@@ -4172,7 +4173,7 @@ and the derived file cooking-units.sty.
     '#3' \ as \ a \ set \ of \ choices \ and \ '#2' \ is \ non \ of \ these.
   }{ 
     The \ key \ accepts \ only \ a \ fixed \ set \ of \ choices. \
-    You \ can \ add \ new \ choices \ via \ \cuaddkeys, \ \cuaddsinglekeys \
+    You \ can \ add \ new \ choices \ via \ \cuaddkeys, ~ \cuaddsinglekeys ~
     and \ \cuaddtokeys.
     \msg_see_documentation_text:n {cooking-units} 
   }
@@ -4227,7 +4228,7 @@ and the derived file cooking-units.sty.
     Please \ set \ it \ as \ a \ package \ option.
   } 
   { 
-    You \ cannot \ set \ this \ option \ using \ \cusetup \
+    You \ cannot \ set \ this \ option \ using \ \cusetup ~
     but \ only \ as \ a \ package \ option.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4238,8 +4239,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { obsolete-command } 
   { 
     Command \ #1 is \ obsolete. \ Please \ use \ #2 instead.
-  } 
-  { 
+  }{ 
     Don't \ use \ this \ old \ command \ ... 
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4249,13 +4249,9 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { No-Value-given } 
   { 
     Please \ input \ a \ value \ for \ the \ key-value \ list \ in \ '#1'
-%    Please \ input \ a \ number \ to \ check \ for \ 
-%    'check-temperature'.
   } 
   { 
     Each \ element \ of \ the \ list \ needs \ a \ value.
-%    A \ minimum \ value \ is \ needed \ for \ testing \ if \
-%    'check-temperature' \ is \ active.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -4266,8 +4262,6 @@ and the derived file cooking-units.sty.
     The \ key-list \ in \ '#1' \ does \ not \ take \ a \ value.
   } 
   { 
-%    A \ minimum \ value \ is \ needed \ for \ testing \ if \
-%    'check-temperature' \ is \ active.
     This \ key-list \ does \ not \ take \ a \ value. \ The \
     given \ value \ will \ be \ ignored.
     \msg_see_documentation_text:n { cooking-units } 
@@ -4279,8 +4273,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { Minimum-already-defined } 
   { 
     A \ minimum \ for \ '#1' \ has \ already \ been \  defined.
-  } 
-  { 
+  }{ 
     You \ cannot \ redefine \ it.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4319,8 +4312,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { label-already-defined } 
   { 
     The \ label \ '#1' \ has \ already \ been \ defined.
-  } 
-  { 
+  }{ 
     Each \ label \ must \ be \ unique.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4332,8 +4324,7 @@ and the derived file cooking-units.sty.
   { 
     The \ label \ is \ not \ defined. \ Please \ note \ that \ a \ label
     \ has \ to \ defined \ before \ it \ is \ referenced.
-  } 
-  { 
+  }{ 
     Define \ the \ label \ before \ using \ it.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4343,10 +4334,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { redefine-unit } 
   { 
-    The \ unit \ '#1' \ is \ redefined \ by \ \declarecookingunit at \ 
+    The \ unit \ '#1' \ is \ redefined \ by \ \declarecookingunit ~ at \ 
     \msg_line_context: . 
-  } 
-  { 
+  }{ 
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -4356,8 +4346,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { phrase-unit-not-an-integer } 
   { 
     A \ phrase \ must \ be \ an \ integer,  \ '#1' \ is \ not \ allowed.
-  } 
-  { 
+  }{ 
     You \ can \ only \ use \ integers.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4370,12 +4359,12 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { cutext-no-translation-available }
   { 
     For \ the \ unit \ '#1' \ there \ exists \ no \ translation \ to \ be \ used \
-    for \ \cutext and \ \Cutext. \
+    for \ \cutext ~ and \ \Cutext. \
     You \ can \ define \ new \ translations \ for \ a \ given \ language \ using \
     \cudefinename.
   } 
   { 
-    \cunum \ is \ used \ instead.
+    \cunum ~ is \ used \ instead.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -4486,7 +4475,7 @@ and the derived file cooking-units.sty.
       { \bool_set_false:N #1 }
     \bool_lazy_and:nnT 
       { \l_@@_range_in_input_bool } {#1}
-      { 
+      {
         \@@_if_integer:VF #3
           { \bool_set_false:N #1 }
       } 
