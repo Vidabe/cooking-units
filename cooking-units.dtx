@@ -3977,6 +3977,13 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{hooks}
 %    \begin{macrocode}
+    commands-add-hook .meta:n = 
+      { 
+        cunum-add-hook =  {#1} ,
+        cutext-add-hook =  {#1} ,
+        Cutext-add-hook =  {#1} ,
+        cuam-add-hook =  {#1} ,
+      } , 
     cunum-add-hook .code:n = { \tl_put_right:Nn \l_@@_cunum_hook_tl {#1} } , 
     cutext-add-hook .code:n = { \tl_put_right:Nn \l_@@_cutext_hook_tl {#1} } , 
     Cutext-add-hook .code:n = { \tl_put_right:Nn \l_@@_Cutext_hook_tl {#1} } , 
