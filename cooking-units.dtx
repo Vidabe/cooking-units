@@ -4658,8 +4658,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{\@@_tl_eval:Nn}
 % I am using this construction often enough, so \dots\ yeah.
 %    \begin{macrocode}
-\cs_new:Npn \@@_tl_eval:Nn #1#2
-  { \tl_set:Nf #1 { \fp_eval:n {#2} } }
+\cs_new:Npn \@@_tl_eval:Nn #1#2 { \tl_set:Nf #1 { \fp_eval:n {#2} } }
 \cs_generate_variant:Nn \@@_tl_eval:Nn { Nv }
 %    \end{macrocode}
 % \end{macro}
