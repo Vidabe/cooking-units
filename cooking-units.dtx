@@ -144,6 +144,11 @@ and the derived file cooking-units.sty.
 \usepackage{cleveref}
 \usepackage{mathtools}
 \usepackage{siunitx}
+\usepackage{totalcount}
+
+
+\newcounter{CookingUnitsCounter}
+\DeclareTotalCounter{CookingUnitsCounter}
 
 \babeltags{myde = ngerman}
 
@@ -185,6 +190,7 @@ and the derived file cooking-units.sty.
     cuaddtokeys,
     culabel,
     curef,
+    cudefinephrase,
   }
 
 \NewDocumentCommand \mycs { m }
@@ -228,7 +234,8 @@ and the derived file cooking-units.sty.
 
 %% Allyourwhitespacearebelongtous (too long)
 %% 42
-\NewDocumentCommand \dothewhitespace { O{ Miep! } }
+%% Miep!
+\NewDocumentCommand \dothewhitespace { O{ Ducks } }
   {
     \textcolor{white} {#1} \\
   }
@@ -528,6 +535,7 @@ and the derived file cooking-units.sty.
   }
 \cusetup 
   {
+    commands-add-hook = {\stepcounter{CookingUnitsCounter}} ,
     set-option-for-Ro = { round-to-int = true }  ,
 %    add-unit-to-group = { weight = {st} , temperature = {Ro} }
   }
@@ -535,6 +543,7 @@ and the derived file cooking-units.sty.
 %: \cusetup
 \cusetup
   {
+%    weight=stick,
 %    42 = true ,
 %    convert-to-eV=true ,
 %    cutext-range-sign = {as},
@@ -809,7 +818,7 @@ and the derived file cooking-units.sty.
 %   \cunum{2,3}{kg}  \\
 %   \cunum{2--3}{kg}  \\
 %   \cunum{2.5--3.5}{kg}  \\
-%   \cunum[kg=g]{2.5--3.5}{kg}  \\
+%   \cunum[kg=g]{2.5--3,5}{kg}  \\
 %   \cunum[C=F]{200}{C}  \\
 %   \cunum[C=F]{180--200}{C} \\
 %   \cunum{1/2}{m}  \\
@@ -888,6 +897,7 @@ and the derived file cooking-units.sty.
 % \begin{myde}
 % \begin{cuexamplecode}
 %   \cusetup{use-phrases=true} @
+%   \cuam{11} \\
 %   \cuam{12} \\
 %   \cuam{13} \\
 %   \cuam{24} \\
@@ -968,7 +978,7 @@ and the derived file cooking-units.sty.
 % found in \cref{sec:options}.
 %
 %
-%
+%\subsection{Numerals}
 %   \begin{cuinterest}{use-numerals, use-numerals-below, print-numerals} 
 %   As seen above, you can use the \emph{package}-option
 %   \opt{use-numerals} to print integers used by \cCutext{} below
@@ -982,6 +992,7 @@ and the derived file cooking-units.sty.
 %
 % \end{cuinterest}
 %
+%  \subsection{Phrases}
 % \begin{cuinterest}{use-phrases}
 %   In (I presume) all languages there exist phrases for a given
 %   amount or a number of things (think it is called \enquote{counting measurement}).
@@ -1024,9 +1035,30 @@ and the derived file cooking-units.sty.
 %     supported. Furthermore this feature is only available for \mycs{cuam}.
 %   \end{cunote}
 %
-%
 %  \end{cuinterest}
 %
+%
+%\subsection{Rounding temperatures}
+%
+% By default temperatures are rounded to integers (using \opt{round-to-int = true}).
+% Since vNEWv it is possible to round amounts to a negative precision. 
+% If you want to round temperatures to the tens see the following 
+% example (\opt{set-option-for-\meta{unit}} is described in \cref{sec:opt:unit-spec}).
+% 
+% \begin{cuexamplecode}
+%   \cunum{180}{C} \\
+%   \cunum[C=F]{180}{C} \\
+%   \cunum[C=Re]{180}{C} \\
+%   \cunum[C=K]{180}{C} \\
+%   \cusetup{set-option-for-C = { round-precision = -1 } } @
+%   \cusetup{set-option-for-F = { round-precision = -1 } } @
+%   \cusetup{set-option-for-Re = { round-precision = -1 } } @
+%   \cusetup{set-option-for-K = { round-precision = -1 } } @
+%   \cunum{180}{C} \\
+%   \cunum[C=F]{180}{C} \\
+%   \cunum[C=Re]{180}{C} \\
+%   \cunum[C=K]{180}{C} \\
+% \end{cuexamplecode}
 %
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
@@ -1485,8 +1517,8 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     \mycs{cudefinename}\marg{Language}
 %      \ \ \{
-%      \ \ \ \ \marg{unit-key-1} \oarg{symbol-1} \marg{singular-1} \oarg{plural-1} \meta{gender}
-%      \ \ \ \ \marg{unit-key-2} \oarg{symbol-2} \marg{singular-2} \oarg{plural-2} \meta{gender}
+%      \ \ \ \ \marg{unit-key-1} \oarg{symbol-1} \marg{singular-1} \oarg{plural-1} \myaarg{gender}
+%      \ \ \ \ \marg{unit-key-2} \oarg{symbol-2} \marg{singular-2} \oarg{plural-2} \myaarg{gender}
 %      \ \ \ \ \dots
 %      \ \ \}
 %   \end{syntax}
@@ -1602,7 +1634,7 @@ and the derived file cooking-units.sty.
 % You do it anyway and end up with:
 %  \begin{cuexamplecode}
 %    \cunum{12}{dag} & weed\\
-%    \cunum{3}{dag} & nuts\\
+%    \cunum{3}[0]{dag} & nuts\\
 %    \cunum{10}{dag} & duckmeat
 %  \end{cuexamplecode}
 %
@@ -1623,16 +1655,17 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{\cudefinephrase}
 %   \begin{syntax}
-%     \mycs{cudefinesymbol}\marg{Language}
+%     \mycs{cudefinephrase}\marg{Language}
 %      \ \ \{
-%      \    \marg{integer-1}   \marg{phrase-1} \oarg{phrase-1-plural} \meta{gender-1}
-%      \    \marg{integer-2} * \marg{phrase-2} \oarg{phrase-2-plural} \meta{gender-2}
+%      \    \marg{integer-1}   \marg{phrase-1} \oarg{phrase-1-plural} \myaarg{gender-1}
+%      \    \marg{integer-2} * \marg{phrase-2} \oarg{phrase-2-plural} \myaarg{gender-2}
 %      \    \dots
 %      \ \ \}
 %   \end{syntax}
 %   
-%   This command pairs for a given \marg{Language} the number \marg{integer-1}
-%   with \marg{phrase-1} (plural and gender). The package then checks if the amount
+%   This command pairs for a given \marg{Language} (see package \pkg{translations})
+%   the number \marg{integer-1}
+%   with \marg{phrase-1} (\& plural and gender). The package then checks if the amount
 %   given in \mycs{cuam} is either this number or a \emph{multiple} of it.
 %
 %   If the behavior of checking for a multiple is not wanted, you can use the optional
@@ -1655,10 +1688,10 @@ and the derived file cooking-units.sty.
 %   \enquote{German}:
 %   
 % \cudefinephrase {German}
-%    {
+%   {
 %      { 60 }  {Schock} <n>
 %      { 6  }* {halbes\  Dutzend} <n>
-%    }
+%   }
 %
 %
 % \begin{lstlisting}
@@ -1669,7 +1702,7 @@ and the derived file cooking-units.sty.
 %      { 6  }* {halbes\ Dutzend} <n>
 %    }
 % \end{lstlisting}
-%   Let's just use them (activating the german language):
+%   Let's just use them (german language activated!):
 %   \begin{myde}
 %   \begin{cuexamplecode}
 %     \cusetup{use-phrases=true} @
@@ -1752,6 +1785,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 % 
 % \subsubsection{Unit Specific options} 
+% \label{sec:opt:unit-spec}
 %
 % \begin{function}{<unit>}
 %   \begin{syntax}
@@ -1821,6 +1855,7 @@ and the derived file cooking-units.sty.
 %  \cunum{1}{oz} \\
 %  \cunum{1}{lb} \\
 %  \cunum{1}{stick} \\
+%  \cunum{1}{st} 
 % \end{cuexamplecode}
 % \end{cuexample}
 %
@@ -1980,6 +2015,36 @@ and the derived file cooking-units.sty.
 %   change the unit of \cCutext. Both of them are set to \opt{new} by
 %   default.
 % \end{function}
+%
+%
+%
+%
+% \subsubsection{Hooks}
+%
+% \begin{function}{commands-add-hook,cunum-add-hook,cutext-add-hook,Cutext-add-hook,cuam-add-hook}
+%   \begin{syntax}
+%      commands-add-hook = \meta{code}
+%      cunum-add-hook  = \meta{code} 
+%      cutext-add-hook = \meta{code} 
+%      Cutext-add-hook = \meta{code} 
+%      cuam-add-hook   = \meta{code}
+%   \end{syntax}
+%   Adds \meta{code} to the respective command (or in case of the first key: 
+%   to \emph{all} commands). The hook is executed
+%   \emph{after} setting the keys, but \emph{before} parsing and processing the input.
+% \end{function}
+%
+% \begin{cuexample}
+%   You would like to count how often all commands of this package are used.
+%   Simply add:
+%   \begin{lstlisting}
+%     \newcounter{CookingUnitsCounter} %% or however you like it
+%     \cusetup{commands-add-hook={\stepcounter{CookingUnitsCounter}}}
+%        %% beware of spaces inside the add-hook keys.
+%   \end{lstlisting}
+%   to your preamble. In this documentation the commands are used
+%   a total of \totalCookingUnitsCounters\ times.
+% \end{cuexample}
 %
 % \subsubsection{Input and Outputs}
 %
@@ -2667,7 +2732,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     42 = \meta{true/false}
 %   \end{syntax}
-%   What do you think it does?
+%   Take a good guess.
 % \end{function}
 % 
 % \begin{cuexamplecode}[\hfill]
