@@ -1091,6 +1091,7 @@ and the derived file cooking-units.sty.
 %   are shown in \cref{sec:Translations}. 
 %   Note that \enquote{electron volt} exists just for fun.
 % }
+% \smallskip
 %   \begin{tabular}{ lll @{\hspace{1cm}} lll  }
 %       \toprule
 %      description & key & default & description & key & default \\ \midrule
@@ -1125,6 +1126,7 @@ and the derived file cooking-units.sty.
 %   (e.g. \enquote{saltspoonful}) may not exist in another language
 %   (like german; at least I never heard of it). So please only use
 %   units known to you.}
+%   \smallskip
 %   \begin{tabular}{ lll }
 %     \toprule
 %     description & key & symbol \\ \midrule
@@ -1134,7 +1136,7 @@ and the derived file cooking-units.sty.
 %     \PrintUnit {dsp} \\ 
 %     \PrintUnit {csp} \\ 
 %     \PrintUnit {ssp} \\ \addlinespace
-%     \PrintUnit [Messerpsitze (point of a knife)] {Msp} \\
+%     \PrintUnit [Messerspitze (point of a knife)] {Msp} \\
 %     \bottomrule
 %   \end{tabular}
 %   \label{tab:some-more-units}
@@ -1144,6 +1146,7 @@ and the derived file cooking-units.sty.
 %   \centering
 %   \caption{List of (not really) nonsense units (exist just for fun, there will be
 %   no support for those units; unless -- of course -- you really want it).}
+%   \smallskip
 %   \begin{tabular}{ ll }
 %    \toprule
 %      unit-key & symbol \\ \midrule
@@ -2269,7 +2272,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{cuexample}
 % \begin{myde}
-% For the German langauge:
+% For the German language:
 % \begin{cuexamplecode}
 %   \cuam{12} \\
 %   \cuam{12--24} \\
@@ -3768,7 +3771,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ use-numerals-below }
-%   Use numerals if the intger is below the integer set by this option.
+%   Use numerals if the integer is below the integer set by this option.
 %    \begin{macrocode}
     use-numerals-below .int_set:N = \l_@@_print_numerals_below_int ,
     use-numerals-below .default:n = { 13 } ,
@@ -4003,7 +4006,7 @@ and the derived file cooking-units.sty.
 %\begin{macro}{ convert-to-eV }
 %  Another weird option, converts pretty much any unit defined by this
 %  package to electron volt or the respective derivative.
-% As this is a unit transfrmation, it needs to be inside the
+% As this is a unit transformation, it needs to be inside the
 % group.
 %    \begin{macrocode}
     convert-to-eV .bool_set:N = \l_@@_convert_to_eV_bool ,
@@ -4454,7 +4457,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 % A translation for \cs{cutext} or \cs{Cutext} is not available. For this case
-% -- instead of printing the keyname (see  \pkg{translations}) -- we fall back
+% -- instead of printing the key-name (see  \pkg{translations}) -- we fall back
 % to \cs{cunum}.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { cutext-no-translation-available }
