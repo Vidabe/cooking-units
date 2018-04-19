@@ -1791,7 +1791,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     \meta{unit-key-1} = \meta{unit-key-2}
 %  \end{syntax}
-%  Change unit \meta{unit-key-1} to \meta{unit-key-2} (see
+%  Change \meta{unit-key-1} to \meta{unit-key-2} (see
 %  \cref{sec:defining-opt} to define new options).
 % \end{function}
 %
@@ -1831,7 +1831,12 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{add-unit-to-group}
 %   \begin{syntax}
-%     \meta{add-unit-to-group} = \marg{group1 = \{unit-key-list\},\dots}
+%     add-unit-to-group = 
+%     \  \{
+%     \    \meta{group1} = \marg{unit-key-list}, 
+%     \    \meta{group2} = \marg{unit-key-list}, 
+%     \    \dots 
+%     \  \}
 %  \end{syntax}
 %  Adds each \meta{unit-key} in \meta{unit-keys-list} to \meta{group}.
 % \end{function}
@@ -1848,7 +1853,7 @@ and the derived file cooking-units.sty.
 %  \cusetup{ add-unit-to-group = { weight = {st} } }
 %
 % \begin{cuexamplecode}
-%  \cusetup{weight=st} @
+%  \cusetup{weight=g} @
 %  \cunum{1}{kg} \\
 %  \cunum{1}{dag} \\
 %  \cunum{1}{g} \\
@@ -1862,12 +1867,12 @@ and the derived file cooking-units.sty.
 % 
 % \begin{function}{set-option-for-<unit-key>,add-option-for-<unit-key>}
 %   \begin{syntax}
-%     set-option-for-\meta{unit-key} = \meta{key1=value1,\dots}
-%     add-option-for-\meta{unit-key} = \meta{key1=value1,\dots}
+%     set-option-for-\meta{unit-key} = \marg{ key1 = value1, \dots\ }
+%     add-option-for-\meta{unit-key} = \marg{ key1 = value1, \dots\ }
 %  \end{syntax}
 %  Sets and adds \meta{key1=value1,\dots} to a specific
 %  \meta{unit-key},
-%  \opt{erase-all-options} is used to erase all options for all
+%  \opt{erase-all-options} (see below) is used to erase all options for all
 %  \meta{unit-key}s.
 %  
 %  You may want to attach some options to a special
@@ -1911,17 +1916,27 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{set-option-for, add-option-for}
 %   \begin{syntax}
-%     set-option-for = \meta{unit-key1=\{keys=vals\}, unit-key2=\{keys=vals\},\dots}
-%     add-option-for = \meta{unit-key1=\{keys=vals\}, unit-key2=\{keys=vals\},\dots}
+%     set-option-for = 
+%     \  \{
+%     \    \meta{unit-key1} = \marg{keys=vals}, 
+%     \    \meta{unit-key2} = \marg{keys=vals},
+%     \    \dots
+%     \  \}
+%     add-option-for = 
+%     \  \{
+%     \    \meta{unit-key1} = \marg{keys=vals}, 
+%     \    \meta{unit-key2} = \marg{keys=vals},
+%     \    \dots
+%     \  \}
 %  \end{syntax}
 %  Sets/adds each \meta{keys=vals} to the specific \meta{unit-key}. Works pretty much
 %  the same way their \opt{set-option-for-\meta{unit-key}} and
 % \opt{add-option-for-\meta{unit-key}} counterparts.
 %
-% The following example does the same as the example above: 
-%
 % \end{function}
 %
+% \begin{cuexample}
+% The following example does the same as the example above: 
 % \begin{lstlisting}
 %  \cusetup 
 %    { 
@@ -1934,6 +1949,7 @@ and the derived file cooking-units.sty.
 %        }
 %    }
 % \end{lstlisting}
+% \end{cuexample}
 %
 % \begin{function}{erase-all-options, erase-all-options-for}
 %   \begin{syntax}
@@ -1952,7 +1968,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 % \begin{cuexample}
-%  The following code erases all added options from \myunit{C}, \myunit{F}, 
+%  The following code erases all attached options from \myunit{C}, \myunit{F}, 
 %  \myunit{K} and \myunit{Re}:
 %
 %   \begin{lstlisting}
@@ -2023,15 +2039,17 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{commands-add-hook,cunum-add-hook,cutext-add-hook,Cutext-add-hook,cuam-add-hook}
 %   \begin{syntax}
-%      commands-add-hook = \meta{code}
-%      cunum-add-hook  = \meta{code} 
-%      cutext-add-hook = \meta{code} 
-%      Cutext-add-hook = \meta{code} 
-%      cuam-add-hook   = \meta{code}
+%      commands-add-hook = \marg{code}
+%      cunum-add-hook  = \marg{code} 
+%      cutext-add-hook = \marg{code} 
+%      Cutext-add-hook = \marg{code} 
+%      cuam-add-hook   = \marg{code}
 %   \end{syntax}
 %   Adds \meta{code} to the respective command (or in case of the first key: 
 %   to \emph{all} commands). The hook is executed
 %   \emph{after} setting the keys, but \emph{before} parsing and processing the input.
+%
+%   Please be carful with spaces, they will be printed.
 % \end{function}
 %
 % \begin{cuexample}
@@ -2056,10 +2074,12 @@ and the derived file cooking-units.sty.
 %     expand-unit = \meta{n/o/f/x}
 %   \end{syntax}
 %   By default the commands \mycs{cunum}, \cCutext{} and \mycs{cunum}
-%   do \emph{not} expand their input. You can change the expansion of
+%   do \emph{not} expand their input. You can change the expansion behavior of
 %   the \meta{amount} and/or \meta{unit-key} using the options specified
 %   above. The meaning of the available values are the same as specified
-%  in the \LaTeX3\ document \enquote{interface3}:
+%   in the \LaTeX3\ document \enquote{interface3}.
+%
+%   It is set to \texttt{n} by default.
 %
 % \end{function}
 %
@@ -2068,8 +2088,8 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{set-special-sign,add-special-sign}
 %   \begin{syntax}
-%     set-special-sign = \meta{character(s)}
-%     add-special-sign = \meta{character(s)}
+%     set-special-sign = \marg{character(s)}
+%     add-special-sign = \marg{character(s)}
 %   \end{syntax}
 %   Allows \meta{character(s)} to be used in the first mandatory argument of 
 %  \mycs{cunum}, \mycs{cuam}, \cCutext{} without raising an error (you can customize this
@@ -2188,7 +2208,7 @@ and the derived file cooking-units.sty.
 %   \cunum{1/2}{kg} \\
 %   \cunum{1_2/3}{kg} \\
 %   \cunum{1/2_3}{kg} \\
-%   \cunum{qwertzuiop}{kg} \\
+%   \cunum{some weird stuff}{kg} \\
 %   \cutext{1}{kg} \\
 %   \cutext{100}{kg} \\
 %   \cutext{gjfak}{kg} \\
@@ -2203,9 +2223,9 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{range-sign}
 %   \begin{syntax}
-%     range-sign = \meta{string}
-%     cunum-range-sign = \meta{string}
-%     cutext-range-sign = \meta{string}
+%     range-sign = \marg{string}
+%     cunum-range-sign = \marg{string}
+%     cutext-range-sign = \marg{string}
 %   \end{syntax}
 %   The second sets the \emph{printed} range sign used in \mycs{cunum}
 %   (and \mycs{cuam}) to \meta{string}, the third sets the printed
@@ -2247,6 +2267,7 @@ and the derived file cooking-units.sty.
 %  more information) with their phrase counterpart. This option is set to \false\ by default.
 % \end{function}
 %
+% \begin{cuexample}
 % \begin{myde}
 % For the German langauge:
 % \begin{cuexamplecode}
@@ -2263,6 +2284,7 @@ and the derived file cooking-units.sty.
 %   \cuam{36} \\
 % \end{cuexamplecode}
 % \end{myde}
+% \end{cuexample}
 %
 %
 % \subsubsection{Rounding options}
@@ -2405,7 +2427,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{fraction-inline}
 %   \begin{syntax}
-%     fraction-inline = \meta{input containing \#1 and \#2}
+%     fraction-inline = \marg{input containing \#1 and \#2}
 %   \end{syntax}
 %   Similar to \opt{fraction-command} only that you don't have to 
 %   define a command  to alter the output of the fraction.
@@ -2450,7 +2472,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{cutext-space}
 %   \begin{syntax}
-%     cutext-space = \meta{string}
+%     cutext-space = \marg{string}
 %   \end{syntax}
 %   \meta{string} is inserted between the numeral part and the unit part
 %   when using \cCutext. By default it is set to \cs{space}. Use this option
@@ -2473,14 +2495,14 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{phrase-space}
 %   \begin{syntax}
-%     phrase-space = \meta{string}
+%     phrase-space = \marg{string}
 %   \end{syntax}
 %   \meta{string} is inserted between the numeral part and the phrase part
 %   while using \mycs{cuam}. By default it is set to \cs{space}. Use this option
 %  if you want to e.g.\ insert an unbreakable space.
 % \end{function}
-%  \cusetup{use-phrases=true}
 % \begin{myde}
+%  \cusetup{use-phrases=true}
 % (Switching to german)
 % \begin{cuexamplecode}
 %   \cuam{12}\\
@@ -2495,12 +2517,12 @@ and the derived file cooking-units.sty.
 %   \cuam{12}\\
 %   \cuam{144}\\
 % \end{cuexamplecode}
-% \end{myde}
 %  \cusetup{use-phrases=false}
+% \end{myde}
 %
 % \begin{function}{amount-unit-space}
 %   \begin{syntax}
-%     amount-unit-space = \meta{string}
+%     amount-unit-space = \marg{string}
 %   \end{syntax}
 %   Change the spacing for \mycs{cunum} between the printed amount(s) and
 %   the unit. The default value is |\thinspace|.
@@ -2541,8 +2563,9 @@ and the derived file cooking-units.sty.
 %     set-number-of-persons = \meta{integer}
 %   \end{syntax}
 %   With this option you can determine the number of people your recipes
-%   are. Note that this option only has an effect on those who have a \meta{label}
-%   given. It is set to \opt{4} by default.
+%   are for. Note that this option only has an effect on those who have a \meta{label}
+%   given. It is set to \opt{4} by default. Please also note the use of 
+%   \opt{recalculate-amount}.
 % \end{function}
 % \begin{cuexamplecode}
 %   \culabel{anotherrecipe}{2} @
@@ -2580,11 +2603,11 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{label}
 %   \begin{syntax}
-%     label = \meta{string}*\meta{integer}
+%     label = \{\meta{string}*\meta{integer}\}
 %   \end{syntax}
 %   The key-value version of \mycs{culabel}. It defines the label \meta{string}
 %   which is originally for \meta{integer} people. Please note that the \texttt{*}
-%   is mandatory as it separates the string from the integer. Note that each
+%   is mandatory as it separates the string from the integer. Each
 %   label is defined globally and must be unique.
 % \end{function}
 % \begin{cuexamplecode}
@@ -2601,7 +2624,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{function}{get-label}
 %   \begin{syntax}
-%     get-label = \meta{label}
+%     get-label = \marg{label}
 %   \end{syntax}
 %   The key-value version of \mycs{curef}. Note that this key doesn't save the value
 %   inside a macro but rather prints it directly into the document.
@@ -2615,10 +2638,14 @@ and the derived file cooking-units.sty.
 %   \curef{Schinken} \\
 % \end{cuexamplecode}
 %
+% \begin{cunote}
+%   \mycs{curef} \emph{is} expendable.
+% \end{cunote}
+%
 %
 % \begin{function}{ref}
 %   \begin{syntax}
-%     ref = \meta{label}
+%     ref = \marg{label}
 %   \end{syntax}
 %   Instead of using the first optional arguments of the commands in \cref{sec:commands}
 %   you may use this option. It requires a valid value and throws an error if \meta{label}
@@ -2626,7 +2653,7 @@ and the derived file cooking-units.sty.
 % \end{function}
 % \begin{cuexamplecode}
 %   \culabel{Kaese}{3} @
-%   \cunum<Kaese>[m=dm]{1}{m} \\
+%   \cunum<Kaese> [m=dm]{1}{m} \\
 %   \cunum[ref=Kaese,m=dm]{1}{m} \\
 %   \cusetup { recalculate-amount = true } @
 %   \cunum<Kaese>[m=dm]{1}{m} \\
@@ -2662,7 +2689,8 @@ and the derived file cooking-units.sty.
 %  
 % \end{function}
 %
-%   For example, this package implements the allowed minimum values for the
+% \begin{cuexample}
+%   This package implements the allowed minimum values for the
 %  temperatures \myunit{C}, \myunit{F}, \myunit{K} and \myunit{Re} to be checked if
 %  \opt{check-temperature} is active using:
 % \begin{lstlisting}
@@ -2686,7 +2714,7 @@ and the derived file cooking-units.sty.
 %       add-temperature-to-check = { Ro = -135.90375 }
 %     }
 % \end{lstlisting}
-%
+% \end{cuexample}
 %
 %
 %
@@ -2722,7 +2750,7 @@ and the derived file cooking-units.sty.
 %     add-natural-unit = \meta{unit-key}
 %   \end{syntax}
 %   This option adds \meta{unit-key} to the list of units \opt{convert-to-eV}
-%   uses to determine how a unit is transformed if \true.
+%   uses to determine how a unit is transformed if set to \true.
 % \end{function}
 %
 %
@@ -2774,7 +2802,8 @@ and the derived file cooking-units.sty.
 % description. If you use mail please add  \pkg{cooking-units} 
 % to the e-mail header. GMX has the habit of putting e-mails into the 
 % spam account and adding  \pkg{cooking-units} to the header makes
-% it easier to recognize those e-mails. 
+% it easier to recognize those e-mails. It can also take longer of GitHub,
+% but I hope I figured out how to get a mail if a new issue is created (by not me).
 %
 % Feedback and requests (commands, units, etc.) are also  welcome.  Please
 % also add (if possible) an example of the desired output into the
