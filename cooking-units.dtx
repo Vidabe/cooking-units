@@ -661,22 +661,22 @@ and the derived file cooking-units.sty.
 % \changes {2017/10/23} {1.20} {Now checks for ranges if both values can be printed as numerals (if activated) (bug fix).}
 % \changes {2017/10/23} {1.20} {Reworked quite a lot of code.}
 %
-% \changes {vDATEv} {vNEWv} {}
-% \changes {vDATEv} {vNEWv} {Allow round precision to be negative.}
-% \changes {vDATEv} {vNEWv} {Fix argument specifiers.}
-% \changes {vDATEv} {vNEWv} {Change large portions of code.}
-% \changes {vDATEv} {vNEWv} {Option: \opt{add-natural-unit}.}
-% \changes {vDATEv} {vNEWv} {New Option: \opt{42}.}
-% \changes {vDATEv} {vNEWv} {New options: \opt{expand-both}, \opt{expand-amount}, \opt{expand-unit}.}
-% \changes {vDATEv} {vNEWv} {Introduce key-groups (weight, volume, etc.).}
-% \changes {vDATEv} {vNEWv} {New option: \opt{add-unit-to-group}}
-% \changes {vDATEv} {vNEWv} {New parsing algorithm. Hopefully better
+% \changes {2018/04/20} {1.30} {Allow round precision to be negative.}
+% \changes {2018/04/20} {1.30} {Fix argument specifiers.}
+% \changes {2018/04/20} {1.30} {Change large portions of code.}
+% \changes {2018/04/20} {1.30} {Introduce key-groups (weight, volume, etc.).}
+% \changes {2018/04/20} {1.30} {Option: \opt{add-natural-unit}.}
+% \changes {2018/04/20} {1.30} {New Option: \opt{42}.}
+% \changes {2018/04/20} {1.30} {New options: \opt{expand-both}, \opt{expand-amount}, \opt{expand-unit}.}
+% \changes {2018/04/20} {1.30} {New options: \opt{set-option-for} \& \opt{add-option-for}.}
+% \changes {2018/04/20} {1.30} {New option: \opt{erase-all-options-for}}
+% \changes {2018/04/20} {1.30} {New option: \opt{add-unit-to-group}}
+% \changes {2018/04/20} {1.30} {New feature: Hooks}
+% \changes {2018/04/20} {1.30} {New parsing algorithm. Hopefully better
 %   error recovery (if signs for fractions are in wrong order e.g.)}
-% \changes {vDATEv} {vNEWv} {Add \enquote{Division-by-zero} error.}
-% \changes {vDATEv} {vNEWv} {Cooking Units-keys are not allowed to contain
+% \changes {2018/04/20} {1.30} {Add \enquote{Division-by-zero} error.}
+% \changes {2018/04/20} {1.30} {Cooking Units-keys are not allowed to contain
 %   either \enquote{,} or \enquote{/}.}
-% \changes {vDATEv} {vNEWv} {New options: \opt{set-option-for} \& \opt{add-option-for}.}
-% \changes {vDATEv} {vNEWv} {New option: \opt{erase-all-options-for}}
 %
 %
 %
@@ -1054,7 +1054,7 @@ and the derived file cooking-units.sty.
 %\subsection{Rounding temperatures}
 %
 % By default temperatures are rounded to integers (using \opt{round-to-int = true}).
-% Since vNEWv it is possible to round amounts to a negative precision. 
+% Since 1.30 it is possible to round amounts to a negative precision. 
 % If you want to round temperatures to the tens see the following 
 % example (\opt{set-option-for-\meta{unit}} is described in \cref{sec:opt:unit-spec}).
 % 
@@ -3066,8 +3066,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2017/10/23} %% vDATEv
-  {1.20} %% vNEWv
+  {2018/04/20}
+  {1.30} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
