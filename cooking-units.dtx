@@ -149,7 +149,15 @@ and the derived file cooking-units.sty.
 
 
 \newcounter{CookingUnitsCounter}
+\newcounter{cunumCounter}
+\newcounter{cuamCounter}
+\newcounter{cutextCounter}
+\newcounter{CutextCounter}
 \DeclareTotalCounter{CookingUnitsCounter}
+\DeclareTotalCounter{cunumCounter}
+\DeclareTotalCounter{cuamCounter}
+\DeclareTotalCounter{cutextCounter}
+\DeclareTotalCounter{CutextCounter}
 
 \babeltags{myde = ngerman}
 
@@ -537,6 +545,10 @@ and the derived file cooking-units.sty.
 \cusetup 
   {
     commands-add-hook = {\stepcounter{CookingUnitsCounter}} ,
+    cunum-add-hook = {\stepcounter{cunumCounter}} ,
+    cutext-add-hook = {\stepcounter{cutextCounter}} ,
+    Cutext-add-hook = {\stepcounter{CutextCounter}} ,
+    cuam-add-hook = {\stepcounter{cuamCounter}} ,
     set-option-for-Ro = { round-to-int = true }  ,
 %    add-unit-to-group = { weight = {st} , temperature = {Ro} }
   }
@@ -2064,8 +2076,22 @@ and the derived file cooking-units.sty.
 %     \cusetup{commands-add-hook={\stepcounter{CookingUnitsCounter}}}
 %        %% beware of spaces inside the add-hook keys.
 %   \end{lstlisting}
-%   to your preamble. In this documentation the commands are used
-%   a total of \totalCookingUnitsCounters\ times.
+%   to your preamble. The following table lists how often each command
+%   is used in this documentation (with help of \pkg{totalcount}):
+%
+%  \begin{center}
+%   \begin{tabular}{lr} 
+%     \toprule
+%     command & times \\ \midrule
+%     \mycs{cunum} & \totalcunumCounters \\
+%     \mycs{cutext} & \totalcutextCounters \\
+%     \mycs{Cutext} & \totalCutextCounters \\
+%     \mycs{cuam} & \totalcuamCounters  \\
+%     \cmidrule{2-2}
+%     total & \totalCookingUnitsCounters \\
+%     \bottomrule
+%   \end{tabular}
+%  \end{center}
 % \end{cuexample}
 %
 % \subsubsection{Input and Outputs}
