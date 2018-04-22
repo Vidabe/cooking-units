@@ -5148,6 +5148,13 @@ and the derived file cooking-units.sty.
 \@@_newtranslation_to:nnVn { German } { one (n) } \c_@@_postfix_unitname_tl { ein }
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\@@_newtranslation_base:nVn { range-sign } \c_@@_postfix_unitname_tl { -- }
+\@@_newtranslation_base:nVn { range-sign } \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
+\@@_newtranslation_to:nnVn { German } { range-sign } \c_@@_postfix_unitname_tl { ~bis~ }
+\@@_newtranslation_to:nnVn { English } { range-sign } \c_@@_postfix_unitname_tl { ~to~ }
+%    \end{macrocode}
+%
 %
 % \section{General}
 %
@@ -5569,6 +5576,7 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_using_cutext_bool
       { 
         \tl_use:N \l_@@_cutext_range_sign_tl 
+%        \@@_translate:xx { range-sign } \c_@@_postfix_unitname_tl
         \bool_set_false:N \l_@@_cutext_uppercase_word_bool
       }
       { \tl_use:N \l_@@_cunum_range_sign_tl }
@@ -6023,6 +6031,8 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro} {\@@_cutext_print_input:Nn , \@@_cutext_print_input:NV}
 % \changes {2016/06/11} {0.99} {New.}
+%
+%
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cutext_print_input:Nn #1#2
   {
