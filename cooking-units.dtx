@@ -5552,6 +5552,11 @@ and the derived file cooking-units.sty.
 %   Seperates the input, checks it and prints it (after calculating
 %   it). Furthermore a boolean is set to true, is used to check for
 %   errors (ergo if fractions are used).
+%
+% Set |\l_@@_cutext_uppercase_word_bool| to false  
+% so that the second numeral is not capitalized.
+%
+%
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_range_in_input:
   {
@@ -5561,7 +5566,10 @@ and the derived file cooking-units.sty.
     \@@_post_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl 
     \@@_print_input:N \l_@@_number_tmpa_tl
     \bool_if:NTF \l_@@_using_cutext_bool
-      { \tl_use:N \l_@@_cutext_range_sign_tl }
+      { 
+        \tl_use:N \l_@@_cutext_range_sign_tl 
+        \bool_set_false:N \l_@@_cutext_uppercase_word_bool
+      }
       { \tl_use:N \l_@@_cunum_range_sign_tl }
     \@@_print_input:N \l_@@_number_tmpb_tl
   }
