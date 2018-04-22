@@ -6111,7 +6111,6 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_post_process_input_aux:NN #1#2
   {
-    \@@_bool_set_if_integers:NNN \l_@@_tmpa_bool #1 #2
     \bool_if:NTF \l_@@_range_in_input_bool
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #2 }
       { \tl_set_eq:NN \l_@@_cutext_last_value_tl #1 }
@@ -6120,6 +6119,7 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_cutext_post_process_input_numerals:NN #1#2
   {
+    \@@_bool_set_if_integers:NNN \l_@@_tmpa_bool #1 #2
     \bool_if:NTF \l_@@_tmpa_bool
       {
         \bool_if:NTF \l_@@_range_in_input_bool
