@@ -3532,11 +3532,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-% \begin{macro}{ \q_@@_decimal , \q_@@_frac , \q_@@_mixed_frac }
+% \begin{macro}{ \q_@@_decimal , \q_@@_fraction , \q_@@_mixed_fraction }
 %    \begin{macrocode}
 \quark_new:N \q_@@_decimal
-\quark_new:N \q_@@_frac
-\quark_new:N \q_@@_mixed_frac
+\quark_new:N \q_@@_fraction
+\quark_new:N \q_@@_mixed_fraction
 %    \end{macrocode}
 %\end{macro}
 %
@@ -5472,7 +5472,7 @@ and the derived file cooking-units.sty.
                     \tl_if_in:NnTF \l_@@_input_fraction_sign_tl {#1}
                       {
                         \@@_check_repitition:NN 
-                          \q_@@_frac 
+                          \q_@@_fraction 
                           \l_@@_lokal_fraction_bool
                         \tl_set_eq:NN \l_@@_number_tmpa_tl \l_@@_tmpa_tl
                         \cs_set_eq:NN \@@_parse:N \@@_start_loop:N
@@ -5480,7 +5480,7 @@ and the derived file cooking-units.sty.
                         \tl_if_in:NnTF \l_@@_input_mixed_fraction_sign_tl {#1}
                           {
                             \@@_check_repitition:NN 
-                              \q_@@_mixed_frac 
+                              \q_@@_mixed_fraction 
                               \l_@@_lokal_mixed_fraction_bool
                             \bool_if:NT \l_@@_lokal_fraction_bool 
                               { \msg_error:nnV { cooking-units } { fraction-wrong-order } \l_@@_given_amount_tl }
@@ -5505,9 +5505,9 @@ and the derived file cooking-units.sty.
           {
             \q_@@_decimal 
               { \msg_error:nnV { cooking-units } { Second-decimal-sign-not-allowed } \l_@@_given_amount_tl }
-            \q_@@_frac 
+            \q_@@_fraction 
               { \msg_error:nnV { cooking-units } { Second-fraction-sign-not-allowed } \l_@@_given_amount_tl }
-            \q_@@_mixed_frac 
+            \q_@@_mixed_fraction 
               { \msg_error:nnV { cooking-units } { Second-mixed-fraction-sign-not-allowed } \l_@@_given_amount_tl }
           }
           { \bool_set_true:N \l_@@_error_bool }
