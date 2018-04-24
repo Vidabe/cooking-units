@@ -6656,9 +6656,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \cuaddkeys { m m }
   {
     \bool_set_false:N \l_@@_single_key_bool
-    \tl_set:Nn \l_@@_tmpa_tl {#1}
-    \tl_set:Nn \l_@@_tmpb_tl {#2}
-    \@@_cukeys_add_keys_or_single_keys:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
+    \@@_cukeys_add_keys_or_single_keys:nn {#1} {#2}
   }
 %    \end{macrocode}
 %
@@ -6666,9 +6664,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \cuaddsinglekeys { m m }
   {
     \bool_set_true:N \l_@@_single_key_bool
-    \tl_set:Nn \l_@@_tmpa_tl {#1}
-    \tl_set:Nn \l_@@_tmpb_tl {#2}
-    \@@_cukeys_add_keys_or_single_keys:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
+    \@@_cukeys_add_keys_or_single_keys:nn {#1} {#2}
   }
 %    \end{macrocode}
 %
@@ -6676,9 +6672,8 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \cuaddtokeys { m m m }
   {
     \bool_set_false:N \l_@@_single_key_bool
-    \tl_set:Nn \l_@@_tmpa_tl {#1}
     \tl_set:Nn \l_@@_tmpb_tl { {#2} { \fp_eval:n { 1.0 / (#3) } } }
-    \@@_cukeys_add_keys_or_single_keys:VV \l_@@_tmpa_tl \l_@@_tmpb_tl
+    \@@_cukeys_add_keys_or_single_keys:nV {#1} \l_@@_tmpb_tl
   }
 %    \end{macrocode}
 %
@@ -6698,7 +6693,7 @@ and the derived file cooking-units.sty.
           { \@@_cukeys_parse_and_create_keys:nn {#1} {#2} }
       }
   }
-\cs_generate_variant:Nn \@@_cukeys_add_keys_or_single_keys:nn { VV }
+\cs_generate_variant:Nn \@@_cukeys_add_keys_or_single_keys:nn { nV }
 %    \end{macrocode}
 %
 %
