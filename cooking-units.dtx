@@ -3658,6 +3658,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     cutext-change-unit .bool_set:N = \l_@@_cutext_change_unit_bool ,
     cutext-change-unit .default:n = { true } ,
+    cutext-change-unit .groups:n = { change-unit } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6003,8 +6004,8 @@ and the derived file cooking-units.sty.
     \bool_set_true:N \l_@@_using_cutext_bool
     \@@_set_process_and_print_for_cutext:
     \@@_initialise_default:n {#3}
-    \bool_if:NTF \l_@@_cutext_change_unit_bool
-      { \@@_initialise_unit_change:n {#2} }
+    \@@_initialise_unit_change:n {#2}
+    \bool_if:NF \l_@@_cutext_change_unit_bool
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
     \@@_initialise_after_unit_change:nn {#1} {#2}
     \bool_if:NT \l_@@_fourty_two_bool
