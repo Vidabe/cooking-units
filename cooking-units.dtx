@@ -3967,10 +3967,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ label }
 % Defines a label \dots\ is \mycs{culabel} as a key.
 %    \begin{macrocode}
-    label .code:n = 
-      { 
-        \@@_label_and_persons:n {#1} 
-      } ,
+    label .code:n = \@@_label_and_persons:n {#1} ,
     label .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
@@ -3978,10 +3975,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ get-label }
 % \mycs{curef} as a key.
 %    \begin{macrocode}
-    get-label .code:n = 
-      { 
-        \@@_curef:n {#1}
-      } ,
+    get-label .code:n = \@@_curef:n {#1} ,
     label .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
@@ -3989,10 +3983,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ ref }
 % The |<>| option for keys.
 %    \begin{macrocode}
-    ref .code:n = 
-      { 
-        \@@_reference_label_and_persons:n {#1} 
-      } ,
+    ref .code:n = \@@_reference_label_and_persons:n {#1} ,
     ref .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4021,7 +4012,7 @@ and the derived file cooking-units.sty.
           \@@_temperature_to_check_print_error:n
           \@@_temperatures_to_check_define:nn
           {#1}
-      },
+      } ,
     temperature-to-check .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro} 
@@ -5186,9 +5177,7 @@ and the derived file cooking-units.sty.
       }
     \bool_if:NT \l_@@_convert_to_eV_bool { \@@_convert_to_eV: }
     \prop_get:NVNF \l_@@_change_unit_prop \l_@@_given_unit_tl \l_@@_option_unit_tl
-      {
-        \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl
-      }
+      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
   }
 %    \end{macrocode}
 %    \begin{macrocode}
