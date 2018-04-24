@@ -5700,12 +5700,12 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_calculate_input_and_store_in:nN #1#2
   {
     \fp_set:Nn \l_@@_tmpa_fp {#1}
-    \tl_if_in:cnTF { l_@@_tmpa_ \l_@@_given_unit_tl _ tl } { \l_@@_tmpa_fp }
+    \tl_if_in:cnTF { l_@@_unit_change_ \l_@@_given_unit_tl _tl } { \l_@@_tmpa_fp }
       { 
-        \@@_tl_eval:Nv #2 { l_@@_tmpa_ \l_@@_given_unit_tl  _ tl }
+        \@@_tl_eval:Nv #2 { l_@@_unit_change_ \l_@@_given_unit_tl _tl }
       }{ 
         \@@_tl_eval:Nn #2 
-          { \l_@@_tmpa_fp * \tl_use:c { l_@@_tmpa_ \l_@@_given_unit_tl _ tl }  }
+          { \l_@@_tmpa_fp * \tl_use:c { l_@@_unit_change_ \l_@@_given_unit_tl _tl }  }
       }
   }
 %    \end{macrocode}
@@ -6134,8 +6134,8 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \tl_const:Nn \c_@@_cuam_marker_tl { @@_cunum }
-\tl_new:c { l_@@_tmpa_ \c_@@_cuam_marker_tl  _ tl }
-\tl_set:cn { l_@@_tmpa_ \c_@@_cuam_marker_tl  _ tl } { 1.0 }
+\tl_new:c { l_@@_unit_change_ \c_@@_cuam_marker_tl  _ tl }
+\tl_set:cn { l_@@_unit_change_ \c_@@_cuam_marker_tl  _ tl } { 1.0 }
 \clist_new:c { l_@@_predefined_option_ \c_@@_cuam_marker_tl _clist }
 %    \end{macrocode}
 %
@@ -6501,7 +6501,7 @@ and the derived file cooking-units.sty.
     \seq_map_inline:Nn \l_@@_tmpa_seq
       {
         \prop_set_eq:cN { l_@@_cukeys_ ##1 _prop } \l_@@_tmpb_prop
-        \tl_set:cn   { l_@@_tmpa_ ##1 _tl } { 1.0 }
+        \tl_set:cn { l_@@_unit_change_ ##1 _tl } { 1.0 }
         \seq_map_inline:Nn \l_@@_tmpa_seq
           {
             \prop_put:cnx { l_@@_cukeys_ ##1 _prop }
@@ -6563,7 +6563,7 @@ and the derived file cooking-units.sty.
     \prop_get:cVc 
       { l_@@_cukeys_#1_prop } 
       \l_keys_choice_tl 
-      { l_@@_tmpa_ #1_tl }
+      { l_@@_unit_change_ #1_tl }
     \prop_put:NnV \l_@@_change_unit_prop {#1} \l_keys_choice_tl
   }
 %    \end{macrocode}
@@ -6610,7 +6610,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cusinglekeys_create_key_prop:n #1
   {
-    \tl_set:cn { l_@@_tmpa_ #1 _tl } { 1.0 }
+    \tl_set:cn { l_@@_unit_change_ #1 _tl } { 1.0 }
     \prop_set_eq:cN { l_@@_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnn { l_@@_cukeys_ #1 _prop } { Erstes Ding } {#1}
     \prop_put:cnV { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
@@ -6753,8 +6753,8 @@ and the derived file cooking-units.sty.
               { \msg_error:nnn { cooking-units } { character-not-allowed } {#2} }
           }
         \seq_put_right:Nn \g_@@_list_of_defined_units_seq {#2}
-        \tl_new:c { l_@@_tmpa_  #2 _tl }
-        \tl_set:cn { l_@@_tmpa_  #2 _tl } { 1.0 }
+        \tl_new:c { l_@@_unit_change_ #2 _tl }
+        \tl_set:cn { l_@@_unit_change_ #2 _tl } { 1.0 }
         \clist_new:c { l_@@_predefined_option_#2_clist } 
         \keys_define:nn { cooking-units }
           {
