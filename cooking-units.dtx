@@ -3735,9 +3735,6 @@ and the derived file cooking-units.sty.
               }
           }
         \use:n { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
-%        \str_if_eq:nnTF {#1} { < }
-%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-%          { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
       } ,
 %    \end{macrocode}
 %\end{macro}
@@ -3755,9 +3752,6 @@ and the derived file cooking-units.sty.
                 \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {##1}
               }
           }
-%        \str_if_eq:nnTF {#1} { < }
-%          { \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign } }
-%          { \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
       } ,
     add-special-sign .default:n = { } ,
 %    \end{macrocode}
