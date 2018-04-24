@@ -5944,7 +5944,7 @@ and the derived file cooking-units.sty.
 % \section { cutext \& Cutext }
 %
 %
-% A quite primitive implentation of \opt{cutext-to-cunum}, but
+% A better implemantation of \opt{cutext-to-cunum}, but
 % sufficient for now.
 %    \begin{macrocode}
 \NewDocumentCommand \cutext { d<> O{} m m }
@@ -6622,7 +6622,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cukeys_define_singlekey:nn #1#2
   {
     \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1} 
-      {  \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
+      { \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
      \keys_define:nn { cooking-units }
          {
            #1 .choices:Vn =
