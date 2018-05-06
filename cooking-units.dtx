@@ -5676,11 +5676,7 @@ and the derived file cooking-units.sty.
               { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
               { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
               { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
-            \bool_if:NT \l_@@_lokal_persons_bool
-              { 
-                \@@_calc_for_number_of_persons_and_store_in:NN 
-                  \l_@@_tmpa_tl \l_@@_tmpa_tl 
-              }
+            \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_check_temperature_limit:N \l_@@_tmpa_tl
           }
@@ -5711,9 +5707,22 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_calc_for_number_of_persons_and_store_in:NN }
+% \begin{macro}{ \@@_calc_references:NN,\@@_calc_references_aux:NN }
 %    \begin{macrocode}
-\cs_new:Npn \@@_calc_for_number_of_persons_and_store_in:NN #1#2
+
+\cs_new:Npn \@@_calc_references:NN #1#2
+  {
+    \bool_if:NT \l_@@_lokal_persons_bool
+      { 
+        \@@_change_unit:TF
+          { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
+          { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
+        \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_tmpb_tl
+          { \@@_calc_references_aux:NN #1 #2 }
+      }
+  }
+
+\cs_new:Npn \@@_calc_references_aux:NN #1#2
   {
     \int_compare:nNnF 
       { \l_@@_wanted_number_of_persons_int }
