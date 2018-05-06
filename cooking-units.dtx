@@ -5893,7 +5893,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_cunum }
+% \begin{macro}{ \@@_cunum:nnnnn }
 %    \begin{macrocode}
 \cs_new:Npn \@@_cunum:nnnnn #1#2#3#4#5
   {
@@ -6157,9 +6157,7 @@ and the derived file cooking-units.sty.
       { \cuam }
       { 
         \group_begin:
-        \@@_cuam_initialise:nn {#1} {#2}
-        \l_@@_cuam_hook_tl
-        \@@_cuam:n {#3}
+        \@@_cuam:nnn {#1} {#2} {#3}
         \group_end:
       }
   }
@@ -6167,14 +6165,16 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuam:n #1
+\cs_new:Npn \@@_cuam:nnn #1#2#3
   {
+    \@@_cuam_initialise:nn {#1} {#2}
+    \l_@@_cuam_hook_tl
     \bool_if:NTF \l_@@_cuam_old_bool
-        { \@@_cuam_old:n {#1} }
-        { 
-          \@@_parse_input:n {#1}  
-          \@@_print_correct_unit:
-        }
+      { \@@_cuam_old:n {#3} }
+      { 
+        \@@_parse_input:n {#3}  
+        \@@_print_correct_unit:
+      }
   }
 %    \end{macrocode}
 %
