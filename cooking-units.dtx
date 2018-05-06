@@ -534,6 +534,8 @@ and the derived file cooking-units.sty.
 \newcookingunit {st}
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 
+
+
 \cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
@@ -709,7 +711,7 @@ and the derived file cooking-units.sty.
 %
 % \tableofcontents
 %
-% \begin{comment}
+%^^A \begin{comment}
 % \begin{myde}
 % \cusetup{print-numerals=true,use-phrases=true}
 % \cunum[convert-to-eV=true]{1}{m} \\
@@ -718,6 +720,7 @@ and the derived file cooking-units.sty.
 % \cuam{12} Eier \\
 % \cuam{18} Eier \\
 % \cuam{132--168} Eier \\
+% \cuam{12--60} Eier \\
 % \cuam{12--24} Eier \\
 % \cuam{12--24.2} Eier \\
 % \cuam{24--12} Eier \\
@@ -745,7 +748,7 @@ and the derived file cooking-units.sty.
 % \cuam{60} Eier \\
 % \cuam{62} Eier \\
 % \endgroup
-% \end{comment}
+%^^A \end{comment}
 %
 % \section{Introduction}
 %
@@ -3497,6 +3500,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_lokal_numeral_bool
 \bool_new:N \l_@@_round_precision_positive_bool
 \bool_new:N \l_@@_fourty_two_bool
+\bool_new:N \l_@@_phrase_negative_bool
 %    \end{macrocode}
 %
 % While rewriting the code I searched for those 
@@ -6237,18 +6241,17 @@ and the derived file cooking-units.sty.
           {
             \bool_if:NTF \l_@@_range_in_input_bool
               {
-                \@@_cuam_post_process_input_phrases_aux:NNN 
-                  #2 \l_@@_tmpb_int \l_@@_tmpb_tl
-                \bool_lazy_and:nnF
-                  { \l_@@_lokal_phrase_bool }
-                  { \tl_if_eq_p:NN \l_@@_phrase_number_tl \l_@@_tmpb_tl }
-                  { \bool_set_false:N \l_@@_lokal_phrase_bool }
-                \bool_if:NT \l_@@_lokal_phrase_bool
+                \bool_if:NF \l_@@_phrase_negative_bool
                   {
-                    \tl_set:NV #1 \l_@@_tmpa_int
-                    \tl_set:NV #2 \l_@@_tmpb_int
-                    \@@_cuam_get_phrase_name:NVN 
-                      \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
+                    \@@_cuam_post_process_input_phrases_range:NN
+                      #2 \l_@@_tmpb_int
+                    \bool_if:NT \l_@@_lokal_phrase_bool
+                      {
+                        \tl_set:NV #1 \l_@@_tmpa_int
+                        \tl_set:NV #2 \l_@@_tmpb_int
+                        \@@_cuam_get_phrase_name:NVN 
+                          \l_@@_phrase_phrase_tl \l_@@_phrase_number_tl \l_@@_tmpb_int
+                      }
                   }
               }{ 
                 \tl_set:NV #1 \l_@@_tmpa_int 
@@ -6268,7 +6271,10 @@ and the derived file cooking-units.sty.
         \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
             \int_compare:nNnTF {##1} < { 0 }
-              { \int_set:Nn \l_tmpa_int { 1 } }
+              { 
+                \bool_set_true:N \l_@@_phrase_negative_bool
+                \int_set:Nn \l_tmpa_int { 1 } 
+              }
               { \int_set:Nn \l_tmpa_int { \int_div_truncate:nn {#1} {##1} } }
             \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_int } = {#1}
               {
@@ -6278,6 +6284,16 @@ and the derived file cooking-units.sty.
                 \clist_map_break:
               }
           }
+      }
+  }
+\cs_new:Npn \@@_cuam_post_process_input_phrases_range:NN #1#2
+  {
+    \bool_set_false:N \l_@@_lokal_phrase_bool
+    \int_set:Nn \l_tmpa_int { \int_div_truncate:nn {#1} { \l_@@_phrase_number_tl } }
+    \int_compare:nNnT { \l_@@_phrase_number_tl * \l_tmpa_int } = {#1}
+      {
+        \int_set_eq:NN #2 \l_tmpa_int
+        \bool_set_true:N \l_@@_lokal_phrase_bool
       }
   }
 \cs_new:Npn \@@_cuam_get_phrase_name:NnN #1#2#3
