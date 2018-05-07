@@ -5713,7 +5713,6 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_calc_references:NN,\@@_calc_references_aux:NN }
 %    \begin{macrocode}
-
 \cs_new:Npn \@@_calc_references:NN #1#2
   {
     \bool_if:NT \l_@@_lokal_persons_bool
@@ -5725,7 +5724,6 @@ and the derived file cooking-units.sty.
           { \@@_calc_references_aux:NN #1 #2 }
       }
   }
-
 \cs_new:Npn \@@_calc_references_aux:NN #1#2
   {
     \int_compare:nNnF 
@@ -6288,12 +6286,13 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_cuam_post_process_input_phrases_range:NN #1#2
   {
-    \bool_set_false:N \l_@@_lokal_phrase_bool
     \int_set:Nn \l_tmpa_int { \int_div_truncate:nn {#1} { \l_@@_phrase_number_tl } }
-    \int_compare:nNnT { \l_@@_phrase_number_tl * \l_tmpa_int } = {#1}
+    \int_compare:nNnTF { \l_@@_phrase_number_tl * \l_tmpa_int } = {#1}
       {
         \int_set_eq:NN #2 \l_tmpa_int
         \bool_set_true:N \l_@@_lokal_phrase_bool
+      }{
+        \bool_set_false:N \l_@@_lokal_phrase_bool
       }
   }
 \cs_new:Npn \@@_cuam_get_phrase_name:NnN #1#2#3
