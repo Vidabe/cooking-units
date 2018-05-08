@@ -4733,7 +4733,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \seq_new:N \g_@@_natural_units_seq
 \prop_new:N \g_@@_convert_to_eV_remember_prop
-\seq_set_split:Nnn \g_@@_natural_units_seq { , }
+\seq_set_from_clist:Nn \g_@@_natural_units_seq
   {
     eV ,
     eVc-2 ,
