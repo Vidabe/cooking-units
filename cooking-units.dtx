@@ -235,7 +235,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \PrintGroup { m }
   {
     \mygroup {#1} & 
-    \clist_use:cn { l__cooking_units_group_ #1 _clist } { ,~ }
+    \seq_use:cn { l__cooking_units_group_ #1 _seq } { ,~ }
   }
 
 
@@ -456,11 +456,11 @@ and the derived file cooking-units.sty.
     \tl_set:Nn \l_tmpa_tl {#1}
     \__cooking_units_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
       { 
-          \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_clist 
+          \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_seq 
             { phrase-clist } \c__cooking_units_postfix_phrase_tl
       }
       { \ERROR }
-    \clist_gput_right:Nn \l_tmpa_clist { THEEND }
+    \clist_gput_right:Nn \l_tmpa_seq { THEEND }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
         \begin{tabular}{ l l l l l }
           \toprule 
@@ -471,7 +471,7 @@ and the derived file cooking-units.sty.
 
 \NewDocumentCommand \CreatePhraseTableRow { m }
   {
-    \clist_map_inline:Nn \l_tmpa_clist
+    \seq_map_inline:Nn \l_tmpa_seq
       { 
         \str_case:nnF {##1}
           {
@@ -3401,22 +3401,22 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 %
-% \begin{macro} { \g_@@_allowed_unit_phrases_tl }
+% \begin{macro} { \g_@@_allowed_special_keys_seq }
 %   \changes {2016/06/12} {New: \cs{g_@@_allowed_unit_phrases_tl}}
 % Used for the keys 'one(m)', 'one(f)', etc. Those are special keys
 % which cannot be used as units, but are processed by the commands in
 % the language section as such.
 %    \begin{macrocode}
-\clist_new:N \g_@@_allowed_special_keys_clist
+\seq_new:N \g_@@_allowed_special_keys_seq
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} { \l_@@_phrase_numbers_clist }
+% \begin{macro} { \l_@@_phrase_numbers_seq }
 % Inside this list the numbers for which a phrase is defined
 % is stored in. As this is language specific, the list is stored
 % inside a language-sensitive command and retrived when needed.
 %    \begin{macrocode}
-\clist_new:N \l_@@_phrase_numbers_clist 
+\seq_new:N \l_@@_phrase_numbers_seq 
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4657,8 +4657,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_define_unit_group:nn #1#2
   {
-    \clist_new:c { l_@@_group_ #1 _clist }
-    \clist_set:cn { l_@@_group_ #1 _clist } {#2}
+    \seq_new:c { l_@@_group_ #1 _seq }
+    \seq_set_from_clist:cn { l_@@_group_ #1 _seq } {#2}
     \keys_define:nn { cooking-units }
       { 
         #1 .code:n = { \@@_unit_group_convert_units:nn {#1} {##1} } ,
@@ -4672,7 +4672,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_error_if_group_not_defined:n #1
   {
-    \clist_if_exist:cF { l_@@_group_ #1 _clist } 
+    \seq_if_exist:cF { l_@@_group_ #1 _seq } 
       { \msg_error:nn { cooking-units} { group-key-unknown } }
   }
 %    \end{macrocode}
@@ -4684,9 +4684,9 @@ and the derived file cooking-units.sty.
   {
     \@@_error_if_group_not_defined:n {#1}
     \@@_error_if_unit_not_defined:n {#2}
-    \clist_if_in:cnTF { l_@@_group_ #1 _clist } {#2}
+    \seq_if_in:cnTF { l_@@_group_ #1 _seq } {#2}
       {
-        \clist_map_inline:cn { l_@@_group_ #1 _clist }
+        \seq_map_inline:cn { l_@@_group_ #1 _seq }
           { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
       }{
         \msg_error:nnxxx 
@@ -4694,7 +4694,7 @@ and the derived file cooking-units.sty.
           { group-choice-not-allowed }
           {#1} 
           {#2} 
-          { \clist_use:cnnn { l_@@_group_ #1 _clist } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
+          { \seq_use:cnnn { l_@@_group_ #1 _seq } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
       }
   }
 \@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
@@ -4718,8 +4718,8 @@ and the derived file cooking-units.sty.
      \clist_map_inline:nn {#2}
        {
          \@@_error_if_unit_not_defined:n {##1} 
-         \clist_if_in:cnF { l_@@_group_ #1 _clist } {##1}
-           { \clist_put_right:cn { l_@@_group_ #1 _clist } {##1} }
+         \seq_if_in:cnF { l_@@_group_ #1 _seq } {##1}
+           { \seq_put_right:cn { l_@@_group_ #1 _seq } {##1} }
        }
   }
 %    \end{macrocode}
@@ -5101,10 +5101,10 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ decimal-mark, one(m), one(f), one(n) }
 %   Defining the translation for the decimal-mark. Note that those
 %   'phrases' are stored inside
-%   \verb|\g_@@_allowed_special_keys_clist|.
+%   \verb|\g_@@_allowed_special_keys_seq|.
 %   Furthermore some translations are defined.
 %    \begin{macrocode}
-\clist_gset:Nn \g_@@_allowed_special_keys_clist
+\seq_gset_from_clist:Nn \g_@@_allowed_special_keys_seq
   {
     decimal-mark ,
     one (m) ,
@@ -6231,7 +6231,7 @@ and the derived file cooking-units.sty.
   {
     \@@_get_phrase_for_current_langauge:NNT 
       \l_@@_phrase_prop 
-      \l_@@_phrase_numbers_clist
+      \l_@@_phrase_numbers_seq
       {
         \@@_cuam_post_process_input_phrases_aux:NNN 
           #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
@@ -6264,7 +6264,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NNN #1#2#3
   {
     \bool_set_false:N \l_@@_lokal_phrase_bool
-    \clist_map_inline:Nn \l_@@_phrase_numbers_clist
+    \seq_map_inline:Nn \l_@@_phrase_numbers_seq
       {
         \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
@@ -6279,7 +6279,7 @@ and the derived file cooking-units.sty.
                 \int_set_eq:NN #2 \l_tmpa_int
                 \tl_set:Nn #3 {##1}
                 \bool_set_true:N \l_@@_lokal_phrase_bool
-                \clist_map_break:
+                \seq_map_break:
               }
           }
       }
@@ -6890,7 +6890,7 @@ and the derived file cooking-units.sty.
       { 
         \@@_cuname_parse_unit_symbol:nw {#1}
       }{ 
-        \clist_if_in:NnTF \g_@@_allowed_special_keys_clist {#1} 
+        \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#1} 
           { \@@_cuname_parse_input_aux:nn {#1} }
           { \@@_cuname_parse_unit_symbol:nw {#1} [ \q_no_value ] }
       }
@@ -6926,7 +6926,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
-    \clist_if_in:NnF \g_@@_allowed_special_keys_clist {#1} 
+    \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
       { \@@_error_if_unit_not_defined:n {#1} }
     \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl {#1} 
@@ -6940,7 +6940,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuname_parse_bracket:nw #1 [#2]
   {
-    \clist_if_in:NnF \g_@@_allowed_special_keys_clist {#1} 
+    \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
       { 
         \@@_deftranslation_to:Vxxn \l_@@_language_tl {#1} 
           \c_@@_postfix_unitname_pl_tl {#2}
@@ -6982,7 +6982,7 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
-    \clist_if_in:NnTF \g_@@_allowed_special_keys_clist {#1} 
+    \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#1} 
       {
         \@@_deftranslation_to:Vxxn \l_@@_language_tl {#1} 
           \c_@@_postfix_unitname_tl {#2}
@@ -7036,11 +7036,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
       \@@_phrase_list_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
         {
-          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_clist 
+          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_seq 
             { phrase-clist } \c_@@_postfix_phrase_tl
         }{
           \prop_clear:N \l_@@_phrase_prop
-          \clist_clear:N \l_@@_phrase_numbers_clist
+          \seq_clear:N \l_@@_phrase_numbers_seq
         }
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -7050,7 +7050,7 @@ and the derived file cooking-units.sty.
         \q_recursion_tail \q_recursion_tail \q_recursion_stop
 %    \end{macrocode}
 %    \begin{macrocode}
-    \clist_sort:Nn \l_@@_phrase_numbers_clist
+    \seq_sort:Nn \l_@@_phrase_numbers_seq
       {
         \int_compare:nNnTF { \int_abs:n {##1} } < { \int_abs:n {##2} }
           { \sort_return_swapped: }
@@ -7071,7 +7071,7 @@ and the derived file cooking-units.sty.
       \l_@@_phrase_prop
     \@@_deftranslation_to:VxxV 
       \l_@@_language_tl { phrase-clist } 
-      \c_@@_postfix_phrase_tl \l_@@_phrase_numbers_clist
+      \c_@@_postfix_phrase_tl \l_@@_phrase_numbers_seq
   }  
 %    \end{macrocode}
 %
@@ -7099,8 +7099,8 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
     \prop_put:Nnn \l_@@_phrase_prop {#1} {#2}
-    \clist_if_in:NnF \l_@@_phrase_numbers_clist {#1}
-      { \clist_put_right:Nn \l_@@_phrase_numbers_clist {#1} }
+    \seq_if_in:NnF \l_@@_phrase_numbers_seq {#1}
+      { \seq_push:Nn \l_@@_phrase_numbers_seq {#1} }
     \peek_meaning_ignore_spaces:NTF [
       {
         \@@_chuphrase_parse_plural:nw {#1}
