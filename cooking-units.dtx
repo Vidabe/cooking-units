@@ -5172,6 +5172,9 @@ and the derived file cooking-units.sty.
 % Some units have options added to them. To get those options it is first
 % needed to know which unit will be used at all. Therefore units will
 % be changed first and afterwards the other options are processed.
+%
+% |\l_@@_convert_to_eV_bool| must  be checked after processing the keys
+% as the option \opt{convert-to-eV} is set during this process.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_initialise_unit_change:n #1
   {
