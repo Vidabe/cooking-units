@@ -5180,7 +5180,7 @@ and the derived file cooking-units.sty.
   {
     \tl_if_empty:nF {#1}
       { \keys_set_groups:nnn { cooking-units } { change-unit } {#1} }
-    \bool_if:NTF \l_@@_convert_to_eV_bool
+    \bool_if:NT \l_@@_convert_to_eV_bool
       { \@@_convert_to_eV: }
     \prop_get:NVNF \l_@@_change_unit_prop \l_@@_given_unit_tl \l_@@_option_unit_tl
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
