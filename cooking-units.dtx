@@ -5339,7 +5339,7 @@ and the derived file cooking-units.sty.
           { 42 } 
           { \l_@@_tmpa_tl }
       }{
-        \@@_parsing_amount_input:N \l_@@_tmpa_tl
+        \@@_split_and_parse_input:N \l_@@_tmpa_tl
       }
   }
 %    \end{macrocode}
@@ -5347,7 +5347,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_parsing_amount_input:n }
 %    \begin{macrocode}
-\cs_new:Npn \@@_parsing_amount_input:N #1
+\cs_new:Npn \@@_split_and_parse_input:N #1
   {
     \tl_if_in:NVT #1 \l_@@_input_range_sign_tl
       {
@@ -5359,6 +5359,9 @@ and the derived file cooking-units.sty.
     \tl_if_in:NnT #1 { _ }
       { \bool_set_true:N \l_@@_lokal_mixed_fraction_bool }
     \@@_split:N #1
+    \bool_if:NTF \l_@@_error_bool
+      { \l_@@_given_unit_tl }
+      { \@@_parse_tmp: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5367,7 +5370,7 @@ and the derived file cooking-units.sty.
 % Splits the input into   fractions or ranges.
 % Depending on the input on of the four macros are used.
 %    \begin{macrocode}
-
+\cs_new:Npn \@@_parse_tmp: { }
 \cs_new:Npn \@@_split:N #1
   {
     \bool_if:NTF \l_@@_lokal_fraction_bool
@@ -5385,36 +5388,38 @@ and the derived file cooking-units.sty.
       }
   }
 
-\cs_new:Npn \@@_split_number:N #1
+\cs_new:Npn \@@_split_number:n #1
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_parse_number_in_input:
+    \cs_set_eq:NN \@@_parse_tmp: \@@_parse_number_in_input:
   }
-\cs_new:Npn \@@_split_range:N #1
+\cs_new:Npn \@@_split_range:n #1
   {
     \@@_split_range_aux:ww #1 \q_stop
-    \@@_parse_range_in_input:
+    \cs_set_eq:NN \@@_parse_tmp: \@@_parse_range_in_input:
   }
 \cs_new:Npn \@@_split_range_aux:ww #1 \q_@@_range #2 \q_stop
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
   }
-\cs_new:Npn \@@_split_fraction:N #1
+\cs_new:Npn \@@_split_fraction:n #1
   {
-    \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
-      { \@@_split_fraction_auxii:w }
-      { \@@_split_fraction_auxi:ww }
-    #1 \q_stop / \q_recursion_tail \q_stop
-    \q_recursion_stop
     \bool_lazy_or:nnT
       { \l_@@_lokal_persons_bool }{ \l_@@_eval_fractions_bool }
       { \bool_set_false:N \l_@@_lokal_fraction_bool }
     \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
-      { \@@_parse_mixed_fraction_in_input: }
-      { \@@_parse_fraction_in_input: }
+      { 
+        \cs_set_eq:NN \@@_parse_tmp: \@@_parse_mixed_fraction_in_input:
+        \@@_split_fraction_mixed:ww 
+      }{
+        \cs_set_eq:NN \@@_parse_tmp: \@@_parse_fraction_in_input:
+        \@@_split_fraction_frac:ww 
+      }
+    #1 \q_stop / \q_recursion_tail \q_stop
+    \q_recursion_stop
   }
-\cs_new:Npn \@@_split_fraction_auxi:ww #1 / #2 \q_stop
+\cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
   {
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nnV { cooking-units } { fraction-wrong-order } \l_@@_given_amount_tl }
@@ -5422,15 +5427,14 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \use_none_delimit_by_q_recursion_stop:w
   }
-\cs_new:Npn \@@_split_fraction_auxii:w #1 _ #2 \q_stop
+\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
-    \@@_split_fraction_auxi:ww #2 \q_stop 
+    \@@_split_fraction_frac:ww #2 \q_stop 
   }
-
-\cs_generate_variant:Nn \@@_split_number:N { V }
-\cs_generate_variant:Nn \@@_split_range:N { V }
-\cs_generate_variant:Nn \@@_split_fraction:N { V }
+\cs_generate_variant:Nn \@@_split_number:n { V }
+\cs_generate_variant:Nn \@@_split_range:n { V }
+\cs_generate_variant:Nn \@@_split_fraction:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
