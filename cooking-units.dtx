@@ -4112,8 +4112,15 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
+% \begin{macro}{}
+%    \begin{macrocode}
+  curef-do-not-change .code:n =
+    {
+      \seq_if_in:NnF \l_@@_curef_do_not_change_seq {#1}
+        {\seq_put_right:Nn \l_@@_curef_do_not_change_seq {#1} }
+    } ,
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
