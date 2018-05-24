@@ -698,7 +698,7 @@ and the derived file cooking-units.sty.
 % \maketitle
 %
 % \begin{documentation}
-% \begin{abstract}
+% \begin{abstract} \cunum[kg=g]{x}{kg} \cunum{1--c}{kg}
 %   This package enables user to globally format units, to switch
 %   between them and since v1.10 you can also change your recipes for a given
 %   number of persons.
@@ -3164,6 +3164,7 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \tl_set_rescan:Nnn { NnV }
 \cs_generate_variant:Nn \msg_error:nnnn { nnnV }
 \cs_generate_variant:Nn \msg_error:nnn { nnV }
+\cs_generate_variant:Nn \msg_warning:nnn { nnV }
 \cs_generate_variant:Nn \tl_map_function:nN { VN }
 %    \end{macrocode}
 % \end{macro}
@@ -5337,7 +5338,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_parse_input:n }
 %   Rescans the input to get rid of spaces and  to make \_ and ? inactive
-%   (french with babel makes ? active and changes the definition of it).
+%   (french with babel makes |?| active and changes the definition of it).
 %   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
 %   (if not empty). Afterwards the units are printed.
 %    \begin{macrocode}
@@ -5362,7 +5363,7 @@ and the derived file cooking-units.sty.
       }{
         \tl_set_eq:NN \l_@@_tmpa_tl \l_@@_given_amount_tl
         \@@_split_input:N \l_@@_tmpa_tl
-        \@@_parse_and_print_input:
+        \@@_process_and_print_input:
       }
   }
 %    \end{macrocode}
@@ -5587,13 +5588,13 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{\@@_parse_number_in_input:}
+% \begin{macro}{\@@_process_number_in_input:}
 %   If no  fractions and ranges are used this macro activated.
 %   It just checks the input, stores the checked (and a bit
 %   changed) input into a macro. This macro is given to another
 %   function to calculate the input and print it.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_number_in_input:
+\cs_new:Npn \@@_process_number_in_input:
   {
     \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
   }
@@ -5607,7 +5608,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_range_in_input: }
+% \begin{macro}{ \@@_process_range_in_input: }
 %   Is used if a \lstinline|\q_@@_range| is found inside the input.
 %   Seperates the input, checks it and prints it (after calculating
 %   it). Furthermore a boolean is set to true, is used to check for
@@ -5618,7 +5619,7 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_range_in_input:
+\cs_new:Npn \@@_process_range_in_input:
   {
     \@@_pre_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
     \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
@@ -5637,7 +5638,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_fraction_in_input: }
+% \begin{macro}{ \@@_process_fraction_in_input: }
 %   If a \lstinline|/| (but no \lstinline|_|) is found inside the input.
 %   Well \dots\ does the same as the functions before.
 %   If fractions should be evaluated the input is \dots\ well, 
@@ -5646,7 +5647,7 @@ and the derived file cooking-units.sty.
 %   argument in \lstinline|\@@_print_fractions:nnn| indicates a
 %   \enquote{normal} fraction.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_fraction_in_input:
+\cs_new:Npn \@@_process_fraction_in_input:
   {
     \bool_lazy_or:nnTF
       { \l_@@_lokal_fraction_bool }
@@ -5669,7 +5670,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_mixed_fraction_in_input: }
+% \begin{macro}{ \@@_process_mixed_fraction_in_input: }
 %   The same procedure as last function? The same procedure as every 
 %   function!
 %   
@@ -5683,7 +5684,7 @@ and the derived file cooking-units.sty.
 %   \end{align}
 %   
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_mixed_fraction_in_input: 
+\cs_new:Npn \@@_process_mixed_fraction_in_input: 
   {
     \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_mixed_fraction_tl { - } \l_@@_minus_bool
     \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
