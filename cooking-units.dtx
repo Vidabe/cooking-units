@@ -5312,7 +5312,28 @@ and the derived file cooking-units.sty.
 %
 % \subsection {Parsing and checking numbers}
 %
-% This subsection contains macros helping an checking the input.
+% This subsection contains macros for splitting an checking the input.
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+\cs_new:Npn \@@_create_error:n #1
+  {
+    \bool_set_true:N \l_@@_error_bool
+    \msg_error:nnV { cooking-units } {#1} \l_@@_given_amount_tl 
+  }
+\cs_new:Npn \@@_create_error_and_stop:n #1
+  {
+    \bool_set_true:N \l_@@_error_bool
+    \msg_error:nnV { cooking-units } {#1} \l_@@_given_amount_tl 
+    \use_none_delimit_by_q_nil:w
+  }
+\cs_new:Npn \@@_create_error:nn #1#2
+  {
+    \bool_set_true:N \l_@@_error_bool
+    \msg_error:nnnV { cooking-units } {#1} {#2} \l_@@_given_amount_tl 
+  }
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{ \@@_parse_input:n }
 %   Rescans the input to get rid of spaces and  to make \_ and ? inactive
@@ -5347,7 +5368,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parsing_amount_input:n }
+% \begin{macro}{ \@@_split_input:N , \@@_process_and_print_input: ,  \@@_process_tmp: }
 % I would need to check for |/| and |_| anyway. So let's do it here
 % and use the booleans for error-checking.
 %    \begin{macrocode}
@@ -5359,68 +5380,61 @@ and the derived file cooking-units.sty.
         \bool_set_true:N \l_@@_range_in_input_bool            
       }
     \tl_if_in:NnT #1 { / }
-      { \bool_set_true:N \l_@@_lokal_fraction_bool }
+      { 
+        \bool_set_true:N \l_@@_lokal_fraction_bool 
+        \bool_if:NT \l_@@_range_in_input_bool
+          { \@@_create_error_and_stop:n { fraction-not-allowed-with-range } }
+      }
     \tl_if_in:NnT #1 { _ }
-      { \bool_set_true:N \l_@@_lokal_mixed_fraction_bool }
+      { 
+        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool 
+        \bool_if:NF \l_@@_lokal_fraction_bool
+          { \@@_create_error_and_stop:n { missing-slash } }
+      }
     \@@_split:N #1
+    \use_none_delimit_by_q_nil:w \q_nil
   }
-\cs_new:Npn \@@_parse_and_print_input:
+%    \end{macrocode}
+% If an error was raised during parsing, just print the input. Else, go to the next set
+% of commands.
+%    \begin{macrocode}
+\cs_new:Npn \@@_process_tmp: { }
+\cs_new:Npn \@@_process_and_print_input:
   {
     \bool_if:NTF \l_@@_error_bool
       { \l_@@_given_amount_tl }
-      { \@@_parse_tmp: }
+      { \@@_process_tmp: }
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{ \@@_split_input:}
 % Splits the input into fractions or ranges.
-% Furthermore, thanks to knowing some of the input this place
-% is also used to check for errors.
+% Errors are already checked at this point.
 %    \begin{macrocode}
-\cs_new:Npn \@@_split_error:n #1
-  {
-    \bool_set_true:N \l_@@_error_bool
-    \msg_error:nnV { cooking-units } {#1} \l_@@_given_amount_tl 
-  }
-\cs_new:Npn \@@_split_error_and_stop:n #1
-  {
-    \bool_set_true:N \l_@@_error_bool
-    \msg_error:nnV { cooking-units } {#1} \l_@@_given_amount_tl 
-    \use_none_delimit_by_q_nil:w
-  }
-\cs_new:Npn \@@_split_error:nn #1#2
-  {
-    \bool_set_true:N \l_@@_error_bool
-    \msg_error:nnnV { cooking-units } {#1} {#2} \l_@@_given_amount_tl 
-  }
-\cs_new:Npn \@@_parse_tmp: { }
 \cs_new:Npn \@@_split:N #1
   {
     \bool_if:NTF \l_@@_lokal_fraction_bool
+      { \@@_split_fraction:V }
       {
-        \bool_if:NT \l_@@_range_in_input_bool
-          { \@@_split_error_and_stop:n { fraction-not-allowed-with-range } }
-        \@@_split_fraction:V
-      }{
-        \bool_if:NT \l_@@_lokal_mixed_fraction_bool
-          { \@@_split_error_and_stop:n { missing-slash } }
         \bool_if:NTF \l_@@_range_in_input_bool
           { \@@_split_range:V }
           { \@@_split_number:V }
       }
     #1
-    \use_none_delimit_by_q_nil:w \q_nil
   }
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_new:Npn \@@_split_number:n #1
   {
-    \cs_set_eq:NN \@@_parse_tmp: \@@_parse_number_in_input:
+    \cs_set_eq:NN \@@_process_tmp: \@@_process_number_in_input:
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
   }
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_new:Npn \@@_split_range:n #1
   {
-    \cs_set_eq:NN \@@_parse_tmp: \@@_parse_range_in_input:
+    \cs_set_eq:NN \@@_process_tmp: \@@_process_range_in_input:
     \@@_split_range_aux:ww #1 \q_stop
   }
 \cs_new:Npn \@@_split_range_aux:ww #1 \q_@@_range #2 \q_stop
@@ -5428,14 +5442,16 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
   }
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_new:Npn \@@_split_fraction:n #1
   {
     \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
       { 
-        \cs_set_eq:NN \@@_parse_tmp: \@@_parse_mixed_fraction_in_input:
+        \cs_set_eq:NN \@@_process_tmp: \@@_process_mixed_fraction_in_input:
         \@@_split_fraction_mixed:ww 
       }{
-        \cs_set_eq:NN \@@_parse_tmp: \@@_parse_fraction_in_input:
+        \cs_set_eq:NN \@@_process_tmp: \@@_process_fraction_in_input:
         \@@_split_fraction_frac:ww 
       }
     #1 \q_stop / \q_recursion_tail \q_stop
@@ -5447,7 +5463,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
   {
     \quark_if_recursion_tail_stop_do:nn {#2} 
-      { \@@_split_error:n { fraction-wrong-order } }
+      { \@@_create_error:n { fraction-wrong-order } }
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \use_none_delimit_by_q_recursion_stop:w
@@ -5475,7 +5491,7 @@ and the derived file cooking-units.sty.
     \cs_set_eq:NN \@@_parse:N \@@_start_loop:N 
     \tl_map_function:nN {#1} \@@_parse:N
     \bool_if:NTF \l_@@_error_bool
-      { \tl_set:Nn #2 {#1} }
+      { \use_none_delimit_by_q_nil:w }
       { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
   }  
 %    \end{macrocode}
@@ -5529,7 +5545,7 @@ and the derived file cooking-units.sty.
               }{
                 \bool_set_true:N \l_@@_error_bool
                 \@@_check_error:n {#1}
-                \tl_map_break:
+%                \tl_map_break:
               }
           }
       }
@@ -5545,11 +5561,11 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_check_error:n #1
   {
     \tl_if_in:NnTF \l_@@_input_fraction_sign_tl {#1}
-      { \@@_split_error:n { Second-fraction-sign-not-allowed } }
+      { \@@_create_error:n { Second-fraction-sign-not-allowed } }
       {
         \tl_if_in:NnTF \l_@@_input_mixed_fraction_sign_tl {#1}
-          { \@@_split_error:n { Second-mixed-fraction-sign-not-allowed } }
-          { \@@_split_error:nn { Token-not-allowed } {#1} }
+          { \@@_create_error:n { Second-mixed-fraction-sign-not-allowed } }
+          { \@@_create_error:nn { Token-not-allowed } {#1} }
       }
   }
 %    \end{macrocode}
@@ -5558,16 +5574,11 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NTF #2 
       {
-        \tl_case:NnTF #1
+        \tl_case:NnF #1
           {
             \q_@@_decimal 
-              { \@@_split_error:n { Second-decimal-sign-not-allowed } }
-            \q_@@_fraction 
-              { \@@_split_error:n { Second-fraction-sign-not-allowed } }
-            \q_@@_mixed_fraction 
-              { \@@_split_error:n { Second-mixed-fraction-sign-not-allowed } }
+              { \@@_create_error:n { Second-decimal-sign-not-allowed } }
           }
-          { \tl_map_break: }
           { \msg_error:nn { cooking-units } { internal-error } }
       }
       { \bool_set_true:N #2 }
@@ -5725,8 +5736,7 @@ and the derived file cooking-units.sty.
       {
         \bool_if:NTF \l_@@_special_sign_bool
           { 
-            \tl_set_eq:NN \l_@@_tmpa_tl #1
-            \msg_warning:nnx { cooking-units } { amount-not-known } \l_@@_tmpa_tl 
+            \msg_warning:nnV { cooking-units } { amount-not-known } #1 
           }{
             \bool_lazy_and:nnTF
               { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
@@ -5735,8 +5745,8 @@ and the derived file cooking-units.sty.
             \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
             \@@_check_temperature_limit:N \l_@@_tmpa_tl
+            \tl_set_eq:NN #1 \l_@@_tmpa_tl
           }
-        \tl_set_eq:NN #1 \l_@@_tmpa_tl
       }
   }
 %    \end{macrocode}
