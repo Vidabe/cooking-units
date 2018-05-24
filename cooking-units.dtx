@@ -535,7 +535,6 @@ and the derived file cooking-units.sty.
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 
 
-
 \cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
@@ -5073,7 +5072,7 @@ and the derived file cooking-units.sty.
   {
     \SaveTranslationFor {#2} {#1} { #3 #4 }
   }
-\cs_generate_variant:Nn \@@_translate:nn { xx  }
+\cs_generate_variant:Nn \@@_translate:nn { xx , VV }
 \cs_generate_variant:Nn \@@_translate_let:Nnn { Nxx }
 \cs_generate_variant:Nn \@@_translate_let:nNnn { VNxx, nNxx }
 %    \end{macrocode}
@@ -5481,6 +5480,8 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
     \@@_split_fraction_frac:ww #2 \q_stop 
   }
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_generate_variant:Nn \@@_split_number:n { V }
 \cs_generate_variant:Nn \@@_split_range:n { V }
 \cs_generate_variant:Nn \@@_split_fraction:n { V }
@@ -5541,9 +5542,7 @@ and the derived file cooking-units.sty.
       {
         \tl_if_in:NnTF \l_@@_input_decimal_mark_tl {#1}
           { 
-            \@@_check_repitition:NN 
-              \q_@@_decimal 
-              \l_@@_check_decimal_bool
+            \@@_check_repitition:N \l_@@_check_decimal_bool
             \tl_put_right:Nn \l_@@_tmpa_tl { . }
           }{
             \tl_if_in:NnTF \l_@@_input_allowed_special_signs_tl {#1}
@@ -5578,18 +5577,11 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %    \begin{macrocode}
-\cs_new:Npn \@@_check_repitition:NN #1#2
+\cs_new:Npn \@@_check_repitition:N #1
   {
-    \bool_if:NTF #2 
-      {
-        \tl_case:NnF #1
-          {
-            \q_@@_decimal 
-              { \@@_create_error:n { Second-decimal-sign-not-allowed } }
-          }
-          { \msg_error:nn { cooking-units } { internal-error } }
-      }
-      { \bool_set_true:N #2 }
+    \bool_if:NTF #1
+      { \@@_create_error:n { Second-decimal-sign-not-allowed } }
+      { \bool_set_true:N #1 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5634,7 +5626,7 @@ and the derived file cooking-units.sty.
     \@@_post_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl 
     \@@_print_input:N \l_@@_number_tmpa_tl
     \bool_if:NTF \l_@@_using_cutext_bool
-      { 
+      {
         \tl_use:N \l_@@_cutext_range_sign_tl 
 %        \@@_translate:xx { range-sign } \c_@@_postfix_unitname_tl
         \bool_set_false:N \l_@@_cutext_uppercase_word_bool
@@ -5740,21 +5732,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_calculate_and_store_in:N #1
   {
-    \bool_if:NF \l_@@_error_bool
-      {
-        \bool_if:NTF \l_@@_special_sign_bool
-          { 
-            \msg_warning:nnV { cooking-units } { amount-not-known } #1 
-          }{
-            \bool_lazy_and:nnTF
-              { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
-              { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
-              { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
-            \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
-            \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
-            \@@_check_temperature_limit:N \l_@@_tmpa_tl
-            \tl_set_eq:NN #1 \l_@@_tmpa_tl
-          }
+    \bool_if:NTF \l_@@_special_sign_bool
+      { 
+        \msg_warning:nnV { cooking-units } { amount-not-known } #1 
+      }{
+        \bool_lazy_and:nnTF
+          { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
+          { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
+          { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
+        \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
+        \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
+        \@@_check_temperature_limit:N \l_@@_tmpa_tl
+        \tl_set_eq:NN #1 \l_@@_tmpa_tl
       }
   }
 %    \end{macrocode}
@@ -6014,6 +6003,8 @@ and the derived file cooking-units.sty.
   {
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
     \tl_use:N \l_@@_value_unit_space_tl
+    \tl_show:N \l_@@_option_unit_tl
+    \tl_show:N \l_@@_given_unit_tl
     \@@_change_unit:TF
       { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unit_tl }
       { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unit_tl }
