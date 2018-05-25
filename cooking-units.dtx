@@ -6287,13 +6287,9 @@ and the derived file cooking-units.sty.
     \@@_bool_set_if_integers:NNN \l_@@_tmpa_bool #1 #2
     \bool_lazy_and:nnT 
       { \l_@@_use_phrases_bool } { \l_@@_tmpa_bool }
-      {
-        \@@_cuam_post_process_input_phrases:NN #1#2
-      }
+      { \@@_cuam_post_process_input_phrases:NN #1#2 }
     \bool_if:NT \l_@@_lokal_numeral_bool
-      {
-        \@@_cuam_post_process_input_numerals:NN #1#2
-      }
+      { \@@_cuam_post_process_input_numerals:NN #1#2 }
   }
 %    \end{macrocode}
 %
