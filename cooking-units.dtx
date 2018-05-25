@@ -5294,8 +5294,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ \@@_print_fractions:nnn }
 %   The name of this function is the name of the game: It prints fractions.
 %   Furthermore it sets the boolean \lstinline|fraction_in_input_bool| to true
-%   so that the correct unit is printed. Instead of \lstinline|\kern| I used the
-%   \lstinline|\hbox_to_wd:nn| command (I don't have a better idea).
+%   so that the correct unit is printed.
 %
 %  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
 %    \begin{macrocode}
@@ -5338,7 +5337,7 @@ and the derived file cooking-units.sty.
 %
 % This subsection contains macros for splitting an checking the input.
 %
-% \begin{macro}{}
+% \begin{macro}{\@@_create_error:n, \@@_create_error_and_stop:n , \@@_create_error:nn }
 %    \begin{macrocode}
 \cs_new:Npn \@@_create_error:n #1
   {
@@ -5569,7 +5568,6 @@ and the derived file cooking-units.sty.
               }{
                 \bool_set_true:N \l_@@_error_bool
                 \@@_check_error:n {#1}
-%                \tl_map_break:
               }
           }
       }
@@ -5630,10 +5628,8 @@ and the derived file cooking-units.sty.
 %   it). Furthermore a boolean is set to true, is used to check for
 %   errors (ergo if fractions are used).
 %
-% Set |\l_@@_cutext_uppercase_word_bool| to false  
-% so that the second numeral is not capitalized.
-%
-%
+%   Set |\l_@@_cutext_uppercase_word_bool| to false  
+%   so that the second numeral is not capitalized.
 %    \begin{macrocode}
 \cs_new:Npn \@@_process_range_in_input:
   {
@@ -6020,8 +6016,6 @@ and the derived file cooking-units.sty.
   {
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
     \tl_use:N \l_@@_value_unit_space_tl
-    \tl_show:N \l_@@_option_unit_tl
-    \tl_show:N \l_@@_given_unit_tl
     \@@_change_unit:TF
       { \@@_translate:xx \l_@@_option_unit_tl \c_@@_postfix_unit_tl }
       { \@@_translate:xx \l_@@_given_unit_tl \c_@@_postfix_unit_tl }
@@ -6414,7 +6408,7 @@ and the derived file cooking-units.sty.
 % used to decide whetever or not to print numerals. This is due to
 % the $1$ being dependent (in some languages) depending on the gender
 % of the following word. Currently testing only |\l_@@_lokal_numeral_bool| doesn't
-% work due to the   $1$ having a special parsing.
+% work due to the $1$ having a special parsing.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_print_numerical_input:N #1
   {
@@ -6424,7 +6418,8 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_to_and_check_existance:Nx \l_@@_translation_tmpa_tl
+            \@@_translate_one_and_check_existance:Nx 
+              \l_@@_translation_tmpa_tl
               { \l_@@_phrase_number_tl -phrase-gender }
             \l_@@_translation_tmpa_tl 
           }
