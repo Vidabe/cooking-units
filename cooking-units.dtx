@@ -5092,9 +5092,9 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_translate_one_to_and_check_existance:Nx }
+% \begin{macro}{\@@_translate_one_and_check_existance:Nx }
 %    \begin{macrocode}
-\cs_new:Npn \@@_translate_one_to_and_check_existance:Nx #1#2
+\cs_new:Npn \@@_translate_one_and_check_existance:Nn #1#2
   {
     \@@_translate_let:Nxx #1 {#2} \c_@@_postfix_gender_tl
     \@@_unitname_get:NxF #1 { one (#1) }
@@ -6111,7 +6111,7 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_to_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
+            \@@_translate_one_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
               {
                 \exp_args:Nx \tl_upper_case:n { \tl_head:V \l_@@_translation_tmpa_tl }
@@ -6249,7 +6249,7 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_cuam_old_bool
       { \@@_cuam_old:n {#3} }
       { 
-        \@@_parse_input:n {#3}  
+        \@@_parse_input:n {#3}
         \@@_print_correct_unit:
       }
   }
@@ -7251,7 +7251,7 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_to_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
+            \@@_translate_one_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
               {
                 \exp_args:Nx \tl_upper_case:n { \tl_head:V \l_@@_translation_tmpa_tl }
