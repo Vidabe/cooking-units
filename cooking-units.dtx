@@ -5313,6 +5313,23 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
+% \begin{macro}{ \@@_print_ranges:NN }
+%    \begin{macrocode}
+\cs_new:Npn \@@_print_ranges:NN #1#2
+  {
+    \@@_print_input:N #1
+    \bool_if:NTF \l_@@_using_cutext_bool
+      {
+        \tl_use:N \l_@@_cutext_range_sign_tl 
+%        \@@_translate:VV { range-sign } \c_@@_postfix_unitname_tl
+        \bool_set_false:N \l_@@_cutext_uppercase_word_bool
+      }
+      { \tl_use:N \l_@@_cunum_range_sign_tl }
+    \@@_print_input:N #2
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 %
 %
@@ -5624,15 +5641,7 @@ and the derived file cooking-units.sty.
     \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
     \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl 
     \@@_post_process_input:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl 
-    \@@_print_input:N \l_@@_number_tmpa_tl
-    \bool_if:NTF \l_@@_using_cutext_bool
-      {
-        \tl_use:N \l_@@_cutext_range_sign_tl 
-%        \@@_translate:xx { range-sign } \c_@@_postfix_unitname_tl
-        \bool_set_false:N \l_@@_cutext_uppercase_word_bool
-      }
-      { \tl_use:N \l_@@_cunum_range_sign_tl }
-    \@@_print_input:N \l_@@_number_tmpb_tl
+    \@@_print_ranges:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
   }
 %    \end{macrocode}
 % \end{macro}
