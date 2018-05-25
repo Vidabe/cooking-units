@@ -5860,12 +5860,15 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_round_calculated_input:Nn #1#2
   {
     \@@_check_number_for_rounding:n {#2}
-    \tl_set:Nf #1 
-      {
-        \bool_if:NTF \l_@@_round_number_bool
-          { \fp_eval:n { round ( \@@_rounding_function:n {#2} ) } }
-          {#2}
-     }
+    \bool_if:NTF \l_@@_round_number_bool
+      { \@@_tl_eval:Nn #1 { round ( \@@_rounding_function:n {#2} ) } }
+      { \tl_set:Nn #1 {#2} }
+%    \tl_set:Nf #1 
+%      {
+%        \bool_if:NTF \l_@@_round_number_bool
+%          { \fp_eval:n { round ( \@@_rounding_function:n {#2} ) } }
+%          {#2}
+%     }
   }
 \cs_generate_variant:Nn \@@_round_calculated_input:Nn { NV }
 %    \end{macrocode}
