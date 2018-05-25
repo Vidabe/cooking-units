@@ -3467,7 +3467,7 @@ and the derived file cooking-units.sty.
 % \l_@@_lokal_persons_bool,
 % \l_@@_cutext_to_cunum_bool,
 % \l_@@_cutext_old_bool,
-% \l_@@_cutext_change_unit_bool,
+% \l_@@_cutext_keep_unit_bool,
 % \l_@@_round_commercial_bool,
 % \l_@@_use_phrases_bool,
 % \l_@@_lokal_phrase_bool
@@ -3493,7 +3493,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_lokal_persons_bool
 \bool_new:N \l_@@_cutext_to_cunum_bool
 \bool_new:N \l_@@_cutext_old_bool
-\bool_new:N \l_@@_cutext_change_unit_bool
+\bool_new:N \l_@@_cutext_keep_unit_bool
 \bool_new:N \l_@@_round_commercial_bool
 \bool_new:N \l_@@_use_phrases_bool
 \bool_new:N \l_@@_lokal_phrase_bool
@@ -3519,7 +3519,7 @@ and the derived file cooking-units.sty.
 %
 % Setting some of them to \true\ or another boolean respectively.
 %    \begin{macrocode}
-\bool_set_true:N \l_@@_cutext_change_unit_bool
+\bool_set_false:N \l_@@_cutext_keep_unit_bool
 \bool_set_eq:NN \l_@@_print_numeral_bool \g_@@_opt_numeral_bool
 %    \end{macrocode}
 %
@@ -3661,7 +3661,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ cutext-change-unit }
 % Do not wanna change units in \mycs{cutext}? Use this option.
 %    \begin{macrocode}
-    cutext-change-unit .bool_set:N = \l_@@_cutext_change_unit_bool ,
+    cutext-change-unit .bool_set_inverse:N = \l_@@_cutext_keep_unit_bool ,
     cutext-change-unit .default:n = { true } ,
     cutext-change-unit .groups:n = { change-unit } ,
 %    \end{macrocode}
@@ -5737,7 +5737,7 @@ and the derived file cooking-units.sty.
         \msg_warning:nnV { cooking-units } { amount-not-known } #1 
       }{
         \bool_lazy_and:nnTF
-          { \l_@@_using_cutext_bool } { ! \l_@@_cutext_change_unit_bool }
+          { \l_@@_using_cutext_bool } { \l_@@_cutext_keep_unit_bool }
           { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
           { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
         \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
@@ -6061,7 +6061,7 @@ and the derived file cooking-units.sty.
     \@@_set_process_and_print_for_cutext:
     \@@_initialise_default:n {#3}
     \@@_initialise_unit_change:n {#2}
-    \bool_if:NF \l_@@_cutext_change_unit_bool
+    \bool_if:NT \l_@@_cutext_keep_unit_bool
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_given_unit_tl }
     \@@_initialise_after_unit_change:nn {#1} {#2}
     \bool_if:NT \l_@@_fourty_two_bool
