@@ -5780,31 +5780,39 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ \@@_calc_references:NN,\@@_calc_references_aux:NN }
+% As comparing integers is faster then checking if something is inside
+% the sequence, first (after the boolean) check if there needs to be a calculation
+% at all.
 %    \begin{macrocode}
 \cs_new:Npn \@@_calc_references:NN #1#2
   {
     \bool_if:NT \l_@@_lokal_persons_bool
       { 
-        \@@_change_unit:TF
-          { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
-          { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
-        \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_tmpb_tl
-          { \@@_calc_references_aux:NN #1 #2 }
+        \int_compare:nNnF 
+          { \l_@@_wanted_number_of_persons_int }
+          =
+          { \l_@@_local_number_of_persons_int }
+          {
+            \@@_change_unit:TF
+              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
+              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
+            \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_tmpb_tl
+              { \@@_calc_references_aux:NN #1 #2 }
+          }
       }
   }
+%    \end{macrocode}
+% I hope that by putting |#2| to the front of the calculation, it will increase the
+% precision of the calculation (not that it is necessary). I don't really know if this
+% makes sense, but \dots\ eh.
+%    \begin{macrocode}
 \cs_new:Npn \@@_calc_references_aux:NN #1#2
   {
-    \int_compare:nNnF 
-      { \l_@@_wanted_number_of_persons_int }
-      =
-      { \l_@@_local_number_of_persons_int }
+    \@@_tl_eval:Nn #1
       {
-        \@@_tl_eval:Nn #1
-          {
-            \l_@@_wanted_number_of_persons_int /  
-            \l_@@_local_number_of_persons_int * 
-            #2
-          }
+        #2 *
+        \l_@@_wanted_number_of_persons_int /  
+        \l_@@_local_number_of_persons_int 
       }
   }
 %    \end{macrocode}
