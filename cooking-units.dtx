@@ -456,7 +456,7 @@ and the derived file cooking-units.sty.
     \tl_set:Nn \l_tmpa_tl {#1}
     \__cooking_units_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
       { 
-          \__cooking_units_translate_let:VNnV \l_tmpa_tl \l_tmpa_seq 
+          \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_seq 
             { phrase-clist } \c__cooking_units_postfix_phrase_tl
       }
       { \ERROR }
@@ -5030,8 +5030,8 @@ and the derived file cooking-units.sty.
   {
     \declaretranslation {#1} { #2 #3 } {#4}
   }
-\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xV }
-\cs_generate_variant:Nn \@@_deftranslation_to:nnnn { VxVv, VnVV , VxVn }
+\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xx , xxV }
+\cs_generate_variant:Nn \@@_deftranslation_to:nnnn { Vxxv, VxxV , Vxxn, Vxxx,Vxxo,Vxxf }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -5072,8 +5072,8 @@ and the derived file cooking-units.sty.
     \SaveTranslationFor {#2} {#1} { #3 #4 }
   }
 \cs_generate_variant:Nn \@@_translate:nn { VV }
-\cs_generate_variant:Nn \@@_translate_let:Nnn { NnV }
-\cs_generate_variant:Nn \@@_translate_let:nNnn { VNnV, nNxx }
+\cs_generate_variant:Nn \@@_translate_let:Nnn { Nxx , Nnx , NnV }
+\cs_generate_variant:Nn \@@_translate_let:nNnn { VNxx, nNxx }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -6862,14 +6862,14 @@ and the derived file cooking-units.sty.
     \IfNoValueTF {#1}
       {
         \tl_set:cn { l_@@_default_unit_ #2 _tl } {#2}
-        \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unit_tl {#2}
+        \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unit_tl {#2}
       }{
         \tl_set:cn { l_@@_default_unit_ #2 _tl } {#1}
-        \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unit_tl {#1}
+        \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unit_tl {#1}
       }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unitname_tl { \q_@@_no_translation }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_gender_tl { m }
+    \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unitname_tl { \q_@@_no_translation }
+    \@@_deftranslation_base:xxn {#2} \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
+    \@@_deftranslation_base:xxn {#2} \c_@@_postfix_gender_tl { m }
   }
 %    \end{macrocode}
 %
@@ -6978,12 +6978,12 @@ and the derived file cooking-units.sty.
     \@@_error_if_unit_not_defined:n {#1}
     \quark_if_no_value:nTF {#2}
       {
-        \@@_deftranslation_to:VxVv 
+        \@@_deftranslation_to:Vxxv 
           \l_@@_language_tl {#1} 
           \c_@@_postfix_unit_tl 
           { l_@@_default_unit_ #1 _tl }
       }{ 
-        \@@_deftranslation_to:VxVn
+        \@@_deftranslation_to:Vxxn
           \l_@@_language_tl {#1}
           \c_@@_postfix_unit_tl {#2} 
       }
@@ -7000,7 +7000,7 @@ and the derived file cooking-units.sty.
       { \msg_error:nn { cooking-units } { missing-argument } }
     \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
       { \@@_error_if_unit_not_defined:n {#1} }
-    \@@_deftranslation_to:VxVn 
+    \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl {#1} 
       \c_@@_postfix_unitname_tl {#2}
     \peek_meaning_ignore_spaces:NTF [
@@ -7014,7 +7014,7 @@ and the derived file cooking-units.sty.
   {
     \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
       { 
-        \@@_deftranslation_to:VxVn \l_@@_language_tl {#1} 
+        \@@_deftranslation_to:Vxxn \l_@@_language_tl {#1} 
           \c_@@_postfix_unitname_pl_tl {#2}
       }
     \peek_meaning_ignore_spaces:NTF <
@@ -7027,7 +7027,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuname_parse_gender:nw #1 <#2>
   {
     \@@_check_if_correct_gender_input:n {#2}
-    \@@_deftranslation_to:VxVn 
+    \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl {#1} 
       \c_@@_postfix_gender_tl {#2}
     \@@_cuname_parse_input:n
@@ -7056,11 +7056,11 @@ and the derived file cooking-units.sty.
       { \msg_error:nn { cooking-units } { missing-argument } }
     \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#1} 
       {
-        \@@_deftranslation_to:VxVn \l_@@_language_tl {#1} 
+        \@@_deftranslation_to:Vxxn \l_@@_language_tl {#1} 
           \c_@@_postfix_unitname_tl {#2}
       }{ 
         \@@_error_if_unit_not_defined:n {#1} 
-        \@@_deftranslation_to:VxVn 
+        \@@_deftranslation_to:Vxxn 
           \l_@@_language_tl {#1} 
           \c_@@_postfix_unit_tl {#2}
       }
@@ -7080,7 +7080,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_phrase_list_get_for:NN #1#2 { TF }
   {
-    \@@_translate_let:VNnV #2 #1 { phrase-prop } \c_@@_postfix_phrase_tl
+    \@@_translate_let:VNxx #2 #1 { phrase-prop } \c_@@_postfix_phrase_tl
     \tl_if_eq:NNTF #1 \q_@@_no_translation
       { \prg_return_false: }
       { \prg_return_true: }
@@ -7108,7 +7108,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
       \@@_phrase_list_get_for:NNTF \l_@@_phrase_prop \l_@@_language_tl
         {
-          \@@_translate_let:VNnV \l_@@_language_tl \l_@@_phrase_numbers_seq 
+          \@@_translate_let:VNxx \l_@@_language_tl \l_@@_phrase_numbers_seq 
             { phrase-clist } \c_@@_postfix_phrase_tl
         }{
           \prop_clear:N \l_@@_phrase_prop
@@ -7137,11 +7137,11 @@ and the derived file cooking-units.sty.
       }
 %    \end{macrocode}
 %    \begin{macrocode}
-    \@@_deftranslation_to:VnVV
+    \@@_deftranslation_to:VxxV
       \l_@@_language_tl { phrase-prop } 
       \c_@@_postfix_phrase_tl 
       \l_@@_phrase_prop
-    \@@_deftranslation_to:VnVV 
+    \@@_deftranslation_to:VxxV 
       \l_@@_language_tl { phrase-clist } 
       \c_@@_postfix_phrase_tl \l_@@_phrase_numbers_seq
   }  
@@ -7200,7 +7200,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_chuphrase_parse_gender:nw #1 <#2>
   {
     \@@_check_if_correct_gender_input:n {#2}
-    \@@_deftranslation_to:VxVn 
+    \@@_deftranslation_to:Vxxn 
       \l_@@_language_tl { #1-phrase-gender } 
       \c_@@_postfix_gender_tl {#2}
     \@@_cuphrase_parse:n
