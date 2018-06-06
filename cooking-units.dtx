@@ -679,8 +679,27 @@ and the derived file cooking-units.sty.
 % \changes {2018/04/20} {1.30} {Cooking Units-keys are not allowed to contain
 %   either \enquote{,} or \enquote{/}.}
 %
-%
-%
+% \changes {2018/06/05} {1.40} {This version introduces mayor internal changes.
+%   For users not many things change.} 
+% \changes {2018/06/05} {1.40} {Rework parsing code (again). As this is 
+% basically an improved version of the old parsing algorithm, there is
+% no huge version change.}
+% \changes {2018/06/05} {1.40} {Improve error-recovery by a lot!} 
+% \changes {2018/06/05} {1.40} {Bugfix: A range in \mycs{Cutext} (and numerals=true)
+% will print the second word small.} 
+% \changes {2018/06/05} {1.40} {Add \enquote{range-sign} for translations (not usable yet).} 
+% \changes {2018/06/05} {1.40} {Convert \texttt{clist} to \texttt{seq} if possible.} 
+% \changes {2018/06/05} {1.40} {Remove unnecessary variants.} 
+% \changes {2018/06/05} {1.40} {Fix some more argument specifiers.} 
+% \changes {2018/06/05} {1.40} {Renaming of some internal commands.} 
+% \changes {2018/06/05} {1.40} {\opt{set-unknown-message}: Fix default value.} 
+% \changes {2018/06/05} {1.40} {Change (\texttt{amount-not-known}): Change message a bit.} 
+% \changes {2018/06/05} {1.40} {Bugfix (\texttt{label-not-defined}): Add |'#1'|.} 
+% \changes {2018/06/05} {1.40} {Bugfix (\texttt{unit-change}): \opt{convert-to-eV}
+%   can be again used as a local argument.} 
+% \changes {2018/06/05} {1.40} {Change order of boolean testing for |\@@_calc_references:NN|.} 
+% \changes {2018/06/05} {1.40} {Bugfix (\texttt{phrases}): Use the phrase from the first amount to check
+% the second (and don't parse through the second amount).} 
 %
 %
 %
@@ -3069,8 +3088,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2018/04/20}
-  {1.30} 
+  {2018/06/05}
+  {1.40} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
