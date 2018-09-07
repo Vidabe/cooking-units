@@ -460,7 +460,7 @@ and the derived file cooking-units.sty.
             { phrase-clist } \c__cooking_units_postfix_phrase_tl
       }
       { \ERROR }
-    \clist_gput_right:Nn \l_tmpa_seq { THEEND }
+    \seq_gput_right:Nn \l_tmpa_seq { THEEND }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
         \begin{tabular}{ l l l l l }
           \toprule 
@@ -496,6 +496,44 @@ and the derived file cooking-units.sty.
   }
 
 
+
+
+
+\newcommand\txtupde{\textsuperscript{de}}
+\newcommand\txtupsic{\textsuperscript{sicilian}}
+\newcommand\txtupen{\textsuperscript{en}}
+\NewDocumentCommand\unititem { m d** O{} O{} }
+  {
+   \item 
+     [{ 
+       #1 
+       \IfNoValueF {#2} { \use:c { txtup #2 } }
+       \tl_if_empty:nF {#3} {\ (#3) }
+       \tl_if_empty:nF {#4} {\ [#4] }
+     }]
+  }
+
+\NewDocumentEnvironment { myquote } { o o }
+  {
+    \list{}{%
+      \topsep 0pt
+     \leftmargin 0pt
+    } 
+    \item\relax
+    \itshape
+  }{
+    \normalfont
+    \IfNoValueF{#1}{(see\ \cite{#1} \IfNoValueF{#2}{\ page \ #2}  )}
+    \endlist
+  }
+\makeatletter
+\newenvironment{mydescription}
+               {\list{}{\labelwidth\z@ \itemindent-\leftmargin
+                        \let\makelabel\descriptionlabel}}
+               {\endlist}
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep
+                                \normalfont\bfseries #1}
+\makeatother
 \ExplSyntaxOff
 
 \newcommand\cCutext{\mycs{cutext} and \mycs{Cutext}}
@@ -533,12 +571,13 @@ and the derived file cooking-units.sty.
 
 \newcookingunit {st}
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
-
+\newcookingunit {ft}
 
 \cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
   }        
+\cuaddtokeys {m} {ft} {0.3048}
 \cuaddsinglekeys {C}
   {
     {Ro} { #1*21/40 + 7.5 }
@@ -2869,6 +2908,137 @@ and the derived file cooking-units.sty.
 % you can send me  the translations known to you. A list of all units
 % (and their current translations) is given in \cref{sec:Translations}.
 % 
+%
+%
+%
+%
+% \clearpage
+%
+% \section{Bens Einheitensammelsurium (Bens unit Almanac)}
+% 
+%
+% Units are a fascinating mess. There are so many that one can be glad
+% that SI-units exist in this world. This section offers some units which didn't manage
+% to appear in \cref{tab:def-units} and \cref{tab:some-more-units}.^^A\footnote{This somehow
+%^^A reminds me of the story of \enquote{Tower of Babel} in the bible. This tower is -- according to the
+%^^A story -- the reason (or the sympton) of why people speak different langauges. 
+%^^A I suppose what didn't make it into the story was that as even more severe punishment,
+%^^A different units were created. Just my take at leat.}.
+%
+% I am only taking units into account which I either found in literature (stone, canna, etc.),
+% are well known (foot) or have some other experience with them (ell) (exception: Batman). The reason I 
+% am not including units which I found in the internet are that I would like to
+% see those units in their natural environment (so to speak).
+%
+% \begin{comment}
+% \begin{tabular}{lllllll}
+%  \toprule
+%   unit & original & abreviation  & type & source \\ \midrule
+%
+%  Batman & & &  weight\\
+%^^A  Rottel\txtupde & sicilian: \emph{rotolo} && length & \cite{Gattopardo}\\
+%^^A  Rute\txtupde & sicilian: \emph{canna}  & & weight & \cite{Gattopardo}\\
+%  rotolo\txtupsic & Rottel\txtupde && length & \cite{Gattopardo}\\
+%  canna\txtupsic & rod\txtupen, Rute\txtupde  & & weight & \cite{Gattopardo}\\
+% \bottomrule
+% \end{tabular}
+%
+% {\footnotesize \txtupde German }
+% \end{comment}
+%
+% \begin{description}
+%
+% \unititem{unit}*in given language*[translation][abreviation] Description, containing a 
+%   quote or not. \emph{Please note that most of the units are country dependent!
+%   So the translation may not have the same amount as the word it is translated to.}
+%
+% \unititem{Batman}
+% So \dots\ You wanna be Batman? Be like Bruce Wayn? Having a secret identitiy?
+% Then congratulations! You \emph{are} Batman! Around $39$ Batman, to be 
+% precise\footnote{Being precise is extremely difficult, because it ranges from
+% around \SI{0.5}{\kg} to \SI{262}{\kg}. Wikipedia is your friend.}.
+%
+%
+% \unititem{Rotolo}*sic*[Rottel\txtupde] Around \SI{0.850}{\kg}
+%   \begin{myquote}[Gattopardo][51]
+%     Auf den Fußboden lagen vier ungereifte Käse zu je \emph{zwölf Rottel},
+%     jeder ungefähr zehn Kilo schwer.
+%   \end{myquote}
+%
+% \unititem{Canna}*sic*[Rute\txtupde, rod\txtupen] Circa \SI{2}{\m} bzw. circa $6$ foot.
+%   \begin{myquote}[Gattopardo][25]
+%     \enquote{Unsinn, Stella, Unsinn; was soll mir zustoßen? Sie kennen mich alle:
+%      Männer, die \emph{eine Rute} lange sind, gibt es wenige in Palermo.}
+%   \end{myquote}
+%
+% \unititem{Stone}[][st]  \cunum[st=kg]{1}{st} According to a fellow student 
+%  this unit is still used in
+%  Great Britain.
+%   
+%   \begin{myquote}[Sh:3][988]
+%      As we had expected, the telegramm was soon followed by its sender, and the card of Mr.\ Cyril Overton, Trinity College, Cambridge, announced the arrival of an enourmas young man, \emph{sixteen stone} \emph{[\cunum[st=kg]{16}{st}]} of solid bone and muscle, who spanned the doorway with his broad shoulders \emph{[\dots\!]}
+%   \end{myquote} (Story \enquote{The missing Three Quarters})
+%
+% \unititem{Foot}[][ft] Equals exactly \cunum[ft=m,round-precision=10]{1}{ft}
+%  equals \cunum[ft=in]{1}{ft}. 
+% 
+%   A bit of a strange unit (for me at least). Where I am from, people
+%   tend to have different foot sizes.
+%
+% \unititem{degree Rèamur}[][Re] Like degree Celsius, but instead of having the
+%   water boiling at \SI{100}{\degree} (Celsius), water boils at \SI{80}{\degree}.
+%   Water thankfully still freezes at \SI{0}{\degree}. Don't think that this unit
+%   is used anymore.
+%
+% \unititem{Ell} Just read the Wikipedia article. 
+%
+%   Fun Fact: At the Stephansdom
+%   in Vienna left of the main entrance are two metal bars. One is the 
+%   \enquote{Tuchelle} (drapery ell, circa \SI{78}{\cm}), the other the
+%   \enquote{Leinenelle} (linen ell, around \SI{89.6}{\cm}).
+%
+% \unititem{cup} Any person who writes \enquote{cup} and 
+%   \emph{doesn't} mean
+%  a cup equal to \SI{250}{\ml} should be 
+%  -- in my humble opinion\footnote{Which, now that I admitted my humlbeness, is automatically
+% more important than yours.} -- excommunicated by default (or incommunicated,
+%  if you are an atheist).
+%
+% \unititem{stick} A unit I've made fun of because it is quite regional and doesn't make
+%  any sense for foreigners. Then I realiced that I am using the unit \enquote{Packerl}
+%  in my cookery book which is also quite locally\footnote{And maybe doesn't even exist 
+%  outside my familiy} and -- even worse -- changes 
+%  in weight depending on 
+%  the content (See \emph{Packerl}). \emph{Damn}.
+%  
+% \unititem{Packerl}*de*[small bag] I'm a bit split on this unit as I don't actually 
+%   know if it exists. The reason I have the unit \emph{Packerl} for my cookery
+%   book is that in Austria you can buy baking powder, (dry) Germ, Natrium, etc.
+%   in small bags (similar to \emph{stick}). The problem: Depending on the content,
+%   the weight of \emph{Packerl} differs. Not only that, but it can also differ
+%   between different producers (but not more than \SI{2}{\g} bzw. \cunum[g=oz]{2}{g}). 
+%   Here is a table:
+%
+%   \begin{tabular}{l @{\space} l @{\space} l r l}
+%    
+%    1 Packerl & Backpulver & (baking powder)           & \cunum{16}{g} & (\cunum[g=oz]{16}{g}) \\
+%    & Natrium &                                         & \cunum{14}{g} & (\cunum[g=oz]{14}{g}) \\
+%    & Vanillin(-zucker) & (vanillin(-sugar)) & \cunum{8}{g} & (\cunum[g=oz]{8}{g}) \\
+%    & Germ* &                                              & \cunum{7}{g} & (\cunum[g=oz]{7}{g}) \\
+%   \end{tabular}
+%
+%   {\footnotesize *Tockengerm (dry Germ) to be precise}
+%
+%   For what kind of thing do I need \emph{Natrium} for?
+% \end{description}
+%
+%
+% \begin{comment}
+% Fun Wikipedia articles: 
+% \begin{itemize}
+%   \item Old Austrian units: https://en.wikipedia.org/wiki/Obsolete_Austrian_units_of_measurement
+% \end{itemize}
+% \end{comment}
 %
 %
 %
@@ -7853,6 +8023,21 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 % \end{implementation}
+%
+%
+%
+% \begin{thebibliography}{}
+%   \bibitem{Gattopardo} 
+%     Guiseppe Tomasi di Lampedusa, \enquote{Der Gattopardo},
+%     Piper, Volume~8 (2018), ISBN~978-3-492-24586-9
+%
+%   \bibitem{Sh:3} 
+%     Sir Arthur Conan Doyle, \enquote{Sherlock Holmes The Complete Novels and Stories Volume~II},
+%     Bantam Books
+%     
+%
+% \end{thebibliography}
+%
 %
 %
 % \endinput
