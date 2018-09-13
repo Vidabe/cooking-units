@@ -179,8 +179,8 @@ and the derived file cooking-units.sty.
 
 
 
-\clist_new:N \l_cooking_units_list_of_defined_befehlen_clist
-\clist_set:Nn \l_cooking_units_list_of_defined_befehlen_clist
+\clist_new:N \l_cookingunits_list_of_defined_befehlen_clist
+\clist_set:Nn \l_cookingunits_list_of_defined_befehlen_clist
   {
     cunum,
     cutext,
@@ -204,7 +204,7 @@ and the derived file cooking-units.sty.
 
 \NewDocumentCommand \mycs { m }
   {
-    \clist_if_in:NnTF \l_cooking_units_list_of_defined_befehlen_clist {#1}
+    \clist_if_in:NnTF \l_cookingunits_list_of_defined_befehlen_clist {#1}
       { \cs{\textcolor{blue}{#1}} }
       { \ERROR }
   }
@@ -219,23 +219,23 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \PrintUnit { o m }
   {
     \SaveTranslation \l_tmpa_tl { #2 (cu-unitname) }
-    \tl_if_eq:NNF \l_tmpa_tl \q__cooking_units_no_translation
+    \tl_if_eq:NNF \l_tmpa_tl \q__cookingunits_no_translation
       { \l_tmpa_tl }
     \IfNoValueF {#1} {#1}
     &
     \texttt {#2}
     &
-    \tl_use:c { l__cooking_units_default_unit_ #2 _tl }
+    \tl_use:c { l__cookingunits_default_unit_ #2 _tl }
   }
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
     \texttt {#1} & 
-    \tl_use:c { l__cooking_units_default_unit_ #1 _tl }
+    \tl_use:c { l__cookingunits_default_unit_ #1 _tl }
   }
 \NewDocumentCommand \PrintGroup { m }
   {
     \mygroup {#1} & 
-    \seq_use:cn { l__cooking_units_group_ #1 _seq } { ,~ }
+    \seq_use:cn { l__cookingunits_group_ #1 _seq } { ,~ }
   }
 
 
@@ -391,7 +391,7 @@ and the derived file cooking-units.sty.
 \cs_new_eq:NN \__table_default_midrule: \__table_midrule:
 
 \cs_new:Npn \_cook_use:n #1
-  { \cs_if_exist_use:cF { __cooking_units_#1 } {\ERROR} }
+  { \cs_if_exist_use:cF { __cookingunits_#1 } {\ERROR} }
 
 \NewDocumentCommand \CreateTableForLanguages { s >{\TrimSpaces} m }
   {
@@ -423,28 +423,28 @@ and the derived file cooking-units.sty.
                  \clist_if_in:NnTF \l_list_of_textunits_clist {##1}
                    { \l_translation_does_not_exist_tl }
                    { 
-                     \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unit_tl 
-                     \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
+                     \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_unit_tl 
+                     \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
                        { \l_translation_does_not_exist_tl }
                        { \l_tmpa_tl }
                    }
                & 
-               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
-               \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_unitname_tl 
+               \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
                  { \l_translation_does_not_exist_tl }
                  { \l_tmpa_tl }
                & 
-               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_unitname_tl 
-               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpb_tl {##1} \c__cooking_units_postfix_unitname_pl_tl 
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_unitname_tl 
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpb_tl {##1} \c__cookingunits_postfix_unitname_pl_tl 
                \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
                  { 
-                   \tl_if_in:NnTF \l_tmpb_tl \q__cooking_units_no_translation
+                   \tl_if_in:NnTF \l_tmpb_tl \q__cookingunits_no_translation
                      { \l_translation_does_not_exist_tl  }
                      { (\l_tmpb_tl)  }
                  }
                &
-               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cooking_units_postfix_gender_tl 
-               \tl_if_in:NnTF \l_tmpa_tl \q__cooking_units_no_translation
+               \_cook_use:n { translate_let:nNxx } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_gender_tl 
+               \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
                  { \l_translation_does_not_exist_tl }
                  { \l_tmpa_tl }
           }
@@ -454,10 +454,10 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \CreateTableForPhrases { >{\TrimSpaces}  m }
   {
     \tl_set:Nn \l_tmpa_tl {#1}
-    \__cooking_units_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
+    \__cookingunits_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
       { 
-          \__cooking_units_translate_let:VNxx \l_tmpa_tl \l_tmpa_seq 
-            { phrase-clist } \c__cooking_units_postfix_phrase_tl
+          \__cookingunits_translate_let:VNxx \l_tmpa_tl \l_tmpa_seq 
+            { phrase-clist } \c__cookingunits_postfix_phrase_tl
       }
       { \ERROR }
     \seq_gput_right:Nn \l_tmpa_seq { THEEND }
@@ -481,15 +481,15 @@ and the derived file cooking-units.sty.
             \__table_midrule:
             ##1
                & 
-                 \prop_get:NnN \l__cooking_units_phrase_prop {##1} \l_tmpa_tl
+                 \prop_get:NnN \l__cookingunits_phrase_prop {##1} \l_tmpa_tl
                  \tl_gset:NV \l_tmpa_tl \l_tmpa_tl %% Damit global
                  \l_tmpa_tl
                & 
-                 \prop_get:NnN \l__cooking_units_phrase_prop {##1-pl} \l_tmpb_tl
+                 \prop_get:NnN \l__cookingunits_phrase_prop {##1-pl} \l_tmpb_tl
                  \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl { \l_tmpb_tl }
                &
-            \__cooking_units_translate_let:nNxx {#1} 
-              \l_tmpa_tl { ##1 -phrase-gender } \c__cooking_units_postfix_gender_tl
+            \__cookingunits_translate_let:nNxx {#1} 
+              \l_tmpa_tl { ##1 -phrase-gender } \c__cookingunits_postfix_gender_tl
                \l_tmpa_tl
           }
       }
