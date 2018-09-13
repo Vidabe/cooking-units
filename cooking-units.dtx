@@ -5339,10 +5339,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\@@_newtranslation_base:nVn { range-sign } \c_@@_postfix_unitname_tl { -- }
-\@@_newtranslation_base:nVn { range-sign } \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
-\@@_newtranslation_to:nnVn { German } { range-sign } \c_@@_postfix_unitname_tl { ~bis~ }
-\@@_newtranslation_to:nnVn { English } { range-sign } \c_@@_postfix_unitname_tl { ~to~ }
+\@@_newtranslation_base:nVn { cutext-range-sign } \c_@@_postfix_unitname_tl { -- }
+\@@_newtranslation_base:nVn { cutext-range-sign } \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
+\@@_newtranslation_to:nnVn { German } { cutext-range-sign } \c_@@_postfix_unitname_tl { ~bis~ }
+\@@_newtranslation_to:nnVn { English } { cutext-range-sign } \c_@@_postfix_unitname_tl { ~to~ }
 %    \end{macrocode}
 %
 %
@@ -5513,7 +5513,7 @@ and the derived file cooking-units.sty.
       {
 %        \tl_use:N \l_@@_cutext_range_sign_tl
         \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
-          { \@@_translate:nV { range-sign } \c_@@_postfix_unitname_tl  }
+          { \@@_translate:nV { cutext-range-sign } \c_@@_postfix_unitname_tl  }
           { \tl_use:N \l_@@_cutext_range_sign_tl }
         \bool_set_false:N \l_@@_cutext_uppercase_word_bool
       }
