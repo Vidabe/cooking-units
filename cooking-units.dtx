@@ -238,7 +238,10 @@ and the derived file cooking-units.sty.
     \seq_use:cn { l__cookingunits_group_ #1 _seq } { ,~ }
   }
 
-
+\NewDocumentCommand \DeactivateForbiddenUnitError { }
+  {
+    \msg_redirect_name:nnn { cooking-units } { curef-forbidden-unit } { warning }
+  }
 
 
 %% Allyourwhitespacearebelongtous (too long)
@@ -751,6 +754,7 @@ and the derived file cooking-units.sty.
 %\thanks{This document corresponds to \textsf{Benedikt Vitecek}~\fileversion, dated~\filedate.}}
 %\author{Ben Vitecek \\ b.vitecek@gmx.at}%
 %\date{\filedate}%
+%
 %
 % \maketitle
 %
@@ -1573,11 +1577,17 @@ and the derived file cooking-units.sty.
 % name depending on the language you can use \lstinline|\cudefinename|
 % and to only change symbols use \lstinline|\cudefinesymbol|.
 %
-% \begin{function}{decimal-mark, one(m),one(f),one(n)}
+% \begin{function}{decimal-mark,cutext-range-sign, one(m),one(f),one(n)}
 %   Those are special keys (as they cannot be used as units). Not only
 %   are printed units language depending, but as is the decimal mark
-%   (\enquote{.} or \enquote{,}). To set the decimal mark use
-%   \opt{decimal-mark} (see examples below).
+%   (\enquote{.} or \enquote{,}) and the text which substitutes the range-sign. 
+%   To set the decimal mark use
+%   \opt{decimal-mark} (see examples below), to set the range-sign for \cCutext\
+%   use \opt{cutext-range-sign}.
+%
+%   Note that \opt{cutext-range-sign} is \enquote{overwritten} by the \emph{option}
+%  \opt{cutext-range-sign}. If the \emph{option} is set, then the language symbol
+%  will be ignored.
 %
 %   Furthermore if you are using the package-option \opt{use-numerals}
 %   you may also use the keys \opt{one(m)}, \opt{one(f)} and
@@ -1624,6 +1634,7 @@ and the derived file cooking-units.sty.
 %      {h}   {hour} [hours]
 %      {C}   {degree\space Celsius} [degrees\space Celsius]
 %      {decimal-marker} {.}
+%      {cutext-range-sign} {~to~}
 %      {one(m)} {one}
 %      {one(f)} {one}
 %      {one(n)} {one}
@@ -1638,6 +1649,7 @@ and the derived file cooking-units.sty.
 %      {h}   {Stunde} [Stunden] <f>
 %      {C}   {Grad\space Celsius}
 %      {decimal-marker} {,}
+%      {cutext-range-sign} {~bis~}
 %      {one(m)} {ein}
 %      {one(f)} {eine}
 %      {one(n)} {ein}
@@ -1669,6 +1681,7 @@ and the derived file cooking-units.sty.
 %  \cudefinesymbol {English}
 %    {
 %      {decimal-mark} {.}
+%      {cutext-range-sign} {~to~}
 %      {one(m)} {one}
 %      {one(f)} {one}
 %      {one(n)} {one}
@@ -1676,6 +1689,7 @@ and the derived file cooking-units.sty.
 %  \cudefinesymbol {German}
 %    {
 %      {decimal-mark} {,}
+%      {cutext-range-sign} {~bis~}
 %      {one(m)} {ein}
 %      {one(f)} {eine}
 %      {one(n)} {ein}
@@ -2328,6 +2342,16 @@ and the derived file cooking-units.sty.
 %  The default for \meta{string} is \texttt{-{}-} (for both).
 % \end{function}
 %
+% Since version vVersionv there also exits the language symbol \opt{cutext-range-sign}
+% (see \cref{sec:language}). If the \emph{option} \opt{cutext-range-sign} is set
+% the language symbol will be ignored.
+%
+% \begin{cuexamplecode}
+%   \cunum{1--2}{kg} \\
+%   \cuam{1--2} \\
+%   \cutext{1--2}{kg} \\
+%   \Cutext{1--2}{kg} 
+% \end{cuexamplecode}
 % \begin{cuexamplecode}
 %   \cusetup{cunum-range-sign={~to~}} @
 %   \cunum{1--2}{kg} \\
@@ -2336,14 +2360,14 @@ and the derived file cooking-units.sty.
 %   \Cutext{1--2}{kg} 
 % \end{cuexamplecode}
 % \begin{cuexamplecode}
-%   \cusetup{cutext-range-sign={~to~}} @
+%   \cusetup{cutext-range-sign={--}} @
 %   \cunum{1--2}{kg} \\
 %   \cuam{1--2} \\
 %   \cutext{1--2}{kg} \\
 %   \Cutext{1--2}{kg} 
 % \end{cuexamplecode}
 % \begin{cuexamplecode}
-%   \cusetup{range-sign={~to~}} @
+%   \cusetup{range-sign={-to-}} @
 %   \cunum{1--2}{kg} \\
 %   \cuam{1--2} \\
 %   \cutext{1--2}{kg} \\
@@ -2751,6 +2775,67 @@ and the derived file cooking-units.sty.
 %   \cunum[ref=Kaese,m=dm]{1}{m} 
 % \end{cuexamplecode}
 %
+%
+%
+% \begin{function}{curef-add-forbidden-unit, curef-remove-forbidden-unit,curef-clear-forbidden-units}
+%   \begin{syntax}
+%     curef-add-forbidden-unit    = \marg{unit list} 
+%     curef-remove-forbidden-unit = \marg{unit list} 
+%     curef-clear-forbidden-units = \meta{true/false} 
+%   \end{syntax}
+%^^A   How much of a specify ingredient is used generally depends on the number of folks the meal
+%^^A   is for. Change the number of folks and the needed weight of an ingredient will most probably
+%^^A   change, \emph{but} there are units which do not change automatically if you have $2$ instead
+%^^A   of $4$ guests. Units which measure the temperature are for example one of them. So changing
+%^^A   them using the label \& ref system would be accidental and should in the best case create an error. 
+%^^A   Use the given options to define units which will throw an error if they are about to be changed
+%^^A   by the label \& ref system. Of course, you can also remove units or clear the whole list.
+%
+%   There are units which do not depend on the number of folks you are cooking for. Units measuring
+%   the temperature are for example some of them. Changing those units with the label \& ref
+%   system would be by accident and in the best case throw an error. With the following options
+%   you can add units to the \enquote{forbidden unit list}, remove them and clear the whole list
+%   entirely.
+%
+%  By default the list contains \texttt{C}, \texttt{F}, \texttt{K} and \texttt{Re}.
+% \end{function}
+% \begingroup
+% \DeactivateForbiddenUnitError
+% \begin{cuexamplecode}
+%   \culabel{check}{2} @
+%   \cusetup{ recalculate-amount=true } @
+%   \cunum<check>{1}{m} \\
+%   \cunum<check>{1}{kg} \\
+%   \cunum[ref=check]{1}{C} \\
+%   \cusetup { curef-add-forbidden-unit = { m, kg } } @
+%   \cunum<check>[m]{1}{m} \\
+%   \cunum<check>[m]{1}{kg} \\
+%   \cunum[ref=check]{1}{C}  \\
+%   \cusetup { curef-remove-forbidden-unit = { C } } @
+%   \cunum<check>[m]{1}{m} \\
+%   \cunum<check>[m]{1}{kg} \\
+%   \cunum[ref=check]{1}{C} \\
+%   \cusetup { curef-clear-forbidden-units = true } @
+%   \cunum<check>[m]{1}{m} \\
+%   \cunum<check>[m]{1}{kg} \\
+%   \cunum[ref=check]{1}{C} 
+% \end{cuexamplecode}
+% \endgroup
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 % \subsection{Weird options}
 %
 % \begin{function}{check-temperature}
@@ -2916,19 +3001,28 @@ and the derived file cooking-units.sty.
 %
 % \section{Bens Einheitensammelsurium (Bens unit Almanac)}
 % 
+% Units are a fascinating mess. There are so many different ones which are  different and
+% the few ones which are the same (in name at least) are \emph{also} different, depending on 
+% geographical position, time period and probably pure spite. We can be glad that SI-units exist.
 %
-% Units are a fascinating mess. There are so many that one can be glad
-% that SI-units exist in this world. This section offers some units which didn't manage
-% to appear in \cref{tab:def-units} and \cref{tab:some-more-units}.^^A\footnote{This somehow
-%^^A reminds me of the story of \enquote{Tower of Babel} in the bible. This tower is -- according to the
-%^^A story -- the reason (or the sympton) of why people speak different langauges. 
-%^^A I suppose what didn't make it into the story was that as even more severe punishment,
-%^^A different units were created. Just my take at leat.}.
 %
-% I am only taking units into account which I either found in literature (stone, canna, etc.),
+%^^A  Units are a fascinating mess. There are so many different ones that one can be glad
+%^^A  that SI-units exist in this world. This section offers some units which didn't manage
+%^^A  to appear in \cref{tab:def-units} and \cref{tab:some-more-units}.^^A\footnote{This somehow
+%^^A ^^A reminds me of the story of \enquote{Tower of Babel} in the bible. This tower is -- according to the
+%^^A ^^A story -- the reason (or the sympton) of why people speak different langauges. 
+%^^A ^^A I suppose what didn't make it into the story was that as even more severe punishment,
+%^^A ^^A different units were created. Just my take at leat.}.
+%
+% So for those units which didn't make it into \cref{tab:def-units} and \cref{tab:some-more-units},
+% this section exists. Please note that this list is intended to be a just-for-fun list and not a
+% compilation of every unit in existence with its exact value ordered by geographical and chronological
+% position. I am sadly neither a historian nor very good in regards to languages. It would sound like
+% fun, but ultimately, I wouldn't have the time.
+% Therefore I am only taking units into account which I either found in literature (stone, canna, etc.),
 % are well known (foot) or have some other experience with them (ell) (exception: Batman). The reason I 
-% am not including units which I found in the internet are that I would like to
-% see those units in their natural environment (so to speak).
+% am not including units which I found in the internet is that I would like to
+% see those units in their enquote{natural environment}.
 %
 % \begin{comment}
 % \begin{tabular}{lllllll}
@@ -2953,10 +3047,9 @@ and the derived file cooking-units.sty.
 %   So the translation may not have the same amount as the word it is translated to.}
 %
 % \unititem{Batman}
-% So \dots\ You wanna be Batman? Be like Bruce Wayn? Having a secret identitiy?
-% Then congratulations! You \emph{are} Batman! Around $39$ Batman, to be 
-% precise\footnote{Being precise is extremely difficult, because it ranges from
-% around \SI{0.5}{\kg} to \SI{262}{\kg}. Wikipedia is your friend.}.
+% So \dots\ You wanna be Batman? Be like Bruce Wayne? Having a secret identity?
+% Then congratulations! You \emph{are} Batman! How much Batman depends on  the location,
+% but Wikipedia is your friend in this matter.
 %
 %
 % \unititem{Rotolo}*sic*[Rottel\txtupde] Around \SI{0.850}{\kg}
@@ -2965,30 +3058,32 @@ and the derived file cooking-units.sty.
 %     jeder ungefähr zehn Kilo schwer.
 %   \end{myquote}
 %
-% \unititem{Canna}*sic*[Rute\txtupde, rod\txtupen] Circa \SI{2}{\m} bzw. circa $6$ foot.
+% \unititem{Canna}*sic*[Rute\txtupde, rod\txtupen] About \SI{2}{\m} bzw.\ about $6$ foot.
 %   \begin{myquote}[Gattopardo][25]
 %     \enquote{Unsinn, Stella, Unsinn; was soll mir zustoßen? Sie kennen mich alle:
 %      Männer, die \emph{eine Rute} lange sind, gibt es wenige in Palermo.}
 %   \end{myquote}
 %
-% \unititem{Stone}[][st]  \cunum[st=kg]{1}{st} According to a fellow student 
+% \unititem{Stone}[][st]  \cunum[st=kg]{1}{st}. According to a fellow student 
 %  this unit is still used in
-%  Great Britain.
+%  Great Britain. I've also recently found it in a video game; in the german translation
+%  of that video game to be precise. Why is the german translation using stone
+%  and not kilogramme?
 %   
 %   \begin{myquote}[Sh:3][988]
 %      As we had expected, the telegramm was soon followed by its sender, and the card of Mr.\ Cyril Overton, Trinity College, Cambridge, announced the arrival of an enourmas young man, \emph{sixteen stone} \emph{[\cunum[st=kg]{16}{st}]} of solid bone and muscle, who spanned the doorway with his broad shoulders \emph{[\dots\!]}
 %   \end{myquote} (Story \enquote{The missing Three Quarters})
 %
 % \unititem{Foot}[][ft] Equals exactly \cunum[ft=m,round-precision=10]{1}{ft}
-%  equals \cunum[ft=in]{1}{ft}. 
+%  or  \cunum[ft=in]{1}{ft}. 
 % 
 %   A bit of a strange unit (for me at least). Where I am from, people
-%   tend to have different foot sizes.
+%   tend to have different feet sizes.
 %
-% \unititem{degree Rèamur}[][Re] Like degree Celsius, but instead of having the
+% \unititem{degree Rèamur}[][\ensuremath{{}^{\circ}}\kern-\scriptspace R\'{e}] Like degree Celsius, but instead of having the
 %   water boiling at \SI{100}{\degree} (Celsius), water boils at \SI{80}{\degree}.
 %   Water thankfully still freezes at \SI{0}{\degree}. Don't think that this unit
-%   is used anymore.
+%   is used anymore. I think I learned about in physics.
 %
 % \unititem{Ell} Just read the Wikipedia article. 
 %
@@ -3000,15 +3095,16 @@ and the derived file cooking-units.sty.
 % \unititem{cup} Any person who writes \enquote{cup} and 
 %   \emph{doesn't} mean
 %  a cup equal to \SI{250}{\ml} should be 
-%  -- in my humble opinion\footnote{Which, now that I admitted my humlbeness, is automatically
-% more important than yours.} -- excommunicated by default (or incommunicated,
+%^^A -- in my humble opinion\footnote{Which, now that I admitted 
+%^^A my humbleness, is automatically
+%^^A more important than yours.} -- 
+% excommunicated by default (or incommunicated,
 %  if you are an atheist).
 %
 % \unititem{stick} A unit I've made fun of because it is quite regional and doesn't make
 %  any sense for foreigners. Then I realiced that I am using the unit \enquote{Packerl}
 %  in my cookery book which is also quite locally\footnote{And maybe doesn't even exist 
-%  outside my familiy} and -- even worse -- changes 
-%  in weight depending on 
+%  outside my familiy} and -- even worse -- the weight changes depending 
 %  the content (See \emph{Packerl}). \emph{Damn}.
 %  
 % \unititem{Packerl}*de*[small bag] I'm a bit split on this unit as I don't actually 
@@ -3112,6 +3208,11 @@ and the derived file cooking-units.sty.
 %   \CreateTableForLanguages{ French }
 % \end{tabular}
 %
+% If the spoons should be extra full:  
+% \begin{itemize}
+%   \item cuill\`{e}re  \`{a}  soupe rase
+%  \item cuill\`{e}re  \`{a}  caf\'{e} rase
+% \end{itemize}
 %
 % \clearpage
 %
