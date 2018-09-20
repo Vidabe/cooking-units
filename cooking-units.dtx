@@ -4299,13 +4299,48 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+% \begin{macro}{curef-add-forbidden-unit, curef-remove-forbidden-unit, curef-clear-forbidden-units}
 %    \begin{macrocode}
-  curef-do-not-change .code:n =
+  curef-add-forbidden-unit .code:n =
     {
-      \seq_if_in:NnF \l_@@_curef_do_not_change_seq {#1}
-        {\seq_put_right:Nn \l_@@_curef_do_not_change_seq {#1} }
+      \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+      \seq_map_inline:Nn \l_@@_tmpa_seq
+        {
+          \seq_if_in:NnF \l_@@_curef_do_not_change_seq {##1}
+            { \seq_put_right:Nn \l_@@_curef_do_not_change_seq {##1} }
+        }
     } ,
+  curef-add-forbidden-unit .default:n = { } ,  
+  curef-remove-forbidden-unit .code:n =
+    {
+      \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+      \seq_map_inline:Nn \l_@@_tmpa_seq
+        {
+          \seq_if_in:NnTF \l_@@_curef_do_not_change_seq {##1}
+            { \seq_remove_all:Nn \l_@@_curef_do_not_change_seq {##1} }
+            { 
+              \msg_warning:nnn { cooking-units } { curef-not-inside-list } {##1} 
+                { \seq_use:Nnnn \l_@@_curef_do_not_change_seq { ',~ ' } { ',~ ' } { ' ~ and ~ ' } } 
+            }
+        }
+    } ,
+  curef-remove-forbidden-unit .default:n = { } ,  
+  curef-clear-forbidden-units .choice: ,
+  curef-clear-forbidden-units/true .code:n = { \seq_clear:N \l_@@_curef_do_not_change_seq } ,
+  curef-clear-forbidden-units/false .code:n = { } ,
+  curef-clear-forbidden-units .value_required:n = true,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4726,6 +4761,30 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { curef-not-inside-list } 
+  { 
+   '#1' \ cannot \ be \ removed \ from \ the \ 'forbidden \ unit' \ list \ because
+   \ it \ is \ not \ inside \ the \ list.
+  }{ 
+    Currently \ the \ list\ contains \ '#2'.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { curef-forbidden-unit } 
+  { 
+   The \ amount \  of \ '#1' \ cannot \ be \ changed \ using \ cooking-units` \ label \ \& \ ref \ feature.
+  }{ 
+    You \ can \ remove \ the \ unit \ using \ 'curef-remove-forbidden-unit'.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { internal-error } 
   { 
@@ -8005,6 +8064,7 @@ and the derived file cooking-units.sty.
     set-option-for-C = { round-to-int = true } ,
     set-option-for-K = { round-to-int = true } ,
     set-option-for-Re = { round-to-int = true } ,
+    curef-add-forbidden-unit = { F , C , K , Re } ,
     add-temperature-to-check =
       {
         K = 0,
