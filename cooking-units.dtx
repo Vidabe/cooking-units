@@ -4237,7 +4237,9 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ 42 }
 %    \begin{macrocode}
-    42 .bool_set:N = \l_@@_fourty_two_bool ,
+    42 .choice: ,
+    42 / true .code:n = { \bool_set_true:N \l_@@_fourty_two_bool } ,
+    42 / false .code:n = { \msg_fatal:nnn { cooking-units } { 42-is-...-wrong? } } ,
     42 .default:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
@@ -4785,6 +4787,20 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { 42-is-...-wrong? } 
+  { 
+   You \ requested \ to \ set  \ 42 \ to \ 'false'. \ This \ doesn't \ make
+   \ any \ sense! \ It \ cannot \ be \ 'false', \ it \ is \ the \ answer \ to \ the
+   \ question \ of \ life, \ universe \ and \ everything. \ For \ the \ sake \ of \
+   the \ world \ I \ cannot \ allow \ you \ to \ set \ it \ to \ 'false', \ the \ universe
+   \ might \ explode \ otherwise. \\
+   The \ run \ will \ be \ aborted.
+  }{ 
+    Phew ... \ this \ might \ have \ ended \ disastrous.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { internal-error } 
   { 
