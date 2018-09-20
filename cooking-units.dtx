@@ -5983,10 +5983,12 @@ and the derived file cooking-units.sty.
           =
           { \l_@@_local_number_of_persons_int }
           {
-            \@@_change_unit:TF
-              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
-              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
-            \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_tmpb_tl
+%            \@@_change_unit:TF
+%              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_option_unit_tl } 
+%              { \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl }
+            \tl_set_eq:NN \l_@@_tmpb_tl \l_@@_given_unit_tl
+            \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_tmpb_tl
+              { \msg_error:nnV { cooking-units } { curef-forbidden-unit } \l_@@_tmpb_tl }
               { \@@_calc_references_aux:NN #1 #2 }
           }
       }
