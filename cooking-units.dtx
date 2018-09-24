@@ -3022,7 +3022,7 @@ and the derived file cooking-units.sty.
 % Therefore I am only taking units into account which I either found in literature (stone, canna, etc.),
 % are well known (foot) or have some other experience with them (ell) (exception: Batman). The reason I 
 % am not including units which I found in the internet is that I would like to
-% see those units in their enquote{natural environment}.
+% see those units in their \enquote{natural environment}.
 %
 % \begin{comment}
 % \begin{tabular}{lllllll}
@@ -3067,8 +3067,8 @@ and the derived file cooking-units.sty.
 % \unititem{Stone}[][st]  \cunum[st=kg]{1}{st}. According to a fellow student 
 %  this unit is still used in
 %  Great Britain. I've also recently found it in a video game; in the german translation
-%  of that video game to be precise. Why is the german translation using stone
-%  and not kilogramme?
+%  of said video game to be precise. Why is the german translation using stone
+%  and not kilogram (at least in braces)?
 %   
 %   \begin{myquote}[Sh:3][988]
 %      As we had expected, the telegramm was soon followed by its sender, and the card of Mr.\ Cyril Overton, Trinity College, Cambridge, announced the arrival of an enormous young man, \emph{sixteen stone} \emph{[\cunum[st=kg]{16}{st}]} of solid bone and muscle, who spanned the doorway with his broad shoulders \emph{[\dots\!]}
@@ -3078,7 +3078,8 @@ and the derived file cooking-units.sty.
 %  or  \cunum[ft=in]{1}{ft}. 
 % 
 %   A bit of a strange unit (for me at least). Where I am from, people
-%   tend to have different feet sizes.
+%   tend to have different feet sizes. Also present in the german translation of the 
+%   video game that uses \enquote{Stone}.
 %
 % \unititem{degree Rèamur}[][\ensuremath{{}^{\circ}}\kern-\scriptspace R\'{e}] Like degree Celsius, but instead of having the
 %   water boiling at \SI{100}{\degree} (Celsius), water boils at \SI{80}{\degree}.
@@ -3092,20 +3093,23 @@ and the derived file cooking-units.sty.
 %   \enquote{Tuchelle} (drapery ell, circa \SI{78}{\cm}), the other the
 %   \enquote{Leinenelle} (linen ell, around \SI{89.6}{\cm}).
 %
-% \unititem{cup} Any person who writes \enquote{cup} and 
-%   \emph{doesn't} mean
-%  a cup equal to \SI{250}{\ml} should be 
-%^^A -- in my humble opinion\footnote{Which, now that I admitted 
-%^^A my humbleness, is automatically
-%^^A more important than yours.} -- 
-% excommunicated by default (or incommunicated,
-%  if you are an atheist).
+% \unititem{cup} I think the idea of having a \enquote{cup} and it not being
+%   equal to \cunum{250}{ml} is a bit strange, for me at least. What other sizes can a 
+%   cup have? I can imagine \cunum{500}{ml}, but are there other sizes?
+% ^^A   Any person who writes \enquote{cup} and 
+% ^^A  \emph{doesn't} mean
+% ^^A a cup equal to \SI{250}{\ml} should be 
+%^^A^^A -- in my humble opinion\footnote{Which, now that I admitted 
+%^^A^^A my humbleness, is automatically
+%^^A^^A more important than yours.} -- 
+%^^A excommunicated by default (or incommunicated,
+%^^A  if you are an atheist).
 %
 % \unititem{stick} A unit I've made fun of because it is quite regional and doesn't make
 %  any sense for foreigners. Then I realized that I am using the unit \enquote{Packerl}
 %  in my cookery book which is also quite locally\footnote{And maybe doesn't even exist 
 %  outside my family} and -- even worse -- the weight changes depending 
-%  the content (See \emph{Packerl}). \emph{Damn}.
+%  the content (See \emph{Packerl}).
 %  
 % \unititem{Packerl}*de*[small bag] I'm a bit split on this unit as I don't actually 
 %   know if it exists. The reason I have the unit \emph{Packerl} for my cookery
