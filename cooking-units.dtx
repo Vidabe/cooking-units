@@ -136,7 +136,7 @@ and the derived file cooking-units.sty.
 ]{l3doc}
 \usepackage[utf8]{inputenc}
 \usepackage[main=english]{babel}
-\usepackage[use-numerals=true]{cooking-units}
+\usepackage[use-fmtcount-numerals=true]{cooking-units}
 \usepackage{tikzsymbols}
 \usepackage{listings}
 \usepackage{environ}
@@ -3413,11 +3413,28 @@ and the derived file cooking-units.sty.
 % Define the only load-time option for this package. If it is set,
 % load package \pkg{fmtcount}.
 %    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { Option-deprecated } 
+  { 
+   The \ option \ '#1' \ is \ deprecated \ and \ should \ be \
+   replaced \ by \ '#2'.
+  }{ 
+    Please \ replace \ the \ option.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%    \begin{macrocode}
 \bool_new:N \g_@@_opt_numeral_bool
 \keys_define:nn { cooking-units }
   {
-    use-numerals .bool_gset:N = \g_@@_opt_numeral_bool ,
+%    use-numerals .bool_gset:N = \g_@@_opt_numeral_bool ,
+    use-numerals .code:n = 
+      { 
+        \msg_warning:nnnn { cooking-units } { Option-deprecated } { use-numerals } { use-fmtcount-numerals } 
+        \keys_set:nn { cooking-units } { use-fmtcount-numerals = #1 }
+      } ,
     use-numerals .default:n = { false },
+    use-fmtcount-numerals .bool_gset:N = \g_@@_opt_numeral_bool ,
+    use-fmtcount-numerals .default:n = { false },
   }
 %    \end{macrocode}
 % Now process the package options \dots
@@ -3432,7 +3449,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \keys_define:nn { cooking-units }
   {
-    use-numerals .code:n = { \msg_error:nnn { cooking-units } { load-time-option } { fmtcount } } ,
+    use-numerals .code:n = 
+      { 
+        \msg_warning:nnnn { cooking-units } { Option-deprecated } { use-numerals } { use-fmtcount-numerals }
+        \msg_error:nnn { cooking-units } { load-time-option } { fmtcount } 
+      } ,
+    use-fmtcount-numerals .code:n = { \msg_error:nnn { cooking-units } { load-time-option } { fmtcount } } ,
   }
 %    \end{macrocode}
 % 
@@ -3497,8 +3519,8 @@ and the derived file cooking-units.sty.
 % This command is used to print the fractions and can be changed
 % accordingly.
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_numeral:n #1 { }
-\cs_new:Npn \@@_print_Numeral:n #1 { }
+\cs_new:Npn \@@_print_numeral:n #1 { \msg_error:nnn {cooking-units} { define-numeral-function } }
+\cs_new:Npn \@@_print_Numeral:n #1 { \msg_error:nnn {cooking-units} { define-Numeral-function } }
 \bool_if:NT \g_@@_opt_numeral_bool
   {
     \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
@@ -4899,6 +4921,31 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { define-numeral-function } 
+  { 
+   You \ are \ using \ numerals \ (lowercase) \ without \ the \ load-time \ option \
+   'use-fmtcount-numerals' \ as \ such \ you \ need \ to \ define \ 
+   which \ function \ is \ to \ be \ used \ for \ numerals. \ You \ can
+   \ do \ that \ via \ 'numeral-function' \ and \ 'Numeral-function'
+  }{ 
+    Please \ specify\ which \ function \ should \ be \ used \ to \ print \
+    numerals (lowercase \ and \ uppercase).
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+\msg_new:nnnn { cooking-units } { define-Numeral-function } 
+  { 
+   You \ are \ using \ numerals \ (capitaliced) \ without \ the \ load-time \ option \
+   'use-fmtcount-numerals' \ as \ such \ you \ need \ to \ define \ 
+   which \ function \ is \ to \ be \ used \ for \ numerals. \ You \ can
+   \ do \ that \ via \ 'numeral-function' \ and \ 'Numeral-function'
+  }{ 
+    Please \ specify\ which \ function \ should \ be \ used \ to \ print \
+    numerals (lowercase \ and \ uppercase).
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { 42-is-...-wrong? } 
   { 
    You \ requested \ to \ set  \ 42 \ to \ 'false'. \ This \ doesn't \ make
@@ -4912,6 +4959,7 @@ and the derived file cooking-units.sty.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
+%
 %
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { internal-error } 
@@ -5591,10 +5639,11 @@ and the derived file cooking-units.sty.
       { \l_@@_calc_because_ref_was_given_bool } { \l_@@_change_number_of_persons_bool }
       { \bool_set_true:N \l_@@_lokal_persons_bool }
       { \bool_set_false:N \l_@@_lokal_persons_bool }
-    \bool_lazy_and:nnTF
-      { \g_@@_opt_numeral_bool } { \l_@@_print_numeral_bool }
-      { \bool_set_true:N \l_@@_lokal_numeral_bool }
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+%    \bool_lazy_and:nnTF
+%      { \g_@@_opt_numeral_bool } { \l_@@_print_numeral_bool }
+%      { \bool_set_true:N \l_@@_lokal_numeral_bool }
+%      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+    \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_print_numeral_bool
   }
 %    \end{macrocode}
 % \end{macro}
