@@ -5952,7 +5952,8 @@ and the derived file cooking-units.sty.
     \cs_set_eq:NN \@@_parse:N \@@_start_loop:N 
     \tl_map_function:nN {#1} \@@_parse:N
     \bool_if:NTF \l_@@_error_bool
-      { \use_none_delimit_by_q_nil:w }
+      { }
+%      { \use_none_delimit_by_q_nil:w }
       { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
   }  
 %    \end{macrocode}
