@@ -3793,6 +3793,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_round_number_bool
 \bool_new:N \l_@@_error_bool
 \bool_new:N \l_@@_eval_fractions_bool
+\bool_new:N \l_@@_convert_fractions_bool
 \bool_new:N \l_@@_draft_bool
 \bool_new:N \l_@@_round_to_int_bool
 \bool_new:N \l_@@_special_sign_bool
@@ -4478,7 +4479,13 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
+%\begin{macro}{ eval-fraction }
+% If set to true the fractions are evaluated.
+%    \begin{macrocode}
+    convert-fraction .bool_set:N = \l_@@_convert_fractions_bool ,
+    convert-fraction .default:n = { true } ,
+%    \end{macrocode}
+%\end{macro}
 %
 %
 %
@@ -5908,10 +5915,17 @@ and the derived file cooking-units.sty.
       }
     #1 \q_stop / \q_recursion_tail \q_stop
     \q_recursion_stop
+%    \end{macrocode}
+% At this point we have all information we need to determine whatever or not
+% the fractions should be evaluated or if the units should be changed.
+%    \begin{macrocode}
     \bool_lazy_or:nnT
       { \l_@@_lokal_persons_bool }{ \l_@@_eval_fractions_bool }
       { \bool_set_false:N \l_@@_lokal_fraction_bool }
+    \bool_if:NT \l_@@_convert_fractions_bool
+      { \@@_change_unit:T { \bool_set_false:N \l_@@_lokal_fraction_bool } }
   }
+%
 \cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
   {
     \quark_if_recursion_tail_stop_do:nn {#2} 
@@ -5920,6 +5934,7 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \use_none_delimit_by_q_recursion_stop:w
   }
+%
 \cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
   {
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
