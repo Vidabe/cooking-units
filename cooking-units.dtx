@@ -5265,11 +5265,14 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_temperatures_to_check_define:nn #1#2
   {
     \@@_error_if_unit_not_defined:n {#1}
-    \fp_if_exist:cTF { c_@@_ #1 _min_fp }
-      { \msg_warning:nnn { cooking-units } { Minimum-already-defined } {#1} }
-      {
+    \fp_if_exist:cTF { l_@@_ #1 _min_fp }
+      { 
+%        \msg_warning:nnn { cooking-units } { Minimum-already-defined } {#1} 
+        \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
+      }{
         \seq_put_right:Nn \l_@@_temperatures_to_check_seq {#1}
-        \fp_const:cn { c_@@_ #1 _min_fp } {#2}      
+        \fp_new:c { l_@@_ #1 _min_fp }
+        \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
       }
   }
 %    \end{macrocode}
@@ -6353,13 +6356,13 @@ and the derived file cooking-units.sty.
         \seq_if_in:NVT \l_@@_temperatures_to_check_seq \l_@@_option_unit_tl
           { 
             \fp_compare:vNnT 
-              { c_@@_ \l_@@_option_unit_tl _min_fp } > {#1}
+              { l_@@_ \l_@@_option_unit_tl _min_fp } > {#1}
               { 
                 \msg_error:nnxx { cooking-units } 
                   { Temperature-too-low } 
                   { #1 \space \l_@@_option_unit_tl } 
                   {  
-                    \fp_use:c { c_@@_ \l_@@_option_unit_tl _min_fp } 
+                    \fp_use:c { l_@@_ \l_@@_option_unit_tl _min_fp } 
                     \space \l_@@_option_unit_tl 
                   }
               }
