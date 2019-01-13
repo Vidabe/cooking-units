@@ -4179,6 +4179,18 @@ and the derived file cooking-units.sty.
 %  Rounding the results to an integer.
 %    \begin{macrocode}
     round-to-int .bool_set:N = \l_@@_round_to_int_bool ,
+    round-to-int .choices:nn = 
+      { true , false }
+      {
+        \msg_warning:nnnn { cooking-units } { Option-deprecated }  { round-to-int } { round-precision = 0 }
+        \int_compare:nNnTF { \l_keys_choice_int } = { 1 }
+          {
+            \int_set:Nn \l_@@_round_precision_int { 0 }
+          }{
+          
+          }
+        \use:c { bool_set_ \l_keys_choice_tl :N } \l_@@_round_to_int_bool
+      } ,
     round-to-int .default:n = { false } ,
 %    \end{macrocode}
 %\end{macro}
