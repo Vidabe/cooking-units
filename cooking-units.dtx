@@ -4988,7 +4988,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_error_if_unit_not_defined:n #1
   {
     \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#1} 
-      { \msg_error:nnn { cooking-units } { unknown-unit } {#1} }
+      { 
+        \msg_error:nnn { cooking-units } { unknown-unit } {#1} 
+        \bool_set_true:N \l_@@_error_bool
+      }
   }
 \cs_generate_variant:Nn \@@_error_if_unit_not_defined:n { V }
 %    \end{macrocode}
@@ -5596,9 +5599,9 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_initialise_default:n #1
   {
     \@@_set_unit:Nn \l_@@_given_unit_tl {#1}
+    \bool_set_false:N \l_@@_error_bool
     \@@_error_if_unit_not_defined:V \l_@@_given_unit_tl
     \bool_set_false:N \l_@@_special_sign_bool
-    \bool_set_false:N \l_@@_error_bool
     \bool_set_false:N \l_@@_range_in_input_bool
     \bool_set_false:N \l_@@_lokal_fraction_bool
     \bool_set_false:N \l_@@_lokal_mixed_fraction_bool
@@ -5805,9 +5808,12 @@ and the derived file cooking-units.sty.
         \char_set_catcode_ignore:N \ %
         \char_set_catcode_other:N ? %
       } \l_@@_given_amount_tl
-    \bool_lazy_or:nnTF
-      { \l_@@_draft_bool }
-      { \tl_if_empty_p:N \l_@@_given_amount_tl }
+    \bool_lazy_any:nTF
+      {
+        { \l_@@_error_bool }
+        { \l_@@_draft_bool }
+        { \tl_if_empty_p:N \l_@@_given_amount_tl }
+      }
       {
         \bool_if:NTF \l_@@_fourty_two_bool
           { 42 } 
