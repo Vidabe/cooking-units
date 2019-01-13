@@ -4488,9 +4488,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
-%
 %\begin{macro}{ eval-fraction }
 % If set to true the fractions are evaluated.
 %    \begin{macrocode}
@@ -4498,6 +4495,9 @@ and the derived file cooking-units.sty.
     convert-fraction .default:n = { true } ,
 %    \end{macrocode}
 %\end{macro}
+%
+%
+%
 %
 %
 %
@@ -5054,7 +5054,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}[TF]{ \@@_fp_if_equal_one:n}
-% \begin{macro}[TF]{ \@@_int_if_equal_one:n}f
+% \begin{macro}[TF]{ \@@_int_if_equal_one:n}
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_fp_if_equal_one:n #1 { TF }
   {
@@ -5235,6 +5235,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{  }
 % I am using this construction often enough, so \dots\ yeah.
+% Note that if the evaluation is |true|, the path taken is the |false| one.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_change_unit: { TF }
   { 
@@ -5461,8 +5462,8 @@ and the derived file cooking-units.sty.
 \tl_const:Nn \c_@@_postfix_phrase_tl { ( cu-unitphrase ) }
 %    \end{macrocode}
 %
-% \begin{macro}{ \@@_deftranslation:nn }
-% \begin{macro}{ \@@_deftranslation:xxn , \@@_deftranslation:Vnv}
+% \begin{macro}{\@@_deftranslation_base:nnn, \@@_deftranslation_base:xVn }
+% \begin{macro}{\@@_deftranslation_to:nnnn , \@@_deftranslation_to:VxVv,\@@_deftranslation_to:VxVV,\@@_deftranslation_to:VxVn}
 %    \begin{macrocode}
 \cs_new:Npn \@@_deftranslation_base:nnn #1#2#3
   {
@@ -7208,7 +7209,6 @@ and the derived file cooking-units.sty.
 %
 % \section {Adding Keys}
 %
-% Question to me: Why do we need \cs{l_tmpa(b)_tl}?
 % Maybe due to \cs{cuaddtokeys}?
 %    \begin{macrocode}
 \NewDocumentCommand \cuaddkeys { m m }
