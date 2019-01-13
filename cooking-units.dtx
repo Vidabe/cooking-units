@@ -592,7 +592,7 @@ and the derived file cooking-units.sty.
     cutext-add-hook = {\stepcounter{cutextCounter}} ,
     Cutext-add-hook = {\stepcounter{CutextCounter}} ,
     cuam-add-hook = {\stepcounter{cuamCounter}} ,
-    set-option-for-Ro = { round-to-int = true }  ,
+    set-option-for-Ro = { round-precision= 0 }  ,
 %    add-unit-to-group = { weight = {st} , temperature = {Ro} }
   }
 
@@ -1125,7 +1125,7 @@ and the derived file cooking-units.sty.
 %
 %\subsection{Rounding temperatures}
 %
-% By default temperatures are rounded to integers (using \opt{round-to-int = true}).
+% By default temperatures are rounded to integers (using \opt{round-precision=0}).
 % Since 1.30 it is possible to round amounts to a negative precision. 
 % If you want to round temperatures to the tens see the following 
 % example (\opt{set-option-for-\meta{unit}} is described in \cref{sec:opt:unit-spec}).
@@ -1504,7 +1504,7 @@ and the derived file cooking-units.sty.
 %    }
 %  \cusetup %% round to integer automatically
 %    {
-%      set-option-for-Ro = { round-to-int = true }
+%      set-option-for-Ro = { round-precision = 0 }
 %    }
 % \end{lstlisting}
 % \begin{cuexamplecode}
@@ -1992,10 +1992,10 @@ and the derived file cooking-units.sty.
 % \begin{lstlisting}
 %  \cusetup 
 %    { 
-%      set-option-for-F  = { round-to-int = true } ,
-%      set-option-for-C  = { round-to-int = true } ,
-%      set-option-for-K  = { round-to-int = true } ,
-%      set-option-for-Re = { round-to-int = true } 
+%      set-option-for-F  = { round-precision = 0 } ,
+%      set-option-for-C  = { round-precision = 0 } ,
+%      set-option-for-K  = { round-precision = 0 } ,
+%      set-option-for-Re = { round-precision = 0 } 
 %    }
 % \end{lstlisting}
 %
@@ -2040,10 +2040,10 @@ and the derived file cooking-units.sty.
 %    { 
 %      set-option-for = 
 %        { 
-%          F  = { round-to-int = true } ,
-%          C  = { round-to-int = true } ,
-%          K  = { round-to-int = true } ,
-%          Re = { round-to-int = true }
+%          F  = { round-precision = 0 } ,
+%          C  = { round-precision = 0 } ,
+%          K  = { round-precision = 0 } ,
+%          Re = { round-precision = 0 }
 %        }
 %    }
 % \end{lstlisting}
@@ -2454,17 +2454,18 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     round-to-int = \meta{true/false}
 %   \end{syntax}
-%   Rounds the amount to an integer if set \true.
+%   Rounds the amount to an integer if set \true. This option is deprecated.
+%  Use \opt{round-precision=0} instead.
 % \end{function}
 %
 %
-% \begin{cuexamplecode}
-%   \cusetup{round-to-int=true} @
-%   \cunum{1.23456789}{kg} \\
-%   \cunum{12.58}{kg} \\
-%   \cunum[g=kg]{194--294}{g} \\
-%   \cunum[kg=g]{1.23456789}{kg}
-% \end{cuexamplecode}
+%^^A \begin{cuexamplecode}
+%^^A   \cusetup{round-to-int=true} @
+%^^A   \cunum{1.23456789}{kg} \\
+%^^A   \cunum{12.58}{kg} \\
+%^^A   \cunum[g=kg]{194--294}{g} \\
+%^^A   \cunum[kg=g]{1.23456789}{kg}
+%^^A \end{cuexamplecode}
 %
 % \begin{function}{round-half}
 %   \begin{syntax}
