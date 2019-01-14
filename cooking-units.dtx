@@ -6168,11 +6168,11 @@ and the derived file cooking-units.sty.
           { \msg_error:nnV { cooking-units } { Division-by-zero } \l_@@_given_amount_tl }
         \@@_tl_eval:Nn \l_@@_number_tmpa_tl
           {
-            \bool_if:NTF \l_@@_minus_bool
-              { - \l_@@_mixed_fraction_tl - }
-              { \l_@@_mixed_fraction_tl + }
+            \l_@@_mixed_fraction_tl +
             \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl 
           }
+        \bool_if:NT \l_@@_minus_bool
+          { \tl_put_left:Nn \l_@@_number_tmpa_tl { - } }
         \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
       }
   }
