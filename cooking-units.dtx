@@ -5808,7 +5808,20 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_parse_input:n }
+% The following command is needed after the parsing. It further processes
+% the parsed input and prints. The actual parsing and printing process (|\@@_process_tmp|)
+% depends on the command (|\cunum|, etc.) used.
+%    \begin{macrocode}
+\cs_new:Npn \@@_process_tmp: { }
+\cs_new:Npn \@@_process_and_print_input:
+  {
+    \bool_if:NTF \l_@@_error_bool
+      { \l_@@_given_amount_tl }
+      { \@@_process_tmp: }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{ \@@_parse_and_print_input:n }
 %   Rescans the input to get rid of spaces and  to make \_ and ? inactive
 %   (french with babel makes |?| active and changes the definition of it).
 %   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
@@ -5869,17 +5882,6 @@ and the derived file cooking-units.sty.
       }
     \@@_split:N #1
     \use_none_delimit_by_q_nil:w \q_nil
-  }
-%    \end{macrocode}
-% If an error was raised during parsing, just print the input. Else, go to the next set
-% of commands.
-%    \begin{macrocode}
-\cs_new:Npn \@@_process_tmp: { }
-\cs_new:Npn \@@_process_and_print_input:
-  {
-    \bool_if:NTF \l_@@_error_bool
-      { \l_@@_given_amount_tl }
-      { \@@_process_tmp: }
   }
 %    \end{macrocode}
 % \end{macro}
