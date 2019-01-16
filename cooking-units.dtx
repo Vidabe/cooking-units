@@ -5827,7 +5827,7 @@ and the derived file cooking-units.sty.
 %   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
 %   (if not empty). Afterwards the units are printed.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_input:n #1
+\cs_new:Npn \@@_parse_and_print_input:n #1
   {
     \bool_if:NTF \l_@@_fourty_two_bool
       { \tl_clear:N \l_@@_given_amount_tl  }
@@ -6181,7 +6181,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%
+% 
 %
 %
 %
@@ -6442,7 +6442,7 @@ and the derived file cooking-units.sty.
   {
     \@@_cunum_initialise:nnnnn {#1} {#2} {#3} {#4} {#5}
     \l_@@_cunum_hook_tl
-    \@@_parse_input:n {#3}
+    \@@_parse_and_print_input:n {#3}
     \@@_print_correct_unit:
   }
 %    \end{macrocode}
@@ -6559,7 +6559,7 @@ and the derived file cooking-units.sty.
       { \l_@@_cutext_hook_tl }
     \bool_if:NTF \l_@@_cutext_old_bool
       { \@@_old_cutext:nnn {#2} {#3} {#4} }
-      { \@@_parse_input:n {#3} }
+      { \@@_parse_and_print_input:n {#3} }
     \@@_print_correct_unit:
   }
 %    \end{macrocode}
@@ -6715,7 +6715,7 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_cuam_old_bool
       { \@@_cuam_old:n {#3} }
       { 
-        \@@_parse_input:n {#3}
+        \@@_parse_and_print_input:n {#3}
         \@@_print_correct_unit:
       }
   }
