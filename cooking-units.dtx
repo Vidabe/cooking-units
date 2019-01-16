@@ -5419,32 +5419,27 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ \@@_tl_if_in_remove_and_set_bool:NnN }
+% \begin{macro}{ \@@_bool_reverse:N, \@@_check_minus_remove_and_reverse:NN }
 % Can probably optimize this as the sign is always at the first place
-% (this is done after cheking the input, so the asumption is safe), but yeah \dots
+% (this is done after cheking the input, so the assumption is safe), but yeah \dots
 %    \begin{macrocode}
-\cs_new:Npn \@@_tl_if_in_remove_and_set_bool:NnN #1#2#3
+\cs_new:Npn \@@_bool_reverse:N #1
   {
-    \tl_if_in:NnTF #1 {#2}
-      {
-        \bool_set_true:N #3
-        \tl_remove_once:Nn #1 {#2}
-      }
-      { \bool_set_false:N #3 }
+    \bool_if:NTF #1
+      { \bool_set_false:N }
+      { \bool_set_true:N }
+    #1
   }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_tl_if_in_remove_and_reverse_bool:NnN }
-%    \begin{macrocode}
-\cs_new:Npn \@@_tl_if_in_remove_and_reverse_bool:NnN #1#2#3
+\cs_new:Npn \@@_check_minus_remove_and_reverse:NN #1#2
   {
-    \tl_if_in:NnT #1 {#2}
+    \quark_if_nil:NF #2
       {
-        \bool_if:NTF #3
-          { \bool_set_false:N #3 }
-          { \bool_set_true:N #3 }
-        \tl_remove_once:Nn #1 {#2}
+        \tl_if_in:NnT #2 { - }
+          {
+            \tl_remove_once:Nn #2 { - }
+            \@@_bool_reverse:N #1
+          }
+       \@@_check_minus_remove_and_reverse:NN #1
       }
   }
 %    \end{macrocode}
@@ -5622,6 +5617,7 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_range_in_input_bool
     \bool_set_false:N \l_@@_lokal_fraction_bool
     \bool_set_false:N \l_@@_lokal_mixed_fraction_bool
+    \bool_set_false:N \l_@@_minus_bool
   }
 %    \end{macrocode}
 % Some units have options added to them. To get those options it is first
@@ -5739,17 +5735,25 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_print_fractions:nnn }
+% \begin{macro}{ \@@_print_fractions:Nnn }
 %   The name of this function is the name of the game: It prints fractions.
-%   Furthermore it sets the boolean \lstinline|fraction_in_input_bool| to true
-%   so that the correct unit is printed.
+%   The minus sign is always put in front of the fraction.
+%
+%   The first argument regards the mixed fraction part. It is either empty
+%   or not empty. If empty, do nothing. Else insert and add space.
+%
+%  The 2nd and 3rd argument are the nominator and denominator, they are
+%  used in the fraction command directly.
+%
+%  All three arguments are currently tl varables, but only the first is a dedicated
+%  \enquote{can only take one token}.
 %
 %  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_fractions:nnn #1#2#3
+\cs_new:Npn \@@_print_fractions:Nnn #1#2#3
   {
     \bool_if:NT \l_@@_minus_bool { \c_@@_minus_tl }
-    \tl_if_empty:nF {#1} 
+    \tl_if_empty:NF #1
       { 
         #1 
         \skip_horizontal:N \l_@@_mixed_frac_dim
@@ -5874,12 +5878,12 @@ and the derived file cooking-units.sty.
         \bool_if:NT \l_@@_range_in_input_bool
           { \@@_create_error_and_stop:n { fraction-not-allowed-with-range } }
       }
-    \tl_if_in:NnT #1 { _ }
-      { 
-        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool 
-        \bool_if:NF \l_@@_lokal_fraction_bool
-          { \@@_create_error_and_stop:n { missing-slash } }
-      }
+%    \tl_if_in:NnT #1 { _ }
+%      { 
+%        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool 
+%%        \bool_if:NF \l_@@_lokal_fraction_bool
+%%          { \@@_create_error_and_stop:n { missing-slash } }
+%      }
     \@@_split:N #1
     \use_none_delimit_by_q_nil:w \q_nil
   }
@@ -5924,16 +5928,15 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_split_fraction:n #1
   {
-    \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
-      { 
-        \cs_set_eq:NN \@@_process_tmp: \@@_process_mixed_fraction_in_input:
-        \@@_split_fraction_mixed:ww 
-      }{
-        \cs_set_eq:NN \@@_process_tmp: \@@_process_fraction_in_input:
-        \@@_split_fraction_frac:ww 
-      }
-    #1 \q_stop / \q_recursion_tail \q_stop
-    \q_recursion_stop
+    \cs_set_eq:NN \@@_process_tmp: \@@_process_generel_fraction_in_input:
+%    \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
+%      { \@@_split_fraction_mixed:ww }
+%      { \@@_split_fraction_frac:ww }
+%    #1 \q_stop / \q_recursion_tail \q_stop
+%    \q_recursion_stop
+    \@@_split_fraction_mixed:ww  
+      #1 \q_stop / \q_recursion_tail _ \q_nil \q_stop
+      \q_recursion_stop
 %    \end{macrocode}
 % At this point we have all information we need to determine whatever or not
 % the fractions should be evaluated or if the units should be changed.
@@ -5945,6 +5948,32 @@ and the derived file cooking-units.sty.
       { \@@_change_unit:T { \bool_set_false:N \l_@@_lokal_fraction_bool } }
   }
 %
+%\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
+%  {
+%    \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
+%    \@@_split_fraction_frac:ww #2 \q_stop 
+%  }
+%\cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
+%  {
+%    \quark_if_recursion_tail_stop_do:nn {#2} 
+%      { \@@_create_error:n { fraction-wrong-order } }
+%    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
+%    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
+%    \use_none_delimit_by_q_recursion_stop:w
+%  }
+%
+\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
+  {
+    \quark_if_nil:nTF {#2}
+      { 
+        \tl_clear:N \l_@@_mixed_fraction_tl
+        \@@_split_fraction_frac:ww #1 \q_stop 
+      }{ 
+        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool
+        \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
+        \@@_split_fraction_frac:ww #2 \q_stop
+      }
+  }
 \cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
   {
     \quark_if_recursion_tail_stop_do:nn {#2} 
@@ -5952,12 +5981,6 @@ and the derived file cooking-units.sty.
     \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
     \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
     \use_none_delimit_by_q_recursion_stop:w
-  }
-%
-\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
-  {
-    \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
-    \@@_split_fraction_frac:ww #2 \q_stop 
   }
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -6050,7 +6073,11 @@ and the derived file cooking-units.sty.
       { \@@_create_error:n { Second-fraction-sign-not-allowed } }
       {
         \tl_if_in:NnTF \l_@@_input_mixed_fraction_sign_tl {#1}
-          { \@@_create_error:n { Second-mixed-fraction-sign-not-allowed } }
+          { 
+            \bool_if:NTF \l_@@_lokal_fraction_bool
+              { \@@_create_error:n { Second-mixed-fraction-sign-not-allowed } }
+              { \@@_create_error:n { missing-slash } }
+          }
           { \@@_create_error:nn { Token-not-allowed } {#1} }
       }
   }
@@ -6106,65 +6133,47 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_process_fraction_in_input: }
-%   If a \lstinline|/| (but no \lstinline|_|) is found inside the input.
-%   Well \dots\ does the same as the functions before.
-%   If fractions should be evaluated the input is \dots\ well, 
-%   evaluated and printed. Otherwise the input is given to 
-%   another function which prints the fractions. Note that the empty
-%   argument in \lstinline|\@@_print_fractions:nnn| indicates a
-%   \enquote{normal} fraction.
-%    \begin{macrocode}
-\cs_new:Npn \@@_process_fraction_in_input:
-  {
-    \bool_lazy_or:nnTF
-      { \l_@@_lokal_fraction_bool }
-      { \l_@@_special_sign_bool }
-      {
-        \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
-        \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
-        \@@_print_fractions:nnn 
-          { } 
-          { \l_@@_number_tmpa_tl } 
-          { \l_@@_number_tmpb_tl } 
-      }{
-        \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
-          { \msg_error:nnV { cooking-units } { Division-by-zero } \l_@@_given_amount_tl }
-        \@@_tl_eval:Nn \l_@@_number_tmpa_tl 
-          { \l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl }
-        \@@_process_and_print_number_in_input:N \l_@@_number_tmpa_tl
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
+% \begin{macro}{ \@@_process_generel_fraction_in_input: }
+% This function prints both mixed and normal fractions. Those was done
+% by two functions beforehand, but they shared mostly the same code, so I
+% managed to fuse them.
 %
-% \begin{macro}{ \@@_process_mixed_fraction_in_input: }
-%   The same procedure as last function? The same procedure as every 
-%   function!
-%   
-%   If it should be evaluated it is important to check if the mixed-fraction
-%   part is positive or negative. That's why the minuses are removed \emph{before}
-%   checking if there is a fraction (in opposite to the command before).
+% The first part removes the minus sign. It cycles through the variables
+% (|\l_@@_mixed_fraction_tl| can be emtpy) and removes the minus signs.
+% It furthermore saves how many minuses are used by reversing a bool.
+% If a minus sign is found, the bool is reversed to true (from false). Another
+% minus: minus and minus is plus, reverse bool again (to false this time), etc.
 %
+% Afterwards: Is a fraciton printed, or is the input evaluated. Printing is
+% straight forward. 
+%
+%  Due to how mixed fractions are evaluated, one can just evaluate the 
+%  absolute values of the inputs and add a minus sign on the left side afterwards
+%  (if necessary).
 %   \begin{align}
 %     \cuam{1_2/3} &=  1 + 2/3 \\
-%     \cuam{-1_2/3} &= -1 - 2/3
+%     \cuam{-1_2/3} &= -1 - 2/3 = - ( 1 + 2/3 )
 %   \end{align}
-%   
+%
+% If |\l_@@_mixed_fraction_tl| is empty the calculation just evaluates to
+% |+\l_@@_number_tmpa_tl / \l_@@_number_tmpb_tl|, which is also valid.
+%
 %    \begin{macrocode}
-\cs_new:Npn \@@_process_mixed_fraction_in_input: 
+\cs_new:Npn \@@_process_generel_fraction_in_input:
   {
-    \@@_tl_if_in_remove_and_set_bool:NnN \l_@@_mixed_fraction_tl { - } \l_@@_minus_bool
-    \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpa_tl { - } \l_@@_minus_bool
-    \@@_tl_if_in_remove_and_reverse_bool:NnN \l_@@_number_tmpb_tl { - } \l_@@_minus_bool
+    \@@_check_minus_remove_and_reverse:NN
+      \l_@@_mixed_fraction_tl
+      \l_@@_number_tmpa_tl
+      \l_@@_number_tmpb_tl
+      \q_nil
     \bool_lazy_or:nnTF
       { \l_@@_lokal_fraction_bool }
       { \l_@@_special_sign_bool }
       {
-        \@@_print_fractions:nnn
-          { \l_@@_mixed_fraction_tl } 
+        \@@_print_fractions:Nnn 
+          \l_@@_mixed_fraction_tl
           { \l_@@_number_tmpa_tl } 
-          { \l_@@_number_tmpb_tl }
+          { \l_@@_number_tmpb_tl } 
       }{
         \fp_compare:nNnT { \l_@@_number_tmpb_tl } = { 0 }
           { \msg_error:nnV { cooking-units } { Division-by-zero } \l_@@_given_amount_tl }
