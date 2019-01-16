@@ -5929,11 +5929,6 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_split_fraction:n #1
   {
     \cs_set_eq:NN \@@_process_tmp: \@@_process_generel_fraction_in_input:
-%    \bool_if:NTF \l_@@_lokal_mixed_fraction_bool
-%      { \@@_split_fraction_mixed:ww }
-%      { \@@_split_fraction_frac:ww }
-%    #1 \q_stop / \q_recursion_tail \q_stop
-%    \q_recursion_stop
     \@@_split_fraction_mixed:ww  
       #1 \q_stop / \q_recursion_tail _ \q_nil \q_stop
       \q_recursion_stop
@@ -5947,20 +5942,6 @@ and the derived file cooking-units.sty.
     \bool_if:NT \l_@@_convert_fractions_bool
       { \@@_change_unit:T { \bool_set_false:N \l_@@_lokal_fraction_bool } }
   }
-%
-%\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
-%  {
-%    \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
-%    \@@_split_fraction_frac:ww #2 \q_stop 
-%  }
-%\cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
-%  {
-%    \quark_if_recursion_tail_stop_do:nn {#2} 
-%      { \@@_create_error:n { fraction-wrong-order } }
-%    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-%    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
-%    \use_none_delimit_by_q_recursion_stop:w
-%  }
 %
 \cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
   {
