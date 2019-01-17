@@ -5333,9 +5333,6 @@ and the derived file cooking-units.sty.
   {
     #1
       , \l_@@_round_precision_int
-%      \bool_if:NTF \l_@@_round_to_int_bool
-%        { , 0 }
-%        { , \l_@@_round_precision_int }
       \bool_if:NT \l_@@_round_commercial_bool
         { , #1 }
   }
@@ -5660,10 +5657,6 @@ and the derived file cooking-units.sty.
       { \l_@@_calc_because_ref_was_given_bool } { \l_@@_change_number_of_persons_bool }
       { \bool_set_true:N \l_@@_lokal_persons_bool }
       { \bool_set_false:N \l_@@_lokal_persons_bool }
-%    \bool_lazy_and:nnTF
-%      { \g_@@_opt_numeral_bool } { \l_@@_print_numeral_bool }
-%      { \bool_set_true:N \l_@@_lokal_numeral_bool }
-%      { \bool_set_false:N \l_@@_lokal_numeral_bool }
     \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_print_numeral_bool
   }
 %    \end{macrocode}
@@ -5827,7 +5820,6 @@ and the derived file cooking-units.sty.
     \bool_lazy_or:nnTF
       { \l_@@_error_bool }
       { \l_@@_unit_error_bool }
-%    \bool_if:NTF \l_@@_error_bool
       { \l_@@_given_amount_tl }
       { \@@_process_tmp: }
   }
@@ -5888,12 +5880,6 @@ and the derived file cooking-units.sty.
         \bool_if:NT \l_@@_range_in_input_bool
           { \@@_create_error_and_stop:n { fraction-not-allowed-with-range } }
       }
-%    \tl_if_in:NnT #1 { _ }
-%      { 
-%        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool 
-%%        \bool_if:NF \l_@@_lokal_fraction_bool
-%%          { \@@_create_error_and_stop:n { missing-slash } }
-%      }
     \@@_split:N #1
     \use_none_delimit_by_q_nil:w \q_nil
   }
@@ -5994,7 +5980,6 @@ and the derived file cooking-units.sty.
     \tl_map_function:nN {#1} \@@_parse:N
     \bool_if:NTF \l_@@_error_bool
       { }
-%      { \use_none_delimit_by_q_nil:w }
       { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
   }  
 %    \end{macrocode}
@@ -6300,19 +6285,10 @@ and the derived file cooking-units.sty.
       {
         \bool_if:NF \l_@@_round_precision_positive_bool
           { \bool_set_true:N \l_@@_round_number_bool }
-%        \bool_lazy_or:nnF
-%          { \l_@@_round_precision_positive_bool }
-%          { \l_@@_round_to_int_bool }
-%          { \bool_set_true:N \l_@@_round_number_bool }
       }
         \int_compare:nNnT 
           { \tl_count:n {#2} } >
-          { 
-            \l_@@_round_precision_int
-%            \bool_if:NTF \l_@@_round_to_int_bool
-%              { 0 }
-%              { \l_@@_round_precision_int }
-          }
+          { \l_@@_round_precision_int }
           { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
   }
@@ -6332,12 +6308,6 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_round_number_bool
       { \@@_tl_eval:Nn #1 { round ( \@@_rounding_function:n {#2} ) } }
       { \tl_set:Nn #1 {#2} }
-%    \tl_set:Nf #1 
-%      {
-%        \bool_if:NTF \l_@@_round_number_bool
-%          { \fp_eval:n { round ( \@@_rounding_function:n {#2} ) } }
-%          {#2}
-%     }
   }
 \cs_generate_variant:Nn \@@_round_calculated_input:Nn { NV }
 %    \end{macrocode}
