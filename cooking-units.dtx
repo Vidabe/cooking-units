@@ -5812,7 +5812,11 @@ and the derived file cooking-units.sty.
       { \l_@@_original_amount_tl }
       { \@@_process_tmp: }
   }
-\cs_new:Npn \@@_process_default: { \l_@@_given_amount_tl }
+%    \end{macrocode}
+% If there is an error or there is a special case (like \opt{42=true}) these commands
+% are used.
+%    \begin{macrocode}
+\cs_new:Npn \@@_process_default: { \l_@@_original_amount_tl }
 \cs_new:Npn \@@_print_default_unit: 
   { 
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
