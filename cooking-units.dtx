@@ -5332,9 +5332,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_rounding_function:n #1 
   {
     #1
-      \bool_if:NTF \l_@@_round_to_int_bool
-        { , 0 }
-        { , \l_@@_round_precision_int }
+      , \l_@@_round_precision_int
+%      \bool_if:NTF \l_@@_round_to_int_bool
+%        { , 0 }
+%        { , \l_@@_round_precision_int }
       \bool_if:NT \l_@@_round_commercial_bool
         { , #1 }
   }
@@ -6297,17 +6298,20 @@ and the derived file cooking-units.sty.
   {
     \quark_if_recursion_tail_stop_do:nn {#2}
       {
-        \bool_lazy_or:nnF
-          { \l_@@_round_precision_positive_bool }
-          { \l_@@_round_to_int_bool }
+        \bool_if:NF \l_@@_round_precision_positive_bool
           { \bool_set_true:N \l_@@_round_number_bool }
+%        \bool_lazy_or:nnF
+%          { \l_@@_round_precision_positive_bool }
+%          { \l_@@_round_to_int_bool }
+%          { \bool_set_true:N \l_@@_round_number_bool }
       }
         \int_compare:nNnT 
           { \tl_count:n {#2} } >
           { 
-            \bool_if:NTF \l_@@_round_to_int_bool
-              { 0 }
-              { \l_@@_round_precision_int }
+            \l_@@_round_precision_int
+%            \bool_if:NTF \l_@@_round_to_int_bool
+%              { 0 }
+%              { \l_@@_round_precision_int }
           }
           { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
