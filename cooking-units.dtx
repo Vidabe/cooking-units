@@ -3793,6 +3793,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_minus_bool
 \bool_new:N \l_@@_round_number_bool
 \bool_new:N \l_@@_error_bool
+\bool_new:N \l_@@_unit_error_bool
 \bool_new:N \l_@@_eval_fractions_bool
 \bool_new:N \l_@@_convert_fractions_bool
 \bool_new:N \l_@@_draft_bool
@@ -5003,7 +5004,7 @@ and the derived file cooking-units.sty.
     \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#1} 
       { 
         \msg_error:nnn { cooking-units } { unknown-unit } {#1} 
-        \bool_set_true:N \l_@@_error_bool
+        \bool_set_true:N \l_@@_unit_error_bool
       }
   }
 \cs_generate_variant:Nn \@@_error_if_unit_not_defined:n { V }
@@ -5611,8 +5612,11 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_initialise_default:n #1
   {
     \@@_set_unit:Nn \l_@@_given_unit_tl {#1}
+    \bool_set_false:N \l_@@_unit_error_bool
     \bool_set_false:N \l_@@_error_bool
     \@@_error_if_unit_not_defined:V \l_@@_given_unit_tl
+    \bool_if:NT \l_@@_unit_error_bool
+      { \cs_set_eq:NN \@@_print_correct_unit: \@@_print_default_unit: }
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_range_in_input_bool
     \bool_set_false:N \l_@@_lokal_fraction_bool
@@ -5819,23 +5823,30 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_process_tmp: { }
 \cs_new:Npn \@@_process_and_print_input:
   {
-    \bool_if:NTF \l_@@_error_bool
+    \bool_lazy_or:nnTF
+      { \l_@@_error_bool }
+      { \l_@@_unit_error_bool }
+%    \bool_if:NTF \l_@@_error_bool
       { \l_@@_given_amount_tl }
       { \@@_process_tmp: }
   }
+\cs_new:Npn \@@_process_default: { \l_@@_given_amount_tl }
+\cs_new:Npn \@@_print_default_unit: 
+  { 
+    \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
+    \,\l_@@_given_unit_tl 
+  }
 %    \end{macrocode}
 %
-% \begin{macro}{ \@@_parse_and_print_input:n }
+% \begin{macro}{ \@@_parse_input:n }
 %   Rescans the input to get rid of spaces and  to make \_ and ? inactive
 %   (french with babel makes |?| active and changes the definition of it).
 %   \lstinline|--| is replaced by \lstinline|\q_@@_range| and the input is parsed
 %   (if not empty). Afterwards the units are printed.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_and_print_input:n #1
+\cs_new:Npn \@@_parse_input:n #1
   {
-    \bool_if:NTF \l_@@_fourty_two_bool
-      { \tl_clear:N \l_@@_given_amount_tl  }
-      { \@@_set_amount:Nn \l_@@_given_amount_tl {#1} }
+    \@@_set_amount:Nn \l_@@_given_amount_tl {#1}
     \tl_set_rescan:NnV \l_@@_given_amount_tl
       {
         \char_set_catcode_letter:N \_ %
@@ -5844,18 +5855,16 @@ and the derived file cooking-units.sty.
       } \l_@@_given_amount_tl
     \bool_lazy_any:nTF
       {
-        { \l_@@_error_bool }
+        { \l_@@_fourty_two_bool }
         { \l_@@_draft_bool }
         { \tl_if_empty_p:N \l_@@_given_amount_tl }
-      }
-      {
-        \bool_if:NTF \l_@@_fourty_two_bool
-          { 42 } 
-          { \l_@@_given_amount_tl }
+      }{
+        \cs_set_eq:NN \@@_process_tmp: \@@_process_default:
+        \bool_if:NT \l_@@_fourty_two_bool
+          { \tl_set:Nn \l_@@_given_amount_tl { 42 }  }
       }{
         \tl_set_eq:NN \l_@@_tmpa_tl \l_@@_given_amount_tl
         \@@_split_input:N \l_@@_tmpa_tl
-        \@@_process_and_print_input:
       }
   }
 %    \end{macrocode}
@@ -6432,7 +6441,8 @@ and the derived file cooking-units.sty.
   {
     \@@_cunum_initialise:nnnnn {#1} {#2} {#3} {#4} {#5}
     \l_@@_cunum_hook_tl
-    \@@_parse_and_print_input:n {#3}
+    \@@_parse_input:n {#3}
+    \@@_process_and_print_input:
     \@@_print_correct_unit:
   }
 %    \end{macrocode}
@@ -6549,7 +6559,10 @@ and the derived file cooking-units.sty.
       { \l_@@_cutext_hook_tl }
     \bool_if:NTF \l_@@_cutext_old_bool
       { \@@_old_cutext:nnn {#2} {#3} {#4} }
-      { \@@_parse_and_print_input:n {#3} }
+      { 
+        \@@_parse_input:n {#3} 
+        \@@_process_and_print_input:
+      }
     \@@_print_correct_unit:
   }
 %    \end{macrocode}
@@ -6705,7 +6718,8 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_cuam_old_bool
       { \@@_cuam_old:n {#3} }
       { 
-        \@@_parse_and_print_input:n {#3}
+        \@@_parse_input:n {#3}
+        \@@_process_and_print_input:
         \@@_print_correct_unit:
       }
   }
