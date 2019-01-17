@@ -3828,7 +3828,6 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_range_in_input_bool
 \bool_new:N \l_@@_lokal_fraction_bool
 \bool_new:N \l_@@_print_fraction_bool
-\bool_new:N \l_@@_lokal_mixed_fraction_bool
 \bool_new:N \l_@@_check_decimal_bool
 %    \end{macrocode}
 % \end{macro}
@@ -5618,7 +5617,6 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_range_in_input_bool
     \bool_set_false:N \l_@@_lokal_fraction_bool
-    \bool_set_false:N \l_@@_lokal_mixed_fraction_bool
     \bool_set_false:N \l_@@_minus_bool
   }
 %    \end{macrocode}
@@ -5946,7 +5944,6 @@ and the derived file cooking-units.sty.
         \tl_clear:N \l_@@_mixed_fraction_tl
         \@@_split_fraction_frac:ww #1 \q_stop 
       }{ 
-        \bool_set_true:N \l_@@_lokal_mixed_fraction_bool
         \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
         \@@_split_fraction_frac:ww #2 \q_stop
       }
