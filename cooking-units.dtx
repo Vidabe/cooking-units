@@ -6138,6 +6138,10 @@ and the derived file cooking-units.sty.
       { \l_@@_lokal_fraction_bool }
       { \l_@@_special_sign_bool }
       {
+        \bool_if:NT \l_@@_special_sign_bool
+          { 
+            \msg_warning:nnV { cooking-units } { amount-not-known } \l_@@_original_amount_tl 
+          }
         \@@_print_fractions:Nnn 
           \l_@@_mixed_fraction_tl
           { \l_@@_number_tmpa_tl } 
