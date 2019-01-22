@@ -4963,6 +4963,17 @@ and the derived file cooking-units.sty.
     Phew ... \ this \ might \ have \ ended \ disastrous.
     \msg_see_documentation_text:n { cooking-units } 
   }
+%    \end{macrocode} 
+%
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { empty-amount } 
+  { 
+    The \ amount \ given \ is \ empty \ ( spaces \ are \ removed ).
+  }{ 
+    The \ amount \ given \ is \ empty.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
 %    \end{macrocode}
 %
 %
@@ -5847,6 +5858,8 @@ and the derived file cooking-units.sty.
         { \tl_if_empty_p:N \l_@@_original_amount_tl }
       }{
         \cs_set_eq:NN \@@_process_tmp: \@@_process_default:
+        \tl_if_empty:NT \l_@@_original_amount_tl
+          { \msg_error:nnV { cooking-units } { empty-amount } \l_@@_original_amount_tl }
         \bool_if:NT \l_@@_fourty_two_bool
           { \tl_set:Nn \l_@@_original_amount_tl { 42 }  }
       }{
