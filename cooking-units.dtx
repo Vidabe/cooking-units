@@ -4359,10 +4359,13 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     add-natural-unit .code:n = 
       {
-        \@@_error_if_unit_not_defined:n {#1}
         \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-        \seq_concat:NNN \g_@@_natural_units_seq \g_@@_natural_units_seq \l_@@_tmpa_seq
-        \seq_remove_duplicates:N \g_@@_natural_units_seq
+        \seq_map_inline:Nn \l_@@_tmpa_seq
+          {
+            \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnn }
+            \seq_if_in:NnF \l_@@_natural_units_seq {##1}
+              { \seq_put_right:Nn \g_@@_natural_units_seq {##1} }
+          }
       } ,
     add-natural-unit .value_required:n = { true } ,
 %    \end{macrocode}
@@ -4453,6 +4456,7 @@ and the derived file cooking-units.sty.
       \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
       \seq_map_inline:Nn \l_@@_tmpa_seq
         {
+          \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnn }
           \seq_if_in:NnF \l_@@_curef_do_not_change_seq {##1}
             { \seq_put_right:Nn \l_@@_curef_do_not_change_seq {##1} }
         }
@@ -4463,6 +4467,7 @@ and the derived file cooking-units.sty.
       \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
       \seq_map_inline:Nn \l_@@_tmpa_seq
         {
+          \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnnn }
           \seq_if_in:NnTF \l_@@_curef_do_not_change_seq {##1}
             { \seq_remove_all:Nn \l_@@_curef_do_not_change_seq {##1} }
             { 
@@ -5001,15 +5006,18 @@ and the derived file cooking-units.sty.
 %  }
 % A little helper macro. Checks if the unit is defined, if not raise an error.
 %    \begin{macrocode}
-\cs_new:Npn \@@_error_if_unit_not_defined:n #1
+\prg_new_conditional:Npnn \@@_error_if_unit_not_defined:n #1 { TF, T, F }
   {
-    \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#1} 
+    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#1} 
+      { \prg_return_false: }
       { 
         \msg_error:nnn { cooking-units } { unknown-unit } {#1} 
-        \bool_set_true:N \l_@@_unit_error_bool
+        \prg_return_true:
       }
   }
-\cs_generate_variant:Nn \@@_error_if_unit_not_defined:n { V }
+\cs_new:Npn \@@_error_if_unit_not_defined:n #1
+  { \@@_error_if_unit_not_defined:nTF {#1} { } { } }
+\cs_generate_variant:Nn \@@_error_if_unit_not_defined:nTF { V }
 %    \end{macrocode}
 %\end{macro}
 %
@@ -5091,6 +5099,20 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_check_if_correct_gender_input:n }
 %    \begin{macrocode}
+\prg_new_conditional:Npnn \@@_if_gender_error:n #1 { TF }
+  {
+    \str_case:nnTF {#1}
+      {
+        { m } { }
+        { f } { }
+        { n } { }
+      } 
+      { \prg_return_false: }
+      { 
+        \msg_error:nnn { cooking-units } { unknown-gender } {#1} 
+        \prg_return_true:
+      } 
+  }
 \cs_new:Npn \@@_check_if_correct_gender_input:n #1
   {
     \str_case:nnF {#1}
@@ -5109,6 +5131,11 @@ and the derived file cooking-units.sty.
   {
     \seq_new:c { l_@@_group_ #1 _seq }
     \seq_set_from_clist:cn { l_@@_group_ #1 _seq } {#2}
+    \seq_map_inline:cn { l_@@_group_ #1 _seq }
+      {
+        \@@_error_if_unit_not_defined:nT {##1}
+          { \msg_error:nn { cooking-units } { internal-error } }
+      }
     \keys_define:nn { cooking-units }
       { 
         #1 .code:n = { \@@_unit_group_convert_units:nn {#1} {##1} } ,
@@ -5120,20 +5147,28 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{\@@_error_if_group_not_defined:n}
 %    \begin{macrocode}
-\cs_new:Npn \@@_error_if_group_not_defined:n #1
+\prg_new_conditional:Npnn \@@_error_if_group_not_defined:n #1 { T }
   {
-    \seq_if_exist:cF { l_@@_group_ #1 _seq } 
-      { \msg_error:nn { cooking-units} { group-key-unknown } }
+    \seq_if_exist:cTF { l_@@_group_ #1 _seq } 
+      { \prg_return_false: }
+      { 
+        \msg_error:nn { cooking-units} { group-key-unknown } 
+        \prg_return_true:
+      }
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\@@_unit_group_convert_units:nn}
+% Didn't feel like intending the groups, as such use |\use_none:nnnnn(nnn)|.
+% (Always wanted to use those |\use_none:|)
 %    \begin{macrocode}
 \cs_new:Npn \@@_unit_group_convert_units:nn #1#2
   {
-    \@@_error_if_group_not_defined:n {#1}
-    \@@_error_if_unit_not_defined:n {#2}
+    \@@_error_if_group_not_defined:nT {#1}
+      { \use_none:nnnnnnnn }
+    \@@_error_if_unit_not_defined:nT {#2}
+      { \use_none:nnnnn }
     \seq_if_in:cnTF { l_@@_group_ #1 _seq } {#2}
       {
         \seq_map_inline:cn { l_@@_group_ #1 _seq }
@@ -5147,12 +5182,6 @@ and the derived file cooking-units.sty.
           { \seq_use:cnnn { l_@@_group_ #1 _seq } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
       }
   }
-\@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
-\@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
-\@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
-\@@_define_unit_group:nn { temperature } { C , F , K , Re }
-\@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
-\@@_define_unit_group:nn { time } { d , h , min , s }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5164,12 +5193,14 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_unit_group_add_unit:nn #1#2 
   { 
-     \@@_error_if_group_not_defined:n {#1}
+     \@@_error_if_group_not_defined:nT {#1}
+       { \use_none:nnn }
      \clist_map_inline:nn {#2}
        {
-         \@@_error_if_unit_not_defined:n {##1} 
-         \seq_if_in:cnF { l_@@_group_ #1 _seq } {##1}
-           { \seq_put_right:cn { l_@@_group_ #1 _seq } {##1} }
+        \@@_error_if_unit_not_defined:nT {##1} 
+          { \use_none:nnnn }
+        \seq_if_in:cnF { l_@@_group_ #1 _seq } {##1}
+          { \seq_put_right:cn { l_@@_group_ #1 _seq } {##1} }           
        }
   }
 %    \end{macrocode}
@@ -5269,7 +5300,7 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_temperatures_to_check_define:nn #1#2
   {
-    \@@_error_if_unit_not_defined:n {#1}
+    \@@_error_if_unit_not_defined:nT {#1} { \use_none:nnnn }
     \fp_if_exist:cTF { l_@@_ #1 _min_fp }
       { 
 %        \msg_warning:nnn { cooking-units } { Minimum-already-defined } {#1} 
@@ -5287,8 +5318,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_erase_options_for:n #1
   {
-    \@@_error_if_unit_not_defined:n {#1}
-    \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
+    \@@_error_if_unit_not_defined:nF {#1}
+      { \clist_clear:c { l_@@_predefined_option_ ##1 _clist } }
   }
 \cs_new:Npn \@@_erase_options_for_error:nn #1#2
   {
@@ -5307,8 +5338,8 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
-    \@@_error_if_unit_not_defined:n {#1}
-    \clist_set:cn { l_@@_predefined_option_#1_clist } {#2}
+    \@@_error_if_unit_not_defined:nF {#1}
+     { \clist_set:cn { l_@@_predefined_option_#1_clist } {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5322,8 +5353,8 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
-    \@@_error_if_unit_not_defined:n {#1}
-    \clist_put_right:cn { l_@@_predefined_option_ #1 _clist } {#2}
+    \@@_error_if_unit_not_defined:nF {#1}
+      { \clist_put_right:cn { l_@@_predefined_option_ #1 _clist } {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5612,11 +5643,13 @@ and the derived file cooking-units.sty.
 \cs_new_protected:Npn \@@_initialise_default:n #1
   {
     \@@_set_unit:Nn \l_@@_original_unit_tl {#1}
-    \bool_set_false:N \l_@@_unit_error_bool
     \bool_set_false:N \l_@@_error_bool
-    \@@_error_if_unit_not_defined:V \l_@@_original_unit_tl
-    \bool_if:NT \l_@@_unit_error_bool
-      { \cs_set_eq:NN \@@_print_correct_unit: \@@_print_default_unit: }
+    \@@_error_if_unit_not_defined:VTF \l_@@_original_unit_tl
+      { 
+        \bool_set_true:N \l_@@_unit_error_bool 
+        \cs_set_eq:NN \@@_print_correct_unit: \@@_print_default_unit:
+      } 
+      { \bool_set_false:N \l_@@_unit_error_bool }
     \bool_set_false:N \l_@@_special_sign_bool
     \bool_set_false:N \l_@@_range_in_input_bool
     \bool_set_false:N \l_@@_lokal_fraction_bool
@@ -6976,9 +7009,11 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
-    \@@_error_if_unit_not_defined:n {#1}
-    \seq_put_right:Nn \l_@@_tmpa_seq {#1}
-    \prop_put:Nnx \l_@@_tmpa_prop {#1} { \fp_eval:n { (#2) / \l_@@_tmpa_fp } }
+    \@@_error_if_unit_not_defined:nF {#1}
+      {
+        \seq_put_right:Nn \l_@@_tmpa_seq {#1}
+        \prop_put:Nnx \l_@@_tmpa_prop {#1} { \fp_eval:n { (#2) / \l_@@_tmpa_fp } }
+      }
     \@@_cukeys_parse_input:nn
   }
 %    \end{macrocode}
@@ -7145,11 +7180,13 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
-    \@@_error_if_unit_not_defined:n {#1}
-    \seq_put_right:Nn \l_@@_tmpa_seq {#1}
-    \tl_set:Nn \l_@@_tmpa_tl {#2}
-    \tl_replace_all:NVn \l_@@_tmpa_tl \c_@@_input_str_hash_one_tl { \l_@@_tmpa_fp }
-    \prop_put:NnV \l_@@_tmpa_prop {#1} \l_@@_tmpa_tl
+    \@@_error_if_unit_not_defined:nF {#1}
+      {
+        \seq_put_right:Nn \l_@@_tmpa_seq {#1}
+        \tl_set:Nn \l_@@_tmpa_tl {#2}
+        \tl_replace_all:NVn \l_@@_tmpa_tl \c_@@_input_str_hash_one_tl { \l_@@_tmpa_fp }
+        \prop_put:NnV \l_@@_tmpa_prop {#1} \l_@@_tmpa_tl
+      }
     \@@_cusinglekeys_parse_input_aux:nn
   }
 %    \end{macrocode}
@@ -7228,7 +7265,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_add_keys_or_single_keys:nn #1#2
   {
-    \@@_error_if_unit_not_defined:n {#1}
+    \@@_error_if_unit_not_defined:nT {#1} { \use_none:nnnnnnn }
     \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1}
       { \msg_error:nnn { cooking-units } { Key-not-defined } {#1} }
     \tl_if_blank:nF {#2}
@@ -7425,7 +7462,8 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
-    \@@_error_if_unit_not_defined:n {#1}
+    \@@_error_if_unit_not_defined:nT {#1}
+      { \use_none_delimit_by_q_recursion_stop:w }
     \quark_if_no_value:nTF {#2}
       {
         \@@_deftranslation_to:VxVv 
@@ -7449,7 +7487,10 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
     \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
-      { \@@_error_if_unit_not_defined:n {#1} }
+      { 
+        \@@_error_if_unit_not_defined:nT {#1} 
+          { \use_none_delimit_by_q_recursion_stop:w }
+      }
     \@@_deftranslation_to:VxVn 
       \l_@@_language_tl {#1} 
       \c_@@_postfix_unitname_tl {#2}
@@ -7476,10 +7517,20 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuname_parse_gender:nw #1 <#2>
   {
-    \@@_check_if_correct_gender_input:n {#2}
-    \@@_deftranslation_to:VxVn 
-      \l_@@_language_tl {#1} 
-      \c_@@_postfix_gender_tl {#2}
+%    \@@_check_if_correct_gender_input:n {#2}
+%    \@@_deftranslation_to:VxVn 
+%      \l_@@_language_tl {#1} 
+%      \c_@@_postfix_gender_tl {#2}
+    \@@_if_gender_error:nTF {#2}
+      {
+        \@@_deftranslation_to:VxVn 
+          \l_@@_language_tl {#1} 
+          \c_@@_postfix_gender_tl { m }
+      }{
+        \@@_deftranslation_to:VxVn 
+          \l_@@_language_tl {#1} 
+          \c_@@_postfix_gender_tl {#2}
+      }
     \@@_cuname_parse_input:n
   }
 %    \end{macrocode}
@@ -7509,10 +7560,12 @@ and the derived file cooking-units.sty.
         \@@_deftranslation_to:VxVn \l_@@_language_tl {#1} 
           \c_@@_postfix_unitname_tl {#2}
       }{ 
-        \@@_error_if_unit_not_defined:n {#1} 
-        \@@_deftranslation_to:VxVn 
-          \l_@@_language_tl {#1} 
-          \c_@@_postfix_unit_tl {#2}
+        \@@_error_if_unit_not_defined:nF {#1} 
+          {
+            \@@_deftranslation_to:VxVn 
+              \l_@@_language_tl {#1} 
+              \c_@@_postfix_unit_tl {#2}
+          }
       }
     \@@_cuprint_define_printed_unit:nn
   }  
@@ -7649,10 +7702,20 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_chuphrase_parse_gender:nw #1 <#2>
   {
-    \@@_check_if_correct_gender_input:n {#2}
-    \@@_deftranslation_to:VxVn 
-      \l_@@_language_tl { #1-phrase-gender } 
-      \c_@@_postfix_gender_tl {#2}
+%    \@@_check_if_correct_gender_input:n {#2}
+%    \@@_deftranslation_to:VxVn 
+%      \l_@@_language_tl { #1-phrase-gender } 
+%      \c_@@_postfix_gender_tl {#2}
+    \@@_if_gender_error:nTF {#2}
+      {
+        \@@_deftranslation_to:VxVn 
+          \l_@@_language_tl { #1-phrase-gender } 
+          \c_@@_postfix_gender_tl { m }
+      }{
+        \@@_deftranslation_to:VxVn 
+          \l_@@_language_tl { #1-phrase-gender } 
+          \c_@@_postfix_gender_tl {#2}
+      }    
     \@@_cuphrase_parse:n
   }
 %    \end{macrocode}
@@ -8253,6 +8316,12 @@ and the derived file cooking-units.sty.
 % \subsection{Finish}
 %
 %    \begin{macrocode}
+\@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
+\@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
+\@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
+\@@_define_unit_group:nn { temperature } { C , F , K , Re }
+\@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
+\@@_define_unit_group:nn { time } { d , h , min , s }
 \cusetup 
   { 
     set-option-for-F = { round-precision = 0 } ,
