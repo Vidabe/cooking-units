@@ -3513,8 +3513,10 @@ and the derived file cooking-units.sty.
 % This command is used to print the fractions and can be changed
 % accordingly.
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_numeral:n #1 { \msg_error:nnn {cooking-units} { define-numeral-function } }
-\cs_new:Npn \@@_print_Numeral:n #1 { \msg_error:nnn {cooking-units} { define-Numeral-function } }
+\cs_new:Npn \@@_print_numeral:n #1 
+  { \msg_error:nnn {cooking-units} { define-numeral-function } }
+\cs_new:Npn \@@_print_Numeral:n #1 
+  { \msg_error:nnn {cooking-units} { define-Numeral-function } }
 \bool_if:NT \g_@@_opt_numeral_bool
   {
     \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
