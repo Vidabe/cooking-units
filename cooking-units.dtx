@@ -7704,10 +7704,6 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_chuphrase_parse_gender:nw #1 <#2>
   {
-%    \@@_check_if_correct_gender_input:n {#2}
-%    \@@_deftranslation_to:VxVn 
-%      \l_@@_language_tl { #1-phrase-gender } 
-%      \c_@@_postfix_gender_tl {#2}
     \@@_if_gender_error:nTF {#2}
       {
         \@@_deftranslation_to:VxVn 
