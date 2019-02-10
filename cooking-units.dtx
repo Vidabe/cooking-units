@@ -3932,7 +3932,7 @@ and the derived file cooking-units.sty.
       { 
         \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
           {
-            \clist_clear:c { l_@@_predefined_option_ ##1 _clist }
+            \clist_clear:c { l_@@_unit_option_ ##1 _clist }
           }
         },
     erase-all-options .value_forbidden:n = { true } ,
@@ -5321,7 +5321,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_erase_options_for:n #1
   {
     \@@_error_if_unit_not_defined:nF {#1}
-      { \clist_clear:c { l_@@_predefined_option_ ##1 _clist } }
+      { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
   }
 \cs_new:Npn \@@_erase_options_for_error:nn #1#2
   {
@@ -5341,7 +5341,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
     \@@_error_if_unit_not_defined:nF {#1}
-     { \clist_set:cn { l_@@_predefined_option_#1_clist } {#2} }
+     { \clist_set:cn { l_@@_unit_option_ #1_clist } {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5356,7 +5356,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
     \@@_error_if_unit_not_defined:nF {#1}
-      { \clist_put_right:cn { l_@@_predefined_option_ #1 _clist } {#2} }
+      { \clist_put_right:cn { l_@@_unit_option_ #1 _clist } {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5680,12 +5680,12 @@ and the derived file cooking-units.sty.
   {
     \IfNoValueF {#1}
       { \@@_reference_label_and_persons:n {#1} }
-    \clist_if_empty:cF { l_@@_predefined_option_ \l_@@_option_unit_tl _clist }
+    \clist_if_empty:cF { l_@@_unit_option_ \l_@@_option_unit_tl _clist }
       {
         \keys_set_filter:nnv 
           { cooking-units } 
           { change-unit } 
-          { l_@@_predefined_option_ \l_@@_option_unit_tl _clist }
+          { l_@@_unit_option_ \l_@@_option_unit_tl _clist }
       }
     \tl_if_empty:nF {#2}
       { \keys_set_filter:nnn { cooking-units } { change-unit } {#2} }
@@ -6707,7 +6707,7 @@ and the derived file cooking-units.sty.
 \tl_const:Nn \c_@@_cuam_marker_tl { @@_cunum }
 \tl_new:c { l_@@_unit_change_ \c_@@_cuam_marker_tl _tl }
 \tl_set:cn { l_@@_unit_change_ \c_@@_cuam_marker_tl _tl } { 1.0 }
-\clist_new:c { l_@@_predefined_option_ \c_@@_cuam_marker_tl _clist }
+\clist_new:c { l_@@_unit_option_ \c_@@_cuam_marker_tl _clist }
 %    \end{macrocode}
 %
 % Replaces and extends \mycs{cufrac}.
@@ -7335,12 +7335,12 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \g_@@_list_of_defined_units_seq {#2}
         \tl_new:c { l_@@_unit_change_ #2 _tl }
         \tl_set:cn { l_@@_unit_change_ #2 _tl } { 1.0 }
-        \clist_new:c { l_@@_predefined_option_#2_clist } 
+        \clist_new:c { l_@@_unit_option_ #2 _clist } 
         \keys_define:nn { cooking-units }
           {
-            set-option-for-#2 .clist_set:c = { l_@@_predefined_option_#2_clist } ,
+            set-option-for-#2 .clist_set:c = { l_@@_unit_option_ #2_clist } ,
             add-option-for-#2 .code:n = 
-              { \clist_put_right:cn { l_@@_predefined_option_#2_clist } {##1} },
+              { \clist_put_right:cn { l_@@_unit_option_ #2_clist } {##1} },
           }
         \prop_new:c { l_@@_cukeys_ #2 _prop }
         \tl_new:c { l_@@_default_unit_ #2 _tl }
