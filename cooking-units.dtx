@@ -4177,7 +4177,7 @@ and the derived file cooking-units.sty.
     round-to-int .choices:nn = 
       { true , false }
       {
-        \msg_warning:nnnn { cooking-units } { Option-deprecated }  { round-to-int } { round-precision = 0 }
+        \msg_error:nnnn { cooking-units } { Option-deprecated }  { round-to-int } { round-precision = 0 }
         \int_compare:nNnTF { \l_keys_choice_int } = { 1 }
           {
             \int_set:Nn \l_@@_round_precision_int { 0 }
