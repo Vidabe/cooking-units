@@ -55,7 +55,7 @@ License
 -------
 This material is subject to the LaTeX Project Public License 1.3c or later. See
 
-  https://ctan.org/license/lppl1.3c
+  https://www.latex-project.org/lppl/
 
 for the details of that license.
 
