@@ -7088,8 +7088,9 @@ and the derived file cooking-units.sty.
   {
     \prop_clear:N \l_@@_tmpb_prop
     \prop_put:NnV \l_@@_tmpb_prop { Liste } \l_@@_tmpa_seq
-    \prop_put:NnV \l_@@_tmpb_prop { prop } \l_@@_tmpa_prop
     \prop_put:NnV \l_@@_tmpb_prop { Erstes Ding } \l_@@_original_unit_tl
+    %% Test
+%    \prop_put:NnV \l_@@_tmpb_prop { prop } \l_@@_tmpa_prop
     \seq_map_inline:Nn \l_@@_tmpa_seq
       {
         \prop_set_eq:cN { l_@@_cukeys_ ##1 _prop } \l_@@_tmpb_prop
@@ -7208,7 +7209,8 @@ and the derived file cooking-units.sty.
     \prop_set_eq:cN { l_@@_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnn { l_@@_cukeys_ #1 _prop } { Erstes Ding } {#1}
     \prop_put:cnV { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
-    \prop_put:cnV { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
+    %% Test
+%    \prop_put:cnV { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
   }
 %    \end{macrocode}
 %
@@ -7294,8 +7296,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cukeys_add_keys_and_single_key_aux:n #1
   { 
     \prop_get:cnN { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
-    \prop_get:cnN { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
+    %% Test
+%    \prop_get:cnN { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
     \prop_get:cnN { l_@@_cukeys_ #1 _prop } { Erstes Ding } \l_@@_original_unit_tl
+    \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_cukeys_ \l_@@_original_unit_tl _prop } 
     \prop_get:cVN { l_@@_cukeys_ #1 _prop } \l_@@_original_unit_tl \l_@@_tmpa_fp
   }
 %    \end{macrocode}
