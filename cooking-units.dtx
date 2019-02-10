@@ -4981,6 +4981,14 @@ and the derived file cooking-units.sty.
     The \ amount \ given \ is \ empty.
     \msg_see_documentation_text:n { cooking-units } 
   }
+%
+\msg_new:nnnn { cooking-units } { unknown-option } 
+  { 
+    The \ option \ '#1' \ is \ not \ defined.
+  }{ 
+    Perhaps \ you \ misspelled \ the \ option.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
 %    \end{macrocode}
 %
 %
@@ -7936,6 +7944,85 @@ and the derived file cooking-units.sty.
 %
 %
 %
+%
+%
+% Not really happy with the construction, but it works ...
+%    \begin{macrocode}
+\NewDocumentCommand \cusetunitoption { m m }
+  {
+    \@@_map_trough_valid_unit_options:nnNn
+      {#1} {#2} \l_@@_tmpa_clist 
+      {  
+        \clist_set_eq:cN { l_@@_unit_option_ ##1 _clist } \l_@@_tmpa_clist
+      }
+  }
+\NewDocumentCommand \cuaddunitoption { m m }
+  {
+    \@@_map_trough_valid_unit_options:nnNn 
+      {#1} {#2} \l_@@_tmpa_clist 
+      {  
+        \clist_put_right:cV { l_@@_unit_option_ ##1 _clist } \l_@@_tmpa_clist
+      }
+  }
+\NewDocumentCommand \cuclearunitoption { m }
+  {
+    \@@_map_trough_valid_unit_options:nnNn 
+      {#1} { } \l_@@_tmpa_clist 
+      {  
+        \clist_clear:c { l_@@_unit_option_ ##1 _clist }
+      }
+  }
+%    \end{macrocode}
+% The reason I map trough the units twice is simply: I think it makes more
+% sense if an \enquote{unknown unit} error is shown before an 
+% \enquote{unknown option} error.
+% It is kinda stupid, but this is not really a heavily used function, so \dots\ yeah.
+%
+% Note: I cannot check if |\l_@@_tmpa_clist| is empty because one could
+% use |\cusetunitoption{F,C,Re,K}{}| to clear the options of the given units.
+%    \begin{macrocode}
+\cs_new:Npn \@@_map_trough_valid_unit_options:nnNn #1#2 #3#4
+  {
+    \clist_clear:N \l_@@_tmpa_clist
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_map_inline:Nn \l_@@_tmpa_seq
+      { \@@_error_if_unit_not_defined:n {##1} }
+    \tl_if_empty:nF {#2}
+      { \@@_unit_options_check_validity:n {#2} }
+    \clist_set_eq:NN #3 \l_@@_tmpa_clist
+    \seq_map_inline:Nn \l_@@_tmpa_seq 
+      {
+        \seq_if_in:NnT \g_@@_list_of_defined_units_seq {##1}
+          {#4}
+      }
+  }
+\cs_new:Npn \@@_unit_options_check_validity:n #1
+  {
+    \keyval_parse:NNn
+      \@@_unit_options_check_validity_aux_i:n
+      \@@_unit_options_check_validity_aux_ii:nn
+      {#1}
+  }
+\cs_new:Npn \@@_unit_options_check_validity_aux_i:n #1
+  {
+    \keys_if_exist:nnTF { cooking-units } {#1}
+      { \clist_put_right:Nn \l_@@_tmpa_clist {#1} }
+      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
+  }
+\cs_new:Npn \@@_unit_options_check_validity_aux_ii:nn #1#2
+  {
+    \keys_if_exist:nnTF { cooking-units } {#1}
+      { \clist_put_right:Nn \l_@@_tmpa_clist { #1={#2} } }
+      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
+  }
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+%
 % \subsection {cusetup}
 %
 %    \begin{macrocode}
@@ -8320,12 +8407,9 @@ and the derived file cooking-units.sty.
 \@@_define_unit_group:nn { temperature } { C , F , K , Re }
 \@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
 \@@_define_unit_group:nn { time } { d , h , min , s }
+\cusetunitoption { F , C , K , Re } { round-precision = 0 }
 \cusetup 
   { 
-    set-option-for-F = { round-precision = 0 } ,
-    set-option-for-C = { round-precision = 0 } ,
-    set-option-for-K = { round-precision = 0 } ,
-    set-option-for-Re = { round-precision = 0 } ,
     curef-add-forbidden-unit = { F , C , K , Re } ,
     add-temperature-to-check =
       {
