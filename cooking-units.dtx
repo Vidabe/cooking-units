@@ -7088,7 +7088,6 @@ and the derived file cooking-units.sty.
   {
     \prop_clear:N \l_@@_tmpb_prop
     \prop_put:NnV \l_@@_tmpb_prop { Liste } \l_@@_tmpa_seq
-    \prop_put:NnV \l_@@_tmpb_prop { prop } \l_@@_tmpa_prop
     \prop_put:NnV \l_@@_tmpb_prop { Erstes Ding } \l_@@_original_unit_tl
     \seq_map_inline:Nn \l_@@_tmpa_seq
       {
@@ -7208,7 +7207,6 @@ and the derived file cooking-units.sty.
     \prop_set_eq:cN { l_@@_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnn { l_@@_cukeys_ #1 _prop } { Erstes Ding } {#1}
     \prop_put:cnV { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
-    \prop_put:cnV { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
   }
 %    \end{macrocode}
 %
@@ -7289,13 +7287,21 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_cukeys_add_keys_or_single_keys:nn { nV }
 %    \end{macrocode}
 %
-%
+%^^A ((((
+% Now this does the following: 1) get the \enquote{original unit} (the unit used
+% in the first argument of |\cudefinekeys|) 2) Get the list of units already in the
+% list (It is important that the units are alway in the same order and one cannot
+% rely on the order of the property-lists 3) Get the property list of the 
+% \enquote{original unit}. In the old code I simply stored the whole property list inside
+% another property list, but this shouldn't be done this way. So \dots\ simply
+% copy the original one. 4) As there is a unit added the unit it is added to 
+% might not be the \enquote{original unit}. As such we need the conversion factor.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_add_keys_and_single_key_aux:n #1
   { 
-    \prop_get:cnN { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
-    \prop_get:cnN { l_@@_cukeys_ #1 _prop } { prop } \l_@@_tmpa_prop
     \prop_get:cnN { l_@@_cukeys_ #1 _prop } { Erstes Ding } \l_@@_original_unit_tl
+    \prop_get:cnN { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
+    \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_cukeys_ \l_@@_original_unit_tl _prop }
     \prop_get:cVN { l_@@_cukeys_ #1 _prop } \l_@@_original_unit_tl \l_@@_tmpa_fp
   }
 %    \end{macrocode}
