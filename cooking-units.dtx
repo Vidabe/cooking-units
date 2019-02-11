@@ -7021,7 +7021,8 @@ and the derived file cooking-units.sty.
       { \msg_error:nn { cooking-units } { missing-argument } }
     \@@_error_if_unit_not_defined:nF {#1}
       {
-        \seq_put_right:Nn \l_@@_tmpa_seq {#1}
+        \seq_if_in:NnF \l_@@_tmpa_seq {#1}
+          { \seq_put_right:Nn \l_@@_tmpa_seq {#1} }
         \prop_put:Nnx \l_@@_tmpa_prop {#1} { \fp_eval:n { (#2) / \l_@@_tmpa_fp } }
       }
     \@@_cukeys_parse_input:nn
@@ -7191,7 +7192,8 @@ and the derived file cooking-units.sty.
       { \msg_error:nn { cooking-units } { missing-argument } }
     \@@_error_if_unit_not_defined:nF {#1}
       {
-        \seq_put_right:Nn \l_@@_tmpa_seq {#1}
+        \seq_if_in:NnF \l_@@_tmpa_seq {#1}
+          { \seq_put_right:Nn \l_@@_tmpa_seq {#1} }
         \tl_set:Nn \l_@@_tmpa_tl {#2}
         \tl_replace_all:NVn \l_@@_tmpa_tl \c_@@_input_str_hash_one_tl { \l_@@_tmpa_fp }
         \prop_put:NnV \l_@@_tmpa_prop {#1} \l_@@_tmpa_tl
