@@ -146,6 +146,7 @@ and the derived file cooking-units.sty.
 \usepackage{siunitx}
 \usepackage{totalcount}
 \usepackage{microtype}
+\usepackage{enumitem}
 
 
 \newcounter{CookingUnitsCounter}
@@ -171,6 +172,8 @@ and the derived file cooking-units.sty.
 \cusetup{print-numerals=false}
 
 %\EnableCrossrefs
+
+\newcommand\US{$^{\mathrm{U.S.}}$}
 
 
 %\newcommand\TODO[1]{\footnote{\textcolor{red}{#1}}}
@@ -331,6 +334,7 @@ and the derived file cooking-units.sty.
 \ProvideDocumentEnvironment{cuexamplecode}{}{}{}{}
 
 
+
 \NewDocumentEnvironment { cuexample } { }
   { 
     \paragraph{Example:} 
@@ -345,6 +349,13 @@ and the derived file cooking-units.sty.
   {
     \paragraph{Note:}
   }{ }
+
+\NewEnviron { cuenumnote }
+  {
+    \begin{enumerate}[label={Note \space \arabic*:}]
+      \BODY
+    \end{enumerate}
+  }
 
 
 \NewDocumentEnvironment { cuinterest } { m }
@@ -3227,6 +3238,118 @@ and the derived file cooking-units.sty.
 % \end{itemize}
 %
 % \clearpage
+%
+%
+%
+%
+%
+%
+%
+%
+% \section{Tabular}
+%
+%As source \cite{WM1985} has been used for imperial units, while \cite{Nist2006}
+%and \cite{Nist2008} was used for U.S.\ units. I hope someone will find this
+%bringing together useful.
+%
+%\begin{center}
+%\begin{tabular}{ l @{ } l }
+%\toprule
+%  1 yard &= \SI{0.9144}{\m} (exact) \\
+%  1 yard &= 3 foot \\
+%  1 yard &= 36 Inch \\ \midrule
+%  1 Inch &= \SI{0.0254}{\m} (also exact) \\
+%  \bottomrule
+%\end{tabular}
+%\end{center}
+%
+%\begin{center}
+%\begin{tabular}{r@{ }l r@{ }l} 
+%\toprule
+%  \multicolumn{4}{c}{  1 liter = \SI{1}{\cubic\deci\meter} } \\ \midrule
+%  1 gallon &= \SI{4.54609}{liter} (exact) & 1 U.S.\ gallon &= 231\,Inch$^3$ $=$ 
+%    $231\times \num{0,016387064}$ liter \\
+%  1 gallon &= 4 Quart   & 1 U.S.\ gallon &= 4 Quart\US\\
+%  1 gallon &= 8 Pint     & 1 U.S.\ gallon &= 8 Pint\US\\
+%  1 gallon &= 32 Gill    & 1 U.S.\ gallon &= 32 Gill\US\\
+%  1 gallon &= 160\,fl.\,oz & 1 U.S.\ gallon &= 128\,fl.\,oz\US \\\midrule
+%  1 \,fl.\,oz&= \num{0.0284130625} liter & 1\,fl.\,oz\US & = \num{0.0295735295625} liter
+%  \\ \bottomrule
+%\end{tabular}\\ \footnotesize\raggedright
+%\begin{cuenumnote}
+%  \item I think the American fl.\,oz\US\ is more common. Maybe. Most bottles
+%    have something like 10\,fl.\,oz, which they say is equal to \SI{30}{\ml}. This would
+%    work really well with fl.\,oz\US.
+%  \item Sometimes \enquote{fl.\,oz} is written without the dot. I am also not sure what
+%    kind of spacing has to be between \enquote{fl.} and \enquote{oz} (currently
+%    using \cs{thinspace}).
+%  \item This maybe sounds stupid, but could we introduce something like
+%    \enquote{flouz}, \enquote{floiz} and \enquote{floez}? \enquote{flouz} would be
+%    \enquote{fl.\,oz\US}, \enquote{floiz} would be \enquote{Imperial fl.\,oz} and
+%    \enquote{floez} would simply be equal to \SI{30}{\ml}?
+%\end{cuenumnote}
+%\end{center}
+%
+%
+%\begin{center}
+%\begin{tabular} { l @{ } l }
+%  \toprule
+%  1\,lb &= \SI{0.453 592 37}{\kg} (exact) \\
+%  1\,lb &= 16\,oz  \\
+%  1\,lb &= \sfrac{1}{14}\,st  \\
+%  1\,lb &= \sfrac{175}{12}\,ounce~troy \\
+%  \bottomrule
+%\end{tabular}
+%\end{center}
+%
+%
+%
+%\begin{center}
+%\begin{tabular} { r @{ } l @{ }l r @{ } l }
+%  \toprule
+% 1 cup &$\approx$  \num{0.25} litre &= \SI{250}{\ml} &1 cup\US &= 8\, fl.\,oz\US \\
+% 1 tablespoon &$\approx$  \num{0.015} litre&= \SI{15}{\ml} & 1 tablespoon\US &= \sfrac{1}{2}\, fl.\,oz\US \\
+% 1 teaspoon &$\approx$  \num{0.005} litre &= \SI{5}{\ml} & 1 teaspoon\US&= \sfrac{1}{6}\, fl.\,oz\US \\
+% \bottomrule
+%\end{tabular} \footnotesize \\  \raggedright
+%\begin{cuenumnote}
+%  \item I tested the approximation for tablespoon   with water
+%    ($\SI{1}{\mg} \approx \SI{1}{\mg}$) and the approximation looks good enough.
+%    It of course depends on how full you fill your spoon.
+%\end{cuenumnote}
+%\end{center}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 %
 % \begin{comment}
 %^^A \section{Notes and other stuff}
@@ -8487,13 +8610,23 @@ and the derived file cooking-units.sty.
 %
 % \begin{thebibliography}{}
 %   \bibitem{Gattopardo} 
-%     Guiseppe Tomasi di Lampedusa, \enquote{Der Gattopardo},
+%     Guiseppe Tomasi di Lampedusa, \emph{Der Gattopardo},
 %     Piper, Volume~8 (2018), ISBN~978-3-492-24586-9
 %
 %   \bibitem{Sh:3} 
-%     Sir Arthur Conan Doyle, \enquote{Sherlock Holmes The Complete Novels and Stories Volume~II},
+%     Sir Arthur Conan Doyle, \emph{Sherlock Holmes The Complete Novels and Stories Volume~II},
 %     Bantam Books
-%     
+%
+%  \bibitem{Nist2008} \emph{Guide for the Use of the International System of Units (SI)},
+%    NIST Special Publication 811, 2008 Edition, Ambler Thompson and Barry N. Taylor
+%
+%  \bibitem{Nist2006} \emph{The International System of Units (SI) – Conversion Factors 
+%    for General Use}, NIST Special Publication 1038, May 2006,
+%    Kenneth Butcher, Linda Crown and Elizabeth J. Gentry
+%
+%  \bibitem{WM1985} \emph{Weights and Measures Act 1985},
+%    \url{https://www.legislation.gov.uk/ukpga/1985/72}
+%
 %
 % \end{thebibliography}
 %
