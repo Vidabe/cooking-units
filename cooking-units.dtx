@@ -4060,10 +4060,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     erase-all-options .code:n = 
       { 
-        \seq_map_inline:Nn \g_@@_list_of_defined_units_seq
-          {
-            \clist_clear:c { l_@@_unit_option_ ##1 _clist }
-          }
+        \exp_args:Nx \cuclearunitoption { \seq_use:Nn \g_@@_list_of_defined_units_seq { , } }
         },
     erase-all-options .value_forbidden:n = { true } ,
 %    \end{macrocode}
@@ -5478,7 +5475,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
     \@@_error_if_unit_not_defined:nF {#1}
-     { \clist_set:cn { l_@@_unit_option_ #1_clist } {#2} }
+     { \cusetunitoption {#1} {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5493,7 +5490,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
     \@@_error_if_unit_not_defined:nF {#1}
-      { \clist_put_right:cn { l_@@_unit_option_ #1 _clist } {#2} }
+      { \cuaddunitoption {#1} {#2} }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7515,9 +7512,8 @@ and the derived file cooking-units.sty.
         \clist_new:c { l_@@_unit_option_ #2 _clist } 
         \keys_define:nn { cooking-units }
           {
-            set-option-for-#2 .clist_set:c = { l_@@_unit_option_ #2_clist } ,
-            add-option-for-#2 .code:n = 
-              { \clist_put_right:cn { l_@@_unit_option_ #2_clist } {##1} },
+            set-option-for-#2 .code:n =  { \cusetunitoption {#2} {##1} } ,
+            add-option-for-#2 .code:n = { \cuaddunitoption {#2} {##1} },
           }
         \tl_new:c { l_@@_base_key_unit_ #2 _tl }
         \tl_new:c { l_@@_default_unit_ #2 _tl }
@@ -8115,7 +8111,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% Not really happy with the construction, but it works ...
+% Works better now.
 %    \begin{macrocode}
 \NewDocumentCommand \cusetunitoption { m m }
   {
