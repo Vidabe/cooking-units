@@ -8116,27 +8116,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \cusetunitoption { m m }
   {
-    \@@_map_trough_valid_unit_options:nnNn
-      {#1} {#2} \l_@@_tmpa_clist 
-      {  
-        \clist_set_eq:cN { l_@@_unit_option_ ##1 _clist } \l_@@_tmpa_clist
-      }
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
+      { \clist_set:cn { l_@@_unit_option_ ##1 _clist } {##2} }
   }
 \NewDocumentCommand \cuaddunitoption { m m }
   {
-    \@@_map_trough_valid_unit_options:nnNn 
-      {#1} {#2} \l_@@_tmpa_clist 
-      {  
-        \clist_put_right:cV { l_@@_unit_option_ ##1 _clist } \l_@@_tmpa_clist
-      }
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
+      { \clist_put_right:cn { l_@@_unit_option_ ##1 _clist } {##2} }
   }
 \NewDocumentCommand \cuclearunitoption { m }
   {
-    \@@_map_trough_valid_unit_options:nnNn 
-      {#1} { } \l_@@_tmpa_clist 
-      {  
-        \clist_clear:c { l_@@_unit_option_ ##1 _clist }
-      }
+    \@@_map_trough_valid_unit_options:nnn {#1} { } 
+      { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
   }
 %    \end{macrocode}
 % The reason I map trough the units twice is simply: I think it makes more
@@ -8147,20 +8138,21 @@ and the derived file cooking-units.sty.
 % Note: I cannot check if |\l_@@_tmpa_clist| is empty because one could
 % use |\cusetunitoption{F,C,Re,K}{}| to clear the options of the given units.
 %    \begin{macrocode}
-\cs_new:Npn \@@_map_trough_valid_unit_options:nnNn #1#2 #3#4
+\cs_new:Npn \@@_tmp:w { }
+\cs_new:Npn \@@_map_trough_valid_unit_options:nnn #1#2 #3
   {
+    \seq_clear:N \l_@@_tmpa_seq
     \clist_clear:N \l_@@_tmpa_clist
-    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-    \seq_map_inline:Nn \l_@@_tmpa_seq
-      { \@@_error_if_unit_not_defined:n {##1} }
+    \cs_set:Npn \@@_tmp:w ##1##2 {#3}
+    \clist_map_inline:nn {#1}
+      {
+        \@@_error_if_unit_not_defined:nF {##1}
+          { \seq_put_right:Nn \l_@@_tmpa_seq {##1} }
+      }
     \tl_if_empty:nF {#2}
       { \@@_unit_options_check_validity:n {#2} }
-    \clist_set_eq:NN #3 \l_@@_tmpa_clist
     \seq_map_inline:Nn \l_@@_tmpa_seq 
-      {
-        \seq_if_in:NnT \g_@@_list_of_defined_units_seq {##1}
-          {#4}
-      }
+      { \exp_args:NnV \@@_tmp:w {##1} \l_@@_tmpa_clist }
   }
 \cs_new:Npn \@@_unit_options_check_validity:n #1
   {
