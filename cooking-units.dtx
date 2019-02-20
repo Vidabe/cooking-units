@@ -7540,8 +7540,68 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
+%    \begin{macrocode}
+\cs_generate_variant:Nn \clist_item:Nn { cx }
+
+
+
+\NewDocumentCommand \newcookingderivative  { m m m m }
+  {
+    \@@_new_cooking_derivative:nnn {#1} {#2} {#3} {#4}
+  }
+
+\cs_new:Npn \@@_tmp:w { }
+\cs_new:Npn \@@_new_cooking_derivative:nnn #1#2#3#4
+  {
+    \clist_set:Nn \l_tmpa_clist {#1}
+    \cs_generate_from_arg_count:NNnn \@@_tmp:w \cs_set:Npn
+      { \clist_count:N \l_tmpa_clist } {#3}
+    \tl_clear:N \l_tmpa_tl
+    
+    \int_set:Nn \l_tmpa_int { 1 }
+    \prop_clear:N \l_tmpa_prop
+    \seq_clear:N \l_tmpa_seq
+    
+    \tl_clear:N \l_tmpb_tl
+    \int_step_function:nN { \clist_count:N \l_tmpa_clist } \@@_int_step_function:n
+    \newpage
+    \int_step_function:nN { \clist_count:c { l_@@_tmpa_ \clist_item:Nn \l_tmpa_clist { \l_tmpa_int } _clist } } \@@_int_step_function:n
+    
+    \clist_map_inline:Nn \l_tmpa_clist
+      { \tl_put_right:Nn \l_tmpa_tl {{##1}}  }
+    \exp_after:wN\@@_tmp:w \l_tmpa_tl
+    \clist_map_inline:Nn \l_tmpa_clist
+      {
+        ##1
+      }
+    
+  }
+
+\cs_new:Npn \@@_int_step_function:n #1 
+  { 
+    \prop_put:NVn \l_tmpa_prop \l_tmpa_int {#1}
+    \int_compare:nNnTF { \l_tmpa_int } = { \clist_count:N \l_tmpa_clist }
+      {
+        \tl_clear:N \l_tmpa_tl
+        \int_step_inline:nn { \clist_count:N \l_tmpa_clist }
+          { 
+            \tl_put_right:Nx \l_tmpa_tl
+             {{
+               \clist_item:cn { l_@@_values_ \clist_item:Nn \l_tmpa_clist {##1} _clist } 
+                 { \prop_item:Nn \l_tmpa_prop {##1} }
+             }}
+          }
+        \fp_eval:n { \exp_after:wN \@@_tmp:w \l_tmpa_tl }
+         \par
+      }{
+        \int_incr:N \l_tmpa_int
+        \int_step_function:nN { \clist_count:c { l_@@_tmpa_ \clist_item:Nn \l_tmpa_clist { \l_tmpa_int } _clist } } \@@_int_step_function:n
+        \exp_args:NNV \prop_remove:Nn \l_tmpa_prop \l_tmpa_int
+        \int_decr:N \l_tmpa_int
+      }
+  }
+
+%    \end{macrocode}
 %
 %
 %
