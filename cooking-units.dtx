@@ -789,7 +789,7 @@ and the derived file cooking-units.sty.
 % \end{abstract}
 %
 % \tableofcontents
-%
+% 
 % \begin{comment}
 % \begin{myde}
 % \cusetup{print-numerals=true,use-phrases=true}
@@ -7243,29 +7243,33 @@ and the derived file cooking-units.sty.
   {
    \seq_map_inline:Nn \l_@@_tmpa_seq
      {
-       \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {##1} 
-         { \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {##1} }
-       \keys_define:nn { cooking-units }
-         {
-           ##1 .choices:Vn =
-             \l_@@_tmpa_clist
-             {
-               \@@_cukeys_define_keys_and_single_key_aux:n {##1}
-             } ,
-           ##1 / unknown .code:n= 
-             { 
-               \seq_set_split:Nnn \l_tmpa_seq { , } {#1}
-               \msg_error:nnxxx
-                 { cooking-units } 
-                 { key-choice-unknown }
-                 {##1} 
-                 {####1} 
-                 { \seq_use:Nnnn \l_tmpa_seq { ',~ ' } { ',~ ' } { ' ~ and ~ ' } } 
-             } ,
-           ##1 .default:n = {##1} ,
-           ##1 .groups:n = { change-unit }
-         }
+       \@@_cukeys_keys_define:nn {##1} {#1}
      }
+  }
+\cs_new:Npn \@@_cukeys_keys_define:nn #1#2
+  {
+    \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1} 
+      { \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
+    \keys_define:nn { cooking-units }
+      {
+        #1 .choices:nn =
+          {#2}
+          {
+            \@@_cukeys_define_keys_and_single_key_aux:n {#1}
+          } ,
+        #1 / unknown .code:n= 
+          { 
+            \seq_set_split:Nnn \l_tmpa_seq { , } {#2}
+            \msg_error:nnxxx
+              { cooking-units } 
+              { key-choice-unknown }
+              {#1} 
+              {##1} 
+              { \seq_use:Nnnn \l_tmpa_seq { ',~ ' } { ',~ ' } { ' ~ and ~ ' } } 
+          } ,
+         #1 .default:n = {#1} ,
+         #1 .groups:n = { change-unit }
+      }
   }
 \cs_generate_variant:Nn \@@_cukeys_define_keys:n { V }
 %    \end{macrocode}
@@ -7373,28 +7377,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_define_singlekey:nn #1#2
   {
-    \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1} 
-      { \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
-     \keys_define:nn { cooking-units }
-         {
-           #1 .choices:Vn =
-             \l_@@_tmpa_clist
-               {
-                 \@@_cukeys_define_keys_and_single_key_aux:n {#1}
-               } ,
-           #1 / unknown .code:n= 
-             { 
-               \seq_set_split:Nnn \l_tmpa_seq { , } {#2}
-               \msg_error:nnxxx
-                 { cooking-units } 
-                 { key-choice-unknown }
-                 {#1} 
-                 {##1} 
-                 { \seq_use:Nnnn \l_tmpa_seq { ',' } { ',' } { ' ~ and ~ ' } }  
-             } ,
-           #1 .default:n = {#1} ,
-           #1 .groups:n = { change-unit } ,
-         }
+    \@@_cukeys_keys_define:nn {#1} {#2}
   }
 \cs_generate_variant:Nn \@@_cukeys_define_singlekey:nn { nV }
 %    \end{macrocode}
