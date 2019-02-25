@@ -3611,6 +3611,7 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \msg_error:nnnn { nnnV }
 \cs_generate_variant:Nn \msg_error:nnn { nnV }
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
+\cs_generate_variant:Nn \prop_put:Nnn { cnx }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -3713,6 +3714,8 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_unit_letter_not_allowed_tl
 \tl_new:N \l_@@_input_fraction_sign_tl
 \tl_new:N \l_@@_input_mixed_fraction_sign_tl
+\tl_new:N \l_@@_list_of_units_tl
+\tl_new:N \l_@@_list_of_values_tl
 %    \end{macrocode}
 %    \begin{macrocode}
 \tl_new:N \l_@@_cunum_hook_tl
@@ -3860,6 +3863,12 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%    \begin{macrocode}
+\seq_new:N \l_@@_number_of_iterations_seq
+\seq_new:N \l_@@_derivative_unit_list_seq
+\seq_new:N \l_@@_derivative_symbol_list_seq
+\seq_new:N \l_@@_derivative_value_list_seq
+%    \end{macrocode}
 % \begin{macro} { \l_@@_temperatures_to_check_seq }
 %   \changes {1.02h} {New.}
 % Stores units which should be tested if \opt{check-temperature} equals true.
@@ -3890,6 +3899,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%    \begin{macrocode}
+\int_new:N \l_@@_max_depth_int
+\int_new:N \l_@@_curr_depth_int
+%    \end{macrocode}
 %
 % \begin{macro}
 %   {
@@ -7522,69 +7535,161 @@ and the derived file cooking-units.sty.
 %
 %
 %
+% \begin{macro}{\declarecookingderivative}
+% Now this is an experimental command. The idea is simple: Combine units
+% (like meter and second giving meter per second or in any way possible).
+% The first argument contains a list of the units that should be connected, one of every type is enough.
+% Second is the unit-key, containing |#1|, \dots\ |#(number of units in first argument)|. 
+% Third is the calculation. The formula for the new unit should be written in here.
+% And last, but not least: The last argument contains the unit-symbol.
 %
-%
+% Now this command simply defines a bunch of units, declaring them makes things easier.
 %    \begin{macrocode}
-\cs_generate_variant:Nn \clist_item:Nn { cx }
-
-
-
-\NewDocumentCommand \newcookingderivative  { m m m m }
+\NewDocumentCommand \declarecookingderivative { m m m m }
   {
-    \@@_new_cooking_derivative:nnn {#1} {#2} {#3} {#4}
+    \@@_declare_cooking_derivative:nnnn {#1} {#2} {#3} {#4}
   }
-
-\cs_new:Npn \@@_tmp:w { }
-\cs_new:Npn \@@_new_cooking_derivative:nnn #1#2#3#4
+%    \end{macrocode}
+% \end{macro}
+% 
+% The idea is the following. The relation between the units are given as 
+% |(#1)/(#2)| (e.g.). The idea is the following:
+% \begin{enumerate}
+%   \item The derivative contains two units.
+%   \item The mathematical relationship is given by |(#1)/(#2)|
+%   \item Define |\@@_tmp:w| to be |(#1)/(#2)|.
+%   \item Parse through all values and store them in a list (e.g. |\l_tmpa_t|) as | {value-1}{value-2} |
+%   \item Use |\exp_after:wN \@@_tmp:w \l_tmpa_t | to expand to |\@@_tmp:w {value-1} {value-2} |
+%  \item Let |\@@_tmp:w| do its job.
+% \end{enumerate}
+%
+% \begin{macro}{\@@_tl_set_list:Nnn, \@@_tl_set_list:NnV, \@@_tl_set_list:NVV, \@@_tl_set_list_aux:Nnnnnnnnn }
+% The following argument creates the list. I am a bit lazy here and don't quite know how
+% to do it \enquote{correctly}. And I know, there are too many |\q_nil|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_tl_set_list:Nnn #1#2#3
   {
-    \clist_set:Nn \l_tmpa_clist {#1}
-    \cs_generate_from_arg_count:NNnn \@@_tmp:w \cs_set:Npn
-      { \clist_count:N \l_tmpa_clist } {#3}
-    \tl_clear:N \l_tmpa_tl
-    
-    \int_set:Nn \l_tmpa_int { 1 }
-    \prop_clear:N \l_tmpa_prop
-    \seq_clear:N \l_tmpa_seq
-    
-    \tl_clear:N \l_tmpb_tl
-    \int_step_function:nN { \clist_count:N \l_tmpa_clist } \@@_int_step_function:n
-    \newpage
-    \int_step_function:nN { \clist_count:c { l_@@_tmpa_ \clist_item:Nn \l_tmpa_clist { \l_tmpa_int } _clist } } \@@_int_step_function:n
-    
-    \clist_map_inline:Nn \l_tmpa_clist
-      { \tl_put_right:Nn \l_tmpa_tl {{##1}}  }
-    \exp_after:wN\@@_tmp:w \l_tmpa_tl
-    \clist_map_inline:Nn \l_tmpa_clist
-      {
-        ##1
-      }
-    
+     \@@_tl_set_list_aux:Nnnnnnnnn #1 {#2} #3
+       \q_nil \q_nil \q_nil \q_nil \q_nil \q_nil \q_nil \q_nil \q_nil
+       \q_recursion_stop
   }
-
-\cs_new:Npn \@@_int_step_function:n #1 
-  { 
-    \prop_put:NVn \l_tmpa_prop \l_tmpa_int {#1}
-    \int_compare:nNnTF { \l_tmpa_int } = { \clist_count:N \l_tmpa_clist }
+\cs_generate_variant:Nn \@@_tl_set_list:Nnn { NnV, NVV }
+\cs_new:Npn \@@_tl_set_list_aux:Nnnnnnnnn #1#2#3#4#5#6#7#8#9
+  {
+    \tl_set:Nf #1
       {
-        \tl_clear:N \l_tmpa_tl
-        \int_step_inline:nn { \clist_count:N \l_tmpa_clist }
-          { 
-            \tl_put_right:Nx \l_tmpa_tl
-             {{
-               \clist_item:cn { l_@@_values_ \clist_item:Nn \l_tmpa_clist {##1} _clist } 
-                 { \prop_item:Nn \l_tmpa_prop {##1} }
-             }}
+        \int_case:nn { \l_@@_curr_depth_int }
+          {
+            { 1 } { }
+            { 2 } { {#3} }
+            { 3 } { {#3}{#4} }
+            { 4 } { {#3}{#4}{#5} }
+            { 5 } { {#3}{#4}{#5}{#6} }
+            { 6 } { {#3}{#4}{#5}{#6}{#7} }
+            { 7 } { {#3}{#4}{#5}{#6}{#7}{#8} }
+            { 8 } { {#3}{#4}{#5}{#6}{#7}{#8}{#9} }
           }
-        \fp_eval:n { \exp_after:wN \@@_tmp:w \l_tmpa_tl }
-         \par
+        {#2}
+      }
+    \use_none_delimit_by_q_recursion_stop:w 
+  }
+%    \end{macrocode}
+% \end{macro}
+% \begin{\@@_declare_cooking_derivative:nnnn}
+% This command has the following parts:
+% \begin{enumerate}
+%   \item Get list of units in |#1|, count their number and store in |\l_@@_max_depth_int|
+%   \item Use |\cs_generate_from_arg_count:NNnn| to create the commands
+%   \item Define lists |l_@@_tmp_ 1 ... \l_@@_max_depth_int |, same for prop. I know 
+%     that there is a better way to do it, but this \emph{is} experimental. In the end, it
+%    safes a bit of brain-power for me.
+%   \item The main part: Map trough all units in the |l_@@_cukeys_ <unit> _prop| lists.
+%   \item Create key-porperty and define keys.
+% \end{enumerate}
+%    \begin{macrocode}
+\cs_new:Npn \@@_declare_cooking_derivative:nnnn #1#2#3#4
+  {
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_clear:N \l_@@_number_of_iterations_seq
+    \seq_clear:N \l_@@_derivative_unit_list_seq
+    \seq_clear:N \l_@@_derivative_symbol_list_seq
+    \seq_clear:N \l_@@_derivative_value_list_seq
+    \int_set:Nn \l_@@_max_depth_int { \seq_count:N \l_@@_tmpa_seq }
+    \int_set:Nn \l_@@_curr_depth_int { 1 }
+%    \end{macrocode}
+%    \begin{macrocode}
+    \cs_generate_from_arg_count:NNnn \@@_tmp_unit_and_symbol_list:w \cs_set:Npn
+      { \l_@@_max_depth_int } 
+      { 
+        \seq_put_right:Nn \l_@@_derivative_unit_list_seq {#2} 
+        \seq_put_right:Nn \l_@@_derivative_symbol_list_seq {#4}
+      }
+    \cs_generate_from_arg_count:NNnn \@@_tmp_value_list:w \cs_set:Npn
+      { \l_@@_max_depth_int } 
+      { \seq_put_right:Nx \l_@@_derivative_value_list_seq { \fp_eval:n {#3} } }
+%    \end{macrocode}
+%    \begin{macrocode}
+   \int_step_inline:nn { \l_@@_max_depth_int }
+     {
+       \tl_set_eq:Nc \l_@@_original_unit_tl 
+         { l_@@_base_key_unit_ \seq_item:Nn \l_@@_tmpa_seq {##1} _tl }
+       \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_cukeys_ \l_@@_original_unit_tl _prop }
+       \prop_get:NnN \l_@@_tmpa_prop { Liste } \l_@@_tmpb_seq
+       \int_set:Nn \l_@@_tmpa_int { \seq_count:N \l_@@_tmpb_seq }
+%    \end{macrocode}
+%    \begin{macrocode}
+       \seq_put_right:NV \l_@@_number_of_iterations_seq \l_@@_tmpa_int
+       \seq_clear_new:c { l_@@_tmp_ ##1 _seq }
+       \prop_clear_new:c { l_@@_tmp_ ##1 _prop }
+       \seq_set_eq:cN { l_@@_tmp_ ##1 _seq } \l_@@_tmpb_seq
+       \prop_set_eq:cN { l_@@_tmp_ ##1 _prop } \l_@@_tmpa_prop
+     }
+%    \end{macrocode}
+%    \begin{macrocode}
+    \seq_map_function:cN 
+      { l_@@_tmp_ \int_use:N \l_@@_curr_depth_int _seq } 
+      \@@_seq_step_function:n
+%    \end{macrocode}
+%    \begin{macrocode}
+    \seq_get_left:NN \l_@@_derivative_unit_list_seq \l_@@_original_unit_tl
+    \prop_clear_new:c { l_@@_cukeys_ \l_@@_original_unit_tl _prop }  
+%    \end{macrocode}
+%    \begin{macrocode}
+    \int_zero:N \l_@@_tmpa_int
+    \clist_set_from_seq:NN \l_@@_tmpa_clist \l_@@_derivative_unit_list_seq
+    \seq_map_inline:Nn \l_@@_derivative_unit_list_seq
+      {
+        \int_incr:N \l_@@_tmpa_int
+        \tl_set:Nx \l_@@_tmpa_tl { \seq_item:Nn \l_@@_derivative_symbol_list_seq { \l_@@_tmpa_int } }
+        \exp_after:wN \declarecookingunit \exp_after:wN [ \l_@@_tmpa_tl ] {##1}
+        \prop_put:cnx 
+          { l_@@_cukeys_ \l_@@_original_unit_tl _prop }
+          {##1}
+          { \seq_item:Nn \l_@@_derivative_value_list_seq { \l_@@_tmpa_int } }
+        \tl_clear_new:c { l_@@_base_key_unit_ ##1 _tl }
+        \tl_set_eq:cN { l_@@_base_key_unit_ ##1 _tl } \l_@@_original_unit_tl
+        \exp_args:NnV \@@_cukeys_keys_define:nn {##1} \l_@@_tmpa_clist
+      }    
+  }
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_new:Npn \@@_seq_step_function:n #1 
+  { 
+    \@@_tl_set_list:NnV \l_@@_list_of_units_tl {#1} \l_@@_list_of_units_tl
+    \prop_get:cnN { l_@@_tmp_ \int_use:N \l_@@_curr_depth_int _prop } {#1} \l_@@_tmpa_tl
+    \@@_tl_set_list:NVV \l_@@_list_of_values_tl \l_@@_tmpa_tl \l_@@_list_of_values_tl
+    \int_compare:nNnTF { \l_@@_curr_depth_int } = { \l_@@_max_depth_int }
+      {
+        \exp_after:wN \@@_tmp_unit_and_symbol_list:w \l_@@_list_of_units_tl 
+        \exp_after:wN \@@_tmp_value_list:w \l_@@_list_of_values_tl         
       }{
-        \int_incr:N \l_tmpa_int
-        \int_step_function:nN { \clist_count:c { l_@@_tmpa_ \clist_item:Nn \l_tmpa_clist { \l_tmpa_int } _clist } } \@@_int_step_function:n
-        \exp_args:NNV \prop_remove:Nn \l_tmpa_prop \l_tmpa_int
-        \int_decr:N \l_tmpa_int
+        \int_incr:N \l_@@_curr_depth_int
+        \seq_map_function:cN 
+          { l_@@_tmp_ \int_use:N \l_@@_curr_depth_int _seq } 
+          \@@_seq_step_function:n
+        \int_decr:N \l_@@_curr_depth_int
       }
   }
-
 %    \end{macrocode}
 %
 %
