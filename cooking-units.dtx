@@ -4074,7 +4074,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     erase-all-options .code:n = 
       { 
-        \exp_args:Nx \cuclearunitoption { \seq_use:Nn \g_@@_list_of_defined_units_seq { , } }
+        \exp_args:Nx \cuclearoptionfor { \seq_use:Nn \g_@@_list_of_defined_units_seq { , } }
         },
     erase-all-options .value_forbidden:n = { true } ,
 %    \end{macrocode}
@@ -4085,10 +4085,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     erase-all-options-for .code:n = 
       { 
-        \keyval_parse:NNn 
-          \@@_erase_options_for:n
-          \@@_erase_options_for_error:nn
-          {#1}
+        \cuclearoptionfor {#1}
+%        \keyval_parse:NNn 
+%          \@@_erase_options_for:n
+%          \@@_erase_options_for_error:nn
+%          {#1}
       },
     erase-all-options-for  .value_required:n = { true } ,
 %    \end{macrocode}
@@ -5459,16 +5460,16 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_erase_options_for:n , \@@_erase_options_for_error:nn }
 %    \begin{macrocode}
-\cs_new:Npn \@@_erase_options_for:n #1
-  {
-    \@@_error_if_unit_not_defined:nF {#1}
-      { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
-  }
-\cs_new:Npn \@@_erase_options_for_error:nn #1#2
-  {
-    \@@_error_if_unit_not_defined:n {#1}
-    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-all-options-for }
-  }
+%\cs_new:Npn \@@_erase_options_for:n #1
+%  {
+%    \@@_error_if_unit_not_defined:nF {#1}
+%      { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
+%  }
+%\cs_new:Npn \@@_erase_options_for_error:nn #1#2
+%  {
+%    \@@_error_if_unit_not_defined:n {#1}
+%    \msg_error:nnn { cooking-units } { Value-not-allowed } { erase-all-options-for }
+%  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5480,10 +5481,7 @@ and the derived file cooking-units.sty.
     \msg_error:nnn { cooking-units } { No-Value-given } { set-option-for }
   }
 \cs_new:Npn \@@_set_options_for:nn #1#2
-  {
-    \@@_error_if_unit_not_defined:nF {#1}
-     { \cusetunitoption {#1} {#2} }
-  }
+  { \cusetoptionfor {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5495,10 +5493,7 @@ and the derived file cooking-units.sty.
     \msg_error:nnn { cooking-units } { No-Value-given } { add-option-for }
   }
 \cs_new:Npn \@@_add_options_for:nn #1#2
-  {
-    \@@_error_if_unit_not_defined:nF {#1}
-      { \cuaddunitoption {#1} {#2} }
-  }
+  { \cuaddoptionfor {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7502,8 +7497,8 @@ and the derived file cooking-units.sty.
         \clist_new:c { l_@@_unit_option_ #2 _clist } 
         \keys_define:nn { cooking-units }
           {
-            set-option-for-#2 .code:n =  { \cusetunitoption {#2} {##1} } ,
-            add-option-for-#2 .code:n = { \cuaddunitoption {#2} {##1} },
+            set-option-for-#2 .code:n =  { \cusetoptionfor {#2} {##1} } ,
+            add-option-for-#2 .code:n = { \cuaddoptionfor {#2} {##1} },
           }
         \tl_new:c { l_@@_base_key_unit_ #2 _tl }
         \tl_new:c { l_@@_default_unit_ #2 _tl }
@@ -8294,17 +8289,17 @@ and the derived file cooking-units.sty.
 %
 % Works better now.
 %    \begin{macrocode}
-\NewDocumentCommand \cusetunitoption { m m }
+\NewDocumentCommand \cusetoptionfor { m m }
   {
     \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
       { \clist_set:cn { l_@@_unit_option_ ##1 _clist } {##2} }
   }
-\NewDocumentCommand \cuaddunitoption { m m }
+\NewDocumentCommand \cuaddoptionfor { m m }
   {
     \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
       { \clist_put_right:cn { l_@@_unit_option_ ##1 _clist } {##2} }
   }
-\NewDocumentCommand \cuclearunitoption { m }
+\NewDocumentCommand \cuclearoptionfor { m }
   {
     \@@_map_trough_valid_unit_options:nnn {#1} { } 
       { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
@@ -8739,13 +8734,13 @@ and the derived file cooking-units.sty.
 % \subsection{Finish}
 %
 %    \begin{macrocode}
-\cusetunitoption { F , C , K , Re } { round-precision = 0 }
 \cudeclareunitgroup { weight } { kg , dag, g, oz, lb, stick }
 \cudeclareunitgroup { length } { m , dm , cm , mm , in }
 \cudeclareunitgroup { volume } { l , dl , cl  , ml }
 \cudeclareunitgroup { temperature } { C , F , K , Re }
 \cudeclareunitgroup { energy } { cal, kcal , J , kJ , eV }
 \cudeclareunitgroup { time } { d , h , min , s }
+\cusetoptionfor { F , C , K , Re } { round-precision = 0 }
 \cusetup 
   { 
     curef-add-forbidden-unit = { F , C , K , Re } ,
