@@ -4034,8 +4034,8 @@ and the derived file cooking-units.sty.
     add-unit-to-group .code:n = 
       { 
         \keyval_parse:NNn 
-          \@@_unit_group_add_unit_error:n 
-          \@@_unit_group_add_unit:nn 
+          \@@_add_to_unit_group_error:n 
+          \@@_add_to_unit_group:nn 
           {#1} 
       } ,
     add-unit-to-group .default:n = {} ,
@@ -5276,21 +5276,33 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_define_unit_group:nn}
+% \begin{macro}{\@@_define_clear_unit_group:nn,\@@_add_to_unit_group_error:n,\@@_add_to_unit_group:nn}
 %    \begin{macrocode}
-\cs_new:Npn \@@_define_unit_group:nn #1#2
+\cs_new:Npn \@@_define_clear_unit_group:nn #1#2
   {
-    \seq_new:c { l_@@_group_ #1 _seq }
-    \seq_set_from_clist:cn { l_@@_group_ #1 _seq } {#2}
-    \seq_map_inline:cn { l_@@_group_ #1 _seq }
-      {
-        \@@_error_if_unit_not_defined:nT {##1}
-          { \msg_error:nn { cooking-units } { internal-error } { define-unit-group } }
-      }
+    \seq_clear_new:c { l_@@_group_ #1 _seq }
     \keys_define:nn { cooking-units }
       { 
         #1 .code:n = { \@@_unit_group_convert_units:nn {#1} {##1} } ,
         #1 .groups:n = { change-unit } ,
+      }
+  }
+%
+\cs_new:Npn \@@_add_to_unit_group_error:n #1 
+  { \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group } }
+%
+\cs_new:Npn \@@_add_to_unit_group:nn #1#2
+  {
+    \@@_error_if_group_not_defined:nF {#1}
+      {
+        \clist_map_inline:nn {#2}
+          {
+            \@@_error_if_unit_not_defined:nF {##1}
+              { 
+                \seq_if_in:cnF { l_@@_group_ #1 _seq } {##1}
+                  { \seq_put_right:cn { l_@@_group_ #1 _seq } {##1}  }
+              }
+          }
       }
   }
 %    \end{macrocode}
@@ -5298,7 +5310,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{\@@_error_if_group_not_defined:n}
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_error_if_group_not_defined:n #1 { T }
+\prg_new_conditional:Npnn \@@_error_if_group_not_defined:n #1 { F }
   {
     \seq_if_exist:cTF { l_@@_group_ #1 _seq } 
       { \prg_return_false: }
@@ -5316,46 +5328,27 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_unit_group_convert_units:nn #1#2
   {
-    \@@_error_if_group_not_defined:nT {#1}
-      { \use_none:nnnnnnnn }
-    \@@_error_if_unit_not_defined:nT {#2}
-      { \use_none:nnnnn }
-    \seq_if_in:cnTF { l_@@_group_ #1 _seq } {#2}
+    \@@_error_if_group_not_defined:nF {#1}
       {
-        \seq_map_inline:cn { l_@@_group_ #1 _seq }
-          { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
-      }{
-        \msg_error:nnxxx 
-          { cooking-units } 
-          { group-choice-not-allowed }
-          {#1} 
-          {#2} 
-          { \seq_use:cnnn { l_@@_group_ #1 _seq } { ',~ ' } { ',~ ' } { ' ~ and ~ ' } }
+        \@@_error_if_unit_not_defined:nF {#2}
+          {
+            \seq_if_in:cnTF { l_@@_group_ #1 _seq } {#2}
+              {
+                \seq_map_inline:cn { l_@@_group_ #1 _seq }
+                  { \@@_keys_set:nnn { cooking-units } {##1} {#2} }
+              }{
+                \msg_error:nnxxx 
+                  { cooking-units } 
+                  { group-choice-not-allowed }
+                  {#1} {#2} 
+                  { \@@_seq_use_msg:c { l_@@_group_ #1 _seq } }
+              }
+          }
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_unit_group_add_unit_error:n , \@@_unit_group_add_unit:nn }
-%    \begin{macrocode}
-\cs_new:Npn \@@_unit_group_add_unit_error:n #1 
-  {
-    \msg_error:nnn { cooking-units } { No-Value-given } { add-unit-to-group }
-  }
-\cs_new:Npn \@@_unit_group_add_unit:nn #1#2 
-  { 
-     \@@_error_if_group_not_defined:nT {#1}
-       { \use_none:nnn }
-     \clist_map_inline:nn {#2}
-       {
-        \@@_error_if_unit_not_defined:nT {##1} 
-          { \use_none:nnnn }
-        \seq_if_in:cnF { l_@@_group_ #1 _seq } {##1}
-          { \seq_put_right:cn { l_@@_group_ #1 _seq } {##1} }           
-       }
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 % \begin{macro}{\@@_convert_to_eV:}
 %   Still work in progress. Will probably forever be. Changes all
@@ -8268,6 +8261,33 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
+% 
+%
+%
+%
+%    \begin{macrocode}
+\NewDocumentCommand \cudeclareunitgroup { m m }
+  {
+    \@@_define_clear_unit_group:nn {#1} {#2}
+    \@@_add_to_unit_group:nn {#1} {#2}
+  }
+\NewDocumentCommand \cuaddtounitgroup { m m }
+  {
+    \@@_add_to_unit_group:nn {#1} {#2}
+  }
+\NewDocumentCommand \cuclearunitgroup { m }
+  {
+    \@@_error_if_group_not_defined:nF {#1}
+      { \@@_define_clear_unit_group:nn {#1} { } }
+  }
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+%
 %
 %
 %
@@ -8719,13 +8739,13 @@ and the derived file cooking-units.sty.
 % \subsection{Finish}
 %
 %    \begin{macrocode}
-\@@_define_unit_group:nn { weight } { kg , dag, g, oz, lb, stick }
-\@@_define_unit_group:nn { length } { m , dm , cm , mm , in }
-\@@_define_unit_group:nn { volume } { l , dl , cl  , ml }
-\@@_define_unit_group:nn { temperature } { C , F , K , Re }
-\@@_define_unit_group:nn { energy } { cal, kcal , J , kJ , eV }
-\@@_define_unit_group:nn { time } { d , h , min , s }
 \cusetunitoption { F , C , K , Re } { round-precision = 0 }
+\cudeclareunitgroup { weight } { kg , dag, g, oz, lb, stick }
+\cudeclareunitgroup { length } { m , dm , cm , mm , in }
+\cudeclareunitgroup { volume } { l , dl , cl  , ml }
+\cudeclareunitgroup { temperature } { C , F , K , Re }
+\cudeclareunitgroup { energy } { cal, kcal , J , kJ , eV }
+\cudeclareunitgroup { time } { d , h , min , s }
 \cusetup 
   { 
     curef-add-forbidden-unit = { F , C , K , Re } ,
