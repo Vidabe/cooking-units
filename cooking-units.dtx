@@ -7468,16 +7468,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_add_keys_or_single_keys:nn #1#2
   {
-    \@@_error_if_unit_not_defined:nT {#1} { \use_none:nnnnnnn }
-    \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1}
-      { \msg_error:nnn { cooking-units } { Key-not-defined } {#1} }
-    \tl_if_blank:nF {#2}
+    \@@_error_if_unit_not_defined:nF {#1}
       {
-        \prop_gclear:N \g_@@_master_changer_prop
-        \@@_cukeys_add_keys_and_single_key_aux:n {#1}
-        \bool_if:NTF \l_@@_single_key_bool
-          { \@@_cukeys_parse_and_create_single_key:nn {#1} {#2} }
-          { \@@_cukeys_parse_and_create_keys:Vn \l_@@_original_unit_tl {#2} }
+        \seq_if_in:NnF \l_@@_list_of_defined_keys_seq {#1}
+          { \msg_error:nnn { cooking-units } { Key-not-defined } {#1} }
+        \tl_if_blank:nF {#2}
+          {
+            \prop_gclear:N \g_@@_master_changer_prop
+            \@@_cukeys_add_keys_and_single_key_aux:n {#1}
+            \bool_if:NTF \l_@@_single_key_bool
+              { \@@_cukeys_parse_and_create_single_key:nn {#1} {#2} }
+              { \@@_cukeys_parse_and_create_keys:Vn \l_@@_original_unit_tl {#2} }
+          }
       }
   }
 \cs_generate_variant:Nn \@@_cukeys_add_keys_or_single_keys:nn { nV }
@@ -7647,6 +7649,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_declare_cooking_derivative:nnnn #1#2#3#4
   {
+    \prop_gclear:N \g_@@_master_changer_prop
     \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
     \seq_clear:N \l_@@_number_of_iterations_seq
     \seq_clear:N \l_@@_derivative_unit_list_seq
