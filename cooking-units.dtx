@@ -6723,7 +6723,7 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
-% #1: label, #2: Options, #3: Values, #4: unit
+%^^A #1: label, #2: Options, #3: Values, #4: unit
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
@@ -7605,7 +7605,7 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 % \end{macro}
-% \begin{\@@_declare_cooking_derivative:nnnn}
+% \begin{macro} { \@@_declare_cooking_derivative:nnnn }
 % This command has the following parts:
 % \begin{enumerate}
 %   \item Get list of units in |#1|, count their number and store in |\l_@@_max_depth_int|
@@ -7683,6 +7683,8 @@ and the derived file cooking-units.sty.
       }    
   }
 %    \end{macrocode}
+% \end{macro}
+%
 %    \begin{macrocode}
 \cs_new:Npn \@@_seq_step_function:n #1 
   { 
@@ -8371,7 +8373,7 @@ and the derived file cooking-units.sty.
 % It is kinda stupid, but this is not really a heavily used function, so \dots\ yeah.
 %
 % Note: I cannot check if |\l_@@_tmpa_clist| is empty because one could
-% use |\cusetunitoption{F,C,Re,K}{}| to clear the options of the given units.
+% use |\cusetoptionfor{F,C,Re,K}{}| to clear the options of the given units.
 %    \begin{macrocode}
 \cs_new:Npn \@@_tmp:w { }
 \cs_new:Npn \@@_map_trough_valid_unit_options:nnn #1#2 #3
