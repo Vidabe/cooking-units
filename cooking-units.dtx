@@ -3534,8 +3534,6 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
-% Define the only load-time option for this package. If it is set,
-% load package \pkg{fmtcount}.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Option-deprecated } 
   { 
@@ -3550,7 +3548,6 @@ and the derived file cooking-units.sty.
 \bool_new:N \g_@@_opt_numeral_bool
 \keys_define:nn { cooking-units }
   {
-%    use-numerals .bool_gset:N = \g_@@_opt_numeral_bool ,
     use-numerals .code:n = 
       { 
         \msg_warning:nnnn { cooking-units } { Option-deprecated } { use-numerals } { use-fmtcount-numerals } 
@@ -3589,14 +3586,16 @@ and the derived file cooking-units.sty.
 % \begin{macro}
 %  {
 %  \tl_replace_all:NVn,
-%  \tl_replace_once:NnV ,  \tl_replace_once:NVn ,
+%  \tl_replace_once:NVn ,
 %  \tl_if_in:nVTF ,
 %  \tl_if_in:NVTF ,
 %  \tl_if_in:NVT ,
 %  \fp_compare:vNnT ,
 %  \fp_eval:c ,
 %  \prop_get:cVc ,
-%  \int_abs:c ,
+%  \tl_set_rescan:NnV,
+%  \msg_error:nnnV, \msg_error:nnV, \msg_warning:nnV,
+%  \prop_put:cnx
 %  }
 % Some variations of commands we will need later.
 %    \begin{macrocode}
@@ -3664,28 +3663,35 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}
 %  {
-% \l_@@_number_tmpa_tl,
-% \l_@@_number_tmpb_tl,
-% \l_@@_tmpa_tl,
-% \l_@@_tmpb_tl,
-% \l_@@_mixed_fraction_tl,
-% \l_@@_original_unit_tl,
-% \l_@@_option_unit_tl,
-% \l_@@_language_tl,
-% \l_@@_cunum_range_sign_tl,
-% \l_@@_cutext_range_sign_tl,
-% \l_@@_value_unit_space_tl,
-% \l_@@_input_digits_tl ,
-% \l_@@_input_decimal_mark_tl,
-% \l_@@_input_value_signs_tl,
-% \l_@@_input_allowed_special_signs_tl ,
-% \c_@@_input_str_hash_one_tl ,
-% \l_@@_input_range_sign_tl,
-% \l_@@_cutext_space_tl,
-% \l_@@_cuphrase_space_tl,
-% \l_@@_translation_tmpa_tl,
-% \l_@@_cutext_last_value_tl,
-% \l_@@_phrase_phrase_tl ,
+%    \l_@@_number_tmpa_tl,
+%    \l_@@_number_tmpb_tl,
+%    \l_@@_mixed_fraction_tl,
+%    \l_@@_original_amount_tl,
+%    \l_@@_original_unit_tl,
+%    \l_@@_option_unit_tl,
+%    \l_@@_language_tl,
+%    \l_@@_cunum_range_sign_tl,
+%    \l_@@_cutext_range_sign_tl,
+%    \l_@@_value_unit_space_tl,
+%    \l_@@_input_digits_tl ,
+%    \l_@@_input_decimal_mark_tl,
+%    \l_@@_input_value_signs_tl,
+%    \l_@@_input_allowed_special_signs_tl ,
+%    \c_@@_input_str_hash_one_tl ,
+%    \l_@@_input_range_sign_tl,
+%    \l_@@_cutext_space_tl,
+%    \l_@@_cuphrase_space_tl,
+%    \l_@@_translation_tmpa_tl,
+%    \l_@@_cutext_last_value_tl,
+%    \l_@@_phantom_tl,
+%    \l_@@_phrase_phrase_tl,
+%    \l_@@_unit_letter_not_allowed_tl,
+%    \l_@@_input_fraction_sign_tl,
+%    \l_@@_input_mixed_fraction_sign_tl,
+%    \l_@@_list_of_units_tl,
+%    \l_@@_list_of_values_tl,
+%    \l_@@_cunum_hook_tl , \l_@@_cutext_hook_tl , 
+%    \l_@@_Cutext_hook_tl , \l_@@_cuam_hook_tl
 %  }
 % Quite a lot of tl's.
 %    \begin{macrocode}
@@ -3727,8 +3733,8 @@ and the derived file cooking-units.sty.
 %
 %
 % Setting some token lists to their default value.
-% \lstinline|str_hash_one_tl| is used for defining single keys.
-% (You will see, I didn't have a better idea)
+% \cs{c_@@_input_str_hash_one_tl} is used for defining single keys.
+% (As you will see, I didn't have a better idea)
 %    \begin{macrocode}
 \tl_set:Nn \l_@@_input_digits_tl { 0123456789 }
 \tl_set:Nn \l_@@_input_range_sign_tl { -- }
@@ -3742,14 +3748,14 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %    \begin{macrocode}
 \tl_set:Nn \l_@@_cunum_range_sign_tl { -- }
-\tl_set:Nn \l_@@_cutext_range_sign_tl {}
+\tl_set:Nn \l_@@_cutext_range_sign_tl { }
 \tl_set:Nn \l_@@_value_unit_space_tl { \thinspace }
 \tl_set:Nn \l_@@_cutext_space_tl { \space }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
 \tl_set:Nn \l_@@_unit_letter_not_allowed_tl { , / }
 %    \end{macrocode}
 %
-% Flat out stolen from \pkg{siunitx}
+% Flat out stolen from \pkg{siunitx}.
 %    \begin{macrocode}
 \AtBeginDocument {
   \cs_if_free:cT { T@TS1 }
@@ -3791,7 +3797,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{ \l_@@_round_precision_int }
-%   Stores the round-precision inside.
+%   Stores the round-precision inside. Can also take negative values.
 %    \begin{macrocode}
 \int_new:N \l_@@_round_precision_int
 \int_set:Nn \l_@@_round_precision_int { 2 }
@@ -3799,7 +3805,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ \l_@@_print_numerals_below_int }
-%   Used if option 'use-numerals' is active. Uses numerals for
+%   Used if option \opt{use-numerals} is active. Uses numerals for
 %   integers smaller than this number. I learned this number
 %   at school.
 %    \begin{macrocode}
@@ -3812,7 +3818,7 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ \l_@@_local_number_of_persons_int }
 % Each recipe defined by \cs{culabel} defines a counter to
 % store the number of persons the recipe is for. For calculation
-% the value is retrived and stored inside this temporal counter.
+% the value is retrieved and stored inside this temporal integer variable.
 %    \begin{macrocode}
 \int_new:N \l_@@_local_number_of_persons_int
 %    \end{macrocode}
@@ -3821,17 +3827,21 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ \l_@@_wanted_number_of_persons_int }
 %   Not only the number of persons are recipe is for is needed
 %   for calculation, but also the number of persons you want
-% the recipe to be. This information is stored here.
+%   the recipe to be. This information is stored here.
 %    \begin{macrocode}
 \int_new:N \l_@@_wanted_number_of_persons_int
 \int_set:Nn \l_@@_wanted_number_of_persons_int { 4 }
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{ \l_@@_phrase_number_tl }
+%   Stores the current \enquote{phrase number}. For \enquote{Dutzend} this would
+%   be \enquote{12}, etc. 
 %    \begin{macrocode}
 \int_new:N \l_@@_phrase_number_tl
 %    \end{macrocode}
-%
+% \end{macro}
 %
 % \begin{macro}{ \l_@@_list_of_defined_keys_clist , \g_@@_list_of_defined_units_clist }
 %   Sequence of defined units and keys. Units are defined
@@ -3857,18 +3867,24 @@ and the derived file cooking-units.sty.
 % \begin{macro} { \l_@@_phrase_numbers_seq }
 % Inside this list the numbers for which a phrase is defined
 % is stored in. As this is language specific, the list is stored
-% inside a language-sensitive command and retrived when needed.
+% inside a language-sensitive command and retrieved when needed.
 %    \begin{macrocode}
 \seq_new:N \l_@@_phrase_numbers_seq 
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{\l_@@_number_of_iterations_seq, \l_@@_derivative_unit_list_seq ,
+%    \l_@@_derivative_symbol_list_seq , \l_@@_derivative_value_list_seq
+% }
+% Variables used in \mycs{declarecookingderivatives}.
 %    \begin{macrocode}
 \seq_new:N \l_@@_number_of_iterations_seq
 \seq_new:N \l_@@_derivative_unit_list_seq
 \seq_new:N \l_@@_derivative_symbol_list_seq
 \seq_new:N \l_@@_derivative_value_list_seq
 %    \end{macrocode}
+% \end{macro}
 % \begin{macro} { \l_@@_temperatures_to_check_seq }
 %   \changes {1.02h} {New.}
 % Stores units which should be tested if \opt{check-temperature} equals true.
@@ -3907,27 +3923,36 @@ and the derived file cooking-units.sty.
 % \begin{macro}
 %   {
 % \l_@@_minus_bool,
-% \l_@@_round_number_bool,
-% \l_@@_error_bool,
-% \l_@@_eval_fractions_bool,
-% \l_@@_draft_bool,
-% \l_@@_round_to_int_bool,
-% \l_@@_special_sign_bool,
-% \l_@@_single_key_bool,
-% \l_@@_check_temperature_bool,
-% \l_@@_convert_to_eV_bool,
-% \l_@@_cutext_uppercase_word_bool,
-% \l_@@_using_cutext_bool,
-% \l_@@_cuam_old_bool,
-% \l_@@_change_number_of_persons_bool,
-% \l_@@_calc_because_ref_was_given_bool,
-% \l_@@_lokal_persons_bool,
-% \l_@@_cutext_to_cunum_bool,
-% \l_@@_cutext_old_bool,
-% \l_@@_cutext_keep_unit_bool,
-% \l_@@_round_commercial_bool,
-% \l_@@_use_phrases_bool,
-% \l_@@_lokal_phrase_bool
+%    \l_@@_round_number_bool,
+%    \l_@@_error_bool,
+%    \l_@@_unit_error_bool,
+%    \l_@@_eval_fractions_bool,
+%    \l_@@_convert_fractions_bool,
+%    \l_@@_draft_bool,
+%    \l_@@_round_to_int_bool,
+%    \l_@@_special_sign_bool,
+%    \l_@@_single_key_bool,
+%    \l_@@_check_temperature_bool,
+%    \l_@@_convert_to_eV_bool,
+%    \l_@@_cutext_uppercase_word_bool,
+%    \l_@@_using_cutext_bool,
+%    \l_@@_cuam_old_bool,
+%    \l_@@_change_number_of_persons_bool,
+%    \l_@@_calc_because_ref_was_given_bool,
+%    \l_@@_lokal_persons_bool,
+%    \l_@@_cutext_to_cunum_bool,
+%    \l_@@_cutext_old_bool,
+%    \l_@@_cutext_keep_unit_bool,
+%    \l_@@_round_commercial_bool,
+%    \l_@@_use_phrases_bool,
+%    \l_@@_lokal_phrase_bool,
+%    \l_@@_print_numeral_bool,
+%    \l_@@_lokal_numeral_bool,
+%    \l_@@_round_precision_negative_bool,
+%    \l_@@_fourty_two_bool,
+%    \l_@@_phrase_negative_bool ,
+%    \l_@@_range_in_input_bool, \l_@@_lokal_fraction_bool ,
+%    \l_@@_print_fraction_bool, \l_@@_check_decimal_bool ,
 %   }
 % Some booleans we need later.
 %    \begin{macrocode}
@@ -3989,6 +4014,7 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 % \begin{macro}{ \q_@@_no_translation }
+%  Checking value if a translation is avaiable.
 %    \begin{macrocode}
 \quark_new:N \q_@@_no_translation
 %    \end{macrocode}
@@ -3996,11 +4022,12 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{
+%    \l_@@_tmpa_tl , \l_@@_tmpb_tl , \l_@@_tmp_unit_tl ,
 %    \l_@@_tmpa_fp ,
 %    \l_@@_tmpa_clist ,
-%    \l_@@_tmpa_prop ,
-%    \l_@@_tmpb_prop ,
+%    \l_@@_tmpa_prop , \l_@@_tmpb_prop ,
 %    \l_@@_tmpa_seq ,
+%    \l_@@_tmpa_int , \l_@@_tmpb_int ,
 %  }
 % Some temporal stores which are used throughout the code.
 %    \begin{macrocode}
@@ -4081,7 +4108,8 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %\begin{macro}{ erase-all-options-for }
-%  Erasing options.
+%  Erasing options. As this simply clears the unit options the argument |#1|
+% is simply a clist, as such no keyval parsing is needed.
 %    \begin{macrocode}
     erase-all-options-for .code:n = 
       { 
@@ -4179,7 +4207,7 @@ and the derived file cooking-units.sty.
 %
 %
 %\begin{macro}{ set-special-sign }
-% Doing the same as above but also overrides the old signs.
+% Setting allowd special signs. Note that |<| is not allowed.
 %    \begin{macrocode}
     set-special-sign .code:n = 
       { 
@@ -4435,7 +4463,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{ label }
-% Defines a label \dots\ is \mycs{culabel} as a key.
+% Defines a label. Is \mycs{culabel} in key form.
 %    \begin{macrocode}
     label .code:n = \@@_label_and_persons:n {#1} ,
     label .value_required:n = { true } ,
@@ -4561,7 +4589,12 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{hooks}
+% \begin{macro}{
+%   commands-add-hook ,
+%   cunum-add-hook ,
+%   cutext-add-hook , Cutext-add-hook , 
+%   cuam-add-hook ,
+% }
 %    \begin{macrocode}
     commands-add-hook .meta:n = 
       { 
@@ -4593,7 +4626,11 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{curef-add-forbidden-unit, curef-remove-forbidden-unit, curef-clear-forbidden-units}
+% \begin{macro}{
+%    curef-add-forbidden-unit, 
+%    curef-remove-forbidden-unit, 
+%    curef-clear-forbidden-units
+% }
 %    \begin{macrocode}
   curef-add-forbidden-unit .code:n =
     {
@@ -4842,8 +4879,7 @@ and the derived file cooking-units.sty.
   { 
     The \ amount \  '#1' \ is \ not \ known \ at \ line \ 
     \msg_line_number: .
-  } 
-  {
+  }{
     You \ used\  a\  special\  sign\  indicating\  that\  the\  true\  amount\  of\  the\ 
     specific\  ingredient\  is\  (was) \ not\  known\  to\  you. This\  message\ 
     reminds\  you\  about\  that\  fact.
@@ -4869,8 +4905,7 @@ and the derived file cooking-units.sty.
   { 
     The \ option \ '#1' \ is \ only \ available \ as \ a \ load-time-option. \
     Please \ set \ it \ as \ a \ package \ option.
-  } 
-  { 
+  }{ 
     You \ cannot \ set \ this \ option \ using \ \cusetup ~
     but \ only \ as \ a \ package \ option.
     \msg_see_documentation_text:n { cooking-units } 
@@ -4892,8 +4927,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { No-Value-given } 
   { 
     Please \ input \ a \ value \ for \ the \ key-value \ list \ in \ '#1'
-  } 
-  { 
+  }{ 
     Each \ element \ of \ the \ list \ needs \ a \ value.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -4903,8 +4937,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { Value-not-allowed } 
   { 
     The \ key-list \ in \ '#1' \ does \ not \ take \ a \ value.
-  } 
-  { 
+  }{ 
     This \ key-list \ does \ not \ take \ a \ value. \ The \
     given \ value \ will \ be \ ignored.
     \msg_see_documentation_text:n { cooking-units } 
@@ -4929,8 +4962,7 @@ and the derived file cooking-units.sty.
   { 
     Please \ add \ the \ number \ of \ persons \ this \ recipe \ is \ for \ in \ '#1'. \
     Note \ that\ the \ number \ must \ be \ given \ after \ a \ '*'.
-  } 
-  { 
+  }{ 
     Write \ 'Schweinsbraten*4' \ to \ create \ the \ label \ 'Schweinsbraten' \
     which \ is \ initially \ for \ 4 \ persons.
     \msg_see_documentation_text:n { cooking-units } 
@@ -4943,8 +4975,7 @@ and the derived file cooking-units.sty.
   { 
     The \ number \ of \ persons \ the \ recipe \ is \ for \ must \ be \ an \
     integer. \ '#1' \ is \ not \ allowed.
-  } 
-  { 
+  }{ 
     The \ number \ '#1' \ is \ not \ allowed.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -5005,8 +5036,7 @@ and the derived file cooking-units.sty.
     for \ \cutext ~ and \ \Cutext. \
     You \ can \ define \ new \ translations \ for \ a \ given \ language \ using \
     \cudefinename.
-  } 
-  { 
+  }{ 
     \cunum ~ is \ used \ instead.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -5018,8 +5048,7 @@ and the derived file cooking-units.sty.
   { 
     The \ translation \ for \ #1 \ does \ not \ exist. 
     Please \ define \ it \ using \ \cudefinename.
-  } 
-  { 
+  }{ 
     And \ you \ may \ send \ me \ the \ translation \ as \ it \ is \
     not \ available \ yet.
     \msg_see_documentation_text:n { cooking-units } 
@@ -5032,8 +5061,7 @@ and the derived file cooking-units.sty.
   { 
     Currently \ (and \ probably \ forever) \ the \ sign \ '<' \
     is \ not \ allowed \ to \ be \ used \ as \ a \ special \ sign.
-  } 
-  { 
+  }{ 
     I \ apologize \ for \ the \ inconvenience.
     \msg_see_documentation_text:n { cooking-units } 
   }
@@ -7386,7 +7414,6 @@ and the derived file cooking-units.sty.
 %
 % \section {Adding Keys}
 %
-% Maybe due to \cs{cuaddtokeys}?
 %    \begin{macrocode}
 \NewDocumentCommand \cuaddkeys { m m }
   {
@@ -7679,7 +7706,7 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
-%
+% 
 %
 %
 %
@@ -8307,7 +8334,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % The reason I map trough the units twice is simply: I think it makes more
 % sense if an \enquote{unknown unit} error is shown before an 
-% \enquote{unknown option} error.
+% \enquote{unknown option} error (at least for me).
 % It is kinda stupid, but this is not really a heavily used function, so \dots\ yeah.
 %
 % Note: I cannot check if |\l_@@_tmpa_clist| is empty because one could
@@ -8368,6 +8395,9 @@ and the derived file cooking-units.sty.
 %
 %
 % \subsection{Definitions et all}
+%
+% Plase note that at his point we are still inside the Expl3 \enquote{Environment}
+% and that spaces are ignored!
 %
 %    \begin{macrocode}
 \newcookingunit { kg }
