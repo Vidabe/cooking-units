@@ -4559,9 +4559,11 @@ and the derived file cooking-units.sty.
         \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
         \seq_map_inline:Nn \l_@@_tmpa_seq
           {
-            \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnn }
-            \seq_if_in:NnF \l_@@_natural_units_seq {##1}
-              { \seq_put_right:Nn \g_@@_natural_units_seq {##1} }
+            \@@_error_if_unit_not_defined:nF {##1}
+              {
+                \seq_if_in:NnF \l_@@_natural_units_seq {##1}
+                  { \seq_put_right:Nn \g_@@_natural_units_seq {##1} }
+              }
           }
       } ,
     add-natural-unit .value_required:n = { true } ,
