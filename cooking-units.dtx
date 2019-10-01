@@ -7545,7 +7545,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{\declarecookingderivative}
+% \begin{macro}{\declarecookingderivatives}
 % Now this is an experimental command. The idea is simple: Combine units
 % (like meter and second giving meter per second or in any way possible).
 % The first argument contains a list of the units that should be connected, one of every type is enough.
@@ -7555,7 +7555,7 @@ and the derived file cooking-units.sty.
 %
 % Now this command simply defines a bunch of units, declaring them makes things easier.
 %    \begin{macrocode}
-\NewDocumentCommand \declarecookingderivative { m m m m }
+\NewDocumentCommand \declarecookingderivatives { m m m m }
   {
     \@@_declare_cooking_derivative:nnnn {#1} {#2} {#3} {#4}
   }
