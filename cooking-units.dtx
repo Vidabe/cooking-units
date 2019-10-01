@@ -3618,7 +3618,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{\@@_frac:nn}
-% This command is used to print the fractions and can be changed
+% This command is used to print fractions and can be changed
 % accordingly.
 %    \begin{macrocode}
 \cs_new_eq:NN \@@_frac:nn \sfrac
@@ -3626,6 +3626,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{\@@_set_amount:Nn,\@@_set_unit:Nn}
+% Allows for potential parsing of amount and or unit.
 %    \begin{macrocode}
 \cs_new_eq:NN \@@_set_amount:Nn \tl_set:Nn
 \cs_new_eq:NN \@@_set_unit:Nn \tl_set:Nn
@@ -3634,8 +3635,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{\@@_print_numeral:n , \@@_print_Numeral:n}
-% This command is used to print the fractions and can be changed
-% accordingly.
+% Commands to print numerals. Either use default or set yourself.
 %    \begin{macrocode}
 \cs_new:Npn \@@_print_numeral:n #1 
   { \msg_error:nnn {cooking-units} { define-numeral-function } }
