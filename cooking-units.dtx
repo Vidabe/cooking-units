@@ -4659,34 +4659,13 @@ and the derived file cooking-units.sty.
 %    curef-clear-forbidden-units
 % }
 %    \begin{macrocode}
-  curef-add-forbidden-unit .code:n =
-    {
-      \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-      \seq_map_inline:Nn \l_@@_tmpa_seq
-        {
-          \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnn }
-          \seq_if_in:NnF \l_@@_curef_do_not_change_seq {##1}
-            { \seq_put_right:Nn \l_@@_curef_do_not_change_seq {##1} }
-        }
-    } ,
+  curef-add-forbidden-unit .code:n = { \@@_add_forbidden_unit:n {#1} } ,
   curef-add-forbidden-unit .default:n = { } ,  
-  curef-remove-forbidden-unit .code:n =
-    {
-      \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-      \seq_map_inline:Nn \l_@@_tmpa_seq
-        {
-          \@@_error_if_unit_not_defined:nT {##1} { \use_none:nnnnn }
-          \seq_if_in:NnTF \l_@@_curef_do_not_change_seq {##1}
-            { \seq_remove_all:Nn \l_@@_curef_do_not_change_seq {##1} }
-            { 
-              \msg_warning:nnn { cooking-units } { curef-not-inside-list } {##1} 
-                { \seq_use:Nnnn \l_@@_curef_do_not_change_seq { ',~ ' } { ',~ ' } { ' ~ and ~ ' } } 
-            }
-        }
-    } ,
+  curef-remove-forbidden-unit .code:n = { \@@_remove_forbidden_unit:n {#1} } ,
   curef-remove-forbidden-unit .default:n = { } ,  
+%  
   curef-clear-forbidden-units .choice: ,
-  curef-clear-forbidden-units/true .code:n = { \seq_clear:N \l_@@_curef_do_not_change_seq } ,
+  curef-clear-forbidden-units/true .code:n = { \@@_clear_forbidden_unit: } ,
   curef-clear-forbidden-units/false .code:n = { } ,
   curef-clear-forbidden-units .value_required:n = true,
 %    \end{macrocode}
@@ -8311,6 +8290,42 @@ and the derived file cooking-units.sty.
 %
 %
 % 
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_add_forbidden_unit:n #1
+  {
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_map_inline:Nn \l_@@_tmpa_seq
+      {
+        \@@_error_if_unit_not_defined:nF {##1}
+          {
+            \seq_if_in:NnF \l_@@_curef_do_not_change_seq {##1}
+              { \seq_put_right:Nn \l_@@_curef_do_not_change_seq {##1} }
+          }
+      }
+  }
+\cs_new:Npn \@@_remove_forbidden_unit:n #1
+  {
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_map_inline:Nn \l_@@_tmpa_seq
+      {
+        \@@_error_if_unit_not_defined:nF {##1}
+          {
+            \seq_if_in:NnTF \l_@@_curef_do_not_change_seq {##1}
+              { \seq_remove_all:Nn \l_@@_curef_do_not_change_seq {##1} }
+              { 
+                \msg_warning:nnnn { cooking-units } { curef-not-inside-list } {##1} 
+                  { \@@_seq_use_msg:N \l_@@_curef_do_not_change_seq }
+              }
+          }
+      }
+  }
+\cs_new:Npn \@@_clear_forbidden_unit:
+  { \seq_clear:N \l_@@_curef_do_not_change_seq }
+%    \end{macrocode}
+%
+%
+%
 %
 %
 %
