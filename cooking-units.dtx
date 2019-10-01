@@ -5202,11 +5202,12 @@ and the derived file cooking-units.sty.
 %\begin{macro}
 %  {
 %    \@@_error_if_unit_not_defined:n,
-%    \@@_error_if_unit_not_defined:V,
+%    \@@_error_if_unit_not_defined:nTF,
+%    \@@_error_if_unit_not_defined:VTF,
 %  }
 % A little helper macro. Checks if the unit is defined, if not raise an error.
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_error_if_unit_not_defined:n #1 { TF, T, F }
+\prg_new_protected_conditional:Npnn \@@_error_if_unit_not_defined:n #1 { TF, T, F }
   {
     \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#1} 
       { \prg_return_false: }
