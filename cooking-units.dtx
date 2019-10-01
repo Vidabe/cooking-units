@@ -3660,6 +3660,21 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
+%
+% \begin{macro} { \g_@@_master_changer_prop }
+%   Similar to |\l_@@_change_unit_prop|, but doesn't store the requested
+%  unit change, but the values needed for conversion. Either a numerical
+%  value is stored or a formula (using |#1| to insert the original value).
+%
+%  Put and get values via \cs{\@@_prop_gput_master:nnn}
+%  and \cs{@@_prop_get_master:nnNTF}.
+%    \begin{macrocode}
+\prop_new:N \g_@@_master_changer_prop
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
 % \begin{macro}
 %  {
 %    \l_@@_number_tmpa_tl,
@@ -3884,6 +3899,17 @@ and the derived file cooking-units.sty.
 \seq_new:N \l_@@_derivative_value_list_seq
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{macro}{\l_@@_max_depth_int, \l_@@_curr_depth_int}
+%   Also some variables used in \mycs{declarecookingderivatives}.
+%    \begin{macrocode}
+\int_new:N \l_@@_max_depth_int
+\int_new:N \l_@@_curr_depth_int
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
 % \begin{macro} { \l_@@_temperatures_to_check_seq }
 %   \changes {1.02h} {New.}
 % Stores units which should be tested if \opt{check-temperature} equals true.
@@ -3908,16 +3934,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} { \g_@@_master_changer_prop }
-%    \begin{macrocode}
-\prop_new:N \g_@@_master_changer_prop
-%    \end{macrocode}
-% \end{macro}
 %
-%    \begin{macrocode}
-\int_new:N \l_@@_max_depth_int
-\int_new:N \l_@@_curr_depth_int
-%    \end{macrocode}
 %
 % \begin{macro}
 %   {
