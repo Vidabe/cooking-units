@@ -3899,7 +3899,7 @@ and the derived file cooking-units.sty.
 %    \l_@@_input_decimal_mark_tl,
 %    \l_@@_input_value_signs_tl,
 %    \l_@@_input_allowed_special_signs_tl ,
-%    \c_@@_input_str_hash_one_tl ,
+%    \g_@@_input_str_hash_one_tl ,
 %    \l_@@_input_range_sign_tl,
 %    \l_@@_cutext_space_tl,
 %    \l_@@_cuphrase_space_tl,
@@ -3931,7 +3931,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_input_decimal_mark_tl
 \tl_new:N \l_@@_input_value_signs_tl
 \tl_new:N \l_@@_input_allowed_special_signs_tl 
-\tl_new:N \c_@@_input_str_hash_one_tl 
+\tl_new:N \g_@@_input_str_hash_one_tl 
 \tl_new:N \l_@@_input_range_sign_tl
 \tl_new:N \l_@@_cutext_space_tl
 \tl_new:N \l_@@_cuphrase_space_tl
@@ -3965,7 +3965,7 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_input_decimal_mark_tl { . , }
 \tl_set:Nn \l_@@_input_value_signs_tl { + - }
 \tl_set:Nn \l_@@_input_allowed_special_signs_tl { ? }
-\tl_set_rescan:Nnn \c_@@_input_str_hash_one_tl
+\tl_gset_rescan:Nnn \g_@@_input_str_hash_one_tl
   { \char_set_catcode_letter:N \# } {#1}
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -4769,8 +4769,8 @@ and the derived file cooking-units.sty.
           {
             \@@_error_if_unit_not_defined:nF {##1}
               {
-                \seq_if_in:NnF \l_@@_natural_units_seq {##1}
-                  { \seq_put_right:Nn \g_@@_natural_units_seq {##1} }
+                \seq_if_in:NnF \g_@@_natural_units_seq {##1}
+                  { \seq_gput_right:Nn \g_@@_natural_units_seq {##1} }
               }
           }
       } ,
@@ -5599,7 +5599,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \seq_new:N \g_@@_natural_units_seq
 \prop_new:N \g_@@_convert_to_eV_remember_prop
-\seq_set_from_clist:Nn \g_@@_natural_units_seq
+\seq_gset_from_clist:Nn \g_@@_natural_units_seq
   {
     eV ,
     eVc-2 ,
@@ -7588,7 +7588,7 @@ and the derived file cooking-units.sty.
         \seq_if_in:NnF \l_@@_tmpa_seq {#1}
           { \seq_put_right:Nn \l_@@_tmpa_seq {#1} }
         \tl_set:Nn \l_@@_tmpa_tl {#2}
-        \tl_replace_all:NVn \l_@@_tmpa_tl \c_@@_input_str_hash_one_tl { \l_@@_tmpa_fp }
+        \tl_replace_all:NVn \l_@@_tmpa_tl \g_@@_input_str_hash_one_tl { \l_@@_tmpa_fp }
         \prop_put:NnV \l_@@_tmpa_prop {#1} \l_@@_tmpa_tl
       }
     \@@_cusinglekeys_parse_input_aux:nn
@@ -7722,7 +7722,7 @@ and the derived file cooking-units.sty.
             \tl_if_in:NnT \l_@@_unit_letter_not_allowed_tl {##1}
               { \msg_error:nnn { cooking-units } { character-not-allowed } {#2} }
           }
-        \seq_put_right:Nn \g_@@_list_of_defined_units_seq {#2}
+        \seq_gput_right:Nn \g_@@_list_of_defined_units_seq {#2}
         \tl_new:c { l_@@_unit_change_ #2 _tl }
         \tl_set:cn { l_@@_unit_change_ #2 _tl } { 1.0 }
         \clist_new:c { l_@@_unit_option_ #2 _clist } 
