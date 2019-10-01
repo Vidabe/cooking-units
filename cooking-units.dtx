@@ -5448,7 +5448,7 @@ and the derived file cooking-units.sty.
 % I am using this construction often enough, so \dots\ yeah.
 % Note that if the evaluation is |true|, the path taken is the |false| one.
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_change_unit: { TF }
+\prg_new_conditional:Npnn \@@_change_unit: { TF , T }
   { 
     \bool_lazy_any:nTF
       {
