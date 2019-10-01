@@ -5476,15 +5476,17 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_temperatures_to_check_define:nn #1#2
   {
-    \@@_error_if_unit_not_defined:nT {#1} { \use_none:nnnn }
-    \fp_if_exist:cTF { l_@@_ #1 _min_fp }
-      { 
-%        \msg_warning:nnn { cooking-units } { Minimum-already-defined } {#1} 
-        \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
-      }{
-        \seq_put_right:Nn \l_@@_temperatures_to_check_seq {#1}
-        \fp_new:c { l_@@_ #1 _min_fp }
-        \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
+    \@@_error_if_unit_not_defined:nF {#1} 
+      {
+        \fp_if_exist:cTF { l_@@_ #1 _min_fp }
+          { 
+%            \msg_warning:nnn { cooking-units } { Minimum-already-defined } {#1} 
+            \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
+          }{
+            \seq_put_right:Nn \l_@@_temperatures_to_check_seq {#1}
+            \fp_new:c { l_@@_ #1 _min_fp }
+            \fp_set:cn { l_@@_ #1 _min_fp } {#2}      
+          }
       }
   }
 %    \end{macrocode}
