@@ -4401,6 +4401,15 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+%\begin{macro}{ convert-fraction }
+% If set to true the fractions are evaluated \emph{if} the unit is transformed!
+%    \begin{macrocode}
+    convert-fraction .bool_set:N = \l_@@_convert_fractions_bool ,
+    convert-fraction .default:n = { true } ,
+%    \end{macrocode}
+%\end{macro}
+%
+%
 %\begin{macro}{ fraction-command }
 %  Setting the fraction command
 %    \begin{macrocode}
@@ -4683,13 +4692,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%\begin{macro}{ eval-fraction }
-% If set to true the fractions are evaluated.
-%    \begin{macrocode}
-    convert-fraction .bool_set:N = \l_@@_convert_fractions_bool ,
-    convert-fraction .default:n = { true } ,
-%    \end{macrocode}
-%\end{macro}
 %
 %
 %
@@ -6158,7 +6160,10 @@ and the derived file cooking-units.sty.
       { \l_@@_lokal_persons_bool }{ \l_@@_eval_fractions_bool }
       { \bool_set_false:N \l_@@_lokal_fraction_bool }
     \bool_if:NT \l_@@_convert_fractions_bool
-      { \@@_change_unit:T { \bool_set_false:N \l_@@_lokal_fraction_bool } }
+      {
+        \tl_if_eq:NNF \l_@@_original_unit_tl \l_@@_option_unit_tl
+          { \bool_set_false:N \l_@@_lokal_fraction_bool }
+      }
   }
 %
 \cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
