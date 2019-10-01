@@ -4732,7 +4732,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { unknown-unit }
   { 
     The \ unit \ '#1' \ is \ not \ defined. \ Use \ 
-    \newcookingunit ~ (or \ one \ of \ the \ others) \ to \ 
+    \newcookingunit (or \ one \ of \ the \ others) \ to \ 
     define \ new \ units.
   }{ 
     Define \ units \ before \ using \ or \ check \ if \ the \
@@ -4818,8 +4818,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Key-not-defined } 
   { 
-    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeys ~ or \
-    \cudefinesinglekey ~ to \ define \ keys. 
+    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeys or \
+    \cudefinesinglekey to \ define \ keys. 
   } 
   { 
     This \ key \ is \ not \ defined, \ perhaps \ you  \ misspelled \ it.
@@ -4835,8 +4835,7 @@ and the derived file cooking-units.sty.
     The \ temperature \ '#1' \ is \ too \ low.\ It \ cannot \ be \
     below \ the \ absolute \ zero - point \ of \ '#2'. \ Note \ that \ 
     the \ temperatures \ 
-    '\seq_use:Nnnn \l_@@_temperatures_to_check_seq 
-      { ', ~ ' } { ', ~ ' } { ' ~ and ~ ' }' \
+    '\@@_seq_use_msg:N \l_@@_temperatures_to_check_seq' \
     are \ rounded \ to \ integers \ by \ default. 
     \\\\
     You \ can \ disable \ the \ option \ 'check-temperature' \ to \
@@ -4852,8 +4851,8 @@ and the derived file cooking-units.sty.
     '#3' \ as \ a \ set \ of \ choices \ and \ '#2' \ is \ non \ of \ these.
   }{ 
     The \ key \ accepts \ only \ a \ fixed \ set \ of \ choices. \
-    You \ can \ add \ new \ choices \ via \ \cuaddkeys, ~ \cuaddsinglekeys ~
-    and \ \cuaddtokeys.
+    You \ can \ add \ new \ choices \ via \ \token_to_str:N \cuaddkeys, ~ 
+    \token_to_str:N \cuaddsinglekeys ~ and \ \token_to_str:N \cuaddtokeys.
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -5032,7 +5031,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { cutext-no-translation-available }
   { 
     For \ the \ unit \ '#1' \ there \ exists \ no \ translation \ to \ be \ used \
-    for \ \cutext ~ and \ \Cutext. \
+    for \ \cutext ~ and \ \token_to_str:N \Cutext. \
     You \ can \ define \ new \ translations \ for \ a \ given \ language \ using \
     \cudefinename.
   }{ 
@@ -5046,7 +5045,7 @@ and the derived file cooking-units.sty.
 \msg_new:nnnn { cooking-units } { Translation-not-available }
   { 
     The \ translation \ for \ #1 \ does \ not \ exist. 
-    Please \ define \ it \ using \ \cudefinename.
+    Please \ define \ it \ using \ \token_to_str:N\cudefinename.
   }{ 
     And \ you \ may \ send \ me \ the \ translation \ as \ it \ is \
     not \ available \ yet.
@@ -5094,7 +5093,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { curef-forbidden-unit } 
   { 
-   The \ amount \  of \ '#1' \ cannot \ be \ changed \ using \ cooking-units` \ label \ and \ ref \ feature.
+   The \ amount \  of \ '#1' \ cannot \ be \ changed \ using \ cooking-units` 
+   \ label \ and \ ref \ feature.
   }{ 
     You \ can \ remove \ the \ unit \ using \ 'curef-remove-forbidden-unit'.
     \msg_see_documentation_text:n { cooking-units } 
@@ -5115,7 +5115,7 @@ and the derived file cooking-units.sty.
   }
 \msg_new:nnnn { cooking-units } { define-Numeral-function } 
   { 
-   You \ are \ using \ numerals \ (capitaliced) \ without \ the \ load-time \ option \
+   You \ are \ using \ numerals \ (capitalized) \ without \ the \ load-time \ option \
    'use-fmtcount-numerals' \ as \ such \ you \ need \ to \ define \ 
    which \ function \ is \ to \ be \ used \ for \ numerals. \ You \ can
    \ do \ that \ via \ 'numeral-function' \ and \ 'Numeral-function'
@@ -5202,7 +5202,11 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 %
-%
+%    \begin{macrocode}
+\cs_new:Npn \@@_seq_use_msg:N #1
+  { \seq_use:Nnnn #1 { ' , ~ ' } { ' , ~ ' } { ' ~ and ~ ' } }
+\cs_generate_variant:Nn \@@_seq_use_msg:N { c }
+%    \end{macrocode}
 %
 %
 %
@@ -7297,7 +7301,7 @@ and the derived file cooking-units.sty.
               { key-choice-unknown }
               {#1} 
               {##1} 
-              { \seq_use:Nnnn \l_tmpa_seq { ',~ ' } { ',~ ' } { ' ~ and ~ ' } } 
+              { \@@_seq_use_msg:N \l_tmpa_seq }
           } ,
          #1 .default:n = {#1} ,
          #1 .groups:n = { change-unit }
