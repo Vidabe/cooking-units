@@ -5606,9 +5606,9 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_define_clear_unit_group:nn,\@@_add_to_unit_group_error:n,\@@_add_to_unit_group:nn}
+% \begin{macro}{\@@_define_clear_unit_group:n,\@@_add_to_unit_group_error:n,\@@_add_to_unit_group:nn}
 %    \begin{macrocode}
-\cs_new:Npn \@@_define_clear_unit_group:nn #1#2
+\cs_new:Npn \@@_define_clear_unit_group:n #1
   {
     \seq_clear_new:c { l_@@_group_ #1 _seq }
     \keys_define:nn { cooking-units }  
@@ -8639,7 +8639,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \cudeclareunitgroup { m m }
   {
-    \@@_define_clear_unit_group:nn {#1} {#2}
+    \@@_define_clear_unit_group:n {#1}
     \@@_add_to_unit_group:nn {#1} {#2}
   }
 \NewDocumentCommand \cuaddtounitgroup { m m }
@@ -8649,7 +8649,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \cuclearunitgroup { m }
   {
     \@@_error_if_group_not_defined:nF {#1}
-      { \@@_define_clear_unit_group:nn {#1} { } }
+      { \@@_define_clear_unit_group:n {#1} }
   }
 %    \end{macrocode}
 %
@@ -8676,25 +8676,14 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_clear_options_for:n #1
   {
     \@@_map_trough_valid_unit_options:nnn {#1} { } 
-      { 
-        \exp_args:NNc \use_i_ii:nnn \clist_clear:N 
-      }
+      { \exp_args:NNc \use_i_ii:nnn \clist_clear:N }
   }
 \NewDocumentCommand \cusetoptionfor { m m }
-  {
-    \@@_set_options_for:nn {#1} {#2}
-  }
+  { \@@_set_options_for:nn {#1} {#2} }
 \NewDocumentCommand \cuaddoptionfor { m m }
-  {
-%    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_put_right:cn }
-    \@@_add_options_for:nn {#1} {#2}
-  }
+  { \@@_add_options_for:nn {#1} {#2} }
 \NewDocumentCommand \cuclearoptionfor { m }
-  {
-    \@@_clear_options_for:n {#1}
-%    \@@_map_trough_valid_unit_options:nnn {#1} { } 
-%      { \use_i_ii:nnn \clist_clear:c }
-  }
+  { \@@_clear_options_for:n {#1} }
 %    \end{macrocode}
 % The reason I map trough the units twice is simply: I think it makes more
 % sense if an \enquote{unknown unit} error is shown before an 
