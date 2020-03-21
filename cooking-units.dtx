@@ -8675,7 +8675,10 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_clear_options_for:n #1
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} { } { \use_i_ii:nnn \clist_clear:c }
+    \@@_map_trough_valid_unit_options:nnn {#1} { } 
+      { 
+        \exp_args:NNc \use_i_ii:nnn \clist_clear:N 
+      }
   }
 \NewDocumentCommand \cusetoptionfor { m m }
   {
