@@ -782,6 +782,8 @@ and the derived file cooking-units.sty.
 % \changes {2018/09/24} {1.45} {New section in documentation.}
 % \changes {2018/09/24} {1.45} {Remove exhaustive expansion from internals (shouldn't change anything for users).}
 %
+% \changes {2020/03/21} {vVERSIONv} {Remove exhaustive expansion from translations. Shouldn't really change much if anything.}
+% \changes {2020/03/21} {vVERSIONv} {New options: \Opt{definition/symbol}, \Opt{definition/gender}, Opt{definition/set-options}, Opt{definition/add-to-group}. }
 % 
 %
 %
@@ -4902,11 +4904,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{set-gender}
+% \begin{macro}{gender}
 %  To be implemented. Key used during definition of new units.
 %  Defines the gender of the unit.
 %    \begin{macrocode}
-  definition / set-gender .code:n = 
+  definition / gender .code:n = 
     { 
       \@@_if_gender_error:nF {#1}
         {
@@ -4916,7 +4918,7 @@ and the derived file cooking-units.sty.
             {#1}
         }
     },
-  definition / set-gender .value_required:n = { true } ,
+  definition / gender .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
 %
