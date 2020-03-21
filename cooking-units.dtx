@@ -4322,7 +4322,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     erase-all-options .code:n = 
       { 
-        \exp_args:Nx \cuclearoptionfor { \seq_use:Nn \g_@@_list_of_defined_units_seq { , } }
+        \exp_args:Nx \@@_clear_options_for:n 
+          { \seq_use:Nn \g_@@_list_of_defined_units_seq { , } }
         },
     erase-all-options .value_forbidden:n = { true } ,
 %    \end{macrocode}
@@ -4334,7 +4335,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     erase-all-options-for .code:n = 
       { 
-        \cuclearoptionfor {#1}
+        \@@_clear_options_for:n {#1}
 %        \keyval_parse:NNn 
 %          \@@_erase_options_for:n
 %          \@@_erase_options_for_error:nn
@@ -4878,8 +4879,94 @@ and the derived file cooking-units.sty.
 %
 %
 %
+% \begin{macro}{is-equal-to}
+%  To be implemented. Key used during definition of new units.
+%  Lets you add a connection between keys already during definition.
+%  Suspended until figured out how to do it smartly.
+%    \begin{macrocode}
+%  definition / is-equal-to .code:n = {  },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{symbol,print}
+%  To be implemented. Key used during definition of new units.
+%  Defines the printed symbol of the unit (both do the same).
+%    \begin{macrocode}
+  definition / symbol .code:n = 
+    { 
+      \bool_set_true:N \l_@@_symbol_was_set_by_key_bool
+      \tl_set:cn { l_@@_default_unit_ \l_@@_original_unit_tl _tl } {#1} 
+      \@@_deftranslation_base:VVn \l_@@_original_unit_tl \c_@@_postfix_unit_tl {#1}
+    },
+  definition / symbol .value_required:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{set-gender}
+%  To be implemented. Key used during definition of new units.
+%  Defines the gender of the unit.
+%    \begin{macrocode}
+  definition / set-gender .code:n = 
+    { 
+      \@@_if_gender_error:nF {#1}
+        {
+          \@@_deftranslation_base:xVn 
+            \l_@@_original_unit_tl 
+            \c_@@_postfix_gender_tl 
+            {#1}
+        }
+    },
+  definition / set-gender .value_required:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{set-option}
+%  To be implemented. Key used during definition of new units.
+%  Adds options to a specific key during definition of unit.
+%    \begin{macrocode}
+  definition / set-options .code:n = 
+    { 
+      \exp_args:NV \@@_set_options_for:nn \l_@@_original_unit_tl {#1} 
+    },
+  definition / set-options .value_required:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{add-to-group}
+%  To be implemented. Key used during definition of new units.
+%  Adds unit to given group.
+%    \begin{macrocode}
+  definition / add-to-group .code:n = 
+    {  
+      \exp_args:NnV
+      \@@_add_to_unit_group:nn {#1} \l_@@_original_unit_tl
+    },
+  definition / add-to-group .value_required:n = { true } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{unit-names}
+%  To be implemented. Key used during definition of new units.
+%  Defines written out unit name for \cCutext for given language.
+%  Also suspended. Would need to give language and it would be too
+%  complicated (I think)
+%    \begin{macrocode}
+%  definition / unit-names .code:n = {  },
+%    \end{macrocode}
+% \end{macro}
 %
 %
+% Currently: Do nothing if an unknown key is given.
+%    \begin{macrocode}
+  definition / unknown .code:n = 
+    {  
+      \tl_if_empty:nF {#1}
+        {
+          \tl_show:n { Add warning that kwy was ignored. And if part of symbol ->
+            add braces around (check if helps)}
+        }
+    },
+%    \end{macrocode}
 %
 %
 %
@@ -5488,7 +5575,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_check_if_correct_gender_input:n }
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_if_gender_error:n #1 { TF }
+\prg_new_conditional:Npnn \@@_if_gender_error:n #1 { TF, F }
   {
     \str_case:nnTF {#1}
       {
@@ -5504,12 +5591,15 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_check_if_correct_gender_input:n #1
   {
-    \str_case:nnF {#1}
-      {
-        { m } { }
-        { f } { }
-        { n } { }
-      } { \msg_error:nnn { cooking-units } { unknown-gender } {#1} } 
+    \@@_if_gender_error:nTF {#1}
+      { \msg_error:nnn { cooking-units } { unknown-gender } {#1} }
+      { }
+%    \str_case:nnF {#1}
+%      {
+%        { m } { }
+%        { f } { }
+%        { n } { }
+%      } { \msg_error:nnn { cooking-units } { unknown-gender } {#1} } 
   }
 %    \end{macrocode}
 % \end{macro}
@@ -5519,7 +5609,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_define_clear_unit_group:nn #1#2
   {
     \seq_clear_new:c { l_@@_group_ #1 _seq }
-    \keys_define:nn { cooking-units }
+    \keys_define:nn { cooking-units }  
       { 
         #1 .code:n = { \@@_unit_group_convert_units:nn {#1} {##1} } ,
         #1 .groups:n = { change-unit } ,
@@ -5704,8 +5794,8 @@ and the derived file cooking-units.sty.
     \@@_error_if_unit_not_defined:n {#1}
     \msg_error:nnn { cooking-units } { No-Value-given } { set-option-for }
   }
-\cs_new:Npn \@@_set_options_for:nn #1#2
-  { \cusetoptionfor {#1} {#2} }
+%\cs_new:Npn \@@_set_options_for:nn #1#2
+%  { \cusetoptionfor {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5716,8 +5806,8 @@ and the derived file cooking-units.sty.
     \@@_error_if_unit_not_defined:n {#1}
     \msg_error:nnn { cooking-units } { No-Value-given } { add-option-for }
   }
-\cs_new:Npn \@@_add_options_for:nn #1#2
-  { \cuaddoptionfor {#1} {#2} }
+%\cs_new:Npn \@@_add_options_for:nn #1#2
+%  { \cuaddoptionfor {#1} {#2} }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5863,8 +5953,8 @@ and the derived file cooking-units.sty.
   {
     \declaretranslation {#1} { #2 #3 } {#4}
   }
-\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xV }
-\cs_generate_variant:Nn \@@_deftranslation_to:nnnn { VxVv, VxVV , VxVn }
+\cs_generate_variant:Nn \@@_deftranslation_base:nnn { xV, nV, VV }
+\cs_generate_variant:Nn \@@_deftranslation_to:nnnn { VxVv, VxVV , VxVn, nVVv,  }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -7709,6 +7799,7 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 %    \begin{macrocode}
+\bool_new:N \l_@@_symbol_was_set_by_key_bool
 \cs_new:Npn \@@_new_cooking_unit:nn #1#2
   {
     \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#2} 
@@ -7725,8 +7816,8 @@ and the derived file cooking-units.sty.
         \clist_new:c { l_@@_unit_option_ #2 _clist } 
         \keys_define:nn { cooking-units }
           {
-            set-option-for-#2 .code:n =  { \cusetoptionfor {#2} {##1} } ,
-            add-option-for-#2 .code:n = { \cuaddoptionfor {#2} {##1} },
+            set-option-for-#2 .code:n =  { \@@_set_options_for:nn {#2} {##1} } ,
+            add-option-for-#2 .code:n = { \@@_add_options_for:nn {#2} {##1} },
           }
         \tl_new:c { l_@@_base_key_unit_ #2 _tl }
         \tl_new:c { l_@@_default_unit_ #2 _tl }
@@ -7734,17 +7825,33 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_set_cooking_unit:nn #1#2
   {
-    \IfNoValueTF {#1}
+    \tl_set:Nn \l_@@_original_unit_tl {#2}
+    \bool_set_false:N \l_@@_symbol_was_set_by_key_bool
+    \@@_deftranslation_base:xVn 
+      \l_@@_original_unit_tl 
+      \c_@@_postfix_unitname_tl 
+      { \q_@@_no_translation }
+    \@@_deftranslation_base:xVn 
+      \l_@@_original_unit_tl 
+      \c_@@_postfix_unitname_pl_tl 
+      { \q_@@_no_translation }
+    \@@_deftranslation_base:xVn 
+      \l_@@_original_unit_tl 
+      \c_@@_postfix_gender_tl 
+      { m }
+    \IfNoValueF {#1}
+      { \keys_set:nn { cooking-units / definition } {#1} }
+    \bool_if:NF \l_@@_symbol_was_set_by_key_bool
       {
-        \tl_set:cn { l_@@_default_unit_ #2 _tl } {#2}
-        \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unit_tl {#2}
-      }{
-        \tl_set:cn { l_@@_default_unit_ #2 _tl } {#1}
-        \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unit_tl {#1}
+        \IfNoValueTF {#1}
+          {
+            \tl_set:cn { l_@@_default_unit_ \l_@@_original_unit_tl _tl } {#2}
+            \@@_deftranslation_base:xVn \l_@@_original_unit_tl \c_@@_postfix_unit_tl {#2}
+          }{
+            \tl_set:cn { l_@@_default_unit_ \l_@@_original_unit_tl _tl } {#1}
+            \@@_deftranslation_base:xVn \l_@@_original_unit_tl \c_@@_postfix_unit_tl {#1}
+          }
       }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unitname_tl { \q_@@_no_translation }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_unitname_pl_tl { \q_@@_no_translation }
-    \@@_deftranslation_base:xVn {#2} \c_@@_postfix_gender_tl { m }
   }
 %    \end{macrocode}
 %
@@ -8556,20 +8663,32 @@ and the derived file cooking-units.sty.
 %
 % Works better now.
 %    \begin{macrocode}
+\cs_new:Npn \@@_set_options_for:nn #1#2
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_set:cn }
+  }
+\cs_new:Npn \@@_add_options_for:nn #1#2
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_put_right:cn }
+  }
+\cs_new:Npn \@@_clear_options_for:n #1
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} { } { \use_i_ii:nnn \clist_clear:c }
+  }
 \NewDocumentCommand \cusetoptionfor { m m }
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
-      { \clist_set:cn { l_@@_unit_option_ ##1 _clist } {##2} }
+    \@@_set_options_for:nn {#1} {#2}
   }
 \NewDocumentCommand \cuaddoptionfor { m m }
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} {#2} 
-      { \clist_put_right:cn { l_@@_unit_option_ ##1 _clist } {##2} }
+%    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_put_right:cn }
+    \@@_add_options_for:nn {#1} {#2}
   }
 \NewDocumentCommand \cuclearoptionfor { m }
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} { } 
-      { \clist_clear:c { l_@@_unit_option_ ##1 _clist } }
+    \@@_clear_options_for:n {#1}
+%    \@@_map_trough_valid_unit_options:nnn {#1} { } 
+%      { \use_i_ii:nnn \clist_clear:c }
   }
 %    \end{macrocode}
 % The reason I map trough the units twice is simply: I think it makes more
@@ -8585,7 +8704,10 @@ and the derived file cooking-units.sty.
   {
     \seq_clear:N \l_@@_tmpa_seq
     \clist_clear:N \l_@@_tmpa_clist
-    \cs_set:Npn \@@_tmp:w ##1##2 {#3}
+    \cs_set:Npn \@@_tmp:w ##1 ##2 
+      { 
+        #3 { l_@@_unit_option_ ##1 _clist } {##2}
+      }
     \clist_map_inline:nn {#1}
       {
         \@@_error_if_unit_not_defined:nF {##1}
@@ -8912,7 +9034,7 @@ and the derived file cooking-units.sty.
     { lb } { 1/0.45359237 } 
     { oz } { 16/0.45359237 } 
     { stick } { 4/0.45359237 }
-    { eVc-2 } { 560958865.0e+27 } %% 560958865.0 +- 3.5 e+27
+    { eVc-2 } { 560958865.0e+27 } %% (560958865.0 +- 3.5) e+27
   }
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -8921,7 +9043,7 @@ and the derived file cooking-units.sty.
     { h }  { 24 }
     { min }{ 1440 }
     { s }  { 86400 }
-    { hbareV-1 } { 151926746.1e+7 * 86400 } %% 151926746.1 +- 2.1 e+7
+    { hbareV-1 } { 151926746.1e+7 * 86400 } %% (151926746.1 +- 2.1) e+7
   }
 %\cuaddtokeys { s } { hbareV-1 } { 6.582119514e-16 }
 %    \end{macrocode}
@@ -8951,7 +9073,7 @@ and the derived file cooking-units.sty.
     { kJ }{ 1e-3 }
     { cal }{ 0.2388459 }
     { kcal }{ 0.2388459e-3 }
-    { eV }{ 624150912.6e+10 } %% 624150912.6 +- 3.9 e+10
+    { eV }{ 624150912.6e+10 } %% (624150912.6 +- 3.9) e+10
   }
 %\cuaddtokeys { J } { eV } { 1.6021766208e-19 }
 %    \end{macrocode}
