@@ -6272,7 +6272,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_print_ranges:NN #1#2
   {
     \@@_print_input:N #1
-    \bool_if:NTF \l_@@_using_cutext_bool
+    \bool_lazy_or:nnTF
+      { \l_@@_using_cutext_bool }
+      { \l_@@_lokal_numeral_bool }
+%    \bool_if:NTF \l_@@_using_cutext_bool
       {
 %        \tl_use:N \l_@@_cutext_range_sign_tl
         \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
@@ -7068,7 +7071,7 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
+            \@@_translate_one_and_check_existance:Nn \l_@@_translation_tmpa_tl {#2}
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
               {
                 \exp_args:Nx \tl_upper_case:n { \tl_head:V \l_@@_translation_tmpa_tl }
@@ -7375,7 +7378,7 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_and_check_existance:Nx 
+            \@@_translate_one_and_check_existance:Nx
               \l_@@_translation_tmpa_tl
               { \l_@@_phrase_number_tl -phrase-gender }
             \l_@@_translation_tmpa_tl 
@@ -8444,7 +8447,7 @@ and the derived file cooking-units.sty.
       {
         \@@_int_if_equal_one:nTF {#1}
           {
-            \@@_translate_one_and_check_existance:Nx \l_@@_translation_tmpa_tl {#2}
+            \@@_translate_one_and_check_existance:Nn \l_@@_translation_tmpa_tl {#2}
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
               {
                 \exp_args:Nx \tl_upper_case:n { \tl_head:V \l_@@_translation_tmpa_tl }
