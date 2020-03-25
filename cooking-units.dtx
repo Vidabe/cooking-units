@@ -818,7 +818,7 @@ and the derived file cooking-units.sty.
 % \tableofcontents
 %
 % \section{Introduction}
-%
+% \newcookingunit[{tza=ds}]{Test} \cunum{1}{Test}
 %
 % While writing on a cookery book I used -- for some reasons whatsoever --
 % three different units for weight: kilogram (kg), gram (g) and
@@ -4890,7 +4890,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{symbol,print}
+% \begin{macro}{symbol}
 %  To be implemented. Key used during definition of new units.
 %  Defines the printed symbol of the unit (both do the same).
 %    \begin{macrocode}
@@ -4909,12 +4909,12 @@ and the derived file cooking-units.sty.
 %  Defines the gender of the unit.
 %    \begin{macrocode}
   definition / gender .code:n = 
-    { 
+    {
       \@@_if_gender_error:nF {#1}
         {
-          \@@_deftranslation_base:VVn 
-            \l_@@_original_unit_tl 
-            \c_@@_postfix_gender_tl 
+          \@@_deftranslation_base:VVn
+            \l_@@_original_unit_tl
+            \c_@@_postfix_gender_tl
             {#1}
         }
     },
@@ -4964,8 +4964,9 @@ and the derived file cooking-units.sty.
     {  
       \tl_if_empty:nF {#1}
         {
-          \tl_show:n { Add warning that kwy was ignored. And if part of symbol ->
-            add braces around (check if helps)}
+          \exp_args:NnnV
+          \msg_error:nnnn { cooking-units } { definition-key-mistyped? } \l_keys_key_str
+            {#1}
         }
     },
 %    \end{macrocode}
@@ -5463,6 +5464,22 @@ and the derived file cooking-units.sty.
    \ up. \ The \ error \ code \ is \ '#1'.
   }{ 
     Please \ send \ me \ a \ bug \ report.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { definition-key-mistyped? } 
+  { 
+    This \ message \ shows \ during \ the \ definition \ of \ unit-keys. \
+    You \ may \ have \ mistyped \ the \ key \ '#1'. \ You \ may \ see \
+    this \ message \ because \ you \ have \ used \ a \ '=' \ sign \ in \ the \
+    optional \ argument. \ If \ this \ is \ the \ case \ and \ you \ still \ want
+    \ to \ use \ '=' \ in \ a \ symbol, \ please \ wrap \ the \ symbol
+    \ in \ two \ braces: \ {{#1=#2}}.
+  }{ 
+    Or \ try \ using \ the \ 'symbol' \ option.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -7842,7 +7859,10 @@ and the derived file cooking-units.sty.
       \c_@@_postfix_gender_tl 
       { m }
     \IfNoValueF {#1}
-      { \keys_set:nn { cooking-units / definition } {#1} }
+      { 
+        \tl_if_head_is_group:nTF {#1}
+          { \keys_set:nn { cooking-units / definition } {#1} } 
+      }
     \bool_if:NF \l_@@_symbol_was_set_by_key_bool
       {
         \IfNoValueTF {#1}
