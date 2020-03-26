@@ -3832,9 +3832,14 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{\@@_set_amount:Nn,\@@_set_unit:Nn}
 % Allows for potential parsing of amount and or unit.
+% The \enquote{basis} variant is never changed.
 %    \begin{macrocode}
+\cs_new_eq:NN \@@_set_amount_basis:Nn \tl_set:Nn
 \cs_new_eq:NN \@@_set_amount:Nn \tl_set:Nn
-\cs_new_eq:NN \@@_set_unit:Nn \tl_set:Nn
+%
+\cs_new_eq:NN \@@_set_unit_basis:Nn \str_set:Nn
+\cs_new_eq:NN \@@_set_unit:Nn \str_set:Nn
+\cs_generate_variant:Nn \@@_set_unit_basis:Nn { c }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4403,7 +4408,7 @@ and the derived file cooking-units.sty.
     expand-both .choices:nn =
       { n , o , f , x }
       {
-        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_unit:Nn { str_set:N \l_keys_choice_tl }
         \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
       } ,
     expand-both .default:n = { n } ,
@@ -4420,7 +4425,7 @@ and the derived file cooking-units.sty.
     expand-unit .choices:nn =
       { n , o , f , x }
       {
-        \cs_set_eq:Nc \@@_set_unit:Nn { tl_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_unit:Nn { str_set:N \l_keys_choice_tl }
       } ,
     expand-unit .default:n = { n } ,
 %    \end{macrocode}
@@ -4965,7 +4970,10 @@ and the derived file cooking-units.sty.
       \tl_if_empty:nF {#1}
         {
           \exp_args:NnnV
-          \msg_error:nnnn { cooking-units } { definition-key-mistyped? } \l_keys_key_str
+          \msg_error:nnnn 
+            { cooking-units } 
+            { definition-key-mistyped? } 
+            \l_keys_key_str
             {#1}
         }
     },
@@ -5497,9 +5505,17 @@ and the derived file cooking-units.sty.
 %  }
 % A little helper macro. Checks if the unit is defined, if not raise an error.
 %    \begin{macrocode}
+\prg_new_protected_conditional:Npnn \@@_if_unit_defined:n #1 { TF }
+  {
+    \@@_set_unit_basis:Nn \l_@@_tmp_basis_tl {#1}
+    \seq_if_in:NVTF \g_@@_list_of_defined_units_seq \l_@@_tmp_basis_tl
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
 \prg_new_protected_conditional:Npnn \@@_error_if_unit_not_defined:n #1 { TF, T, F }
   {
-    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#1} 
+    \@@_if_unit_defined:nTF {#1}
+%    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#1} 
       { \prg_return_false: }
       { 
         \msg_error:nnn { cooking-units } { unknown-unit } {#1} 
@@ -6339,7 +6355,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_print_default_unit: 
   { 
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
-    \,\l_@@_original_unit_tl 
+    \,\tl_set:cn { l_@@_default_unit_\l_@@_original_unit_tl _tl }
   }
 %    \end{macrocode}
 %
@@ -7453,7 +7469,7 @@ and the derived file cooking-units.sty.
             \@@_cukeys_parse_and_create_single_key:nn {#1} {#2}
           }{
             \fp_set:Nn \l_@@_tmpa_fp { 1.0 }
-            \tl_set:Nn \l_@@_original_unit_tl {#1}
+            \@@_set_unit_basis:Nn \l_@@_original_unit_tl {#1}
             \@@_cukeys_parse_and_create_keys:nn {#1} 
               { 
                 {#1} { 1.0 } #2 
@@ -7708,7 +7724,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cusinglekeys_create_key_prop:n #1
   {
     \tl_set:cn { l_@@_unit_change_ #1 _tl } { 1.0 }
-    \tl_set:cn { l_@@_base_key_unit_ #1 _tl } {#1}
+    \@@_set_unit_basis:cn { l_@@_base_key_unit_ #1 _tl } {#1}
     \prop_set_eq:cN { l_@@_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnV { l_@@_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
   }
@@ -7799,7 +7815,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \declarecookingunit { o m }
   {
-    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#2} 
+    \@@_if_unit_defined:nTF {#2}
       { \msg_info:nnn { cooking-units } { redefine-unit } {#2} }
       { \@@_new_cooking_unit:nn {#1} {#2} }
     \@@_set_cooking_unit:nn {#1} {#2}
@@ -7811,11 +7827,11 @@ and the derived file cooking-units.sty.
   }
 \NewDocumentCommand \providecookingunit { o m }
   {
-    \seq_if_in:NnF \g_@@_list_of_defined_units_seq {#2} 
+    \@@_if_unit_defined:nTF {#2}
       {
         \@@_new_cooking_unit:nn {#1} {#2} 
         \@@_set_cooking_unit:nn {#1} {#2}
-      }
+      } {}
   }
 %    \end{macrocode}
 %\end{macro}
@@ -7824,30 +7840,32 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_symbol_was_set_by_key_bool
 \cs_new:Npn \@@_new_cooking_unit:nn #1#2
   {
-    \seq_if_in:NnTF \g_@@_list_of_defined_units_seq {#2} 
-      { \msg_error:nnn { cooking-units } { unit-already-defined } {#2} }
+    \@@_set_unit_basis:Nn \l_@@_original_unit_tl {#2}
+    \@@_if_unit_defined:nTF {#2} 
+      { \msg_error:nnV { cooking-units } { unit-already-defined } \l_@@_original_unit_tl }
       {
-        \tl_map_inline:nn {#2}
+        \exp_args:NV
+        \tl_map_inline:nn \l_@@_original_unit_tl
           {
             \tl_if_in:NnT \l_@@_unit_letter_not_allowed_tl {##1}
-              { \msg_error:nnn { cooking-units } { character-not-allowed } {#2} }
+              { \msg_error:nnV { cooking-units } { character-not-allowed } \l_@@_original_unit_tl }
           }
-        \seq_gput_right:Nn \g_@@_list_of_defined_units_seq {#2}
-        \tl_new:c { l_@@_unit_change_ #2 _tl }
-        \tl_set:cn { l_@@_unit_change_ #2 _tl } { 1.0 }
-        \clist_new:c { l_@@_unit_option_ #2 _clist } 
+        \seq_gput_right:NV \g_@@_list_of_defined_units_seq \l_@@_original_unit_tl
+        \tl_new:c { l_@@_unit_change_ \l_@@_original_unit_tl _tl }
+        \tl_set:cn { l_@@_unit_change_ \l_@@_original_unit_tl _tl } { 1.0 }
+        \clist_new:c { l_@@_unit_option_ \l_@@_original_unit_tl _clist } 
         \keys_define:nn { cooking-units }
           {
             set-option-for-#2 .code:n =  { \@@_set_options_for:nn {#2} {##1} } ,
             add-option-for-#2 .code:n = { \@@_add_options_for:nn {#2} {##1} },
           }
-        \tl_new:c { l_@@_base_key_unit_ #2 _tl }
-        \tl_new:c { l_@@_default_unit_ #2 _tl }
+        \tl_new:c { l_@@_base_key_unit_ \l_@@_original_unit_tl _tl }
+        \tl_new:c { l_@@_default_unit_ \l_@@_original_unit_tl _tl }
       }
   }
 \cs_new:Npn \@@_set_cooking_unit:nn #1#2
   {
-    \tl_set:Nn \l_@@_original_unit_tl {#2}
+    \@@_set_unit_basis:Nn \l_@@_original_unit_tl {#2}
     \bool_set_false:N \l_@@_symbol_was_set_by_key_bool
     \@@_deftranslation_base:VVn 
       \l_@@_original_unit_tl 
@@ -8690,15 +8708,29 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_set_options_for:nn #1#2
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_set:cn }
+    \@@_set_unit_basis:Nn \l_@@_tmpa_tl {#1}
+    \@@_set_unit_basis:Nn \l_@@_tmpb_tl {#2}
+    \@@_map_trough_valid_unit_options:VVn 
+      \l_@@_tmpa_tl 
+      \l_@@_tmpb_tl 
+      { \clist_set:cn }
   }
 \cs_new:Npn \@@_add_options_for:nn #1#2
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_put_right:cn }
+    \@@_set_unit_basis:Nn \l_@@_tmpa_tl {#1}
+    \@@_set_unit_basis:Nn \l_@@_tmpb_tl {#2}
+    \@@_map_trough_valid_unit_options:VVn 
+      \l_@@_tmpa_tl 
+      \l_@@_tmpb_tl 
+      { \clist_put_right:cn }
   }
 \cs_new:Npn \@@_clear_options_for:n #1
   {
-    \@@_map_trough_valid_unit_options:nnn {#1} { } 
+    \@@_set_unit_basis:Nn \l_@@_tmpa_tl {#1}
+    \@@_set_unit_basis:Nn \l_@@_tmpb_tl {}
+    \@@_map_trough_valid_unit_options:VVn 
+      \l_@@_tmpa_tl 
+      \l_@@_tmpb_tl 
       { \exp_args:NNc \use_i_ii:nnn \clist_clear:N }
   }
 \NewDocumentCommand \cusetoptionfor { m m }
@@ -8754,6 +8786,7 @@ and the derived file cooking-units.sty.
       { \clist_put_right:Nn \l_@@_tmpa_clist { #1={#2} } }
       { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
   }
+\cs_generate_variant:Nn \@@_map_trough_valid_unit_options:nnn { VV }
 %    \end{macrocode}
 %
 %
