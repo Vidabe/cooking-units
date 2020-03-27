@@ -6719,8 +6719,7 @@ and the derived file cooking-units.sty.
 %   allowed token is found (and \lstinline|\l_@@_error_bool| is set to
 %   true) it just prints the input.  Otherwise it checks if a allowed sign was
 %   found. If so it is just stored inside \lstinline|\l_@@_tmpa_tl|,
-%   otherwise it is calulcated and stored in \lstinline|\l_@@_tmpa_tl|. The input
-%   \#1 can be either a token or a number.
+%   otherwise it is calulcated and stored in \lstinline|\l_@@_tmpa_tl|. 
 %    \begin{macrocode}
 \cs_new:Npn \@@_calculate_and_store_in:N #1
   {
@@ -6731,7 +6730,7 @@ and the derived file cooking-units.sty.
         \bool_lazy_and:nnTF
           { \l_@@_using_cutext_bool } { \l_@@_cutext_keep_unit_bool }
           { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
-          { \@@_calculate_input_and_store_in:nN {#1} \l_@@_tmpa_tl }
+          { \@@_calculate_input_and_store_in:NN #1 \l_@@_tmpa_tl }
         \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
         \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
         \@@_check_temperature_limit:N \l_@@_tmpa_tl
@@ -6741,22 +6740,31 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_calculate_input_and_store_in:nN }
-% Well \dots\ this function calculates the input. First checks if the
+% \begin{macro}{ \@@_calculate_input_and_store_in:NN }
+% Well \dots\ this function calculates the input. 
+% First check if a calculation is necessary at all, if the unit change is equal to \enquote{1.0},
+% there is no need for calculation. Unit change cannot be \enquote{1}, 
+% as I already changed them to \enquote{1.0}.
+% Second, check if the
 % wanted conversion contains a \lstinline|\l_@@_tmpa_fp| (ergo a \#1 in
 % the key definition). If true the conversion token (which already has
 % \lstinline|\l_@@_tmpa_fp|  in its input) is executed, else the input
 % number is multiplicated with the conversion token.
 %    \begin{macrocode}
-\cs_new:Npn \@@_calculate_input_and_store_in:nN #1#2
+\cs_new:Npn \@@_calculate_input_and_store_in:NN #1#2
   {
-    \fp_set:Nn \l_@@_tmpa_fp {#1}
-    \tl_if_in:cnTF { l_@@_unit_change_ \l_@@_original_unit_tl _tl } { \l_@@_tmpa_fp }
-      { 
-        \@@_tl_eval:Nv #2 { l_@@_unit_change_ \l_@@_original_unit_tl _tl }
-      }{ 
-        \@@_tl_eval:Nn #2 
-          { \l_@@_tmpa_fp * \tl_use:c { l_@@_unit_change_ \l_@@_original_unit_tl _tl }  }
+    \exp_args:Nc \tl_if_eq:nnTF { l_@@_unit_change_ \l_@@_original_unit_tl _tl } { 1.0 }
+      {
+        \tl_set_eq:NN #2 #1
+      }{
+        \fp_set:Nn \l_@@_tmpa_fp {#1}
+        \tl_if_in:cnTF { l_@@_unit_change_ \l_@@_original_unit_tl _tl } { \l_@@_tmpa_fp }
+          { 
+            \@@_tl_eval:Nv #2 { l_@@_unit_change_ \l_@@_original_unit_tl _tl }
+          }{ 
+            \@@_tl_eval:Nn #2 
+              { \l_@@_tmpa_fp * \tl_use:c { l_@@_unit_change_ \l_@@_original_unit_tl _tl }  }
+          }
       }
   }
 %    \end{macrocode}
@@ -7669,6 +7677,8 @@ and the derived file cooking-units.sty.
                 (\exp_args:NNV\prop_item:Nn \l_@@_tmpa_prop \l_keys_choice_tl) /
                 (\prop_item:Nn \l_@@_tmpa_prop {#1})
               }
+            \exp_args:NV \tl_if_eq:nnT \l_@@_tmpb_tl { 1 }
+              { \tl_set:Nn \l_@@_tmpb_tl { 1.0 } }
             \@@_prop_gput_master:nVV {#1} \l_keys_choice_tl \l_@@_tmpb_tl
             \tl_set:cV { l_@@_unit_change_ #1 _tl } \l_@@_tmpb_tl
           }
