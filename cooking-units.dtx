@@ -3837,8 +3837,10 @@ and the derived file cooking-units.sty.
 \cs_new_eq:NN \@@_set_amount_basis:Nn \tl_set:Nn
 \cs_new_eq:NN \@@_set_amount:Nn \tl_set:Nn
 %
-\cs_new_eq:NN \@@_set_unit_basis:Nn \str_set:Nn
-\cs_new_eq:NN \@@_set_unit:Nn \str_set:Nn
+\tl_new:N \l_@@_amount_cmd_base_tl
+\tl_set:Nn \l_@@_amount_cmd_base_tl { str_set:N }
+\cs_new_eq:Nc \@@_set_unit_basis:Nn { \l_@@_amount_cmd_base_tl n }
+\cs_new_eq:NN \@@_set_unit:Nn \@@_set_unit_basis:Nn
 \cs_generate_variant:Nn \@@_set_unit_basis:Nn { c }
 %    \end{macrocode}
 % \end{macro}
@@ -4408,7 +4410,7 @@ and the derived file cooking-units.sty.
     expand-both .choices:nn =
       { n , o , f , x }
       {
-        \cs_set_eq:Nc \@@_set_unit:Nn { str_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_unit:Nn { \l_@@_amount_cmd_base_tl \l_keys_choice_tl }
         \cs_set_eq:Nc \@@_set_amount:Nn { tl_set:N \l_keys_choice_tl }
       } ,
     expand-both .default:n = { n } ,
@@ -4425,7 +4427,7 @@ and the derived file cooking-units.sty.
     expand-unit .choices:nn =
       { n , o , f , x }
       {
-        \cs_set_eq:Nc \@@_set_unit:Nn { str_set:N \l_keys_choice_tl }
+        \cs_set_eq:Nc \@@_set_unit:Nn { \l_@@_amount_cmd_base_tl \l_keys_choice_tl }
       } ,
     expand-unit .default:n = { n } ,
 %    \end{macrocode}
@@ -6819,10 +6821,10 @@ and the derived file cooking-units.sty.
         \bool_if:NT \l_@@_round_precision_negative_bool
           { \bool_set_true:N \l_@@_round_number_bool }
       }
-        \int_compare:nNnT 
-          { \tl_count:n {#2} } >
-          { \l_@@_round_precision_int }
-          { \bool_set_true:N \l_@@_round_number_bool }
+    \int_compare:nNnT 
+      { \tl_count:n {#2} } >
+      { \l_@@_round_precision_int }
+      { \bool_set_true:N \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
   }
 %    \end{macrocode}
