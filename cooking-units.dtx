@@ -6670,7 +6670,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_process_generel_fraction_in_input:
   {
+    \bool_set_false:N \l_@@_minus_bool
     \@@_check_minus_remove_and_reverse:NN
+      \l_@@_minus_bool
       \l_@@_mixed_fraction_tl
       \l_@@_number_tmpa_tl
       \l_@@_number_tmpb_tl
