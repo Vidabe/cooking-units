@@ -818,7 +818,7 @@ and the derived file cooking-units.sty.
 % \tableofcontents
 %
 % \section{Introduction}
-% \newcookingunit[{tza=ds}]{Test} \cunum{1}{Test}
+%
 %
 % While writing on a cookery book I used -- for some reasons whatsoever --
 % three different units for weight: kilogram (kg), gram (g) and
@@ -6728,10 +6728,6 @@ and the derived file cooking-units.sty.
       { 
         \msg_warning:nnV { cooking-units } { amount-not-known } #1 
       }{
-%        \bool_lazy_and:nnTF
-%          { \l_@@_using_cutext_bool } { \l_@@_cutext_keep_unit_bool }
-%          { \tl_set_eq:NN \l_@@_tmpa_tl #1 } 
-%          { \@@_calculate_input_and_store_in:NN #1 \l_@@_tmpa_tl }
         \@@_calculate_input_and_store_in:NN #1 \l_@@_tmpa_tl
         \@@_calc_references:NN \l_@@_tmpa_tl \l_@@_tmpa_tl
         \@@_round_calculated_input:NV \l_@@_tmpa_tl \l_@@_tmpa_tl
