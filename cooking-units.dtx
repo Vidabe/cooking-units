@@ -8297,10 +8297,22 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{ \@@_cukeys_prepare_lists:N }
+%  At this point we can assume everything to be correct.
+%  |#1| the main unit aka.\ the \enquote{original unit} or \enquote{base unit}.
+%
+%  First we clear/create new the property list which will contains the conversion values for
+%  for each unit. There we will safe the the values we collected in the last step,
+%  the list of units in this set and if the key is single or not.
+%
+%  For simplification, each unit in the key-list always points to the \enquote{base unit},
+%  so \enquote{g}, \enquote{kg}, \enquote{dag}, etc.\ will all show to \enquote{kg}.
+%  This is not needed if we have a single-key (due to how single-keys work).
+%  Furhtermore, if no single-key, set the default transformation value to \enquote{1};
+%  not sure if the last step is necessary, but eh.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_prepare_lists:N #1
   {
-    %% #1: main unit
     \prop_clear_new:c { l_@@_new_cukeys_ #1 _prop }
     \prop_set_eq:cN { l_@@_new_cukeys_ #1 _prop } \l_@@_tmpa_prop
     \prop_put:cnV { l_@@_new_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
@@ -8316,8 +8328,15 @@ and the derived file cooking-units.sty.
           }
       }
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cukeys_create_keys:n , \@@_new_cukeys_create_keys:V }
+%  Here we start creating the keys. If seperate into two cases: 
+%  Do we have a single-key or not. If yes, just create the key |#1|
+%  and do what needs to be done. If not, we need to create a bunch of
+%  keys for each unit in the list.
+%    \begin{macrocode}
 \cs_new:Npn \@@_new_cukeys_create_keys:n #1
   {
     %% #1: original_unit
@@ -8335,7 +8354,25 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_new_cukeys_create_keys:n { V }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cukeys_define_key:nnn , \@@_new_cukeys_define_key:nVn }
+%  Now we define some key(s). |#1| is the unit and key-to-be-defined.
+%  As |#1| is not expanded, this can contain control sequences, etc. not need for worry
+%  here.
+%
+%  We define the key |#1| with a list of choices |#2| (which is the list of units
+%  collected in the parse step). |#3| plays an important role as it is the
+%  \enquote{base unit}. We mainly need this to do some shortcuts later on.
+%  So instead of getting the the base unit for \enquote{g} \emph{via}
+%  |l_@@_base_key_unit_g_tl| (which would be \enquote{kg}), we give \enquote{kg}
+%  directly as the argument |#3|. It was made sure that |#3| \emph{not} a
+%  control sequence, but text.
+%
+%  In order to remind the user which choices each key have, define an error
+%  message for unknown keys.
+%    \begin{macrocode}
 \cs_new:Npn \@@_new_cukeys_define_key:nnn #1#2#3
   {
     \@@_if_unit_has_a_key:nF {#1} 
@@ -8361,11 +8398,25 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_new_cukeys_define_key:nnn { nVn }
-
-
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_change_unit_from_to:nnn }
+%  Our main \enquote{get the conversion value} command.
+%  |#1| is the current unit, |#2| is the unit it is converted into,
+%  |#3| is the \enquote{base unit}, given in order to make some shortcuts.
+%
+%  |\l_@@_change_unit_prop| stores which unit should be converted into which by
+%  a key-value list. If the unit is later used we restore the value from this property list.
+%
+%  Now to the calculation. |\g_@@_master_changer_prop| stores the the conversion values
+%  globally in a | <old-unit> ~->~ <new-unit>| way. If we already have a conversion
+%  from |#1| to |#2| we simply restore this value and store it in |l_@@_unit_change_ #1_tl|.
+%
+%  If the unit-change is requested for the first time we need to calculate the
+%  conversion value first. Afterwards, store it (globally) into |\g_@@_master_changer_prop|
+%  to not recalculate it in the future.
+%    \begin{macrocode}
 \cs_new:Npn \@@_change_unit_from_to:nnn #1#2#3
   {
     \prop_put:Nnn \l_@@_change_unit_prop {#1} {#2}
@@ -8381,12 +8432,28 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_change_unit_from_to:nnn { nVn }
-
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_cukeys_calculate_change_value:nnn }
+%  Great, an unit-change is requested for the first time, thus calculate
+%  the conversion value.
+%
+%  First we check if the old unit |#1| is the same as the \enquote{base unit}
+%  |#3|. This is a nice shortcut, as the property list is stored with |#3| as a base,
+%  so direct retrival of the value is possible in this case.
+%
+%  If |#1| and |#3| are different, we need to do some work. First, get the list
+%  of key-values |l_@@_new_cukeys_ #3 _prop| and store it in |\l_@@_tmpa_prop|.
+%  Now eval. 
+%
+%  Having unit |a| and wanting unit |b|, we need the value to go from |a| to |b|
+%  which is done by the realtion $|b|/|a|$. This is checked easily as $|a|*|b|/|a|=|b|$.
+%  Replace this by |#1| and |#2| and we get: |#2|=|#1|*|#2|/|#1|, which we
+%  evaluate and store in |l_@@_unit_change_ #1 _tl|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_calculate_change_value:nnn #1 #2 #3
-  { % #3: original_unit = base unit (unit for which no calculation needed)
+  {
     \str_if_eq:nnTF {#1} {#3}
       {
         %% Same unit, no calculation needed
@@ -8402,24 +8469,9 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_cukeys_calculate_change_value:nnn { VVV }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %    \end{macrocode}
+% \end{macro}
+%
 %
 % \section {Creating New Units}
 %
