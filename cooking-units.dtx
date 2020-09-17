@@ -5820,7 +5820,7 @@ and the derived file cooking-units.sty.
     \bool_set_true:N \l_@@_tmpa_bool
     \@@_error_if_group_not_defined:nNT {#1} \l_@@_curr_group_tl
       { \bool_set_false:N \l_@@_tmpa_bool }
-    \@@_error_if_unit_not_defined:nNF {#2} \l_@@_curr_unit_tl
+    \@@_error_if_unit_not_defined:nNT {#2} \l_@@_curr_unit_tl
       { \bool_set_false:N \l_@@_tmpa_bool }
     \bool_if:NT \l_@@_tmpa_bool    
       {
