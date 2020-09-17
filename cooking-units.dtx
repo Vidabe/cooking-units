@@ -9079,21 +9079,52 @@ and the derived file cooking-units.sty.
 % \subsection {Phrases}
 %
 %
+%
+% \begin{macro}{ \@@_cuprint_define_printed_unit:nn }
+%  Defining phrases. Phrases (sadly) depend on the language. 
+%  The idea is going to be: Each language has its own property list
+%  which is going to be stored for each language. Later, the property
+%  list is recoverd for the language currently used. If no phrase is defined
+%  the fallback |\q_@@_no_translation| is returned.
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { phrase } { phrase-prop } { \q_@@_no_translation }
 %    \end{macrocode}
+% \end{macro}
 %
-
-
-\prop_new:N \g_@@_phrase_remember_prop
-
+% \begin{macro}{ \newcudefinephrase }
+%  Defining some phrases. This command is just a wrapper for the
+%  subcommand.
+%    \begin{macrocode}
 \NewDocumentCommand \newcudefinephrase { m m }
   {
-    \prop_gclear:N \g_@@_phrase_remember_prop
     \@@_new_cuphrase_add:nn {#1} {#2}
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cuphrase_add:nn }
+%  |#1| is the language, |#2| is something to be parsed.
+%  I am also not quite happy with this construction, but it works.
+%
+%  First, check if we already have existing phrases for the language.
+%  If so, recover it, we add the parsed one to them. Else, clear
+%  some variables.
+%
+%  Next step, sanitize |<| and |>|. I hate this so much.
+%
+%  Using |\@@_parse_phrase:V| we parse through the argument |#2|.
+%  The results are added to |\l_@@_phrase_prop| and |\l_@@_phrase_numbers_seq|.
+%
+%  By our rules, we prefer big numbers over small ones. For example, 
+%  120 can be translated into \enquote{2 Schocks} ($2\times60$) or
+%  \enquote{10 Dutzend} ($10\times12$). We prefer the bigger number first,
+%  so we will always get \enquote{2 Schocks}. Thus we sort the numbers in the
+%  sequence from highest to lowest. We also have negative numbers (phrases only
+%  used for one specific number). We prefer the negative over the positive ones
+%  if possible.
+%
+%  Then store the variables and thats it.
+%    \begin{macrocode}
 \cs_new:Npn \@@_new_cuphrase_add:nn #1#2
   {
     \tl_set:Nn \l_@@_language_tl {#1}
@@ -9109,25 +9140,29 @@ and the derived file cooking-units.sty.
       }
       \@@_sanitize_arrows:n {#2}
       \@@_parse_phrase:V \l_@@_sanitise_tl
-        
       \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
-
       \prop_put:NnV \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-
       \@@_culang_def_for:VnnV 
         \l_@@_language_tl { phrase } { phrase-prop } \l_@@_phrase_prop
   }
-
-
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_phrase:n }
+%  Wrapper around the parsing cycles. Nothing new.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_phrase:n #1
   {
     \@@_parse_phrase_start_cycle: #1
       \q_recursion_tail \q_recursion_tail \q_recursion_stop
   }
 \cs_generate_variant:Nn \@@_parse_phrase:n { V }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_phrase_start_cycle: }
+%  Starts the parsing cycle. Clear some variables, set state to normal.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_phrase_start_cycle:
   {
     \@@_set_state_to:n { normal }
@@ -9136,6 +9171,26 @@ and the derived file cooking-units.sty.
     \prop_clear:N \l_@@_tmpa_prop
     \@@_parse_stuff_mandatories_plus_star:nn
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_stuff_mandatories_plus_star:nn }
+%  Now. We have two cases: two mandatroy arguments following each other
+%  (number plus phrase) \emph{or} number plus star plus phrase (so three arguments).
+%  In order to not need explicetly test for the star I do the following:
+%  Just grab the first two things. |#1| is always the number. |#2| can either be
+%  the star |*| \emph{or} a phrase. If it is a star, set a boolean, and restart the command
+%  with |#1| already given.
+%
+%  Then check if |#2| is a number (with a primitve test). Star-numbers are stored
+%  negatively. This makes defining a property list easier for me.
+%
+%  Note that the key in the first |\l_@@_tmpa_prop| is empty. This is done
+%  in order to not screw up the later |\prop_map_inline| loop. We also store
+%  if the phrase is only used for one number (aka.\ if there is a star).
+%
+%  Then, parse the optionals.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_stuff_mandatories_plus_star:nn #1#2
   {
     \quark_if_recursion_tail_stop:n {#1}
@@ -9161,12 +9216,27 @@ and the derived file cooking-units.sty.
         \@@_parse_phrase_optionals:n {#2}
       }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_phrase_optionals:n }
+%  Get the plural form of the phrase. If the next token is an open bracket,
+%  get the plural form, else set the plural form equal to the singular form.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_phrase_optionals:n #1
   {
     \peek_meaning_ignore_spaces:NTF [
       { \@@_parse_stuff_plural:w }
       { \@@_parse_stuff_plural:w [#1] }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cuphrase_add:nn }
+%  Store the pluarl form in the property list.
+%  Next, parse gender. Pretty much the same as before. By default we use
+%  a male gender.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_stuff_plural:w [#1]
   {
     \prop_put:Nnn \l_@@_tmpa_prop { -pl } {#1}
@@ -9174,6 +9244,13 @@ and the derived file cooking-units.sty.
       { \@@_parse_stuff_gender:w }
       { \@@_parse_stuff_gender:w  <m> }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cuphrase_add:nn }
+%  Check if the gender-input is correct, add it to the property list.
+%  Then finish the cycle and start a new one.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_stuff_gender:w <#1>
   {
     \@@_if_gender_error:nTF {#1}
@@ -9181,8 +9258,16 @@ and the derived file cooking-units.sty.
       { \prop_put:Nnn \l_@@_tmpa_prop { -gender } {#1} }
     \@@_parse_phrase_finish_cycle_and_start_anew:V \l_@@_tmpa_unit_tl
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_parse_phrase_finish_cycle_and_start_anew:n }
+%  If not errors were found: Add the number to the other numbers (if not already inside).
+%  Afterwards map through the property list and set the variations for each number.
 %  
-
+%  As an example, if we had \enquote{12}, |\l_@@_phrase_prop| would then contain
+%  the keys \enquote{12}, \enquote{12-pl}, \enquote{12-gender}, \enquote{12-singlebool}.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_phrase_finish_cycle_and_start_anew:n #1
   {
     \@@_if_state_equal:nT { normal }
@@ -9197,37 +9282,14 @@ and the derived file cooking-units.sty.
     \@@_parse_phrase_start_cycle:
   }
 \cs_generate_variant:Nn \@@_parse_phrase_finish_cycle_and_start_anew:n { V }
-
-%\cs_new:Npn \@@_parse_check_and_finish_cycle:nnnn #1#2#3#4
-%  {
-%    \@@_if_evaluation_is_integer:nNTF {#1} \l_@@_tmpa_int
-%      {
-%        \@@_parse_check_and_finish_cycle_aux:Vnnn
-%          \l_@@_tmpa_int {#2} {#3} {#4}
-%      }{
-%        \msg_error:nnn { cooking-units} { phrase-unit-not-an-integer } {#1}
-%        \@@_if_gender_error:nTF {#4} { } { }
-%      }
-%    \@@_parse_phrase_start_cycle:
-%  }
-%\cs_new:Npn \@@_parse_check_and_finish_cycle_aux:nnnn #1#2#3#4
-%  {
-%    \seq_if_in:NnF \l_@@_phrase_numbers_seq {#1}
-%      { \seq_put_right:Nn \l_@@_phrase_numbers_seq {#1} }
-%    \prop_put:Nnn \l_@@_phrase_prop {#1} {#2}
-%    \quark_if_no_value:nTF {#3}
-%      { \prop_put:Nnn \l_@@_phrase_prop { #1 - pl } {#2} }
-%      { \prop_put:Nnn \l_@@_phrase_prop { #1 - pl } {#3} }
-%    \prop_put:NnV \l_@@_phrase_prop { #1 - singlebool } \l_@@_tmpa_bool
-%    \@@_if_gender_error:nTF {#4}
-%      { \prop_put:Nnn \l_@@_phrase_prop { #1 - gender } { m } }
-%      { \prop_put:Nnn \l_@@_phrase_prop { #1 - gender } {#4} }
-%  }
-%\cs_generate_variant:Nn \@@_parse_check_and_finish_cycle_aux:nnnn { V }
-
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cuphrase_sort_sequence:N }
+%  Sorting the sequence of numbers from highest to lowest (in absolute values).
+%  And if two absolute values are equal, negative numbers are prefered over
+%  positive ones.
+%    \begin{macrocode}
 \cs_new:Npn \@@_new_cuphrase_sort_sequence:N #1
   {
     %% sort from highest to lowest
@@ -9249,19 +9311,17 @@ and the derived file cooking-units.sty.
           }
       }
   }
-
-
-
-
-
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_new_cuphrase_add:nn }
+%    \begin{macrocode}
 \NewDocumentCommand \cudefinephrase { m m }
   {
-    \@@_cuphrase:nn {#1} {#2}
+%    \@@_cuphrase:nn {#1} {#2}
   }
-%
+%    \end{macrocode}
+% \end{macro}
 %
 %
 % \subsection{Old stuff}
