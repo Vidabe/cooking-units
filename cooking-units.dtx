@@ -5637,7 +5637,7 @@ and the derived file cooking-units.sty.
 %  }
 % A little helper macro. Checks if the unit is defined, if not raise an error.
 %    \begin{macrocode}
-\prg_new_protected_conditional:Npnn \@@_if_unit_defined:nN #1 #2 { TF }
+\prg_new_protected_conditional:Npnn \@@_if_unit_defined:nN #1 #2 { TF , T }
   {
     \@@_set_unit:Nn #2 {#1}
     \seq_if_in:NVTF \g_@@_list_of_defined_units_seq #2
@@ -6212,6 +6212,7 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_culang_base:Nnnnn { Nnvnn }
 \cs_generate_variant:Nn \@@_culang_base:NNnnn { NNnvn }
 %    \end{macrocode}
+%  \end{macro}
 %
 %
 % The following commands are just wrapper around the commands from the
@@ -7923,7 +7924,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
   {
-    \@@_culang_let:nnN  { phrase } { phrase-prop } \l_@@_phrase_prop
+    \@@_culang_let:nnN { phrase } { phrase-prop } \l_@@_phrase_prop
     \tl_if_eq:NNT \q_@@_no_translation \l_@@_phrase_prop
       { \use_none_delimit_by_q_stop:w }
     \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
@@ -7959,16 +7960,16 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_lokal_phrase_bool
     \seq_map_inline:Nn \l_@@_phrase_numbers_seq
       {
-        \int_compare:nNnF {##1} > {#1}
+        \int_compare:nNnF { \int_abs:n {##1} } > {#1}
           {
             \prop_get:NnN \l_@@_phrase_prop { ##1-singlebool } \l_tmpa_tl
             \int_compare:nNnTF { \l_tmpa_tl } = { 1 }
               { \bool_set_true:N \l_@@_phrase_negative_bool }
               { \tl_set:Nf \l_tmpa_tl { \int_div_truncate:nn {#1} {##1} } }
-            \int_compare:nNnT { ##1 * \l_tmpa_tl } = {#1}
+            \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_tl } = {#1}
               {
                 \tl_set_eq:NN #2 \l_tmpa_tl
-                \tl_set:Nn #3 {##1}
+                \tl_set:Nf #3 { \int_abs:n {##1} }
                 \bool_set_true:N \l_@@_lokal_phrase_bool
                 \seq_map_break:
               }
@@ -8456,10 +8457,8 @@ and the derived file cooking-units.sty.
   {
     \str_if_eq:nnTF {#1} {#3}
       {
-        %% Same unit, no calculation needed
         \prop_get:cnc { l_@@_new_cukeys_ #1 _prop } {#2} { l_@@_unit_change_ #1 _tl }
       }{
-        %% calculate difference
         \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_new_cukeys_ #3 _prop }
         \@@_tl_eval:cn { l_@@_unit_change_ #1 _tl }
           {
@@ -8477,6 +8476,11 @@ and the derived file cooking-units.sty.
 %
 %
 %\begin{macro}{ \declarecookingunit , \newcookingunit , \providecookingunit }
+%  Defining new units. Defining an unit is split into two parts: defining
+%  the necassary tl's and clist's and seq's; and setting them. Depending on which
+%  command is used, things are handled differently.
+%
+%  We always make sure that the unit |#1| is first converted into a string.
 %    \begin{macrocode}
 \NewDocumentCommand \declarecookingunit { o m }
   {
@@ -8496,15 +8500,18 @@ and the derived file cooking-units.sty.
   }
 \NewDocumentCommand \providecookingunit { o m }
   {
-    \@@_if_unit_defined:nNTF {#2} \l_@@_original_unit_tl
+    \@@_if_unit_defined:nNT {#2} \l_@@_original_unit_tl
       {
         \@@_new_cooking_unit:V \l_@@_original_unit_tl 
         \@@_set_cooking_unit:nV {#1} \l_@@_original_unit_tl
-      } { }
+      }
   }
 %    \end{macrocode}
 %\end{macro}
 %
+%\begin{macro}{ \@@_new_cooking_unit:n }
+%  Creates the token and other lists for the unit |#1| (which at this point is a string).
+%  Nothing really expectional here.
 %    \begin{macrocode}
 \cs_new:Npn \@@_new_cooking_unit:n #1
   {
@@ -8526,6 +8533,25 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_new_cooking_unit:n { V }
+%    \end{macrocode}
+%  \end{macro}
+%
+%\begin{macro}{ \@@_set_cooking_unit:nn , \@@_set_cooking_unit:nV }
+%  Here we set the in the last step defined lists to their respective value.
+%  |#2| is the unit; |#1| is either the wanted unit-symbol \emph{or} a key-val
+%  list. Depending on that, we either set the printed symbol to |#1| or parse the
+%  key-val list. 
+%
+%  This is done in a three step procedure (if |#1| is a value): First, check if
+%  the head of |#1| is a group. This happens if the user embraces |#1| in two 
+%  curly brace pairs (e.g.\ |{{Test}}|). This is only needed if the user really wants
+%  the symbol to contain |=|.
+%
+%  Second, we have a value and it is not protected by braces: In this case: Parse
+%  |#1| as a key. Any symbol is then parsed as an unknown key with no argument
+%  and is thus ignored. Otherweise, the keys are parsed. If the key \enquote{symbol}
+%  is found the boolean |\l_@@_symbol_was_set_by_key_bool| is set to true.
+%    \begin{macrocode}
 \cs_new:Npn \@@_set_cooking_unit:nn #1 #2
   {
     \bool_set_false:N \l_@@_symbol_was_set_by_key_bool
@@ -8546,6 +8572,12 @@ and the derived file cooking-units.sty.
     \@@_culang_def_base:nnv { unit-symbol } {#2} { l_@@_default_unit_ #2 _tl }
   }
 \cs_generate_variant:Nn \@@_set_cooking_unit:nn { nV }
+%    \end{macrocode}
+%  \end{macro}
+%
+%\begin{macro}{ \@@_set_cooking_unit_base_translation:n }
+%  Just an auxilary command. Sets the base translations to their default value.
+%    \begin{macrocode}
 \cs_new:Npn \@@_set_cooking_unit_base_translation:n #1
   {
     \@@_culang_def_base:nnn { name } {#1} \q_@@_no_translation
@@ -8553,6 +8585,7 @@ and the derived file cooking-units.sty.
     \@@_culang_def_base:nnn { gender } {#1} { m }
   }
 %    \end{macrocode}
+%  \end{macro}
 % 
 %
 %
@@ -8855,10 +8888,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
+% \begin{macro}{\cudefinename}
+%  This command allows to (re)define \enquote{names} for units to be used
+%  in \cCutext\ for given language. We need to sanitize the arrows (|<| and |>|)
+%  in case they are active. Afterwards, parse through the list.
 %    \begin{macrocode}
-
-\tl_new:N \l_@@_parse_collector_tl
-
 \NewDocumentCommand \cudefinename { m m }
   {
     \tl_set:Nn \l_@@_language_tl {#1}
@@ -8867,9 +8901,13 @@ and the derived file cooking-units.sty.
     \@@_parse_definename_start_cycle: \l_@@_sanitise_tl
       \q_recursion_tail \q_recursion_tail \q_recursion_stop
   }
-  
-
-
+%    \end{macrocode}
+% \end{macro}  
+%
+% \begin{macro}{\@@_parse_definename_start_cycle:}
+%  Initializes the parse cycle. Set state to \enquote{normal} and clear some variables.
+%  Start by grabbing the first argument which is the unit.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_start_cycle:
   { 
     \@@_set_state_to:n { normal }
@@ -8878,6 +8916,18 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_tmpa_bool
     \@@_parse_definename_unit:n 
   }  
+%    \end{macrocode}
+% \end{macro}  
+% \begin{macro}{ \@@_parse_definename_unit:n }
+%  Grab the unit. This can be either an actual unit (defined by |\newcookingunit| and Co.)
+%  or it is one of the allowed \enquote{special-keys} like \enquote{decimal-marker},
+%  etc. In case neither of those two is found, issue an error, but continue parsing
+%  to catch more errors. 
+%  
+%  The next optional argument is the unit-symbol, which can also be set by this
+%  command. If it is not found, grab the next mandatory argument, which is the
+%  unit-name.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_unit:n #1
   {
     \quark_if_recursion_tail_stop:n {#1} 
@@ -8893,6 +8943,14 @@ and the derived file cooking-units.sty.
       { \@@_parse_definename_optional_unitsymbol:w }
       { \@@_parse_definename_singular:n }  
   }
+%    \end{macrocode}
+% \end{macro}  
+%
+% \begin{macro}{ \@@_parse_definename_optional_unitsymbol:w }
+%  The frst optional argument has be found; it is thus the unit-symbol.
+%  Changing the unit-symbol is only allowed for actual units, so no \enquote{special-keys}
+%  allowed. If we have an unit, store it into |\l_@@_tmpa_prop|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_optional_unitsymbol:w [#1]
   { 
     \bool_if:NTF \l_@@_tmpa_bool
@@ -8904,6 +8962,15 @@ and the derived file cooking-units.sty.
       { \prop_put:Nnn \l_@@_tmpa_prop { unit-symbol } {#1} }
     \@@_parse_definename_singular:n
   }
+%    \end{macrocode}
+% \end{macro}  
+%
+% \begin{macro}{ \@@_parse_definename_singular:n }
+%  Parses the \enquote{name} of the unit (or special key).
+%  Do an error check, store the input in the property list and go to the
+%  next one, which is the plural form. The next (optional) argument is 
+%  the plural form of the \enquote{name}. If there is none, also use |#1| for plural.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_singular:n #1
   {
     \quark_if_recursion_tail_stop_do:nn {#1} 
@@ -8913,6 +8980,13 @@ and the derived file cooking-units.sty.
       { \@@_parse_definename_optional_plural:w }
       { \@@_parse_definename_optional_plural:w [#1] }
   }
+%    \end{macrocode}
+% \end{macro}  
+%
+% \begin{macro}{ \@@_parse_definename_optional_plural:w }
+%  Nothing new here. The next one is the gender. If no gender is found
+%  I assume it to be male \enquote{m}.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_optional_plural:w [#1]
   {
     \prop_put:Nnn \l_@@_tmpa_prop { name_pl } {#1}
@@ -8920,6 +8994,13 @@ and the derived file cooking-units.sty.
       { \@@_parse_definename_optional_gender:w  }
       { \@@_parse_definename_optional_gender:w <m> }
   }
+%    \end{macrocode}
+% \end{macro}  
+%
+% \begin{macro}{ \@@_parse_definename_optional_plural:w }
+%  Check if the gender is correct. Then store it in the property-list
+%  and finish the cycle. 
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_optional_gender:w <#1>
   {
     \@@_if_gender_error:nT {#1} 
@@ -8928,8 +9009,20 @@ and the derived file cooking-units.sty.
     \@@_parse_name_finish_cycle_and_start_new:VV 
       \l_@@_language_tl \l_@@_tmpa_unit_tl
   }
+%    \end{macrocode}
+% \end{macro}  
 %
+% \begin{macro}{ \@@_parse_name_finish_cycle_and_start_new:nn }
+%  Now it makes sense why we used property list before. 
+%  Each unit has some basic definitions for each language (see |\newcookingunit| and Co.):
+%  \enquote{unit-symbol}, \enquote{name}, \enquote{name\_pl} and \enquote{gender}.
 %
+%  So going through the property list (where we stored the given values)
+%  we set for the given language and unit those definitions (\enquote{unit-symbol} only
+%  if found).
+%
+%  Afterwards, start the next cycle.
+%    \begin{macrocode}
 \cs_new:Npn \@@_parse_name_finish_cycle_and_start_new:nn #1#2
   {
     \@@_if_state_equal:nT { normal }
@@ -8940,60 +9033,14 @@ and the derived file cooking-units.sty.
     \@@_parse_definename_start_cycle:
   }
 \cs_generate_variant:Nn \@@_parse_name_finish_cycle_and_start_new:nn { VV }
-%\cs_new:Npn \@@_parse_stuff_aux:
-%  {
-%    \prop_map_inline:Nn \l_@@_tmpa_prop
-%      {
-%        \@@_culang_def_for:VnVn \l_@@_language_tl {#1} \l_@@_tmpa_unit_tl {#2}
-%      }
-%  }
-%  
-%\cs_new:Npn \@@_parse_definename_finish_cycle:nnnnn #1#2#3#4#5
-%  {
-%    \bool_set_true:N \l_@@_tmpa_bool
-%    \seq_if_in:NnF \g_@@_allowed_special_keys_seq {#1} 
-%      {
-%        \@@_error_if_unit_not_defined:nNT {#1} \l_@@_tmpa_tl
-%          { \bool_set_false:N \l_@@_tmpa_bool }
-%      }
-%    \bool_if:NTF \l_@@_tmpa_bool
-%      {
-%        \@@_parse_definename_finish_cycle_aux:VVnnnn
-%          \l_@@_language_tl \l_@@_tmpa_tl {#2} {#3} {#4} {#5}
-%      }{
-%        \@@_if_gender_error:nTF {#5} { } { }
-%      }
-%%    
-%    \@@_parse_definename_start_cycle:
-%  }
-%\cs_new:Npn \@@_parse_definename_finish_cycle_aux:nnnnnn #1 #2#3#4#5#6
-%  {
-%    \@@_culang_def_for:nnnn {#1} { name } {#2} {#4}
-%    \quark_if_no_value:nTF {#5}
-%      { \@@_culang_def_for:nnnn {#1} { name_pl } {#2} {#4} }
-%      { \@@_culang_def_for:nnnn {#1} { name_pl } {#2} {#5} }
-%    \@@_if_gender_error:nTF {#6}
-%      { \@@_culang_def_for:nnnn {#1} { gender } {#2} { m } }
-%      { \@@_culang_def_for:nnnn {#1} { gender } {#2} {#6} }
-%    \quark_if_no_value:nF {#3}
-%      {
-%        \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#2} 
-%          { 
-%            \msg_error:nnnn 
-%              { cooking-units } 
-%              { symbol-and-special-keys-error } 
-%              {#2} {#3}
-%          }
-%          { \@@_culang_def_for:nnnn {#1} { unit-symbol } {#2} {#3} }
-%    }
-%  }
-%\cs_generate_variant:Nn \@@_parse_definename_finish_cycle_aux:nnnnnn { VV }
 %    \end{macrocode}
-%
+% \end{macro}  
 %
 % \subsection {cudefinesymbol}
 %
-%
+% \begin{macro}{ \cudefinesymbol }
+%  A small and rather straightforward command.
+%  No special sanitizing here, just setting the language and parsing.
 %    \begin{macrocode}
 \NewDocumentCommand \cudefinesymbol { m m }
   {
@@ -9002,7 +9049,13 @@ and the derived file cooking-units.sty.
     \q_recursion_tail \q_recursion_tail \q_recursion_stop
   }
 %    \end{macrocode}
+% \end{macro}
 %
+% \begin{macro}{ \@@_cuprint_define_printed_unit:nn }
+%  Sets the symbol for given units or \enquote{special keys}.
+%  Nothing extraordinary is done here. We we have an unit we
+%  set its \enquote{unit-symbol} for given language, for an \enquote{special key}
+%  we set its name. Rinse and repeat.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuprint_define_printed_unit:nn #1#2
   {
@@ -9020,7 +9073,7 @@ and the derived file cooking-units.sty.
     \@@_cuprint_define_printed_unit:nn
   }  
 %    \end{macrocode}
-%
+% \end{macro}
 %
 %
 % \subsection {Phrases}
@@ -9031,8 +9084,12 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 
+
+\prop_new:N \g_@@_phrase_remember_prop
+
 \NewDocumentCommand \newcudefinephrase { m m }
   {
+    \prop_gclear:N \g_@@_phrase_remember_prop
     \@@_new_cuphrase_add:nn {#1} {#2}
   }
 
@@ -9091,8 +9148,10 @@ and the derived file cooking-units.sty.
       }{
         \@@_if_evaluation_is_integer:nTF {#1} 
           {
-            \int_set:Nn \l_@@_tmpa_int {#1}       
+            \int_set:Nn \l_@@_tmpa_int {#1}   
             \tl_set:NV \l_@@_tmpa_unit_tl \l_@@_tmpa_int
+            \bool_if:NT \l_@@_tmpa_bool
+              { \tl_put_left:Nn \l_@@_tmpa_bool { - } }    
           }{
             \@@_set_state_to:n { error } 
             \msg_error:nnn { cooking-units} { phrase-unit-not-an-integer } {#1}
@@ -9132,7 +9191,6 @@ and the derived file cooking-units.sty.
           { \seq_put_right:Nn \l_@@_phrase_numbers_seq {#1} }
         \prop_map_inline:Nn \l_@@_tmpa_prop
           { 
-            %% ToDo: Not working as star ones and normal ones overwrite each other!
             \prop_put:Nnn \l_@@_phrase_prop { #1 ##1 } {##2} 
           }
       }
@@ -9175,10 +9233,12 @@ and the derived file cooking-units.sty.
     %% sort from highest to lowest
     \seq_sort:Nn #1
       {
-        \int_compare:nNnTF { ##1 } < { ##2 }
+        \int_set:Nn \l_@@_tmpa_int { \int_abs:n {##1} }
+        \int_set:Nn \l_@@_tmpb_int { \int_abs:n {##2} }
+        \int_compare:nNnTF { \l_@@_tmpa_int } < { \l_@@_tmpb_int }
           { \sort_return_swapped: }
           { 
-            \int_compare:nNnTF { ##1 } > { ##2 }
+            \int_compare:nNnTF { \l_@@_tmpa_int } > { \l_@@_tmpb_int }
               { \sort_return_same: }
               {
                 \prop_get:NnN \l_@@_phrase_prop { ##1 - singlebool } \l_@@_tmpa_int
