@@ -6178,11 +6178,11 @@ and the derived file cooking-units.sty.
 %      , \c_@@_postfix_phrase_tl
 %    }
 %    \begin{macrocode}
-\tl_const:cn { c_@@_postfix_unit-symbol_tl } { ( cu-unit ) }
-\tl_const:Nn \c_@@_postfix_name_tl { ( cu-unitname ) }
-\tl_const:Nn \c_@@_postfix_name_pl_tl { ( cu-unitname-pl ) }
-\tl_const:Nn \c_@@_postfix_gender_tl { ( cu-unitgender ) }
-\tl_const:Nn \c_@@_postfix_phrase_tl { ( cu-unitphrase ) }
+%\tl_const:cn { c_@@_postfix_unit-symbol_tl } { ( cu-unit ) }
+%\tl_const:Nn \c_@@_postfix_name_tl { ( cu-unitname ) }
+%\tl_const:Nn \c_@@_postfix_name_pl_tl { ( cu-unitname-pl ) }
+%\tl_const:Nn \c_@@_postfix_gender_tl { ( cu-unitgender ) }
+%\tl_const:Nn \c_@@_postfix_phrase_tl { ( cu-unitphrase ) }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6222,8 +6222,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_def_base:nnn #1#2#3
   {
-    \@@_culang_base:Nvnn \declaretranslationfallback
-      { c_@@_postfix_ #1 _tl } {#2} {#3}
+%    \@@_culang_base:Nvnn \declaretranslationfallback
+%      { c_@@_postfix_ #1 _tl } {#2} {#3}
+    \declaretranslationfallback { #2 - #1 (@@) } {#3}
   }
 \cs_generate_variant:Nn \@@_culang_def_base:nnn { nnv, nVn }
 %    \end{macrocode}
@@ -6233,8 +6234,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_def_for:nnnn #1#2#3#4
   {
-    \@@_culang_base:Nnvnn \declaretranslation {#1}
-      { c_@@_postfix_ #2 _tl } {#3} {#4}
+%    \@@_culang_base:Nnvnn \declaretranslation {#1}
+%      { c_@@_postfix_ #2 _tl } {#3} {#4}
+     \declaretranslation {#1} { #3 - #2  (@@) } {#4}
   }
 \cs_generate_variant:Nn \@@_culang_def_for:nnnn { VnnV, V  }
 %    \end{macrocode}
@@ -6244,8 +6246,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_print:nn #1#2
   {
-    \@@_culang_base:Nvn \GetTranslation
-      { c_@@_postfix_ #1 _tl } {#2}
+%    \@@_culang_base:Nvn \GetTranslation
+%      { c_@@_postfix_ #1 _tl } {#2}
+    \GetTranslation { #2 - #1  (@@) }
   }
 \cs_generate_variant:Nn \@@_culang_print:nn { nV }
 %    \end{macrocode}
@@ -6255,8 +6258,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_let:nnN #1#2#3
   {
-    \@@_culang_base:NNvn \SaveTranslation #3
-      { c_@@_postfix_ #1 _tl } {#2}
+%    \@@_culang_base:NNvn \SaveTranslation #3
+%      { c_@@_postfix_ #1 _tl } {#2}
+     \SaveTranslation #3 { #2 -#1 (@@) }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -6265,8 +6269,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_let_for:nnnN #1#2#3#4
   {
-    \@@_culang_base:NNnvn \SaveTranslationFor #4
-      {#1} { c_@@_postfix_ #2 _tl } {#3}
+%    \@@_culang_base:NNnvn \SaveTranslationFor #4
+%      {#1} { c_@@_postfix_ #2 _tl } {#3}
+    \SaveTranslationFor #4 {#1} { #3-#2 (@@) }
   }
 \cs_generate_variant:Nn \@@_culang_let_for:nnnN { V }
 %    \end{macrocode}
@@ -6276,8 +6281,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_if_translation_exists_for:nnnTF #1#2#3
   {
-    \@@_culang_base_ii:Nnvn \IfTranslation {#1}
-      { c_@@_postfix_ #2 _tl } {#3}
+%    \@@_culang_base_ii:Nnvn \IfTranslation {#1}
+%      { c_@@_postfix_ #2 _tl } {#3}
+    \IfTranslation {#1} { #3 - #2 (@@) }
   }
 \cs_generate_variant:Nn \@@_culang_if_translation_exists_for:nnnTF { V }
 %    \end{macrocode}
@@ -6344,17 +6350,17 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { decimal-mark }  { . }
-\@@_culang_def_base:nnn { name_pl } { decimal-mark } { \q_@@_no_translation }
-\@@_culang_def_for:nnnn { German } { name_pl } { decimal-mark } { , }
+\@@_culang_def_base:nnn { name-pl } { decimal-mark } { \q_@@_no_translation }
+\@@_culang_def_for:nnnn { German } { name-pl } { decimal-mark } { , }
 %    \end{macrocode}
 % Note that the plural versions just exist for completing the set.
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { one (m) } { \q_@@_no_translation }
 \@@_culang_def_base:nnn { name } { one (f) } { \q_@@_no_translation }
 \@@_culang_def_base:nnn { name } { one (n) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name_pl } { one (m) }  { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name_pl } { one (f) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name_pl } { one (n) } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { one (m) }  { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { one (f) } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { one (n) } { \q_@@_no_translation }
 %    \end{macrocode}
 %    \begin{macrocode}
 \@@_culang_def_for:nnnn { English } { name } { one (m) } { one }
@@ -6369,7 +6375,7 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { cutext-range-sign } { -- }
-\@@_culang_def_base:nnn { name_pl } { cutext-range-sign } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \q_@@_no_translation }
 \@@_culang_def_for:nnnn { German } { name } { cutext-range-sign } { ~bis~ }
 \@@_culang_def_for:nnnn { English } { name } { cutext-range-sign } { ~to~ }
 %    \end{macrocode}
@@ -6988,7 +6994,7 @@ and the derived file cooking-units.sty.
         \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process_input:NN #1#2 }
         \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process_input:NN #1#2 }
       }{ 
-            \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
+        \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
       }
   }
 %    \end{macrocode}
@@ -7748,7 +7754,7 @@ and the derived file cooking-units.sty.
       { \tl_set_eq:NN \l_@@_curr_unit_tl \l_@@_original_unit_tl }
     \bool_if:NTF \l_@@_cutext_last_amount_equ_one_bool
       { \@@_culang_print:nV { name } \l_@@_curr_unit_tl  }
-      { \@@_culang_print:nV { name_pl }  \l_@@_curr_unit_tl }
+      { \@@_culang_print:nV { name-pl }  \l_@@_curr_unit_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8581,7 +8587,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_set_cooking_unit_base_translation:n #1
   {
     \@@_culang_def_base:nnn { name } {#1} \q_@@_no_translation
-    \@@_culang_def_base:nnn { name_pl } {#1} \q_@@_no_translation
+    \@@_culang_def_base:nnn { name-pl } {#1} \q_@@_no_translation
     \@@_culang_def_base:nnn { gender } {#1} { m }
   }
 %    \end{macrocode}
@@ -8989,7 +8995,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_definename_optional_plural:w [#1]
   {
-    \prop_put:Nnn \l_@@_tmpa_prop { name_pl } {#1}
+    \prop_put:Nnn \l_@@_tmpa_prop { name-pl } {#1}
     \peek_meaning_ignore_spaces:NTF <
       { \@@_parse_definename_optional_gender:w  }
       { \@@_parse_definename_optional_gender:w <m> }
