@@ -5591,6 +5591,13 @@ and the derived file cooking-units.sty.
     Perhaps \ you \ misspelled \ the \ option.
     \msg_see_documentation_text:n { cooking-units } 
   }
+\msg_new:nnnn { cooking-units } { unknown-choice } 
+  { 
+    The \ choice \ '#2' \ for \ key \ '#1' \ is \ not \ defined.
+  }{ 
+    Perhaps \ you \ misspelled \ the \ choice.
+    \msg_see_documentation_text:n { cooking-units } 
+  }
 %    \end{macrocode}
 %
 %
@@ -6164,6 +6171,204 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 % \end{macro}
+%
+%
+%
+%
+%
+%
+%
+% 
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_add_forbidden_unit:n #1
+  {
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_map_inline:Nn \l_@@_tmpa_seq
+      {
+        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
+          {
+            \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl
+              { \seq_put_right:NV \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl }
+          }
+      }
+  }
+\cs_new:Npn \@@_remove_forbidden_unit:n #1
+  {
+    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
+    \seq_map_inline:Nn \l_@@_tmpa_seq
+      {
+        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
+          {
+            \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl
+              { \seq_remove_all:NV \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl }
+              { 
+                \msg_warning:nnnn { cooking-units } { curef-not-inside-list } {##1} 
+                  { \@@_seq_use_msg:N \l_@@_curef_do_not_change_seq }
+              }
+          }
+      }
+  }
+\cs_new:Npn \@@_clear_forbidden_unit:
+  { \seq_clear:N \l_@@_curef_do_not_change_seq }
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+%    \begin{macrocode}
+\NewDocumentCommand \cudeclareunitgroup { m m }
+  {
+    \@@_define_clear_unit_group:n {#1}
+    \@@_add_to_unit_group:nn {#1} {#2}
+  }
+\NewDocumentCommand \cuaddtounitgroup { m m }
+  {
+    \@@_add_to_unit_group:nn {#1} {#2}
+  }
+\NewDocumentCommand \cuclearunitgroup { m }
+  {
+    \@@_error_if_group_not_defined:nF {#1}
+      { \@@_define_clear_unit_group:n {#1} }
+  }
+%    \end{macrocode}
+%
+%
+%
+%
+%
+%
+%
+%
+% \begin{macro}{ \cusetoptionfor , \cuaddoptionfor , \cuclearoptionfor}
+%  \pkg{cooking-units} allows to attach options to units. Every time the unit
+%  is used, the option is executed (technically it is similar or equal to a hook).
+%  Using these commands, one can set (overwrites all previous options),
+%  add or clear options for a unit or a list of units.
+%    \begin{macrocode}
+\NewDocumentCommand \cusetoptionfor { m m }
+  { \@@_set_options_for:nn {#1} {#2} }
+\NewDocumentCommand \cuaddoptionfor { m m }
+  { \@@_add_options_for:nn {#1} {#2} }
+\NewDocumentCommand \cuclearoptionfor { m }
+  { \@@_clear_options_for:n {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_set_options_for:nn , \@@_add_options_for:nn , \@@_clear_options_for:n}
+%  These commands are quite similar, excpet for a few details.
+%  First, store the unit or list of units |#1| and the list of options |#2|. 
+%  At the end, for each unit in |#1| a clist will be created (if not already existing)
+%  where the options will be put \emph{via} |\clist_set:cn|, |\clist_put_right:cn|
+%  or will be cleared (see there).
+%
+%  E.g.\ |\clist_set:cn| will get something like |\clist_set:cV {...unit...clist} \clist_containing_options_clist|.
+%  As |\clist_clear:c| does not take a second argument, we will eat it \emph{via}
+%  |\use_i_ii:nnn|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_set_options_for:nn #1#2
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_set:cV }
+  }
+\cs_new:Npn \@@_add_options_for:nn #1#2
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} {#2} { \clist_put_right:cV }
+  }
+\cs_new:Npn \@@_clear_options_for:n #1
+  {
+    \@@_map_trough_valid_unit_options:nnn {#1} { \q_no_value } { \clist_clear:c }
+  }
+%    \end{macrocode}
+% \end{macro}
+%  
+%  \begin{macro}{\@@_map_trough_valid_unit_options:nnn}
+%  The first thing is command does is to map through the given unit list |#1|
+%  and check if the unit(s) exist or not. If they exist, store them in the sequence
+%  |\l_@@_tmpa_seq| for later use. Else, ignore it and print a warning.
+%
+%  If |#2| is a |\q_no_value| we know that there is no need to map through |#2|.
+%  Whatever the command |#3| does, it does so only to the clist
+%  |l_@@_unit_option_ <unit> _clist|.
+%
+%  If |#2| is anything else, follow the |else| branch. After veryfing that |#2|
+%  is non-empty map through the option list given in |#2|. All valid keys
+%  (and their agrument) is stored in |\l_@@_tmpa_clist|. 
+%  Afterwards, the clist for each unit in |\l_@@_tmpa_seq| is modified by the command
+%  in |#3| and is given the list of options |\l_@@_tmpa_clist| as an argument.
+%  (Note: |\l_@@_tmpa_clist| can be empty).
+%    \begin{macrocode}
+\cs_new:Npn \@@_map_trough_valid_unit_options:nnn #1#2 #3
+  {
+    \seq_clear:N \l_@@_tmpa_seq
+    \clist_clear:N \l_@@_tmpa_clist
+    \clist_map_inline:nn {#1}
+      {
+        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
+          { \seq_put_right:NV \l_@@_tmpa_seq \l_@@_curr_unit_tl }
+      }
+    \quark_if_no_value:nTF {#2}
+      {
+        \seq_map_inline:Nn \l_@@_tmpa_seq 
+          { #3 { l_@@_unit_option_ ##1 _clist } }
+      }{
+        \tl_if_empty:nF {#2}
+          { \@@_unit_options_check_validity:n {#2} }
+        \seq_map_inline:Nn \l_@@_tmpa_seq 
+          { #3 { l_@@_unit_option_ ##1 _clist } \l_@@_tmpa_clist }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%  \begin{macro}{ \@@_unit_options_check_validity:n }
+%  If the list of options is non-empty, we parse over them using
+%  |\keyval_parse:NNn|. For this we need two commands, one for keys
+%  with argument, one without arguments. All the commands do is to check
+%  if the key given does exist. And if they do, store them in |\l_@@_tmpa_clist|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_unit_options_check_validity:n #1
+  {
+    \keyval_parse:NNn
+      \@@_unit_options_check_validity_aux_i:n
+      \@@_unit_options_check_validity_aux_ii:nn
+      {#1}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%  \begin{macro}{ \@@_unit_options_check_validity_aux_i:n , 
+%    \@@_unit_options_check_validity_aux_ii:nn }
+%  Check if the key exist; if it is then put it in |\l_@@_tmpa_clist| (just the key, or with the value).
+%  Sadly, checking if the value |#2| can be accepted by the key is not really testable.
+%    \begin{macrocode}
+\cs_new:Npn \@@_unit_options_check_validity_aux_i:n #1
+  {
+    \keys_if_exist:nnTF { cooking-units } {#1}
+      { \clist_put_right:Nn \l_@@_tmpa_clist {#1} }
+      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
+  }
+\cs_new:Npn \@@_unit_options_check_validity_aux_ii:nn #1#2
+  {
+    \keys_if_exist:nnTF { cooking-units } {#1}
+      { 
+        \clist_put_right:Nn \l_@@_tmpa_clist { #1= {#2} }
+%        \keys_if_choice_exist:nnnTF { cooking-units } {#1} {#2}
+%          { \clist_put_right:Nn \l_@@_tmpa_clist { #1= {#2} } }
+%          { \msg_error:nnnn { cooking-units } { unknown-choice } {#1} {#2} }
+      }
+      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
+  }
+%    \end{macrocode}
+% \end{macro}
+% 
+%
+%
+%
+%
+%
+%
 %
 %
 %
@@ -9293,12 +9498,11 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_new_cuphrase_sort_sequence:N }
 %  Sorting the sequence of numbers from highest to lowest (in absolute values).
-%  And if two absolute values are equal, negative numbers are prefered over
+%  And if two absolute values are equal, negative numbers are preferred over
 %  positive ones.
 %    \begin{macrocode}
 \cs_new:Npn \@@_new_cuphrase_sort_sequence:N #1
   {
-    %% sort from highest to lowest
     \seq_sort:Nn #1
       {
         \int_set:Nn \l_@@_tmpa_int { \int_abs:n {##1} }
@@ -9320,7 +9524,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cuphrase_add:nn }
+% \begin{macro}{ \cudefinephrase }
 %    \begin{macrocode}
 \NewDocumentCommand \cudefinephrase { m m }
   {
@@ -9545,159 +9749,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %
-% 
-%
-%    \begin{macrocode}
-\cs_new:Npn \@@_add_forbidden_unit:n #1
-  {
-    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-    \seq_map_inline:Nn \l_@@_tmpa_seq
-      {
-        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
-          {
-            \seq_if_in:NVF \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl
-              { \seq_put_right:NV \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl }
-          }
-      }
-  }
-\cs_new:Npn \@@_remove_forbidden_unit:n #1
-  {
-    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-    \seq_map_inline:Nn \l_@@_tmpa_seq
-      {
-        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
-          {
-            \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl
-              { \seq_remove_all:NV \l_@@_curef_do_not_change_seq \l_@@_curr_unit_tl }
-              { 
-                \msg_warning:nnnn { cooking-units } { curef-not-inside-list } {##1} 
-                  { \@@_seq_use_msg:N \l_@@_curef_do_not_change_seq }
-              }
-          }
-      }
-  }
-\cs_new:Npn \@@_clear_forbidden_unit:
-  { \seq_clear:N \l_@@_curef_do_not_change_seq }
-%    \end{macrocode}
-%
-%
-%
-%
-%
-%
-%    \begin{macrocode}
-\NewDocumentCommand \cudeclareunitgroup { m m }
-  {
-    \@@_define_clear_unit_group:n {#1}
-    \@@_add_to_unit_group:nn {#1} {#2}
-  }
-\NewDocumentCommand \cuaddtounitgroup { m m }
-  {
-    \@@_add_to_unit_group:nn {#1} {#2}
-  }
-\NewDocumentCommand \cuclearunitgroup { m }
-  {
-    \@@_error_if_group_not_defined:nF {#1}
-      { \@@_define_clear_unit_group:n {#1} }
-  }
-%    \end{macrocode}
-%
-%
-%
-%
-%
-%
-%
-%
-%
-%
-%
-% Works better now.
-%    \begin{macrocode}
-\cs_new:Npn \@@_set_options_for:nn #1#2
-  {
-    \@@_set_unit:Nn \l_@@_curr_unit_tl {#1}
-    \@@_set_unit:Nn \l_@@_tmpb_tl {#2}
-    \@@_map_trough_valid_unit_options:VVn 
-      \l_@@_curr_unit_tl 
-      \l_@@_tmpb_tl 
-      { \clist_set:cn }
-  }
-\cs_new:Npn \@@_add_options_for:nn #1#2
-  {
-    \@@_set_unit:Nn \l_@@_curr_unit_tl {#1}
-    \@@_set_unit:Nn \l_@@_tmpb_tl {#2}
-    \@@_map_trough_valid_unit_options:VVn 
-      \l_@@_curr_unit_tl 
-      \l_@@_tmpb_tl 
-      { \clist_put_right:cn }
-  }
-\cs_new:Npn \@@_clear_options_for:n #1
-  {
-    \@@_set_unit:Nn \l_@@_curr_unit_tl {#1}
-    \@@_set_unit:Nn \l_@@_tmpb_tl {}
-    \@@_map_trough_valid_unit_options:VVn 
-      \l_@@_curr_unit_tl 
-      \l_@@_tmpb_tl 
-      { \exp_args:NNc \use_i_ii:nnn \clist_clear:N }
-  }
-\NewDocumentCommand \cusetoptionfor { m m }
-  { \@@_set_options_for:nn {#1} {#2} }
-\NewDocumentCommand \cuaddoptionfor { m m }
-  { \@@_add_options_for:nn {#1} {#2} }
-\NewDocumentCommand \cuclearoptionfor { m }
-  { \@@_clear_options_for:n {#1} }
-%    \end{macrocode}
-% The reason I map trough the units twice is simply: I think it makes more
-% sense if an \enquote{unknown unit} error is shown before an 
-% \enquote{unknown option} error (at least for me).
-% It is kinda stupid, but this is not really a heavily used function, so \dots\ yeah.
-%
-% Note: I cannot check if |\l_@@_tmpa_clist| is empty because one could
-% use |\cusetoptionfor{F,C,Re,K}{}| to clear the options of the given units.
-%    \begin{macrocode}
-\cs_new:Npn \@@_tmp:w { }
-\cs_new:Npn \@@_map_trough_valid_unit_options:nnn #1#2 #3
-  {
-    \seq_clear:N \l_@@_tmpa_seq
-    \clist_clear:N \l_@@_tmpa_clist
-    \cs_set:Npn \@@_tmp:w ##1 ##2 
-      { 
-        #3 { l_@@_unit_option_ ##1 _clist } {##2}
-      }
-    \clist_map_inline:nn {#1}
-      {
-        \@@_error_if_unit_not_defined:nNF {##1} \l_@@_curr_unit_tl
-          { \seq_put_right:NV \l_@@_tmpa_seq \l_@@_curr_unit_tl }
-      }
-    \tl_if_empty:nF {#2}
-      { \@@_unit_options_check_validity:n {#2} }
-    \seq_map_inline:Nn \l_@@_tmpa_seq 
-      { \exp_args:NnV \@@_tmp:w {##1} \l_@@_tmpa_clist }
-  }
-\cs_new:Npn \@@_unit_options_check_validity:n #1
-  {
-    \keyval_parse:NNn
-      \@@_unit_options_check_validity_aux_i:n
-      \@@_unit_options_check_validity_aux_ii:nn
-      {#1}
-  }
-\cs_new:Npn \@@_unit_options_check_validity_aux_i:n #1
-  {
-    \keys_if_exist:nnTF { cooking-units } {#1}
-      { \clist_put_right:Nn \l_@@_tmpa_clist {#1} }
-      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
-  }
-\cs_new:Npn \@@_unit_options_check_validity_aux_ii:nn #1#2
-  {
-    \keys_if_exist:nnTF { cooking-units } {#1}
-      { \clist_put_right:Nn \l_@@_tmpa_clist { #1={#2} } }
-      { \msg_error:nnn { cooking-units } { unknown-option } {#1} }
-  }
-\cs_generate_variant:Nn \@@_map_trough_valid_unit_options:nnn { VV }
-%    \end{macrocode}
-%
-% 
 %
 %
 %
