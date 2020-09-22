@@ -806,9 +806,10 @@ and the derived file cooking-units.sty.
 %
 % Implement cuunit?
 %
-%  cusplit -> 12 kj / 10kcal oder so.
 %
-% \cutext{2}{st}
+% \cucomp{12}{st}{kg}
+%
+%
 % While writing on a cookery book I used -- for some reasons whatsoever --
 % three different units for weight: kilogram (kg), gram (g) and
 % decagram (dag, or older: dkg). Later my mother told me that she
@@ -6618,6 +6619,7 @@ and the derived file cooking-units.sty.
 \tl_const:Nn \c_@@_cmd_type_cunum_tl { cunum }
 \tl_const:Nn \c_@@_cmd_type_cCutext_tl { cCutext }
 \tl_const:Nn \c_@@_cmd_type_cuam_tl { cuam }
+\tl_const:Nn \c_@@_cmd_type_cucomp_tl { cucomp }
 %    \end{macrocode}
 %
 %
@@ -8262,6 +8264,55 @@ and the derived file cooking-units.sty.
 %
 %
 %
+% \subsection{\mycs{cucomp}}
+%
+%
+%    \begin{macrocode}
+\NewDocumentCommand \cucomp { d<> O{}  m m m }
+  {
+    \group_begin:
+      \@@_cucomp:nnnnn {#1} {#2} {#3} {#4} {#5}
+    \group_end:
+  }
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_new:Npn \@@_cucomp:nnnnn #1#2 #3#4#5
+  {
+    \group_begin:
+      \@@_set_cmd_type_to:n { cunum }
+      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#4}
+    \group_end:
+      /
+    \group_begin:
+      \@@_set_cmd_type_to:n { cunum }
+      \@@_do_the_stuff:nnnnn {#1} { #2 , #4=#5 } {#3} { } {#4}
+    \group_end:
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%\cs_new:Npn \@@_do_cucomp_stuff:nnnnn #1#2 #3#4#5
+%  {
+%    \group_begin:
+%      \@@_set_cmd_to:n { cucomp }
+%      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#4}
+%      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#5}
+%    \group_end:
+%  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_new_process_split_number_in_input:
+  {
+    \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_number_tmpa_tl
+    \tl_set_eq:NN \l_@@_tmp_unit_tl \l_@@_option_unit_tl
+    \tl_set_eq:NN  \l_@@_option_unit_tl \l_@@_original_unit
+    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl
+    \tl_set_eq:NN  \l_@@_option_unit_tl \l_@@_tmp_unit_tl
+    \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
+    \@@_post_process_accordingly:NN \l_@@_number_tmpa_tl \q_no_value
+  }
+%    \end{macrocode}
 %
 %
 %
