@@ -5712,6 +5712,42 @@ and the derived file cooking-units.sty.
       }
     \prg_return_true: 
   }
+
+\TODO__CHECK_FOR_DECIMAL_INSTEAD_OF_INTEGER_AS_ALREADY_PARSED
+
+\prg_new_conditional:Npnn \@@_if_contains_decimal:n #1 { TF }
+  {
+    \@@_check_for_decimal:w #1 . \q_nil . \q_stop
+  }
+\prg_new_conditional:Npnn \@@_if_contains_decimal:N #1 { TF }
+  {
+    \exp_after:wN \@@_check_for_decimal:w #1 . \q_nil . \q_stop
+  }
+\cs_new:Npn \@@_check_for_decimal:w #1 . #2 . \q_stop
+  { 
+    \if_meaning:w \q_nil #2 
+      \exp_after:wN \prg_return_false:
+    \else:
+      \exp_after:wN \prg_return_true:
+    \fi:
+  }
+
+\prg_new_conditional:Npnn \@@_if_contain_decimals:NN #1#2 { TF }
+  {
+    \@@_if_contains_decimal:NTF #1
+      {
+        \@@_if_print_type_equal:nTF { range }
+          {
+            \@@_if_contains_decimal:NTF #2
+              { \prg_return_true: }
+              { \prg_return_false: }
+          }
+          { \prg_return_false: }
+      }
+      { \prg_return_false: }
+  }
+
+
 \cs_generate_variant:Nn \@@_if_integer:nTF { V }
 \prg_new_protected_conditional:Npnn \@@_if_evaluation_is_integer:n #1 { TF , T , F }
   {
@@ -6405,18 +6441,18 @@ and the derived file cooking-units.sty.
 % following language macros. I need them due to the |\c_@@_postfix_..._tl|
 % commands. Can be done better, but I currently do not know how.
 %    \begin{macrocode}
-\cs_new:Npn \@@_culang_base:Nnn #1#2#3 { #1 { #2 #3 } }
-\cs_new:Npn \@@_culang_base:Nnnn #1#2#3#4 { #1 { #2 #3 } {#4} }
-\cs_new:Npn \@@_culang_base_ii:Nnnn #1#2#3#4 { #1 {#2} { #3 #4 } }
-\cs_new:Npn \@@_culang_base:NNnn #1#2#3#4 { #1 #2 { #3 #4 } }
-\cs_new:Npn \@@_culang_base:Nnnnn #1#2#3#4#5 { #1 {#2} { #3 #4 } {#5} }
-\cs_new:Npn \@@_culang_base:NNnnn #1#2#3#4#5 { #1 #2 {#3} { #4 #5 } }
-\cs_generate_variant:Nn \@@_culang_base:Nnn { Nvn }
-\cs_generate_variant:Nn \@@_culang_base:Nnnn { Nvnn }
-\cs_generate_variant:Nn \@@_culang_base_ii:Nnnn { Nnvn }
-\cs_generate_variant:Nn \@@_culang_base:NNnn { NNvn }
-\cs_generate_variant:Nn \@@_culang_base:Nnnnn { Nnvnn }
-\cs_generate_variant:Nn \@@_culang_base:NNnnn { NNnvn }
+%\cs_new:Npn \@@_culang_base:Nnn #1#2#3 { #1 { #2 #3 } }
+%\cs_new:Npn \@@_culang_base:Nnnn #1#2#3#4 { #1 { #2 #3 } {#4} }
+%\cs_new:Npn \@@_culang_base_ii:Nnnn #1#2#3#4 { #1 {#2} { #3 #4 } }
+%\cs_new:Npn \@@_culang_base:NNnn #1#2#3#4 { #1 #2 { #3 #4 } }
+%\cs_new:Npn \@@_culang_base:Nnnnn #1#2#3#4#5 { #1 {#2} { #3 #4 } {#5} }
+%\cs_new:Npn \@@_culang_base:NNnnn #1#2#3#4#5 { #1 #2 {#3} { #4 #5 } }
+%\cs_generate_variant:Nn \@@_culang_base:Nnn { Nvn }
+%\cs_generate_variant:Nn \@@_culang_base:Nnnn { Nvnn }
+%\cs_generate_variant:Nn \@@_culang_base_ii:Nnnn { Nnvn }
+%\cs_generate_variant:Nn \@@_culang_base:NNnn { NNvn }
+%\cs_generate_variant:Nn \@@_culang_base:Nnnnn { Nnvnn }
+%\cs_generate_variant:Nn \@@_culang_base:NNnnn { NNnvn }
 %    \end{macrocode}
 %  \end{macro}
 %
@@ -6627,6 +6663,7 @@ and the derived file cooking-units.sty.
 \tl_const:Nn \c_@@_parse_and_process_type_number_tl { number }
 \tl_const:Nn \c_@@_parse_and_process_type_range_tl { range }
 \tl_const:Nn \c_@@_parse_and_process_type_fraction_tl { fraction }
+\tl_const:Nn \c_@@_parse_and_process_type_comp_tl { comp }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -6730,7 +6767,8 @@ and the derived file cooking-units.sty.
 %   parses options and decides (depending on which command was used)
 %   what to do with the stuff and how to print it.
 %    \begin{macrocode}
-\cs_new:Npn \@@_do_the_stuff:nnnnn #1#2#3#4#5
+\bool_new:N \l_@@_skip_first_part_bool
+\cs_new:Npn \@@_do_the_stuff:nnnnnn #1#2#3#4#5#6
   {
 %  #1 -- label
 %  #2 -- options
@@ -6747,7 +6785,7 @@ and the derived file cooking-units.sty.
     \@@_new_print_amount_correctly:
     \@@_new_print_unit_correctly:
   }
-\cs_generate_variant:Nn \@@_do_the_stuff:nnnnn { nnnnV }
+\cs_generate_variant:Nn \@@_do_the_stuff:nnnnnn { nnnnV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6761,11 +6799,15 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_initialice_accordingly:nnn #1#2#3
   {
     \@@_initialize_new_default:nn {#2} {#3}
+    \@@_initialize_new_default_units:
     \tl_case:NnF \l_@@_cmd_type_tl
       {
         \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#1} }
         \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
         \c_@@_cmd_type_cuam_tl { }
+        \c_@@_cmd_type_cucomp_tl { 
+%          \@@_initialice_addon_cucomp:n {#4} 
+        }
       }
       { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
   }
@@ -6782,6 +6824,18 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_addon_cucomp:n #1
+  {
+%    \@@_expand_unit_input:Nn \l_@@_option_unit_tl {#1}
+%    \@@_error_if_unit_not_defined:VT \l_@@_option_unit_tl
+%      { 
+%        \@@_set_state_to:n { error } 
+%        \bool_set_true:N \l_@@_unit_error_bool
+%      } 
+  }
+%    \end{macrocode}
+%
 % \begin{macro}{ \@@_initialize_new_default:nn , \@@_initialize_new_default:nV  , 
 %    \@@_intialize_new_default_units:
 %  }
@@ -6793,6 +6847,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_initialize_new_default:nn #1#2
   {
+    \tl_clear:N \l_@@_option_unit_tl
     \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
     \@@_expand_unit_input:Nn \l_@@_original_unit_tl {#2}
     \@@_error_if_unit_not_defined:VTF \l_@@_original_unit_tl
@@ -6804,21 +6859,27 @@ and the derived file cooking-units.sty.
     \@@_set_parse_and_process_type_to:n { number }
     \@@_set_print_type_to:n { unknown }
     \tl_clear:N \l_@@_phantom_tl
-    \@@_if_no_unit_marker:NTF \l_@@_original_unit_tl
-      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
-      { \@@_intialize_new_default_units: }
+    \@@_initialize_new_default_units:
   }
 \cs_generate_variant:Nn \@@_initialize_new_default:nn { nV }
 %    \end{macrocode}
 % First, convert the original unit to eV or a bonkers unit if necessary.
 % If we have an unit-change, store the wanted unit in |\l_@@_option_unit_tl|.
 %    \begin{macrocode}
-\cs_new:Npn \@@_intialize_new_default_units:
+\cs_new:Npn \@@_initialize_new_default_units:
   {
-    \bool_if:NT \l_@@_pckopt_convert_to_eV_bool
-      { \@@_convert_to_eV:N \l_@@_original_unit_tl }
-    \bool_if:NT \l_@@_pckopt_bonkers_bool
+    \@@_if_no_unit_marker:NTF \l_@@_original_unit_tl
+      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
+      { \@@_intialize_new_default_units_aux: }
+  }
+\cs_new:Npn \@@_intialize_new_default_units_aux:
+  {
+    \bool_if:NTF \l_@@_pckopt_bonkers_bool
       { \@@_changing_unit_bonkers:N \l_@@_original_unit_tl }
+      {
+        \bool_if:NT \l_@@_pckopt_convert_to_eV_bool
+          { \@@_convert_to_eV:N \l_@@_original_unit_tl }
+      }
     \prop_get:NVNF \l_@@_change_unit_prop \l_@@_original_unit_tl \l_@@_option_unit_tl
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
   }
@@ -6841,11 +6902,15 @@ and the derived file cooking-units.sty.
 % To make sure the lokal options override the unit-options, we set
 % the options again after unit-options.
 %    \begin{macrocode}
+
+\tl_new:N \l_@@_decided_unit_tl
+
 \cs_new_protected:Npn \@@_initialise_new_after_parsing:nn #1#2
   {    
     \IfNoValueF {#1}
       { \@@_reference_label_and_persons:n {#1} }
     \@@_new_setup_bools_for_process_and_prints:
+    \@@_decide_unit:
     \@@_change_unit:TF
       { \tl_set_eq:NN \l_@@_tmpa_unit_tl \l_@@_option_unit_tl }
       { \tl_set_eq:NN \l_@@_tmpa_unit_tl \l_@@_original_unit_tl }
@@ -6859,6 +6924,13 @@ and the derived file cooking-units.sty.
       }
     \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
   }
+  
+\cs_new:Npn \@@_decide_unit:
+  {
+    \@@_change_unit:TF
+      { \tl_set_eq:NN \l_@@_decided_unit_tl \l_@@_option_unit_tl }
+      { \tl_set_eq:NN \l_@@_decided_unit_tl \l_@@_original_unit_tl }
+  }  
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6914,6 +6986,7 @@ and the derived file cooking-units.sty.
               { \l_@@_cutext_hook_tl }
           }
         \c_@@_cmd_type_cuam_tl { \l_@@_cuam_hook_tl }
+        \c_@@_cmd_type_cucomp_tl { }
       }
       { \@@_create_internal_error:nN { use-hook-acc } \l_@@_cmd_type_tl }
   }
@@ -6929,6 +7002,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_process_amount_normally:nn #1#2
   {
+%    \@@_initialize_new_default_units:
     \@@_initialise_new_after_parsing:nn {#1} {#2}
     \@@_if_cmd_type_equal:nT { cCutext }
       { \@@_cutext_check_if_translation_available: }
@@ -6937,8 +7011,29 @@ and the derived file cooking-units.sty.
         \c_@@_parse_and_process_type_number_tl  \@@_new_process_number_in_input: 
         \c_@@_parse_and_process_type_range_tl     \@@_new_process_range_in_input:
         \c_@@_parse_and_process_type_fraction_tl  \@@_new_process_fraction_in_input:  
+        \c_@@_parse_and_process_type_comp_tl  \@@_new_process_compare_in_input:  
       }
       { \@@_create_internal_error:nN { process_the_input } \l_@@_parse_and_process_type_tl }
+  }
+\cs_new:Npn \@@_process_amount_normally_cucomp:nnn #1#2#3
+  {
+    \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_number_tmpa_tl
+    
+    \group_begin:
+    \@@_initialise_new_after_parsing:nn {#1} {#2}
+    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl
+    \@@_post_process_accordingly:NN \l_@@_number_tmpa_tl \q_no_value
+    \exp_args:NNNV
+    \group_end:
+    \tl_set:Nn \l_@@_number_tmpa_tl \l_@@_number_tmpa_tl
+    
+    \group_begin:
+    \@@_initialise_new_after_parsing:nn {#1} {#3}
+    \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
+    \@@_post_process_accordingly:NN \l_@@_number_tmpb_tl \q_no_value
+    \exp_args:NNNV
+    \group_end:
+    \tl_set:Nn \l_@@_number_tmpb_tl \l_@@_number_tmpb_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7122,6 +7217,7 @@ and the derived file cooking-units.sty.
             \c_@@_cmd_type_cunum_tl { \@@_cunum_print_correct_unit: }
             \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_correct_unitname: }
             \c_@@_cmd_type_cuam_tl { \@@_cuam_print_correct_unitphrase: }
+            \c_@@_cmd_type_cucomp_tl { \@@_cunum_print_correct_unit: }
           }
           { \@@_create_internal_error:nN { print-unit-acc } \l_@@_cmd_type_tl }
       }
@@ -7154,6 +7250,7 @@ and the derived file cooking-units.sty.
         \c_@@_cmd_type_cunum_tl { \@@_print_numerical_input:N #1 }
         \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_input:N #1 }
         \c_@@_cmd_type_cuam_tl { \@@_cuam_print_numerical_input:N #1 }
+        \c_@@_cmd_type_cucomp_tl { \@@_print_numerical_input:N #1 }
       }
       { \@@_create_internal_error:nN { print-input-acc } \l_@@_cmd_type_tl }
   }
@@ -7200,6 +7297,7 @@ and the derived file cooking-units.sty.
         \c_@@_cmd_type_cunum_tl { }
         \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process_input:NN #1#2 }
         \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process_input:NN #1#2 }
+        \c_@@_cmd_type_cucomp_tl { }
       }{ 
         \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
       }
@@ -7586,6 +7684,13 @@ and the derived file cooking-units.sty.
     \@@_round_calculated_input_and_store_in:N #1
     \@@_check_temperature_limit:N #1
   }
+\cs_new:Npn \@@_calculate_and_store_in:NN #1 #2
+  {
+    \@@_calculate_input_and_store_in:N #1
+    \@@_calc_references_and_store_in:N #1
+    \@@_round_calculated_input_and_store_in:N #1
+    \@@_check_temperature_limit:N #1
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7819,7 +7924,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cunum:nnnnn #1#2#3#4#5
   {
     \@@_set_cmd_type_to:n { cunum }
-    \@@_do_the_stuff:nnnnn {#1} {#2} {#3} {#4} {#5}
+    \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} {#4} {#5} { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7891,7 +7996,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
     \@@_set_cmd_type_to:n { cCutext }
-    \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#4}
+    \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} { } {#4} { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8008,9 +8113,12 @@ and the derived file cooking-units.sty.
       { \@@_cutext_check_if_amount_single:N #1 }
     \bool_if:NT \l_@@_lokal_numeral_bool
       { 
-        \@@_if_integers:NNTF #1#2
-          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
+        \@@_if_contain_decimals:NNTF #1#2
           { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
+%        \@@_if_integers:NNTF #1#2
+%          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
+%          { \bool_set_false:N \l_@@_lokal_numeral_bool }
       }
   }
 %    \end{macrocode}
@@ -8098,7 +8206,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuam:nnn #1#2#3
   {
     \@@_set_cmd_type_to:n { cuam }
-    \@@_do_the_stuff:nnnnV {#1} {#2} {#3} { } \c_@@_no_unit_marker_tl
+    \@@_do_the_stuff:nnnnVn {#1} {#2} {#3} { } \c_@@_no_unit_marker_tl { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8114,14 +8222,22 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
   {
-    \@@_if_integers:NNTF #1#2
+    \@@_if_contain_decimals:NNTF #1#2
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
       {
         \bool_if:NT \l_@@_pckopt_use_phrases_bool
           { \@@_cuam_post_process_input_phrases:NN #1#2 }
         \bool_if:NT \l_@@_lokal_numeral_bool
           { \@@_check_if_integer_can_be_numerals:NN #1#2 }
       }
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+%    \@@_if_integers:NNTF #1#2
+%      {
+%        \bool_if:NT \l_@@_pckopt_use_phrases_bool
+%          { \@@_cuam_post_process_input_phrases:NN #1#2 }
+%        \bool_if:NT \l_@@_lokal_numeral_bool
+%          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
+%      }
+%      { \bool_set_false:N \l_@@_lokal_numeral_bool }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8280,12 +8396,9 @@ and the derived file cooking-units.sty.
   {
     \group_begin:
       \@@_set_cmd_type_to:n { cunum }
-      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#4}
-    \group_end:
+      \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} { } {#4} { }
       /
-    \group_begin:
-      \@@_set_cmd_type_to:n { cunum }
-      \@@_do_the_stuff:nnnnn {#1} { #2 , #4=#5 } {#3} { } {#4}
+      \@@_do_the_stuff:nnnnnn {#1} {#4=#5} {#3} { } {#4} { }
     \group_end:
   }
 %    \end{macrocode}
@@ -8295,20 +8408,18 @@ and the derived file cooking-units.sty.
 %  {
 %    \group_begin:
 %      \@@_set_cmd_to:n { cucomp }
-%      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#4}
-%      \@@_do_the_stuff:nnnnn {#1} {#2} {#3} { } {#5}
+%      \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} { } {#4}
+%      \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} { } {#5}
 %    \group_end:
 %  }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_process_split_number_in_input:
+\cs_new:Npn \@@_new_process_compare_in_input:
   {
     \tl_set_eq:NN \l_@@_number_tmpb_tl \l_@@_number_tmpa_tl
-    \tl_set_eq:NN \l_@@_tmp_unit_tl \l_@@_option_unit_tl
-    \tl_set_eq:NN  \l_@@_option_unit_tl \l_@@_original_unit
+    \tl_set_eq:NN \l_@@_tmpa_unit_tl \l_@@_option_unit_tl
     \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl
-    \tl_set_eq:NN  \l_@@_option_unit_tl \l_@@_tmp_unit_tl
     \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
     \@@_post_process_accordingly:NN \l_@@_number_tmpa_tl \q_no_value
   }
@@ -8330,7 +8441,6 @@ and the derived file cooking-units.sty.
 \newcommand \cuaddkeys {}
 \newcommand \cuaddsinglekeys {}
 \newcommand \cuaddtokeys {}
-
 %    \end{macrocode}
 % \end{macro}
 %
