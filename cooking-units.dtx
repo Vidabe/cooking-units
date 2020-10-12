@@ -3838,6 +3838,8 @@ and the derived file cooking-units.sty.
     \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
     \cs_set_eq:NN \@@_print_Numeral:n \Numberstringnum
   }
+\cs_generate_variant:Nn \@@_print_numeral:n { V }
+\cs_generate_variant:Nn \@@_print_Numeral:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6489,7 +6491,7 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}[TF, F]{\@@_culang_unitname_let:Nn , \@@_culang_unitname_let:NV }
 %    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_culang_unitname_let:Nn #1#2 { TF, F }
+\prg_new_conditional:Npnn \@@_culang_unitname_let:Nn #1#2 { TF, F , T }
   {
     \@@_culang_let:nnN { name } {#2} #1
     \tl_if_eq:NNTF #1 \q_@@_no_translation
@@ -6497,33 +6499,35 @@ and the derived file cooking-units.sty.
       { \prg_return_true: }
   }
 \cs_generate_variant:Nn \@@_culang_unitname_let:NnTF { NV, Nx }
+\cs_generate_variant:Nn \@@_culang_unitname_let:NnT {  Nx }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{ \@@_culang_one_let:Nn , \@@_culang_one_let:NV , 
-%   \@@_culang_one_let_aux:Nn , \@@_culang_one_let_aux:NV 
+%   \@@_culang_one_let_by_gender:Nn , \@@_culang_one_let_by_gender:NV 
 %  }
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_culang_one_let:Nn #1#2 { T }
   {
     \@@_culang_let:nnN { gender } {#2} \l_@@_tmpa_tl
-%    \@@_culang_one_let_aux:NVTF #1 \l_@@_tmpa_tl
-    \@@_culang_unitname_let:NxTF #1 { one(\l_@@_tmpa_tl) }
+    \@@_culang_one_let_by_gender:NVTF #1 \l_@@_tmpa_tl
       { \prg_return_true: }
       {
-        \msg_error:nnx { cooking-units } { Translation-not-available } { one (\l_@@_tmpa_tl) }
         \tl_set:Nn #1 { 1 }
         \prg_return_false:
       }
   }
 \cs_generate_variant:Nn \@@_culang_one_let:NnT { NV }
-%\prg_new_conditional:Npnn \@@_culang_one_let_aux:Nn #1#2 { TF }
-%  {
-%    \@@_culang_unitname_let:NnTF #1 { one (#2) } 
-%      { \prg_return_true: }
-%      { \prg_return_false: }
-%  } 
-%\cs_generate_variant:Nn \@@_culang_one_let_aux:NnTF { NV }
+\prg_new_conditional:Npnn \@@_culang_one_let_by_gender:Nn #1#2 { TF }
+  {
+    \@@_culang_unitname_let:NnTF #1 { one (#2) } 
+      { \prg_return_true: }
+      { 
+        \msg_error:nnx { cooking-units } { Translation-not-available } { one (#2) }
+        \prg_return_false: 
+      }
+  } 
+\cs_generate_variant:Nn \@@_culang_one_let_by_gender:NnTF { NV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6610,14 +6614,14 @@ and the derived file cooking-units.sty.
   {
     \cs_new:cpn { @@_set_ #2 _to:n } ##1
       { 
-        \tl_if_exist:cF { c_@@_#2_ ##1 _tl } { \tl_show:n { ERROR-set-#2-##1 } }
+%        \tl_if_exist:cF { c_@@_#2_ ##1 _tl } { \tl_show:n { ERROR-set-#2-##1 } }
         \tl_set_eq:Nc #1 { c_@@_#2_ ##1 _tl } 
       }
     \tl_if_empty:nF {#3}
       {
         \exp_args:Nc \prg_new_conditional:Npnn { @@_if_ #2 _equal:n } ##1 {#3}
           {
-            \tl_if_exist:cF { c_@@_#2_ ##1 _tl } { \tl_show:n { ERROR-check-#2-##1 } }
+%            \tl_if_exist:cF { c_@@_#2_ ##1 _tl } { \tl_show:n { ERROR-check-#2-##1 } }
             \tl_if_eq:NcTF #1 { c_@@_#2_ ##1 _tl } 
               { \prg_return_true: }
               { \prg_return_false: }
@@ -7915,8 +7919,8 @@ and the derived file cooking-units.sty.
         \l_@@_translation_tmpa_tl
       }{ 
         \bool_if:NTF \l_@@_cutext_uppercase_word_bool
-          { \@@_print_Numeral:n {#1} }
-          { \@@_print_numeral:n {#1} }
+          { \@@_print_Numeral:V #1 }
+          { \@@_print_numeral:V #1 }
       }
   }
 \cs_generate_variant:Nn \@@_cutext_print_input_aux:Nn { NV }
@@ -8220,10 +8224,15 @@ and the derived file cooking-units.sty.
   {
     \int_compare:nNnTF {#1} = { 1 }
       {
-        \@@_culang_one_let:NVT \l_@@_translation_tmpa_tl \l_@@_phrase_gender_tl
-        \l_@@_translation_tmpa_tl 
+        \@@_culang_one_let_by_gender:NVTF 
+          \l_@@_translation_tmpa_tl \l_@@_phrase_gender_tl
+          { \l_@@_translation_tmpa_tl  }
+          { 
+            \@@_print_numeral:V #1
+            \bool_set_false:N \l_@@_lokal_numeral_bool
+          }
       }
-      { \@@_print_numeral:n #1 } 
+      { \@@_print_numeral:V #1 } 
   }
 \cs_generate_variant:Nn \@@_cuam_print_numerical_input_aux:Nn { NV }
 %    \end{macrocode}
@@ -9612,8 +9621,8 @@ and the derived file cooking-units.sty.
             \l_@@_translation_tmpa_tl
           }{ 
             \bool_if:NTF \l_@@_cutext_uppercase_word_bool
-              { \@@_print_Numeral:n {#1} }
-              { \@@_print_numeral:n {#1} }
+              { \@@_print_Numeral:V #1 }
+              { \@@_print_numeral:V #1 }
           }
       }
       { \@@_print_numerical_input:N #1 }
