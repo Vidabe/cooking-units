@@ -584,9 +584,10 @@ and the derived file cooking-units.sty.
 
 \newcommand\eneunit[3]{\sfrac{#1\,#2${}^2$}{#3${}^2$}}
 %% Can overflow and takes too long, hard code it
-%\declarecookingderivatives{kg,m,s}{#1*#2-#3}{ (#1)*(#2)^2/(#3)^2 } {\eneunit{#1}{#2}{#3}}
-\newcookingunit[\eneunit{kg}{m}{s}]{kg*m-s}
-\newcookingunit[\eneunit{oz}{in}{min}]{oz*in-min}
+\declarecookingderivatives{kg,m,s}{#1*#2-#3}{ (#1)*(#2)^2/(#3)^2 } {\eneunit{#1}{#2}{#3}}
+%\declarecookingderivatives{kg,kg,kg}{#1-#2-#3}{ #1-#2-#3} {#1-#2-#3}
+%\declarecookingunit[\eneunit{kg}{m}{s}]{kg*m-s}
+%\declarecookingunit[\eneunit{oz}{in}{min}]{oz*in-min}
 \newcookingunit {st}
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 \newcookingunit {ft}
@@ -974,8 +975,9 @@ and the derived file cooking-units.sty.
 % by a word; such as \enquote{12} becoming \enquote{dozen}\footnote{At least I think})
 % which can be activated by the option \opt{use-phrases}
 % (as I don't know any english phrases, I switched the language to german  for the following examples)
-% \begin{myde}
+%^^A \begin{myde}
 % \begin{cuexamplecode}
+%   \selectlanguage{ngerman} @
 %   \cusetup{use-phrases=true} @
 %   \cuam{11} \\
 %   \cuam{12} \\
@@ -986,7 +988,7 @@ and the derived file cooking-units.sty.
 %   \cuam{18} \\
 %   \cuam{60} 
 % \end{cuexamplecode}
-% \end{myde}
+%^^A \end{myde}
 %
 %
 % \section{Label \& refs: Changing the amount of the recipe}
@@ -1084,8 +1086,9 @@ and the derived file cooking-units.sty.
 %
 %   Using (for example) language \opt{ngerman} (or \opt{naustrian}, etc.) with
 %   package option \opt{use-phrases=true} gives:
-%   \begin{myde}
+%^^A   \begin{myde}
 %     \begin{cuexamplecode}
+%       \selectlanguage{ngerman} @
 %       \cusetup{use-phrases=true} @
 %       \cuam{12} \\
 %       \cuam{24} \\
@@ -1094,11 +1097,12 @@ and the derived file cooking-units.sty.
 %       \cuam{18} \\
 %       \cuam{60} 
 %     \end{cuexamplecode}
-%   \end{myde}
+%^^A   \end{myde}
 % This of course also works with the \emph{package}-option \opt{use-fmtcount-numerals}:
-%   \begin{myde}
+%^^A   \begin{myde}
 %     \cusetup{print-numerals=true} 
 %     \begin{cuexamplecode}
+%       \selectlanguage{ngerman} @
 %       \cusetup{use-phrases=true} @
 %       \cuam{12} \\
 %       \cuam{24} \\
@@ -1107,7 +1111,7 @@ and the derived file cooking-units.sty.
 %       \cuam{18} \\
 %       \cuam{60} 
 %     \end{cuexamplecode}
-%   \end{myde}
+%^^A   \end{myde}
 %
 %
 %   \begin{cunote}
@@ -1331,11 +1335,11 @@ and the derived file cooking-units.sty.
 %      { (#1)*(#2)^2/(#3)^2 } {\sfrac{#1\,#2${}^2$}{#3${}^2$}}
 %    \end{lstlisting}
 %
-%^^A Using |\cunum[kg*m-s=oz*in-min]{1}{kg*m-s}| shows that
-%^^A \cunum{1}{kg*m-s} is equal to \cunum{196829101.34}{oz*in-min}.  
-%^^A (Note: This is \emph{really} experimental and it can easily happen that
-%^^A an \enquote{overflow-error} occurs) (like for me which is why I hard-coded the
-%^^A results after testing).
+% Using |\cunum[kg*m-s=oz*in-min]{1}{kg*m-s}| shows that
+% \cunum{1}{kg*m-s} is equal to \cunum[kg*m-s=oz*in-min]{1}{kg*m-s} \cunum{196829101.34}{oz*in-min}.  
+% (Note: This is \emph{really} experimental and it can easily happen that
+% an \enquote{overflow-error} occurs) (like for me which is why I hard-coded the
+% results after testing).
 %
 % \end{cuexample}
 %
@@ -1846,8 +1850,9 @@ and the derived file cooking-units.sty.
 %    }
 % \end{lstlisting}
 %   Let's just use them (german language activated!):
-%   \begin{myde}
+%^^A   \begin{myde}
 %   \begin{cuexamplecode}
+%     \selectlanguage{ngerman} @
 %     \cusetup{use-phrases=true} @
 %     \cuam{12} \\
 %     \cuam{24} \\
@@ -1856,7 +1861,7 @@ and the derived file cooking-units.sty.
 %     \cuam{6} \\
 %     \cuam{18} 
 %   \end{cuexamplecode}
-%   \end{myde}
+%^^A   \end{myde}
 %
 % As you can see, \enquote{Schock} ($60$) is preferred over \enquote{Dutzend} ($12$)
 % as it linked to the higher number. Furthermore, for $6$ the phrase \enquote{halbes
@@ -2571,9 +2576,10 @@ and the derived file cooking-units.sty.
 % \end{function}
 %
 % \begin{cuexample}
-% \begin{myde}
+%^^A \begin{myde}
 % For the German language:
 % \begin{cuexamplecode}
+%   \selectlanguage{ngerman} @
 %   \cuam{12} \\
 %   \cuam{12--24} \\
 %   \cuam{36} \\
@@ -2586,7 +2592,7 @@ and the derived file cooking-units.sty.
 %   \cuam{12--24} \\
 %   \cuam{36} \\
 % \end{cuexamplecode}
-% \end{myde}
+%^^A \end{myde}
 % \end{cuexample}
 %
 %
@@ -2827,10 +2833,11 @@ and the derived file cooking-units.sty.
 %   while using \mycs{cuam}. By default it is set to \cs{space}. Use this option
 %  if you want to e.g.\ insert an unbreakable space.
 % \end{function}
-% \begin{myde}
+%^^A \begin{myde}
 %  \cusetup{use-phrases=true}
 % (Switching to german)
 % \begin{cuexamplecode}
+%   \selectlanguage{ngerman} @
 %   \cuam{12}\\
 %   \cuam{144}\\
 %   \cusetup { phrase-space = ~ } @
@@ -2844,7 +2851,7 @@ and the derived file cooking-units.sty.
 %   \cuam{144}\\
 % \end{cuexamplecode}
 %  \cusetup{use-phrases=false}
-% \end{myde}
+%^^A \end{myde}
 %
 % \begin{function}{amount-unit-space}
 %   \begin{syntax}
@@ -3733,6 +3740,12 @@ and the derived file cooking-units.sty.
     Please \ replace \ the \ option.
     \msg_see_documentation_text:n { cooking-units } 
   }
+\msg_new:nnnn { cooking-units } { key-unknown }
+  { The~key~'#1'~is~unknown~and~is~being~ignored. }
+  {
+    The~module~'#2'~does~not~have~a~key~called~'#1'.\\
+    Check~that~you~have~spelled~the~key~name~correctly.
+  }
 %    \end{macrocode}
 %    \begin{macrocode}
 \bool_new:N \g_@@_opt_numeral_bool
@@ -3746,6 +3759,9 @@ and the derived file cooking-units.sty.
     use-numerals .default:n = { false },
     use-fmtcount-numerals .bool_gset:N = \g_@@_opt_numeral_bool ,
     use-fmtcount-numerals .default:n = { false },
+    unknown .code:n = { \msg_error:nnxx { cooking-units } { key-unknown }
+      { \l_keys_path_str } { cooking-units }
+     }
   }
 %    \end{macrocode}
 % Now process the package options \dots
@@ -3791,7 +3807,7 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \msg_warning:nnn { nnV }
 \cs_generate_variant:Nn \prop_put:Nnn { cnx }
 \cs_generate_variant:Nn \seq_remove_all:Nn { NV }
-\cs_generate_variant:Nn \prop_gput:Nnn { Nnv }
+\cs_generate_variant:Nn \prop_gput:Nnn { Nnv, Nxv }
 \cs_generate_variant:Nn \prop_get:NnN { cnc }
 %    \end{macrocode}
 % \end{macro}
@@ -4189,7 +4205,7 @@ and the derived file cooking-units.sty.
 %    , \l_@@_single_key_bool
 %    , \l_@@_cutext_uppercase_word_bool
 %    , \l_@@_reference_given_bool
-%    , \l_@@_lokal_recalculate_amount_bool
+%    , \l_@@_lokal_recalc_for_people_bool
 %    , \l_@@_lokal_phrase_bool
 %    , \l_@@_lokal_change_unit_bool
 %    , \l_@@_pckopt_print_numeral_bool
@@ -4223,7 +4239,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_single_key_bool
 \bool_new:N \l_@@_cutext_uppercase_word_bool
 \bool_new:N \l_@@_reference_given_bool
-\bool_new:N \l_@@_lokal_recalculate_amount_bool
+\bool_new:N \l_@@_lokal_recalc_for_people_bool
 \bool_new:N \l_@@_lokal_phrase_bool
 \bool_new:N \l_@@_lokal_change_unit_bool
 \bool_new:N \l_@@_pckopt_print_numeral_bool
@@ -5073,9 +5089,43 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+%
+%
+%
+%
+%
+%
+%
+%
+%
 % Ending the definition of keys.
 %    \begin{macrocode}
   }
+
+\keys_define:nn { cooking-units }
+  {
+    unknown .code:n = 
+      { 
+        \prop_get:NVNTF \g_tmpa_prop \l_keys_key_str \l_tmpa_tl
+          {   
+            \prop_get:NnNTF \g_tmpa_prop {#1} \l_tmpb_tl
+              {
+                \prop_put:NVn \l_@@_change_unit_prop \l_keys_key_str {#1}
+                \@@_tl_eval:cn { l_@@_unit_change_ \l_keys_key_str _tl }
+                  {
+                    (\l_tmpb_tl) / (\l_tmpa_tl)
+                  }
+              \prop_gput:Nxv \g_@@_master_changer_prop 
+                { \l_keys_key_str ~->~ #1 } 
+                { l_@@_unit_change_ \l_keys_key_str _tl }
+              }{
+               \tl_show:n { Error-message-here }
+              }
+          }
+          { \msg_error:nnxx { cooking-units } { key-unknown } { \l_keys_path_str } { cooking-units } }
+      }
+  }
+%\keys_set:nn { cooking-units } {#2}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6015,7 +6065,8 @@ and the derived file cooking-units.sty.
     \@@_if_unit_has_a_key:VT #1
       {
         \@@_prepare_going_bonkers:N #1
-        \keys_set:nn { cooking-units } { eval-fraction = true }
+        \keys_set:nn { cooking-units } 
+          { eval-fraction = true , curef-clear-forbidden-units = true }
         \prop_put:NVV \l_@@_change_unit_prop {#1} \l_@@_tmpa_tl
         \@@_cukeys_calculate_change_value:VVV #1 \l_@@_tmpa_tl \l_@@_tmp_unit_tl
       }
@@ -6826,7 +6877,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_new_setup_bools_for_process_and_prints:
   {
-    \bool_set_false:N \l_@@_lokal_recalculate_amount_bool
+    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
     \bool_lazy_and:nnT
       { \l_@@_reference_given_bool } 
       { \l_@@_pckopt_recalculate_amount_bool }
@@ -6835,13 +6886,13 @@ and the derived file cooking-units.sty.
           { \l_@@_wanted_number_of_persons_int }
           =
           { \l_@@_local_number_of_persons_int }
-          { \bool_set_true:N \l_@@_lokal_recalculate_amount_bool }
+          { \bool_set_true:N \l_@@_lokal_recalc_for_people_bool }
       }
     \@@_if_print_type_equal:nT { fraction }
       {
         \bool_lazy_or:nnTF
           { \l_@@_pckopt_eval_fractions_bool }
-          { \l_@@_lokal_recalculate_amount_bool }
+          { \l_@@_lokal_recalc_for_people_bool }
           { \@@_set_print_type_to:n { number } }
           {
 %          "Convert" fractions \emph{only} if a unit change is requested.
@@ -7607,15 +7658,13 @@ and the derived file cooking-units.sty.
 %  so we know that a reference was given and that the wanted number of
 %  persons is different then the one given by |\culabel|. Before
 %  evaluation, check if the unit is one of those that cannot be changed.
-%  Use |\l_@@_option_unit_tl| here, as in case of \enquote{do not change unit}
-%  we wouldn't be here.
 %    \begin{macrocode}
 \cs_new:Npn \@@_calc_references_and_store_in:N #1
   {
-    \bool_if:NT \l_@@_lokal_recalculate_amount_bool
+    \bool_if:NT \l_@@_lokal_recalc_for_people_bool
       { 
-        \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_original_unit_tl
-          { \msg_error:nnV { cooking-units } { curef-forbidden-unit } \l_@@_original_unit_tl }
+        \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_decided_unit_tl
+          { \msg_error:nnV { cooking-units } { curef-forbidden-unit } \l_@@_decided_unit_tl }
           { \@@_calc_references_and_store_in_aux:N #1 }
       }
   }
@@ -7637,12 +7686,16 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \@@_round_calculated_input_and_store_in:Nn,\@@_round_calculated_input_and_store_in:NV }
 %   After calculation, the numbers are rounded (if needed). 
-%  Check first if the number needs rounding at all.
-%  If so, round it.
+%  If the rounding precision is negative (can be), just set the bool to true and go
+%  to the rounding function.
+%  Else check if the number needs rounding at all.
+%  Afterwards, round if necessary
 %    \begin{macrocode}
 \cs_new:Npn \@@_round_calculated_input_and_store_in:N #1
   {
-    \@@_check_number_for_rounding:V #1
+    \bool_if:NTF \l_@@_pckopt_round_precision_negative_bool
+      { \bool_set_true:N \l_@@_round_number_bool }
+      { \@@_check_number_for_rounding:V #1 }
     \bool_if:NT \l_@@_round_number_bool
       { \@@_tl_eval:Nn #1 { round ( \@@_rounding_function:n {#1} ) } }
   }
@@ -7652,22 +7705,17 @@ and the derived file cooking-units.sty.
 % \begin{macro}{\@@_check_number_for_rounding:n,\@@_check_number_after_dot_aux:ww}
 %   Check if rounding is needed. The auxilary function splits the number into
 %   the integer and non-integer part ($12.45$ to $12$ and $45$). 
-%   
-%  If the rounding precision is negative (can be), just set the bool to true and go
-%  to the rounding function.
+%
+%  Set |\l_@@_round_number_bool| to |false| in case of no decimal places found.    
 %
 %  If the rounding precision is positive, use the helper function to split the
 %  amount.  
 %    \begin{macrocode}
 \cs_new:Npn \@@_check_number_for_rounding:n #1
   {
-    \bool_if:NTF \l_@@_pckopt_round_precision_negative_bool
-      { \bool_set_true:N \l_@@_round_number_bool }
-      {
-        \bool_set_false:N \l_@@_round_number_bool
-        \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
-        \q_recursion_stop
-      }
+    \bool_set_false:N \l_@@_round_number_bool
+    \@@_check_number_after_dot_aux:ww #1 . \q_recursion_tail .
+    \q_recursion_stop
   }
 \cs_generate_variant:Nn \@@_check_number_for_rounding:n { V }
 %    \end{macrocode}
@@ -7680,10 +7728,10 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_check_number_after_dot_aux:ww #1 . #2 .
   {
     \quark_if_recursion_tail_stop:n {#2}
-    \int_compare:nNnT 
+    \int_compare:nNnT
       { \tl_count:n {#2} } >
       { \l_@@_round_precision_int }
-      { \bool_set_true:N \l_@@_round_number_bool }
+      { \bool_set_true:N  \l_@@_round_number_bool }
     \use_none_delimit_by_q_recursion_stop:w
   }
 %    \end{macrocode}
@@ -7887,10 +7935,6 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_lokal_numeral_bool
       {
         \@@_cutext_print_input_aux:NV #1 \l_@@_decided_unit_tl
-%        
-%        \@@_change_unit:TF
-%          { \@@_cutext_print_input_aux:NV #1 \l_@@_option_unit_tl }
-%          { \@@_cutext_print_input_aux:NV #1 \l_@@_original_unit_tl }
       }
       { \@@_print_numerical_input:N #1 }
   }
@@ -7917,7 +7961,7 @@ and the derived file cooking-units.sty.
               }
           }
         \l_@@_translation_tmpa_tl
-      }{ 
+      }{
         \bool_if:NTF \l_@@_cutext_uppercase_word_bool
           { \@@_print_Numeral:V #1 }
           { \@@_print_numeral:V #1 }
@@ -8847,8 +8891,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \declarecookingderivatives { m m m m }
   {
-    \tl_show:n { declarecookingderivatives }
-    \@@_declare_cooking_derivative:nnnn {#1} {#2} {#3} {#4}
+%    \tl_show:n { declarecookingderivatives }
+%    \@@_declare_cooking_derivative:nnnn {#1} {#2} {#3} {#4}
+    \@@_nnn_declare_cooking_derivative:nnnn {#1} {#2} {#3} {#4}
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8909,64 +8954,101 @@ and the derived file cooking-units.sty.
 % \end{enumerate}
 %    \begin{macrocode}
 
-\cs_new:Npn \@@_new_declare_cooking_derivative:nnnn #1#2#3#4
+\seq_new:N \l_@@_list_of_known_derived_units_seq
+\int_new:N \l_@@_number_of_units_int
+\int_new:N \l_@@_depth_int
+\prop_new:N \l_@@_derived_units_prop
+
+\cs_new:Npn \@@_nnn_declare_cooking_derivative:nnnn #1#2#3#4
   {
-    \prop_gclear:N \g_@@_master_changer_prop
-    \seq_set_from_clist:Nn \l_@@_tmpa_seq {#1}
-    \seq_clear:N \l_@@_number_of_iterations_seq
-    \seq_clear:N \l_@@_derivative_unit_list_seq
-    \seq_clear:N \l_@@_derivative_symbol_list_seq
-    \seq_clear:N \l_@@_derivative_value_list_seq
-    \int_set:Nn \l_@@_max_depth_int { \seq_count:N \l_@@_tmpa_seq }
-    \int_set:Nn \l_@@_curr_depth_int { 1 }
-%
-    \cs_generate_from_arg_count:NNnn \@@_tmp_unit_and_symbol_list:w \cs_set:Npn
-      { \l_@@_max_depth_int } 
-      { 
-        \seq_put_right:Nn \l_@@_derivative_unit_list_seq {#2} 
-        \seq_put_right:Nn \l_@@_derivative_symbol_list_seq {#4}
-      }
-    \cs_generate_from_arg_count:NNnn \@@_tmp_value_list:w \cs_set:Npn
-      { \l_@@_max_depth_int } 
-      { \seq_put_right:Nx \l_@@_derivative_value_list_seq { \fp_eval:n {#3} } }
-%
-   \int_step_inline:nn { \l_@@_max_depth_int }
-     {
-       \tl_set_eq:Nc \l_@@_original_unit_tl 
-         { l_@@_base_key_unit_ \seq_item:Nn \l_@@_tmpa_seq {##1} _tl }
-       \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_new_cukeys_ \l_@@_original_unit_tl _prop }
-       \prop_get:NnN \l_@@_tmpa_prop { Liste } \l_@@_tmpb_seq
-       \int_set:Nn \l_@@_tmpa_int { \seq_count:N \l_@@_tmpb_seq }
-%
-       \seq_put_right:NV \l_@@_number_of_iterations_seq \l_@@_tmpa_int
-       \seq_clear_new:c { l_@@_tmp_ ##1 _seq }
-       \prop_clear_new:c { l_@@_tmp_ ##1 _prop }
-       \seq_set_eq:cN { l_@@_tmp_ ##1 _seq } \l_@@_tmpb_seq
-       \prop_set_eq:cN { l_@@_tmp_ ##1 _prop } \l_@@_tmpa_prop
+    \seq_set_from_clist:Nn \l_@@_list_of_units_seq {#1}
+    \int_set:Nn \l_@@_number_of_units_int { \seq_count:N \l_@@_list_of_units_seq }
+   
+   \seq_clear:N \g_tmpa_seq
+   \seq_clear:N \g_tmpb_seq
+   \seq_clear:N \g_tmpc_seq
+   
+   \cs_generate_from_arg_count:NNnn \@@_create_unit:w \cs_set:Npn
+     { \l_@@_number_of_units_int } 
+     { 
+       \seq_gput_right:Nn \g_tmpa_seq {#2} 
+       \seq_gput_right:Nn \g_tmpc_seq {#4} 
      }
-%
-    \seq_map_function:cN 
-      { l_@@_tmp_ \int_use:N \l_@@_curr_depth_int _seq } 
-      \@@_seq_step_function:n
-% 
-    \seq_get_left:NN \l_@@_derivative_unit_list_seq \l_@@_original_unit_tl
-    \prop_clear_new:c { l_@@_new_cukeys_ \l_@@_original_unit_tl _prop }  
-%
-    \int_zero:N \l_@@_tmpa_int
-    \clist_set_from_seq:NN \l_@@_tmpa_clist \l_@@_derivative_unit_list_seq
-    \seq_map_inline:Nn \l_@@_derivative_unit_list_seq
+   \cs_generate_from_arg_count:NNnn \@@_create_formula:w \cs_set:Npn
+     { \l_@@_number_of_units_int } 
+     { 
+       \seq_gput_right:Nn \g_tmpb_seq {#3}
+     }
+    
+    \prop_clear:N \l_@@_tmpa_prop
+    \prop_clear:N \g_tmpa_prop
+    
+    \seq_map_indexed_inline:Nn \l_@@_list_of_units_seq
       {
-        \int_incr:N \l_@@_tmpa_int
-        \tl_set:Nx \l_@@_tmpa_tl { \seq_item:Nn \l_@@_derivative_symbol_list_seq { \l_@@_tmpa_int } }
-        \exp_after:wN \declarecookingunit \exp_after:wN [ \l_@@_tmpa_tl ] {##1}
-        \prop_put:cnx 
-          { l_@@_new_cukeys_ \l_@@_original_unit_tl _prop }
-          {##1}
-          { \seq_item:Nn \l_@@_derivative_value_list_seq { \l_@@_tmpa_int } }
-        \tl_clear_new:c { l_@@_base_key_unit_ ##1 _tl }
-        \tl_set_eq:cN { l_@@_base_key_unit_ ##1 _tl } \l_@@_original_unit_tl
-        \exp_args:NnV \@@_cukeys_keys_define:nn {##1} \l_@@_tmpa_clist
-      }    
+        \tl_set_eq:Nc \l_@@_tmp_unit_tl { l_@@_base_key_unit_ ##2 _tl }
+        \tl_set_eq:cN { l_@@_base_unit_ ##1 _tl } \l_@@_tmp_unit_tl
+        \prop_get:cnc { l_@@_new_cukeys_ \l_@@_tmp_unit_tl _prop } 
+          { Liste } { l_@@_list_ ##1 _seq }
+        \prop_set_eq:cc { l_@@_keys_ ##1 _prop } 
+          { l_@@_new_cukeys_ \l_@@_tmp_unit_tl _prop }
+        \int_zero_new:c { l_@@_max_depth_ ##1 _int }
+        \int_set:cn { l_@@_max_depth_ ##1 _int } { \seq_count:c { l_@@_list_ ##1 _seq } }
+%        \prop_put:Nnf \l_@@_tmpa_prop {##1} { \seq_count:c { l_@@_list_ ##1 _seq } }
+      }
+
+    \@@_step_function_start:n { }
+%    \seq_show:N \g_tmpa_seq
+%    \seq_show:N \g_tmpb_seq
+    \seq_map_indexed_inline:Nn \g_tmpa_seq
+      {
+        \seq_pop:NN \g_tmpb_seq \l_tmpa_tl
+        \seq_pop:NN \g_tmpc_seq \l_tmpb_tl
+        \exp_args:NNx \declarecookingunit  [ {symbol=\l_tmpb_tl} ] {##2}
+        \prop_put:NnV \g_tmpa_prop {##2} \l_tmpa_tl
+      }
+%      \prop_show:N \g_tmpa_prop
+    
+  }
+
+\cs_new:Npn \@@_step_function_start:n #1
+  {
+    \tl_clear:N \l_tmpa_tl
+    \tl_clear:N \l_tmpb_tl
+    \int_set:Nn \l_@@_depth_int { 1 }
+    \int_set_eq:Nc \l_@@_tmpa_int {  l_@@_max_depth_ \int_use:N  \l_@@_depth_int _ int }
+    \int_step_function:nN { \l_@@_tmpa_int } \@@_step_function:n
+  }
+
+\cs_generate_variant:Nn \prop_item:Nn { cV }
+
+\cs_new:Npn \@@_step_function:n #1
+  {
+    \group_begin:
+    \tl_set:Nx \l_@@_tmpa_tl 
+      { \seq_item:cn { l_@@_list_ \int_use:N \l_@@_depth_int _ seq } {#1} } 
+    \tl_put_right:No \l_tmpb_tl 
+      { \exp_after:wN { \l_@@_tmpa_tl } }
+%    \prop_get:cVN { l_@@_keys_ \int_use:N \l_@@_depth_int _prop } \l_@@_tmpa_tl
+%      \l_@@_tmpa_tl
+%    \tl_put_right:No \l_tmpa_tl { \exp_after:wN { \l_@@_tmpa_tl } }
+    \tl_set_eq:Nc \l_@@_tmpb_tl { l_@@_base_unit_ \int_use:N \l_@@_depth_int _tl }
+    \tl_put_right:Nx \l_tmpa_tl 
+      { { 
+        (
+        \exp_not:N \prop_item:Nn
+        \exp_not:c { l_@@_new_cukeys_ \l_@@_tmpb_tl _prop }   { \l_@@_tmpa_tl }
+        )
+      } }
+    \int_compare:nNnTF { \l_@@_depth_int } = { \l_@@_number_of_units_int }
+      { 
+        \exp_after:wN \@@_create_unit:w \l_tmpb_tl 
+        \exp_after:wN \@@_create_formula:w \l_tmpa_tl
+      }{
+        \int_incr:N \l_@@_depth_int
+        \int_set_eq:Nc \l_@@_tmpa_int { l_@@_max_depth_ \int_use:N  \l_@@_depth_int _ int }
+        \int_step_function:nN { \l_@@_tmpa_int } \@@_step_function:n
+      }
+    \group_end:
   }
 
 
@@ -10199,6 +10281,14 @@ and the derived file cooking-units.sty.
       } ,
     round-precision = 2 ,
   }
+%\AtBeginDocument{
+%\keys_define:nn { cooking-units }
+%  {
+%    unknown .code:n = { \tl_show:N {\l_keys_key_str} }
+%  }
+%  \keys_set:nn { cooking-units } {#2}
+%  
+%}
 %    \end{macrocode}
 %
 %
