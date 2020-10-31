@@ -1,0 +1,67 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+
+\ExplSyntaxOff
+
+\newcookingunit{testa}
+\newcookingunit[test-b]{testb}
+\newcookingunit[natural-unit]{testc}
+\newcookingunit[symbol={test-d}]{testd}
+\newcookingunit[natural-unit, symbol={test-e}]{teste}
+\newcookingunit[natural-unit, symbol={test-f}, gender=f]{testf}
+\newcookingunit[natural-unit, symbol={test-g}, gender=n, set-options={round-precision=0}]{testg}
+\newcookingunit[add-to-group=weight
+  , natural-unit
+  , symbol={test-i}
+  , gender=n
+  , set-options={round-precision=0}
+]{testi}
+\newcookingunit[just-unknown-unit]{testj}
+\newcookingunit[just-unknown-unit, gender=n]{testk}
+\newcookingunit[gender=n]{testl}
+\newcookingunit[set-options={round-precision=-1}]{testm}
+
+
+
+\begin{document}
+
+\START
+
+\TEST{Print-unit}{
+  \BOXTYPE { \testcunum{12.34}{testa} }
+  \BOXTYPE { \testcunum{12.34}{test-b} }
+  \BOXTYPE { \testcunum{12.34}{testc} }
+  \BOXTYPE { \testcunum{12.34}{test-d} }
+  \BOXTYPE { \testcunum{12.34}{test-e} }
+  \BOXTYPE { \testcunum{12.34}{test-f} }
+  \BOXTYPE { \testcunum{12}{test-g} }
+  \BOXTYPE { \testcunum{12}{test-i} }
+  \BOXTYPE { \testcunum{12.34}{just-unknown-unit} }
+  \BOXTYPE { \testcunum{12.34}{testk} }
+  \BOXTYPE { \testcunum{12.34}{testl} }
+  \BOXTYPE { \testcunum{10}{testm} }
+}
+
+
+
+\END
