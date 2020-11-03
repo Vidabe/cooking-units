@@ -31,7 +31,7 @@
 \newcookingunit[natural-unit, symbol={test-f}, gender=f]{testf}
 \newcookingunit[natural-unit, symbol={test-g}, gender=n, set-options={round-precision=0}]{testg}
 \newcookingunit[add-to-group=weight
-  , natural-unit
+  ,natural-unit
   , symbol={test-i}
   , gender=n
   , set-options={round-precision=0}
@@ -53,18 +53,18 @@
 \START
 
 \TEST{Print-unit}{
-  \BOXTYPE { \testcunum{12.34}{testa} }
-  \BOXTYPE { \testcunum{12.34}{test-b} }
-  \BOXTYPE { \testcunum{12.34}{testc} }
-  \BOXTYPE { \testcunum{12.34}{test-d} }
-  \BOXTYPE { \testcunum{12.34}{test-e} }
-  \BOXTYPE { \testcunum{12.34}{test-f} }
-  \BOXTYPE { \testcunum{12}{test-g} }
-  \BOXTYPE { \testcunum{12}{test-i} }
-  \BOXTYPE { \testcunum{12.34}{just-unknown-unit} }
-  \BOXTYPE { \testcunum{12.34}{testk} }
-  \BOXTYPE { \testcunum{12.34}{yet-another-thingy} }
-  \BOXTYPE { \testcunum{10}{testm} }
+  \BOXTYPE { \cunum{12.34}{testa} }
+  \BOXTYPE { \cunum{12.34}{testb} }
+  \BOXTYPE { \cunum{12.34}{testc} }
+  \BOXTYPE { \cunum{12.34}{testd} }
+  \BOXTYPE { \cunum{12.34}{teste} }
+  \BOXTYPE { \cunum{12.34}{testf} }
+  \BOXTYPE { \cunum{12.34}{testg} }
+  \BOXTYPE { \cunum{12.34}{testi} }
+  \BOXTYPE { \cunum{12.34}{testj} }
+  \BOXTYPE { \cunum{12.34}{testk} }
+  \BOXTYPE { \cunum{12.34}{testl} }
+  \BOXTYPE { \cunum{12.34}{testm} }
   \BOXTYPE { \cunum{12.34}{\%} }
 }
 

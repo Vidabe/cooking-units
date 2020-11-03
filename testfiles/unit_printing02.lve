@@ -1,0 +1,120 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \TYPESTUFF #1
+  {
+    \BOXTYPE { \cutext{1}{#1} }
+    \BOXTYPE { \cutext{2}{#1} }
+    \BOXTYPE { \Cutext{1}{#1} }
+    \BOXTYPE { \Cutext{2}{#1} }
+    \BOXTYPE { \cutext{12.34}{#1} }
+    \BOXTYPE { \cutext{12--13}{#1} }
+    \BOXTYPE { \cutext{0.5--1}{#1} }
+    \BOXTYPE { \cunum{0.5--1}{#1} }
+  }
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 \space #2
+  }
+\cs_new:Npn \testCutext #1#2
+  {
+    #1 \space #2
+  }
+
+\cs_new:Npn \TESTSTUFF #1#2#3
+  {
+    \BOXTYPE { \testcutext{1}{#2} }
+    \BOXTYPE { \testcutext{2}{#3} }
+    \BOXTYPE { \testCutext{1}{#2} }
+    \BOXTYPE { \testCutext{2}{#3} }
+    \BOXTYPE { \testcutext{12.34}{#3} }
+    \BOXTYPE { \testcutext{12~to~13}{#3} }
+    \BOXTYPE { \testcutext{0.5~to~1}{#2} }
+    \BOXTYPE { \testcunum{0.5--1}{#1} }
+  }
+\cs_new:Npn \TESTSTUFFnumeral #1#2#3#4 #5#6#7
+  {
+    \BOXTYPE { \testcutext{#1}{#5} }
+    \BOXTYPE { \testcutext{#2}{#6} }
+    \BOXTYPE { \testCutext{#3}{#5} }
+    \BOXTYPE { \testCutext{#4}{#6} }
+    \BOXTYPE { \testcutext{12.34}{#6} }
+    \BOXTYPE { \testcutext{12~to~13}{#6} }
+    \BOXTYPE { \testcutext{0.5~to~1}{#5} }
+    \BOXTYPE { \testcunum{0.5--1}{#7} }
+  }
+
+\ExplSyntaxOff
+
+\newcookingunit{testa}
+\newcookingunit{testb}
+\newcookingunit{testc}
+\newcookingunit{testd}
+\newcookingunit{teste}
+\newcookingunit{testf}
+\newcookingunit{testg}
+
+\cudefinename{English}
+  {
+    {testa} {Testing-A}
+    {testb} {Testing-B}[Test-B-Plural]
+    {testc} [Test-C-Symbol] {Testing-C}[Test-C-Plural]
+    {testd} [Test-D-Symbol] {Testing-D}
+    {teste} {Testing-E}<n>
+    {testf} {Testing-F} [Test-F-PLURAL]<f>
+    {testg} [Test-G-Symbol] {Testing-G} [Test-G-PLURAL]<n>
+    {one(m)} {one(m)}
+    {one(f)} {one(f)}
+    {one(n)} {one(n)}
+  }
+
+\cusetup{print-numerals=false}
+
+\begin{document}
+
+\START
+
+\TEST{Print-unit-text}{
+  \TESTSTUFF{testa}{Testing-A}{Testing-A}
+  \TESTSTUFF{testb} {Testing-B} {Test-B-Plural}
+  \TESTSTUFF{Test-C-Symbol} {Testing-C} {Test-C-Plural}
+  \TESTSTUFF{Test-D-Symbol} {Testing-D} {Testing-D}
+  \TESTSTUFF{teste} {Testing-E} {Testing-E}
+  \TESTSTUFF{testf} {Testing-F} {Test-F-PLURAL}
+  \TESTSTUFF{Test-G-Symbol} {Testing-G} {Test-G-PLURAL} 
+}
+
+\TEST{Print-unit-text+numerals}{
+  \cusetup{print-numerals=true}
+  \TESTSTUFFnumeral{one(m)}{two}{One(m)}{Two} {Testing-A}{Testing-A}{testa}
+  \TESTSTUFFnumeral{one(m)}{two}{One(m)}{Two} {Testing-B}{Test-B-Plural}{testb}
+  \TESTSTUFFnumeral{one(m)}{two}{One(m)}{Two} {Testing-C}{Test-C-Plural}{Test-C-Symbol}
+  \TESTSTUFFnumeral{one(m)}{two}{One(m)}{Two} {Testing-D}{Testing-D}{Test-D-Symbol}
+  \TESTSTUFFnumeral{one(n)}{two}{One(n)}{Two} {Testing-E}{Testing-E}{teste}
+  \TESTSTUFFnumeral{one(f)}{two}{One(f)}{Two} {Testing-F}{Test-F-PLURAL}{testf}
+  \TESTSTUFFnumeral{one(n)}{two}{One(n)}{Two} {Testing-G}{Test-G-PLURAL}{Test-G-Symbol}
+}
+
+
+
+\END

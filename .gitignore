@@ -35,7 +35,6 @@ cooking-units.toc
 cooking-units.gls
 cooking-units.ind
 cooking-units.ilg
-*.lvt
 *.tlg
 testfiles/Tests/Options.pdf
 testfiles/Tests/Options.tex

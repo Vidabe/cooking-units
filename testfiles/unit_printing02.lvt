@@ -1,0 +1,94 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \TYPESTUFF #1
+  {
+    \BOXTYPE { \cutext{1}{#1} }
+    \BOXTYPE { \cutext{2}{#1} }
+    \BOXTYPE { \Cutext{1}{#1} }
+    \BOXTYPE { \Cutext{2}{#1} }
+    \BOXTYPE { \cutext{12.34}{#1} }
+    \BOXTYPE { \cutext{12--13}{#1} }
+    \BOXTYPE { \cutext{0.5--1}{#1} }
+    \BOXTYPE { \cunum{0.5--1}{#1} }
+  }
+
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 \space #2
+  }
+
+\ExplSyntaxOff
+
+\newcookingunit{testa}
+\newcookingunit{testb}
+\newcookingunit{testc}
+\newcookingunit{testd}
+\newcookingunit{teste}
+\newcookingunit{testf}
+\newcookingunit{testg}
+
+\cudefinename{English}
+  {
+    {testa} {Testing-A}
+    {testb} {Testing-B}[Test-B-Plural]
+    {testc} [Test-C-Symbol] {Testing-C}[Test-C-Plural]
+    {testd} [Test-D-Symbol] {Testing-D}
+    {teste} {Testing-E}<n>
+    {testf} {Testing-F} [Test-F-PLURAL]<f>
+    {testg} [Test-G-Symbol] {Testing-G} [Test-G-PLURAL]<n>
+    {one(m)} {one(m)}
+    {one(f)} {one(f)}
+    {one(n)} {one(n)}
+  }
+
+\cusetup{print-numerals=false}
+
+\begin{document}
+
+\START
+
+\TEST{Print-unit-text}{
+  \TYPESTUFF{testa}
+  \TYPESTUFF{testb}
+  \TYPESTUFF{testc}
+  \TYPESTUFF{testd}
+  \TYPESTUFF{teste}
+  \TYPESTUFF{testf}
+  \TYPESTUFF{testg}
+}
+
+
+
+
+\TEST{Print-unit-text+numerals}{
+  \cusetup{print-numerals=true}
+  \TYPESTUFF{testa}
+  \TYPESTUFF{testb}
+  \TYPESTUFF{testc}
+  \TYPESTUFF{testd}
+  \TYPESTUFF{teste}
+  \TYPESTUFF{testf}
+  \TYPESTUFF{testg}
+}
+
+
+
+
+
+\END

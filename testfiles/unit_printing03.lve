@@ -1,0 +1,276 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \TYPESTUFF #1
+  {
+    \BOXTYPE { \cutext{1}{#1} }
+    \BOXTYPE { \cutext{2}{#1} }
+    \BOXTYPE { \Cutext{1}{#1} }
+    \BOXTYPE { \Cutext{2}{#1} }
+    \BOXTYPE { \cutext{12.34}{#1} }
+    \BOXTYPE { \cutext{12--13}{#1} }
+    \BOXTYPE { \cutext{0.5--1}{#1} }
+    \BOXTYPE { \cunum{0.5--1}{#1} }
+  }
+
+\cs_new_eq:NN \minusSign \c__cookingunits_minus_tl
+
+
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
+  }
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 \space #2
+  }
+\cs_new:Npn \testCutext #1#2
+  {
+    #1 \space #2
+  }
+\cs_new:Npn \testcuam #1#2
+  {
+    #1
+  }
+
+\cs_new:Npn \TESTSTUFF #1#2#3
+  {
+    \BOXTYPE { \testcutext{1}{#2} }
+    \BOXTYPE { \testcutext{2}{#3} }
+    \BOXTYPE { \testCutext{1}{#2} }
+    \BOXTYPE { \testCutext{2}{#3} }
+    \BOXTYPE { \testcutext{12.34}{#3} }
+    \BOXTYPE { \testcutext{12~to~13}{#3} }
+    \BOXTYPE { \testcutext{0.5~to~1}{#2} }
+    \BOXTYPE { \testcunum{0.5--1}{#1} }
+  }
+\cs_new:Npn \TESTSTUFFnumeral #1#2#3#4 #5#6#7
+  {
+    \BOXTYPE { \testcutext{#1}{#5} }
+    \BOXTYPE { \testcutext{#2}{#6} }
+    \BOXTYPE { \testCutext{#3}{#5} }
+    \BOXTYPE { \testCutext{#4}{#6} }
+    \BOXTYPE { \testcutext{12.34}{#6} }
+    \BOXTYPE { \testcutext{12~to~13}{#6} }
+    \BOXTYPE { \testcutext{0.5~to~1}{#5} }
+    \BOXTYPE { \testcunum{0.5--1}{#7} }
+  }
+
+\dim_new:N \ltmpaskip
+\dim_set:Nn \ltmpaskip {0.1em}
+
+\cs_new:Npn \testsfrac #1#2
+  {
+    \sfrac{#1}{#2}
+  }
+\cs_new:Npn \testmixedsfrac #1#2#3
+  {
+    #1 \skip_horizontal:N\ltmpaskip \testsfrac{#2}{#3}
+  }
+
+\ExplSyntaxOff
+
+\newcookingunit{testa}
+
+\cusetup{print-numerals=false}
+
+\begin{document}
+
+\START
+
+\TEST{Print-cunum}{
+  \BOXTYPE{\testcunum{1}{testa}}
+  \BOXTYPE{\testcunum{2}{testa}}
+  \BOXTYPE{\testcunum{2.5}{testa}}
+  \BOXTYPE{\testcunum{2.5}{testa}}
+%  
+  \BOXTYPE{\testcunum{1--2}{testa}}
+  \BOXTYPE{\testcunum{1.5--2.5}{testa}}
+  \BOXTYPE{\testcunum{1.5--2.5}{testa}}
+  \BOXTYPE{\testcunum{1.5--2.5}{testa}}
+%  
+  \BOXTYPE{\testcunum{\testsfrac{1}{2}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1.1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1.1}{2.5}{3.9}}{testa}}
+%  
+  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+%  
+  \BOXTYPE{\testcunum{\minusSign 5}{testa}}
+  \BOXTYPE{\testcunum{\minusSign 2.5}{testa}}
+  \BOXTYPE{\testcunum{\minusSign 3--5}{testa}}
+  \BOXTYPE{\testcunum{3--\minusSign 5}{testa}}
+  \BOXTYPE{\testcunum{\minusSign 3--\minusSign 5}{testa}}
+%  
+  \BOXTYPE{\printUnknownAmountMsg?\testcunum{?}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcunum{12.3?}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcunum{\testsfrac{1}{?}}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcunum{\testsfrac{?}{?}}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcunum{\testmixedsfrac?12}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcunum{1--?}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcunum{?--1}{testa}}
+  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcunum{?--?}{testa}}
+}
+
+
+
+\TEST{Print-cutext}{
+  \BOXTYPE{\testcutext{1}{Test-A}}
+  \BOXTYPE{\testcutext{2}{Test-A}}
+  \BOXTYPE{\testcutext{2.5}{Test-A}}
+  \BOXTYPE{\testcutext{2.5}{Test-A}}
+%  
+  \BOXTYPE{\testcutext{1\space to\space2}{Test-A}}
+  \BOXTYPE{\testcutext{1.5\space to\space2.5}{Test-A}}
+  \BOXTYPE{\testcutext{1.5\space to\space2.5}{Test-A}}
+  \BOXTYPE{\testcutext{1.5\space to\space2.5}{Test-A}}
+%  
+  \BOXTYPE{\testcutext{\testsfrac{1}{2}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
+%  
+  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  
+  \BOXTYPE{\testcutext{\minusSign 5}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign 2.5}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign 3\space to\space 5}{Test-A}}
+  \BOXTYPE{\testcutext{3\space to\space \minusSign 5}{Test-A}}
+  \BOXTYPE{\testcutext{\minusSign 3\space to\space \minusSign 5}{Test-A}}
+%  
+  \BOXTYPE{\printUnknownAmountMsg?\testcutext{?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcutext{12.3?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcutext{\testsfrac{1}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcutext{\testsfrac{?}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcutext{\testmixedsfrac?12}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcutext{1\space to\space ?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcutext{?\space to\space 1}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcutext{?\space to\space ?}{Test-A}}
+}
+
+
+
+\TEST{Print-Cutext}{
+  \BOXTYPE{\testCutext{1}{Test-A}}
+  \BOXTYPE{\testCutext{2}{Test-A}}
+  \BOXTYPE{\testCutext{2.5}{Test-A}}
+  \BOXTYPE{\testCutext{2.5}{Test-A}}
+%  
+  \BOXTYPE{\testCutext{1\space to\space2}{Test-A}}
+  \BOXTYPE{\testCutext{1.5\space to\space2.5}{Test-A}}
+  \BOXTYPE{\testCutext{1.5\space to\space2.5}{Test-A}}
+  \BOXTYPE{\testCutext{1.5\space to\space2.5}{Test-A}}
+%  
+  \BOXTYPE{\testCutext{\testsfrac{1}{2}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
+%  
+  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  
+  \BOXTYPE{\testCutext{\minusSign 5}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign 2.5}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign 3\space to\space 5}{Test-A}}
+  \BOXTYPE{\testCutext{3\space to\space \minusSign 5}{Test-A}}
+  \BOXTYPE{\testCutext{\minusSign 3\space to\space \minusSign 5}{Test-A}}
+%  
+  \BOXTYPE{\printUnknownAmountMsg?\testCutext{?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testCutext{12.3?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1/?}\testCutext{\testsfrac{1}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?/?}\testCutext{\testsfrac{?}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testCutext{\testmixedsfrac?12}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1--?}\testCutext{1\space to\space ?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--1}\testCutext{?\space to\space 1}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--?}\testCutext{?\space to\space ?}{Test-A}}
+}
+
+
+
+
+
+
+
+\TEST{Print-cuam}{
+  \BOXTYPE{\testcuam{1}{Test-A}}
+  \BOXTYPE{\testcuam{2}{Test-A}}
+  \BOXTYPE{\testcuam{2.5}{Test-A}}
+  \BOXTYPE{\testcuam{2.5}{Test-A}}
+%  
+  \BOXTYPE{\testcuam{1--2}{Test-A}}
+  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
+  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
+  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
+%  
+  \BOXTYPE{\testcuam{\testsfrac{1}{2}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
+%  
+  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  
+  \BOXTYPE{\testcuam{\minusSign 5}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign 2.5}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign 3--5}{Test-A}}
+  \BOXTYPE{\testcuam{3--\minusSign 5}{Test-A}}
+  \BOXTYPE{\testcuam{\minusSign 3--\minusSign 5}{Test-A}}
+%  
+  \BOXTYPE{\printUnknownAmountMsg?\testcuam{?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcuam{12.3?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcuam{\testsfrac{1}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcuam{\testsfrac{?}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcuam{\testmixedsfrac?12}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcuam{1--?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcuam{?--1}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcuam{?--?}{Test-A}}
+}
+
+
+
+
+
+
+\END

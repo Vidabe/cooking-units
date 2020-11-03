@@ -1,0 +1,115 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+\cs_new:Npn \useCuam #1#2{\cuam {#1}}
+
+\cs_new:Npn \tesTUFF #1
+  {
+    \BOXTYPE { #1{1}{testa} }
+  }
+
+\cs_new:Npn \TYPESTUFF #1
+  {
+  \BOXTYPE { #1{1}{testa} }
+  \BOXTYPE { #1{2}{testa} }
+  \BOXTYPE { #1{2.5}{testa} }
+  \BOXTYPE { #1{2,5}{testa} }
+%  
+  \BOXTYPE { #1{1--2}{testa} }
+  \BOXTYPE { #1{1.5--2.5}{testa} }
+  \BOXTYPE { #1{1,5--2,5}{testa} }
+  \BOXTYPE { #1{1.5--2,5}{testa} }
+%  
+  \BOXTYPE { #1{1/2}{testa} }
+  \BOXTYPE { #1{1_2/3}{testa} }
+  \BOXTYPE { #1{1.1_2/3}{testa} }
+  \BOXTYPE { #1{1.1_2,5/3,9}{testa} }
+%  
+  \BOXTYPE { #1{-1_2/3}{testa} }
+  \BOXTYPE { #1{1_-2/3}{testa} }
+  \BOXTYPE { #1{1_2/-3}{testa} }
+  \BOXTYPE { #1{1_-2/-3}{testa} }
+  \BOXTYPE { #1{-1_-2/3}{testa} }
+  \BOXTYPE { #1{-1_2/-3}{testa} }
+  \BOXTYPE { #1{-1_-2/-3}{testa} }
+%  
+  \BOXTYPE { #1{-5}{testa} }
+  \BOXTYPE { #1{-2,5}{testa} }
+  \BOXTYPE { #1{-3--5}{testa} }
+  \BOXTYPE { #1{3-- -5}{testa} }
+  \BOXTYPE { #1{-3-- -5}{testa} }
+%  
+  \BOXTYPE { #1{?}{testa} }
+  \BOXTYPE { #1{12.3?}{testa} }
+  \BOXTYPE { #1{1/?}{testa} }
+  \BOXTYPE { #1{?/?}{testa} }
+  \BOXTYPE { #1{?_1/2}{testa} }
+  \BOXTYPE { #1{1--?}{testa} }
+  \BOXTYPE { #1{?--1}{testa} }
+  \BOXTYPE { #1{?--?}{testa} }
+  }
+
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 \space #2
+  }
+
+\ExplSyntaxOff
+
+
+\newcookingunit{testa}
+
+\cudefinename{English}
+  {
+    {testa} {Test-A}
+  }
+
+
+
+
+\cusetup{print-numerals=false}
+
+\begin{document}
+
+\START
+
+\TEST{Print-cunum}{
+  \TYPESTUFF \cunum
+}
+
+\TEST{Print-cutext}{
+  \TYPESTUFF \cutext
+}
+
+\TEST{Print-Cutext}{
+  \TYPESTUFF \Cutext
+}
+
+\TEST{Print-cuam}{
+  \TYPESTUFF \useCuam
+}
+
+
+
+
+
+
+
+
+
+\END

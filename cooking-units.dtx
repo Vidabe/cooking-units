@@ -5859,17 +5859,28 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_if_contain_decimals:NN #1#2 { TF }
   {
+%    \@@_if_contains_decimal:NTF #1
+%      {
+%        \@@_if_print_type_equal:nTF { range }
+%          {
+%            \@@_if_contains_decimal:NTF #2
+%              { \prg_return_true: }
+%              { \prg_return_false: }
+%          }
+%          { \prg_return_true: }
+%      }
+%      { \prg_return_false: }
     \@@_if_contains_decimal:NTF #1
-      {
+      { \prg_return_true: }
+      { 
         \@@_if_print_type_equal:nTF { range }
           {
             \@@_if_contains_decimal:NTF #2
               { \prg_return_true: }
               { \prg_return_false: }
           }
-          { \prg_return_true: }
+          { \prg_return_false: }
       }
-      { \prg_return_false: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -6709,7 +6720,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \@@_def_new_type:nnn { state } { TF , T , F } 
   { normal , special_sign , 42 , error }
-\@@_def_new_type:nnn { cmd_type } { T , p } 
+\@@_def_new_type:nnn { cmd_type } { TF , T , p } 
   { cunum , cCutext , cuam }
 \@@_def_new_type:nnn { parse_and_process_type } { TF , T } 
   { number , range , fraction  }
@@ -7223,16 +7234,20 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_print_range_sign:
   {
-    \bool_lazy_or:nnTF
-      { \@@_if_cmd_type_equal_p:n { cCutext } }
-      { \l_@@_lokal_numeral_bool }
-      {
-        \bool_set_false:N \l_@@_cutext_uppercase_word_bool
-        \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
-          { \@@_culang_print:nn { name } { cutext-range-sign } }
-          { \tl_use:N \l_@@_cutext_range_sign_tl }
-      }
-      { \tl_use:N \l_@@_cunum_range_sign_tl }
+   \@@_if_cmd_type_equal:nTF { cunum }
+     { \tl_use:N \l_@@_cunum_range_sign_tl }
+     {
+        \bool_lazy_or:nnTF
+          { \@@_if_cmd_type_equal_p:n { cCutext } }
+          { \l_@@_lokal_numeral_bool }
+          {
+            \bool_set_false:N \l_@@_cutext_uppercase_word_bool
+            \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
+              { \@@_culang_print:nn { name } { cutext-range-sign } }
+              { \tl_use:N \l_@@_cutext_range_sign_tl }
+          }
+          { \tl_use:N \l_@@_cunum_range_sign_tl }
+     }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -9004,7 +9019,7 @@ and the derived file cooking-units.sty.
 %  First create the unit, \emph{then} set the reference to the base unit.
 %  (Else it is not yet defined)
 %    \begin{macrocode}
-        \exp_args:NNx \declarecookingunit  [ {symbol=\l_@@_tmpa_tl} ] {##1}
+        \exp_args:NNx \declarecookingunit  [ {symbol={\l_@@_tmpa_tl}} ] {##1}
         \tl_set_eq:cN { l_@@_base_key_unit_ ##1 _tl } \l_@@_curr_unit_tl
       }
 %    \end{macrocode}
