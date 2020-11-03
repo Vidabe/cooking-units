@@ -3,6 +3,7 @@
 %
 \documentclass{minimal}
 \input{regression-test}
+\usepackage[ngerman, main=english]{babel}
 \RequirePackage[enable-debug]{expl3}
 \RequirePackage[use-fmtcount-numerals=true]{cooking-units}
 \ExplSyntaxOn
@@ -29,12 +30,12 @@
   \BOXTYPE { #1{2}{testa} }
   \BOXTYPE { #1{2.5}{testa} }
   \BOXTYPE { #1{2,5}{testa} }
-%  
+  
   \BOXTYPE { #1{1--2}{testa} }
   \BOXTYPE { #1{1.5--2.5}{testa} }
   \BOXTYPE { #1{1,5--2,5}{testa} }
   \BOXTYPE { #1{1.5--2,5}{testa} }
-%  
+  
   \BOXTYPE { #1{1/2}{testa} }
   \BOXTYPE { #1{1_2/3}{testa} }
   \BOXTYPE { #1{1.1_2/3}{testa} }
@@ -69,7 +70,6 @@
     #1 \space #2
   }
 
-\ExplSyntaxOff
 
 
 \newcookingunit{testa}
@@ -78,8 +78,15 @@
   {
     {testa} {Test-A}
   }
+\cudefinename{German}
+  {
+    {testa} [GTest-A] {German-Test-A}
+    {cutext-range-sign} { \space undsoweiter\space }
+    {decimal-mark} {,}
+  }
 
 
+\ExplSyntaxOff
 
 
 \cusetup{print-numerals=false}
@@ -104,6 +111,25 @@
   \TYPESTUFF \useCuam
 }
 
+
+\selectlanguage{ngerman}
+
+\TEST{Print-cunum-German}{
+\selectlanguage{ngerman}
+  \TYPESTUFF \cunum
+}
+
+\TEST{Print-cutext-German}{
+  \TYPESTUFF \cutext
+}
+
+\TEST{Print-Cutext-German}{
+  \TYPESTUFF \Cutext
+}
+
+\TEST{Print-cuam-German}{
+  \TYPESTUFF \useCuam
+}
 
 
 

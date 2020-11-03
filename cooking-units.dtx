@@ -6623,6 +6623,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \seq_gset_from_clist:Nn \g_@@_allowed_special_keys_seq
   {
+    cutext-range-sign , 
     decimal-mark ,
     one (m) ,
     one (f) ,
@@ -7153,6 +7154,10 @@ and the derived file cooking-units.sty.
               }
             \c_@@_print_type_fraction_tl
               {
+                \@@_culang_let:nnN { name } { decimal-mark } \l_@@_translation_tmpa_tl
+                \tl_replace_once:Nnn \l_@@_mixed_fraction_tl { . } \l_@@_translation_tmpa_tl
+                \tl_replace_once:Nnn \l_@@_number_tmpa_tl { . } \l_@@_translation_tmpa_tl
+                \tl_replace_once:Nnn \l_@@_number_tmpb_tl { . } \l_@@_translation_tmpa_tl
                 \@@_print_fractions:Nnn 
                   \l_@@_mixed_fraction_tl 
                   \l_@@_number_tmpa_tl 
