@@ -9,6 +9,9 @@
 *.gz
 *.synctex
 
+.Rapp.history
+Test/
+
 .DS_Store
 .swp
 
