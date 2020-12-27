@@ -1,0 +1,161 @@
+%
+%  Test file
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+\cs_new:Npn \KeyChainTest #1
+  {
+    \MYTYPE {a} { \cunum[Ua=U#1]{1}{Ua} }
+    \MYTYPE {b} { \cunum[Ub=U#1]{1}{Ub} }
+    \MYTYPE {c} { \cunum[Uc=U#1]{1}{Uc} }
+    \MYTYPE {d} { \cunum[Ud=U#1]{1}{Ud} }
+  }
+\cs_new:Npn \KeyChainTestII #1
+  {
+    \MYTYPE {a} { \cunum[Ua=U#1]{1}{Ua} }
+    \MYTYPE {b} { \cunum[Ub=U#1]{1}{Ub} }
+    \MYTYPE {c} { \cunum[Uc=U#1]{1}{Uc} }
+    \MYTYPE {d} { \cunum[Ud=U#1]{1}{Ud} }
+    \MYTYPE {e} { \cunum[Ue=U#1]{1}{Ue} }
+  }
+\cs_new:Npn \KeyChainTestIII #1
+  {
+    \MYTYPE {a} { \cunum[Ua=U#1]{1}{Ua} }
+    \MYTYPE {b} { \cunum[Ub=U#1]{1}{Ub} }
+    \MYTYPE {c} { \cunum[Uc=U#1]{1}{Uc} }
+    \MYTYPE {d} { \cunum[Ud=U#1]{1}{Ud} }
+    \MYTYPE {e} { \cunum[Ue=U#1]{1}{Ue} }
+    \MYTYPE {f} { \cunum[Uf=U#1]{1}{Uf} }
+  }
+\cs_new:Npn \KeyChainTestIV #1
+  {
+    \MYTYPE {a} { \cunum[Ua=U#1]{1}{Ua} }
+    \MYTYPE {b} { \cunum[Ub=U#1]{1}{Ub} }
+    \MYTYPE {c} { \cunum[Uc=U#1]{1}{Uc} }
+    \MYTYPE {d} { \cunum[Ud=U#1]{1}{Ud} }
+    \MYTYPE {e} { \cunum[Ue=U#1]{1}{Ue} }
+    \MYTYPE {f} { \cunum[Uf=U#1]{1}{Uf} }
+    \MYTYPE {g} { \cunum[Ug=U#1]{1}{Ug} }
+  }
+\cs_new:Npn \KeyChainTestV #1
+  {
+    \MYTYPE {a} { \cunum[Ua=U#1]{1}{Ua} }
+    \MYTYPE {b} { \cunum[Ub=U#1]{1}{Ub} }
+    \MYTYPE {c} { \cunum[Uc=U#1]{1}{Uc} }
+    \MYTYPE {d} { \cunum[Ud=U#1]{1}{Ud} }
+    \MYTYPE {e} { \cunum[Ue=U#1]{1}{Ue} }
+    \MYTYPE {f} { \cunum[Uf=U#1]{1}{Uf} }
+    \MYTYPE {g} { \cunum[Ug=U#1]{1}{Ug} }
+    \MYTYPE {h} { \cunum[Uh=U#1]{1}{Uh} }
+  }
+
+
+\ExplSyntaxOff
+
+
+\newcookingunit{Ua}
+\newcookingunit{Ub}
+\newcookingunit{Uc}
+\newcookingunit{Ud}
+\newcookingunit{Ue}
+\newcookingunit{Uf}
+\newcookingunit{Ug}
+\newcookingunit{Uh}
+
+
+\cudefinekeys{Ua}
+  {
+    {Ub} { 25 }
+    {Uc} { 0.1 }
+    {Ud} { 34 }
+  }
+
+
+
+\begin{document}
+
+\START
+
+\TEST{Key-Chain-Test}{
+  \KeyChainTest{a}
+  \KeyChainTest{b}
+  \KeyChainTest{c}
+  \KeyChainTest{d}
+}
+
+
+\cudefinekeys{Ua}
+  {
+    {Ub} { 2 }
+    {Uc} { 3 }
+    {Ud} { 4 }
+    {Ue} { 5 }
+  }
+
+\TEST{Key-Chain-Test-Redefined}{
+  \KeyChainTestII {a}
+  \KeyChainTestII {b}
+  \KeyChainTestII {c}
+  \KeyChainTestII {d}
+  \KeyChainTestII {e}
+}
+
+
+\cuaddkeys {Ub}
+  {
+    {Uf} {123}
+  }
+
+\TEST{Key-Chain-Test-Added}{
+  \KeyChainTestIII {a}
+  \KeyChainTestIII {b}
+  \KeyChainTestIII {c}
+  \KeyChainTestIII {d}
+  \KeyChainTestIII {e}
+  \KeyChainTestIII {f}
+}
+
+\cuaddkeys {Uf}
+  {
+    {Ug} {124}
+  }
+
+\TEST{Key-Chain-Test-Added-2}{
+  \KeyChainTestIV {a}
+  \KeyChainTestIV {b}
+  \KeyChainTestIV {c}
+  \KeyChainTestIV {d}
+  \KeyChainTestIV {e}
+  \KeyChainTestIV {f}
+  \KeyChainTestIV {g}
+}
+
+\cuaddtokeys {Uc} {Uh} {9}
+
+\TEST{cuaddtokeys}{
+  \KeyChainTestV {a}
+  \KeyChainTestV {b}
+  \KeyChainTestV {c}
+  \KeyChainTestV {d}
+  \KeyChainTestV {e}
+  \KeyChainTestV {f}
+  \KeyChainTestV {g}
+  \KeyChainTestV {h}
+}
+
+
+
+\END

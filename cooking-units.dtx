@@ -593,12 +593,12 @@ and the derived file cooking-units.sty.
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 \newcookingunit {ft}
 
-\newcukeysadd {lb}  
+\cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
   }        
-\newcukeysaddto {m} {ft} {0.3048}
-\newcusinglekeysadd {C}
+\cuaddtokeys {m} {ft} {0.3048}
+\cuaddsinglekeys {C}
   {
     {Ro} { #1*21/40 + 7.5 }
   }
@@ -786,6 +786,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \maketitle
+%
 %
 % \begin{documentation}
 % \begin{abstract}
@@ -1837,7 +1838,7 @@ and the derived file cooking-units.sty.
 %   The following example creates some phrases for the language
 %   \enquote{German}:
 %   
-% \newcudefinephrase {German}
+% \cudefinephrase {German}
 %   {
 %      { 60 }  {Schock} <n>
 %      { 6  }* {halbes\  Dutzend} <n>
@@ -1845,7 +1846,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{lstlisting}
-%  \newcudefinephrase {German}
+%  \cudefinephrase {German}
 %    {
 %      { 12 }  {Dutzend} <n> %% implemented by default
 %      { 60 }  {Schock} <n>
@@ -5904,7 +5905,7 @@ and the derived file cooking-units.sty.
       {
         \msg_error:nnn { cooking-units } { unknown-gender } {#1} 
         \prg_return_true:
-      } 
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8076,9 +8077,6 @@ and the derived file cooking-units.sty.
         \@@_if_contain_decimals:NNTF #1#2
           { \bool_set_false:N \l_@@_lokal_numeral_bool }
           { \@@_check_if_integer_can_be_numerals:NN #1#2 }
-%        \@@_if_integers:NNTF #1#2
-%          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
-%          { \bool_set_false:N \l_@@_lokal_numeral_bool }
       }
   }
 %    \end{macrocode}
@@ -8104,12 +8102,18 @@ and the derived file cooking-units.sty.
   {
     \@@_if_parse_and_process_type_equal:nTF { range }
       {
-        \bool_lazy_and:nnF
-          { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-          { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+        \bool_lazy_all:nF
+          {
+            { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+            { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
+            { \int_compare_p:nNn {#1} > { 0 } }
+            { \int_compare_p:nNn {#2} > { 0 } }
+          }
           { \bool_set_false:N \l_@@_lokal_numeral_bool }
       }{
-        \int_compare:nNnF {#1} < { \l_@@_print_numerals_below_int }
+        \bool_lazy_and:nnF
+          { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
+          { \int_compare_p:nNn {#1} > { 0 } }
           { \bool_set_false:N \l_@@_lokal_numeral_bool }
       }
   }
@@ -8396,18 +8400,18 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 
 %% To be deleted. In order to remove error messages.
-\newcommand \cudefinekeys {}
-\newcommand \cudefinesinglekey {}
-\newcommand \cuaddkeys {}
-\newcommand \cuaddsinglekeys {}
-\newcommand \cuaddtokeys {}
+%\newcommand \cudefinekeys {}
+%\newcommand \cudefinesinglekey {}
+%\newcommand \cuaddkeys {}
+%\newcommand \cuaddsinglekeys {}
+%\newcommand \cuaddtokeys {}
 %    \end{macrocode}
 % \end{macro}
 %
 %
 %
 %
-% \begin{macro}{ \newcukeysdefine , \newcusinglekeysdefine }
+% \begin{macro}{ \cudefinekeys , \cudefinesinglekey }
 %  Commands used for defining unit-keys. Their main differences
 %  is in setting |\l_@@_single_key_bool| to the respective value
 %  and for single-keys to rescan |#2| as it can contain  |#1| in its argument.
@@ -8415,13 +8419,13 @@ and the derived file cooking-units.sty.
 %  The other stuff is imply a intialization using the unit in |#1| as a base
 %  and parsing the rest.
 %    \begin{macrocode}
-\NewDocumentCommand \newcukeysdefine { m m }
+\NewDocumentCommand \cudefinekeys { m m }
   {
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_define:n {#1}
     \@@_cukeys_prepare_parsing_keys:nn {#1} {#2}
   }
-\NewDocumentCommand \newcusinglekeysdefine { m m }
+\NewDocumentCommand \cudefinesinglekey { m m }
   {
     \bool_set_true:N \l_@@_single_key_bool
     \@@_initialice_cukeys_define:n {#1}
@@ -8457,20 +8461,20 @@ and the derived file cooking-units.sty.
 %  commands share a lot of code. The difference is the initialicing, which is a bit
 %  different.
 %    \begin{macrocode}
-\NewDocumentCommand \newcukeysadd { m m }
+\NewDocumentCommand \cuaddkeys { m m }
   {
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_add:n {#1}
     \@@_cukeys_prepare_parsing_keys:nn {#1} {#2}
   }
-\NewDocumentCommand \newcukeysaddto { m m m }
+\NewDocumentCommand \cuaddtokeys { m m m }
   {
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_add:n {#1}
     \tl_set:Nn \l_@@_tmpa_tl { {#2} { \fp_eval:n { 1.0 / (#3) } } }
     \@@_cukeys_prepare_parsing_keys:nV {#1} \l_@@_tmpa_tl
   }
-\NewDocumentCommand \newcusinglekeysadd { m m }
+\NewDocumentCommand \cuaddsinglekeys { m m }
   {
     \bool_set_true:N \l_@@_single_key_bool
     \@@_initialice_cukeys_add:n {#1}
@@ -8494,7 +8498,7 @@ and the derived file cooking-units.sty.
 %  the values we stored and got during the definition of keys.
 %
 %  First, get the |\l_@@_original_unit_tl|. This one is the unit given in the first argument
-%  of either |\newcukeysdefine| or |\newcusinglekeysdefine|. It is the base unit
+%  of either |\cudefinekeys| or |\cudefinesinglekey|. It is the base unit
 %  for those keys. Afterwards retrieve the other values. Get the property list
 %  which stores the unit-value pairs, get the list of units we can transform the unit to
 %  and -- to make sure -- make sure a single key is only added to a single key and vice versa.
@@ -8543,7 +8547,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cukeys_prepare_parsing_keys:nn #1#2
   {
 %    %% ToDo: Add keval system?
-%    \newcukeysdefine { kg }
+%    \cudefinekeys { kg }
 %      {
 %        dag= 100,
 %        g= 1000,
@@ -9443,11 +9447,11 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \newcudefinephrase }
+% \begin{macro}{ \cudefinephrase }
 %  Defining some phrases. This command is just a wrapper for the
 %  subcommand.
 %    \begin{macrocode}
-\NewDocumentCommand \newcudefinephrase { m m }
+\NewDocumentCommand \cudefinephrase { m m }
   {
     \@@_new_cuphrase_add:nn {#1} {#2}
   }
@@ -9667,10 +9671,10 @@ and the derived file cooking-units.sty.
 %
 % \begin{macro}{ \cudefinephrase }
 %    \begin{macrocode}
-\NewDocumentCommand \cudefinephrase { m m }
-  {
-%    \@@_cuphrase:nn {#1} {#2}
-  }
+%\NewDocumentCommand \cudefinephrase { m m }
+%  {
+%%    \@@_cuphrase:nn {#1} {#2}
+%  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -10187,7 +10191,7 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\newcukeysdefine { kg }
+\cudefinekeys { kg }
   {
     { dag }{ 100 }
     { g }  { 1000 }
@@ -10198,7 +10202,7 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %    \begin{macrocode}
-\newcukeysdefine { d }
+\cudefinekeys { d }
   {
     { h }  { 24 }
     { min }{ 1440 }
@@ -10208,7 +10212,7 @@ and the derived file cooking-units.sty.
 %\cuaddtokeys { s } { hbareV-1 } { 6.582119514e-16 }
 %    \end{macrocode}
 %    \begin{macrocode}
-\newcukeysdefine { m }
+\cudefinekeys { m }
   {
     { dm } { 10 }
     { cm } { 100 }
@@ -10219,7 +10223,7 @@ and the derived file cooking-units.sty.
 %\cuaddtokeys { m } { chbareV-1 } { 1.97326972e-7 }
 %    \end{macrocode}
 %    \begin{macrocode}
-\newcukeysdefine { l }
+\cudefinekeys { l }
   {
     { dl } { 10 }
     { cl } { 100 } 
@@ -10228,7 +10232,7 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %    \begin{macrocode}
-\newcukeysdefine { J }
+\cudefinekeys { J }
   {
     { kJ }{ 1e-3 }
     { cal }{ 0.2388459 }
@@ -10239,28 +10243,28 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %    \begin{macrocode}
 \fp_const:Nn \c_@@_kb_eV_fp {  8.617 330 3 e-5  }
-\newcusinglekeysdefine { C }
+\cudefinesinglekey { C }
   {
     { K } { #1 + 273.15 }
     { F } { #1 * 1.8 + 32 }
     { Re } { #1 * 0.8 }
     { eV } { ( #1 + 273.15 ) * \c_@@_kb_eV_fp }
   }
-\newcusinglekeysdefine { F }
+\cudefinesinglekey { F }
   {
     { C } { ( #1 - 32 ) *  5/9 }
     { K } { ( #1 + 459.67 ) *  5/9 }
     { Re } { ( #1 - 32 ) * 4/9 }
     { eV } {( #1 + 459.67 ) *  5/9 * \c_@@_kb_eV_fp }
   }
-\newcusinglekeysdefine { K } 
+\cudefinesinglekey { K } 
   {
     { C } { #1 - 273.15 }
     { F } { #1 * 1.8 - 459.67 }
     { Re } { ( #1 - 273.15 ) * 0.8 }
     { eV } { #1 * \c_@@_kb_eV_fp }
   }
-\newcusinglekeysdefine { Re }
+\cudefinesinglekey { Re }
   {
     { K } { #1 * 1.25 + 273.15 }
     { C } { #1  * 1.25 }
@@ -10271,7 +10275,7 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\newcudefinephrase { German } 
+\cudefinephrase { German } 
   {  
 %    { 6 } * { halbes \  Dutzend } < n >
 %    { 6 }  { halbe \  Dutzend } < n >
