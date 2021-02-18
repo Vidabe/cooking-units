@@ -7033,10 +7033,10 @@ and the derived file cooking-units.sty.
       { \tl_set:Nn \l_@@_mixed_fraction_tl { 42 } }
     \@@_if_state_equal:nT { special_sign }
       { 
-        \tl_put_right:Nn \l_@@_number_tmpa_tl { (?) } 
-        \tl_put_right:Nn \l_@@_number_tmpb_tl { (?) } 
+        \tl_put_right:Nn \l_@@_number_tmpa_tl { (!) } 
+        \tl_put_right:Nn \l_@@_number_tmpb_tl { (!) } 
         \tl_if_empty:NF \l_@@_mixed_fraction_tl
-          { \tl_put_right:Nn \l_@@_mixed_fraction_tl { (?) }  }
+          { \tl_put_right:Nn \l_@@_mixed_fraction_tl { (!) }  }
       }
   }  
 %    \end{macrocode}
