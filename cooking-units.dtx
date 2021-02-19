@@ -182,7 +182,11 @@ and the derived file cooking-units.sty.
 
 \NewDocumentCommand \cookingunitsToDo { m }
   {
-%    \marginpar { \textcolor{red}{#1} }
+    \marginpar { \textcolor{red}{#1} }
+  }
+\NewDocumentCommand \cookingunitsChecked {  }
+  {
+    \cookingunitsToDo{Checked}
   }
 
 
@@ -233,14 +237,15 @@ and the derived file cooking-units.sty.
 %: \PrintUnit
 \NewDocumentCommand \PrintUnit { o m }
   {
-    \SaveTranslation \l_tmpa_tl { #2 (cu-unitname) }
+    \__cookingunits_culang_let:nnN { name } {#2} \l_tmpa_tl
     \tl_if_eq:NNF \l_tmpa_tl \q__cookingunits_no_translation
       { \l_tmpa_tl }
     \IfNoValueF {#1} {#1}
     &
-    \texttt {#2}
-    &
-    \tl_use:c { l__cookingunits_default_unit_ #2 _tl }
+    \PrintUnitSymbol {#2}
+%    \texttt {#2}
+%    &
+%    \tl_use:c { l__cookingunits_default_unit_ #2 _tl }
   }
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
@@ -806,11 +811,7 @@ and the derived file cooking-units.sty.
 % \tableofcontents
 %
 % \section{Introduction}
-%
-% Implement cuunit?
-%
-%
-%
+% \cookingunitsChecked
 %
 % While writing on a cookery book I used -- for some reasons whatsoever --
 % three different units for weight: kilogram (kg), gram (g) and
@@ -824,30 +825,11 @@ and the derived file cooking-units.sty.
 % more pleasant than \LaTeXe) and here it is.
 %
 %
-% \begin{comment}
-% \subsection{Overview}
-% \begin{description}
-%   \item[Language] I am now using the \pkg{translations} package
-%     and I hope it makes things easier. As such, declaring the used language
-%     through class options shouldn't be necessary anymore.
-%   \item[Phrases] This package now supports the usage of \enquote{phrases}
-%     (words used instead of certain integers) (which I think are called \enquote{counting
-%     measures} in english, but I am not sure).
-%   \item[\cCutext] If no translation is found for a specific language,
-%    \cCutext\ are replaced by \mycs{cunum} with a warning is given.
-%   \item[Commands] Currently, it seems that allowing \meta{label}
-%     to be set by arrow-brackets was not the best idea as it leads to problems
-%    if they are made active (e.g. \pkg{babel} and option \opt{spanish}). As such,
-%    |<| is not allowed as a \enquote{special-sign} anymore as this package
-%   tries to \enquote{fix} this idea (at least make it work). If any problems occur
-%   (for this specific case or in general) please feel free to contact me.
-% \end{description}
-% \end{comment}
 %
 %
 %
 % \subsection{Supported languages}
-%  \cookingunitsToDo{Passt.}
+% \cookingunitsChecked
 % \begin{itemize}
 %  \item German
 %  \item English
@@ -859,7 +841,7 @@ and the derived file cooking-units.sty.
 %
 % \section {The Commands}
 % \label{sec:commands}
-% \cookingunitsToDo{Passt.}
+% \cookingunitsChecked
 %
 % This package offers the following commands for unit printing (and
 % converting):
@@ -879,7 +861,7 @@ and the derived file cooking-units.sty.
 % added and defined, see \cref{sec:pred-units} and
 % \cref{sec:def-units} for further information.}.  It furthermore
 % allows the sign \texttt{?} to be used as a placeholder for not known
-% amounts and raises a warning to remind that this amount needs a
+% amounts and raises a warning to remind you that this amount needs a
 % check-up\footnote{You can customize this behavior, see
 % \cref{sec:options}}. \oarg{space} adds a space between the number
 % and the unit using \lstinline|\phantom|.
@@ -995,7 +977,7 @@ and the derived file cooking-units.sty.
 %
 % \section{Label \& refs: Changing the amount of the recipe}
 % \label{sec:labeletref}
-% \cookingunitsToDo{Also not much to change}
+% \cookingunitsChecked
 %
 % What if you don't want to change units, but the amounts of the recipe because
 % you cook not for 4 persons, but for 2 and don't like to do the math? 
@@ -1055,88 +1037,18 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{comment}
-% \section{Some Interesting options}
-%  \cookingunitsToDo{This section is horrible, change or delete as a whole, but later}
-% This package has some options which might be of interest and to highlight them, this section exists. All options can be
-% found in \cref{sec:options}.
-%
-%
-%\subsection{Numerals}
-%   \begin{cuinterest}{use-fmtcount-numerals, use-numerals-below, print-numerals} 
-%   As seen above, you can use the \emph{package}-option
-%   \opt{use-fmtcount-numerals} to print integers used by \cCutext{} below
-%   \opt{use-numerals-below} (13 by default)  by \pkg{fmtcount}.
-%   You can still decide if numerals should be printed or not with \opt{print-numerals}.
-%
-%   \begin{cunote}
-%     \opt{use-fmtcount-numerals} is a package option as it needs to load
-%     \pkg{fmtcount} which is not loaded by default. 
-%   \end{cunote}
-%
-% \end{cuinterest}
-%
-%  \subsection{Phrases}
-% \begin{cuinterest}{use-phrases}
-%   In (I presume) all languages there exist phrases for a given
-%   amount or a number of things (think it is called \enquote{counting measurement}).
-%   In German you may say instead of
-%   \enquote{12}: \enquote{ein Dutzend}. Using this option you can tell this
-%   package to replace predefined integers used in \mycs{cuam} 
-%   by phrases for the currently used language
-%   (to define new ones, see \cref{sec:phrases})
-%
-%   Using (for example) language \opt{ngerman} (or \opt{naustrian}, etc.) with
-%   package option \opt{use-phrases=true} gives:
-%^^A   \begin{myde}
-%     \begin{cuexamplecode}
-%       \selectlanguage{ngerman} @
-%       \cusetup{use-phrases=true} @
-%       \cuam{12} \\
-%       \cuam{24} \\
-%       \cuam{12--24} \\
-%       \cuam{12--13} \\
-%       \cuam{18} \\
-%       \cuam{60} 
-%     \end{cuexamplecode}
-%^^A   \end{myde}
-% This of course also works with the \emph{package}-option \opt{use-fmtcount-numerals}:
-%^^A   \begin{myde}
-%     \cusetup{print-numerals=true} 
-%     \begin{cuexamplecode}
-%       \selectlanguage{ngerman} @
-%       \cusetup{use-phrases=true} @
-%       \cuam{12} \\
-%       \cuam{24} \\
-%       \cuam{12--24} \\
-%       \cuam{12--13} \\
-%       \cuam{18} \\
-%       \cuam{60} 
-%     \end{cuexamplecode}
-%^^A   \end{myde}
-%
-%
-%   \begin{cunote}
-%     Currently only the lower-case variant for \opt{use-fmtcount-numerals} is
-%     supported. Furthermore this feature is only available for \mycs{cuam}.
-%   \end{cunote}
-%
-%  \end{cuinterest}
-%
-% \end{comment}
-%
-%
 %
 %
 %
 %
 %
 %\subsection{Rounding temperatures}
+% \cookingunitsChecked
 %
 % By default temperatures are rounded to integers (using \opt{round-precision=0}).
 % Since 1.30 it is possible to round amounts to a negative precision. 
 % If you want to round temperatures to the tens see the following 
-% example (\opt{set-option-for-\meta{unit}} is described in \cref{sec:opt:unit-spec}).
+% example (\mycs{cusetoptionfor} is described in \cref{sec:opt:unit-spec}).
 % 
 % \begin{cuexamplecode}
 %   \cunum{182}{C} \\
@@ -1144,10 +1056,6 @@ and the derived file cooking-units.sty.
 %   \cunum[C=Re]{180}{C} \\
 %   \cunum[C=K]{180}{C} \\
 %   \cusetoptionfor{C,F,K,Re}{ round-precision = -1 } @
-%^^A   \cusetup{set-option-for-C = { round-precision = -1 } } @
-%^^A   \cusetup{set-option-for-F = { round-precision = -1 } } @
-%^^A   \cusetup{set-option-for-Re = { round-precision = -1 } } @
-%^^A   \cusetup{set-option-for-K = { round-precision = -1 } } @
 %   \cunum{182}{C} \\
 %   \cunum[C=F]{180}{C} \\
 %   \cunum[C=Re]{180}{C} \\
@@ -1156,37 +1064,26 @@ and the derived file cooking-units.sty.
 %
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
-% \cookingunitsToDo{Passt.}
-% \begin{comment}
-% In \cref{tab:def-units} and \cref{tab:some-more-units} (and \cref{tab:strange-units})
-% you can find
-% all predefined units.  In \cref{sec:Translations} all translations available
-%  are listed.
-% \end{comment}
+% \cookingunitsChecked
+%
 %
 % In \cref{tab:def-units} and you can find all predefined units which can be
 % transformed into each other (sorted by group). Other predefined units
-% (which cannot be used for transformation) are shown in \cref{tab:some-more-units}.
+% (which cannot be used for transformations) are shown in \cref{tab:some-more-units}.
 % \Cref{tab:strange-units} pretty much exists just for fun.
 %
 %
 % \begin{table}[htbp]
 %   \centering
 %   \caption{^^A
-%^^A    The first column shows a list of predefined unit-keys.
-%^^A   The column \enquote{default} shows the abbreviation used if
-%^^A   for given language no translation is defined. The translations used for \cCutext\
-%^^A   are shown in \cref{sec:Translations}.
-%^^A   Note that \enquote{electron volt} exists just for fun.
-%^^A
 %   This table shows all units which  can be transformed into each other, sorted
 %   by group. The columns \enquote{default} show the abbreviations used if
-%   for given language no translation is defined. The translations used for \cCutext\
+%   no translation is defined for the given language. The translations used for \cCutext\
 %   are shown in \cref{sec:Translations}. 
 %   Note that \enquote{electron volt} exists just for fun.
 % }
 % \smallskip
-%   \begin{tabular}{ lll @{\hspace{1cm}} lll  }
+%   \begin{tabular}{ lll @{\hspace{1cm}} lll  }[tb]
 %       \toprule
 %      description & key & default & description & key & default \\ \midrule
 %     \PrintUnit {kg} & \PrintUnit{m}  \\
@@ -1219,7 +1116,9 @@ and the derived file cooking-units.sty.
 %   translation is nearly impossible as a unit
 %   (e.g. \enquote{saltspoonful}) may not exist in another language
 %   (like german; at least I never heard of it). So please only use
-%   units known to you.}
+%   units known to you. For \enquote{tablespoon} and \enquote{teaspoon}
+%   I used the german abbreviations \enquote{EL} and \enquote{TL} (because I forgot to
+%   change them initially).}
 %   \smallskip
 %   \begin{tabular}{ lll }
 %     \toprule
@@ -1257,7 +1156,6 @@ and the derived file cooking-units.sty.
 %
 % \section{Defining units}
 % \label{sec:def-units}
-% \cookingunitsToDo{Passt.}
 % New units can be defined using 
 % \begin{itemize}
 %   \item \mycs{declarecookingunit}\oarg{symbol}\marg{unit-key}
@@ -1350,7 +1248,6 @@ and the derived file cooking-units.sty.
 %
 % \section{Defining options to change units}
 % \label{sec:defining-opt}
-% \cookingunitsToDo{Passt.}
 % Options (to change units) can be newly defined or added to already existing keys (units)
 % using
 % \begin{itemize}
@@ -1600,23 +1497,6 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 % \end{cuexample}
 %
-% \begin{comment}
-% \begin{cuexample}
-% Implementation of \myunit{stick}.  From https://cooking.stackexchange.com/questions/784/translating-cooking-terms-between-us-uk-au-ca-nz
-% we know that 
-% \[ \SI{1}{\stick} = \SI{0.25}{\lb} \]
-%
-% There are two ways to implement \myunit{stick}:
-% either use \mycs{cuaddkeys} or \mycs{cuaddtokeys}.
-%
-% The easier way (in this case) is \mycs{cuaddtokeys} which is pretty straight forward:
-% \begin{lstlisting}
-%   \cuaddtokeys { lb } { st } { 0.25 }
-% \end{lstlisting}
-% \dots\ and finished
-% 
-% \end{cuexample}
-% \end{comment}
 %
 %
 %
@@ -1633,7 +1513,6 @@ and the derived file cooking-units.sty.
 %
 % \section{Language support}
 % \label{sec:language}
-% \cookingunitsToDo{Passt.}
 %
 % Unit names and symbols depend on the language.  To change the
 % name and symbol for given language you can use \lstinline|\cudefinename|;
@@ -3220,6 +3099,7 @@ and the derived file cooking-units.sty.
 %\clearpage
 %
 % \section{Bens Einheitensammelsurium (Bens unit Almanac)}
+% \label{sec:unit-almanac}
 % 
 % Units are a fascinating mess. There are so many different ones which are  different and
 % the few ones which are the same (in name at least) are \emph{also} different, depending on 
@@ -3244,21 +3124,6 @@ and the derived file cooking-units.sty.
 % am not including units which I found in the internet is that I would like to
 % see those units in their \enquote{natural environment}.
 %
-% \begin{comment}
-% \begin{tabular}{lllllll}
-%  \toprule
-%   unit & original & abréviation  & type & source \\ \midrule
-%
-%  Batman & & &  weight\\
-%^^A  Rottel\txtupde & Sicilian: \emph{rotolo} && length & \cite{Gattopardo}\\
-%^^A  Rute\txtupde & Sicilian: \emph{canna}  & & weight & \cite{Gattopardo}\\
-%  rotolo\txtupsic & Rottel\txtupde && length & \cite{Gattopardo}\\
-%  canna\txtupsic & rod\txtupen, Rute\txtupde  & & weight & \cite{Gattopardo}\\
-% \bottomrule
-% \end{tabular}
-%
-% {\footnotesize \txtupde German }
-% \end{comment}
 %
 % \begin{description}
 %
@@ -3353,12 +3218,6 @@ and the derived file cooking-units.sty.
 % \end{description}
 %
 %
-% \begin{comment}
-% Fun Wikipedia articles: 
-% \begin{itemize}
-%   \item Old Austrian units: https://en.wikipedia.org/wiki/Obsolete_Austrian_units_of_measurement
-% \end{itemize}
-% \end{comment}
 %
 %
 %
@@ -3522,8 +3381,8 @@ and the derived file cooking-units.sty.
 %\end{center}
 %
 %
-%
-%
+% If you ever encounter in a german cookery book the word \enquote{Packerl}, 
+% check out its entry in \cref{sec:unit-almanac}.
 %
 %
 %
