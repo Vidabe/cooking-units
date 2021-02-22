@@ -3870,7 +3870,7 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_cunum_range_sign_tl { -- }
 \tl_set:Nn \l_@@_cutext_range_sign_tl { }
 \tl_set:Nn \l_@@_value_unit_space_tl { \thinspace }
-\tl_set:Nn \l_@@_cutext_space_tl { \space }
+\tl_set:Nn \l_@@_cutext_space_tl { ~ }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
 \tl_set:Nn \l_@@_unit_letter_not_allowed_tl { , / }
 %    \end{macrocode}
@@ -4584,7 +4584,7 @@ and the derived file cooking-units.sty.
 % and unit.
 %    \begin{macrocode}
     cutext-space .tl_set:N = \l_@@_cutext_space_tl ,
-    cutext-space .default:n = { \space } ,
+    cutext-space .default:n = { ~ } ,
 %    \end{macrocode}
 % \end{macro}
 %
