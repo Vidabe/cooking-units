@@ -243,9 +243,6 @@ and the derived file cooking-units.sty.
     \IfNoValueF {#1} {#1}
     &
     \PrintUnitSymbol {#2}
-%    \texttt {#2}
-%    &
-%    \tl_use:c { l__cookingunits_default_unit_ #2 _tl }
   }
 \NewDocumentCommand \PrintUnitSymbol { m }
   {
@@ -1073,7 +1070,7 @@ and the derived file cooking-units.sty.
 % \Cref{tab:strange-units} pretty much exists just for fun.
 %
 %
-% \begin{table}[htbp]
+% \begin{table}[tbp]
 %   \centering
 %   \caption{^^A
 %   This table shows all units which  can be transformed into each other, sorted
@@ -1083,8 +1080,8 @@ and the derived file cooking-units.sty.
 %   Note that \enquote{electron volt} exists just for fun.
 % }
 % \smallskip
-%   \begin{tabular}{ lll @{\hspace{1cm}} lll  }[tb]
-%       \toprule
+%   \begin{tabular}{ lll @{\hspace{1cm}} lll  }
+%      \toprule
 %      description & key & default & description & key & default \\ \midrule
 %     \PrintUnit {kg} & \PrintUnit{m}  \\
 %     \PrintUnit {dag} & \PrintUnit{dm}  \\
