@@ -3781,6 +3781,7 @@ and the derived file cooking-units.sty.
 %    , \g_@@_input_str_hash_one_tl 
 %    , \l_@@_input_range_sign_tl
 %    , \l_@@_cutext_space_tl
+%    , \l_@@_cutext_numeral_space_tl
 %    , \l_@@_cuphrase_space_tl
 %    , \l_@@_translation_tmpa_tl
 %    , \l_@@_cutext_last_value_tl
@@ -3823,6 +3824,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \g_@@_input_str_hash_one_tl 
 \tl_new:N \l_@@_input_range_sign_tl
 \tl_new:N \l_@@_cutext_space_tl
+\tl_new:N \l_@@_cutext_numeral_space_tl
 \tl_new:N \l_@@_cuphrase_space_tl
 \tl_new:N \l_@@_translation_tmpa_tl
 \tl_new:N \l_@@_cutext_last_value_tl
@@ -3871,6 +3873,7 @@ and the derived file cooking-units.sty.
 \tl_set:Nn \l_@@_cutext_range_sign_tl { }
 \tl_set:Nn \l_@@_value_unit_space_tl { \thinspace }
 \tl_set:Nn \l_@@_cutext_space_tl { ~ }
+\tl_set:Nn \l_@@_cutext_numeral_space_tl { \space }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
 \tl_set:Nn \l_@@_unit_letter_not_allowed_tl { , / }
 %    \end{macrocode}
@@ -4580,11 +4583,20 @@ and the derived file cooking-units.sty.
 %\end{macro}
 %
 % \begin{macro}{ cutext-space }
-% The space used in \mycs{cutext} between the number (or numeral)
+% The space used in \mycs{cutext} between the \emph{number} 
 % and unit.
 %    \begin{macrocode}
     cutext-space .tl_set:N = \l_@@_cutext_space_tl ,
     cutext-space .default:n = { ~ } ,
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ cutext-space }
+% The space used in \mycs{cutext} between the \emph{numeral}
+% and unit.
+%    \begin{macrocode}
+    cutext-numeral-space .tl_set:N = \l_@@_cutext_numeral_space_tl ,
+    cutext-numeral-space .default:n = { space } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7879,7 +7891,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cutext_print_correct_unitname:
   {
-    \l_@@_cutext_space_tl
+    \bool_if:NTF \l_@@_lokal_numeral_bool
+      { \l_@@_cutext_numeral_space_tl }
+      { \l_@@_cutext_space_tl }
     \bool_if:NTF \l_@@_cutext_last_amount_equ_one_bool
       { \@@_culang_print:nV { name } \l_@@_decided_unit_tl }
       { \@@_culang_print:nV { name-pl }  \l_@@_decided_unit_tl }
