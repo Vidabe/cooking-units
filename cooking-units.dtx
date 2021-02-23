@@ -260,7 +260,6 @@ and the derived file cooking-units.sty.
     \msg_redirect_name:nnn { cooking-units } { curef-forbidden-unit } { warning }
   }
 
-
 %% Allyourwhitespacearebelongtous (too long)
 %% 42
 %% Miep!
@@ -1043,7 +1042,7 @@ and the derived file cooking-units.sty.
 % \cookingunitsChecked
 %
 % By default temperatures are rounded to integers (using \opt{round-precision=0}).
-% Since 1.30 it is possible to round amounts to a negative precision. 
+% Since v1.30 it is possible to round amounts to a negative precision. 
 % If you want to round temperatures to the tens see the following 
 % example (\mycs{cusetoptionfor} is described in \cref{sec:opt:unit-spec}).
 % 
@@ -1155,32 +1154,32 @@ and the derived file cooking-units.sty.
 % \label{sec:def-units}
 % New units can be defined using 
 % \begin{itemize}
-%   \item \mycs{declarecookingunit}\oarg{symbol}\marg{unit-key}
-%   \item \mycs{newcookingunit}\oarg{symbol}\marg{new-unit-key}
-%   \item \mycs{providecookingunit}\oarg{symbol}\marg{new-unit-key}
-% \end{itemize}
+%   \item \mycs{declarecookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
+%   \item \mycs{newcookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
+%   \item \mycs{providecookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
+% \end{itemize} 
 %
 % \begin{function}{\declarecookingunit,\newcookingunit,\providecookingunit}
 %   \begin{syntax}
-%     \mycs{declarecookingunit}\oarg{symbol}\marg{unit-key}
-%     \mycs{newcookingunit}\oarg{symbol}\marg{new-unit-key}
-%     \mycs{providecookingunit}\oarg{symbol}\marg{unit-key}
+%     \mycs{declarecookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
+%     \mycs{newcookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
+%     \mycs{providecookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
 %   \end{syntax}
-%   These commands define the unit  \meta{unit-key}. If the 
-%   key is not the same as the printed symbol use \oarg{symbol}.
-%   Note that \meta{unit-key} can neither contain |/| nor |,|.
 %
-%   Please note due to the current implementation catcodes may cause
-%   trouble. For example using |:| inside \meta{unit-key} may cause
-%   the key to \enquote{not be defined} in the document. If that happens
-%   try removing or changing the \meta{unit-key}.
+%   These commands define the unit  \meta{unit-key}. Note that \meta{unit-key}
+%   can neither contain |/| nor |,|; but is allowed to be a command since v2.0 
+%   (see examples below).
 %
+%   If the key is not the same as the printed symbol use the optional argument.
+%   It can either contain the symbol you want printed or a key-value list (see below) 
+%   for more advanced adjustments.
+%   
 %   \mycs{newcookingunit} raises an error if the unit is already defined,
 %   \mycs{declarecookingunit} creates or (if given) overwrites  \meta{symbol} 
 %   and \mycs{providecookingunit} does nothing if the unit is already
 %   defined. 
 %
-%   All units have male gender |m| by default.
+%   All units have male gender |m| by default (unless you change it using a key below).
 %
 % Some examples:
 % \begin{lstlisting}
@@ -1188,13 +1187,31 @@ and the derived file cooking-units.sty.
 %   \declarecookingunit{g}
 %   \declarecookingunit[Msp.] {Msp}
 %   \declarecookingunit[\ensuremath{{}^{\circ}}\kern-\scriptspace C] {C}
+%   \declarecookingunit{\%}
 % \end{lstlisting}
 %
 % \end{function}
+%
 % \begin{cunote}
 %  The definition of the printed degree Celsius is
 %  copied and pasted from (a maybe older version of) \pkg{siunitx}.
 % \end{cunote}
+%
+% \begin{function}{symbol, gender, set-options, add-to-group, natural-unit}
+%   Those keys can only be used in the optional argument of 
+%   \mycs{declarecookingunit}, \mycs{newcookingunit} or \mycs{providecookingunit}.
+%   \cookingTODO
+%   \begin{syntax}
+%     symbol = \meta{symbol}
+%     gender = \meta{gender}
+%     set-options = \meta{key-val-list}
+%     add-to-group = \meta{group}
+%     natural-unit = \meta{true/false}
+%   \end{syntax}
+%  
+%   
+%
+% \end{function}
 %
 %
 %
@@ -2995,7 +3012,7 @@ and the derived file cooking-units.sty.
 %   Converts (nearly) every unit in \cref{tab:def-units}
 %   to electron volt or the respective derivative (if possible). Note that this 
 %   option is:
-%   a) experimental and probably will forever be and b) just a joke, you are not 
+%   a) experimental and probably will forever be and (b) just a joke, you are not 
 %   supposed to use this units in a cookery book (and as you see this package
 %   doesn't support the arrangement of such huge numbers). Also you may
 %   want to check the values if you really want to use them, just to be sure
