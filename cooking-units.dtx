@@ -8779,8 +8779,6 @@ and the derived file cooking-units.sty.
           { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#2} }
           {
             \bool_if:NTF \l_@@_contains_valid_key_bool
-              { \tl_set:cn { l_@@_default_unit_ #2 _tl } {#2} }
-              { \tl_set:cn { l_@@_default_unit_ #2 _tl } {#1} }
               { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#2} }
               { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#1} }
           }
