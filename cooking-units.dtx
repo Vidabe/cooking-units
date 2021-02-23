@@ -8737,8 +8737,6 @@ and the derived file cooking-units.sty.
     \tl_set:cn { l_@@_unit_change_ #1 _tl } { 1 }
     \keys_define:nn { cooking-units }
       {
-%        set-option-for-#1 .code:n =  { \@@_set_options_for:nn {#1} {##1} } ,
-%        add-option-for-#1 .code:n = { \@@_add_options_for:nn {#1} {##1} },
         set-unit-hook-#1 .code:n =  { \@@_set_options_for:nn {#1} {##1} } ,
         add-unit-hook-#1 .code:n = { \@@_add_options_for:nn {#1} {##1} },
         set-option-for-#1 .meta:n = { set-unit-hook-#1 = {##1} } ,
