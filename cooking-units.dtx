@@ -4859,7 +4859,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{set-option}
+% \begin{macro}{set-options}
 %  To be implemented. Key used during definition of new units.
 %  Adds options to a specific key during definition of unit.
 %    \begin{macrocode}
@@ -4910,7 +4910,10 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% Currently: Do nothing if an unknown key is given, except print a warning.
+% You get here during the definition of a new unit if you use the optional 
+% argument. As symbols cannot contain |=| the argument |#1| is going
+% to be empty. I also assume that none of the above keys are used as an
+% unit-symbol. If |#1| is non-empty (aka.\ the key has a value) throw an error.
 %    \begin{macrocode}
   definition / unknown .code:n = 
     {  
@@ -8693,7 +8696,7 @@ and the derived file cooking-units.sty.
     \@@_if_unit_defined:nNTF {#2} \l_@@_original_unit_tl
       { \msg_info:nnx { cooking-units } { redefine-unit } { \l_@@_original_unit_tl } }
       { \@@_new_cooking_unit:V \l_@@_original_unit_tl }
-    \@@_set_cooking_unit:nV {#1} \l_@@_original_unit_tl
+    \@@_set_cooking_unit:nnV {#1} {#2} \l_@@_original_unit_tl
   }
 \NewDocumentCommand \newcookingunit { o m }
   {
@@ -8701,7 +8704,7 @@ and the derived file cooking-units.sty.
       { \msg_error:nnV { cooking-units } { unit-already-defined } \l_@@_original_unit_tl }
       { 
         \@@_new_cooking_unit:V \l_@@_original_unit_tl 
-        \@@_set_cooking_unit:nV {#1} \l_@@_original_unit_tl
+        \@@_set_cooking_unit:nnV {#1} {#2} \l_@@_original_unit_tl
       }
   }
 \NewDocumentCommand \providecookingunit { o m }
@@ -8709,7 +8712,7 @@ and the derived file cooking-units.sty.
     \@@_if_unit_defined:nNT {#2} \l_@@_original_unit_tl
       {
         \@@_new_cooking_unit:V \l_@@_original_unit_tl 
-        \@@_set_cooking_unit:nV {#1} \l_@@_original_unit_tl
+        \@@_set_cooking_unit:nnV {#1} {#2} \l_@@_original_unit_tl
       }
   }
 %    \end{macrocode}
@@ -8746,9 +8749,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %  \end{macro}
 %
-%\begin{macro}{ \@@_set_cooking_unit:nn , \@@_set_cooking_unit:nV }
+%\begin{macro}{ \@@_set_cooking_unit:nnn , \@@_set_cooking_unit:nnV }
 %  Here we set the in the last step defined lists to their respective value.
-%  |#2| is the unit; |#1| is either the wanted unit-symbol \emph{or} a key-val
+%  |#3| is the unit-string; |#2| is the unit given by the user (as it can be a command
+%  like |/%]; |#1| is either the wanted unit-symbol \emph{or} a key-val
 %  list. Depending on that, we either set the printed symbol to |#1| or parse the
 %  key-val list. 
 %
@@ -8759,9 +8763,9 @@ and the derived file cooking-units.sty.
 %
 %  If |#1| is not protected by braces it is parsed as key(s)
 %    \begin{macrocode}
-\cs_new:Npn \@@_set_cooking_unit:nn #1 #2
+\cs_new:Npn \@@_set_cooking_unit:nnn #1#2#3
   {
-    \@@_set_cooking_unit_base_translation:n {#2}
+    \@@_set_cooking_unit_base_translation:n {#3}
     \bool_set_false:N \l_@@_symbol_was_set_by_key_bool
     \bool_set_false:N \l_@@_contains_valid_key_bool
     \IfNoValueF {#1}
@@ -8772,16 +8776,18 @@ and the derived file cooking-units.sty.
     \bool_if:NF \l_@@_symbol_was_set_by_key_bool
       {
         \IfNoValueTF {#1}
-          { \tl_set:cn { l_@@_default_unit_ #2 _tl } {#2} }
+          { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#2} }
           {
             \bool_if:NTF \l_@@_contains_valid_key_bool
               { \tl_set:cn { l_@@_default_unit_ #2 _tl } {#2} }
               { \tl_set:cn { l_@@_default_unit_ #2 _tl } {#1} }
+              { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#2} }
+              { \tl_set:cn { l_@@_default_unit_ #3 _tl } {#1} }
           }
       }
-    \@@_culang_def_base:nnv { unit-symbol } {#2} { l_@@_default_unit_ #2 _tl }
+    \@@_culang_def_base:nnv { unit-symbol } {#3} { l_@@_default_unit_ #3 _tl }
   }
-\cs_generate_variant:Nn \@@_set_cooking_unit:nn { nV }
+\cs_generate_variant:Nn \@@_set_cooking_unit:nnn { nnV }
 %    \end{macrocode}
 %  \end{macro}
 %
