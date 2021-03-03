@@ -184,6 +184,9 @@ and the derived file cooking-units.sty.
   {
     \marginpar { \textcolor{red}{#1} }
   }
+\NewDocumentCommand \cookingunitsTODO { m } { \cookingunitsToDo {#1} }
+\NewDocumentCommand \cookingunitsContinue {  } { \cookingunitsToDo {Continue} }
+\NewDocumentCommand \cookingunitsCONTINUE {  } { \cookingunitsContinue }
 \NewDocumentCommand \cookingunitsChecked {  }
   {
     \cookingunitsToDo{Checked}
@@ -579,30 +582,30 @@ and the derived file cooking-units.sty.
         culabel,
         curef,
         cudefinephrase,
-        declarecookingderivatives
+        declarecookingderivatives,
       }
   }
 
-\newcommand\eneunit[3]{\sfrac{#1\,#2${}^2$}{#3${}^2$}}
-%% Can overflow and takes too long, hard code it
-\declarecookingderivatives{kg,m,s}{#1*#2-#3}{ (#1)*(#2)^2/(#3)^2 } {\eneunit{#1}{#2}{#3}}
-\declarecookingderivatives{m,s}{#1-#2}{ (#1)/(#2) } {\sfrac{#1}{#2}}
-%\declarecookingderivatives{kg,kg,kg}{#1-#2-#3}{ #1-#2-#3} {#1-#2-#3}
-%\declarecookingunit[\eneunit{kg}{m}{s}]{kg*m-s}
-%\declarecookingunit[\eneunit{oz}{in}{min}]{oz*in-min}
 \newcookingunit {st}
 \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\text{\o}}] {Ro}
 \newcookingunit {ft}
+\newcookingunit {km}
 
 \cuaddkeys {lb}  
   { 
     {st} { 1/14 }  %% 1 lb are 1/14 st
   }        
 \cuaddtokeys {m} {ft} {0.3048}
+\cuaddtokeys {m} {km} {1000}
 \cuaddsinglekeys {C}
   {
     {Ro} { #1*21/40 + 7.5 }
   }
+
+\newcommand\eneunit[3]{\sfrac{#1\,#2${}^2$}{#3${}^2$}}
+%% Can overflow and takes too long, hard code it
+\declarecookingderivatives{kg,m,s}{#1*#2:#3}{ (#1)*(#2)^2/(#3)^2 } {\eneunit{#1}{#2}{#3}}
+\declarecookingderivatives{m,s}{#1:#2}{ (#1)/(#2) } {\sfrac{#1}{#2}}
 
 
 
@@ -771,7 +774,7 @@ and the derived file cooking-units.sty.
 % \changes {2018/09/24} {1.45} {Remove exhaustive expansion from internals (shouldn't change anything for users).}
 %
 % \changes {2020/03/21} {vVERSIONv} {Remove exhaustive expansion from translations. Shouldn't really change much if anything.}
-% \changes {2020/03/21} {vVERSIONv} {New options: \opt{definition/symbol}, \opt{definition/gender}, \opt{definition/set-options}, \opt{definition/add-to-group}. }
+% \changes {2020/03/21} {vVERSIONv} {New options: \opt{definition/symbol}, \opt{definition/gender}, \opt{definition/set-option}, \opt{definition/add-to-group}. }
 % 
 %
 %
@@ -1152,6 +1155,8 @@ and the derived file cooking-units.sty.
 %
 % \section{Defining units}
 % \label{sec:def-units}
+% \cookingunitsChecked
+%
 % New units can be defined using 
 % \begin{itemize}
 %   \item \mycs{declarecookingunit}\oarg{symbol/key-val-list}\marg{unit-key}
@@ -1182,12 +1187,12 @@ and the derived file cooking-units.sty.
 %   All units have male gender |m| by default (unless you change it using a key below).
 %
 % Some examples:
-% \begin{lstlisting}
+% \begin{lstlisting}[commentstyle=\color{black}]
 %   \declarecookingunit{kg}
 %   \declarecookingunit{g}
 %   \declarecookingunit[Msp.] {Msp}
 %   \declarecookingunit[\ensuremath{{}^{\circ}}\kern-\scriptspace C] {C}
-%   \declarecookingunit{\%}
+%   \declarecookingunit{\%} % can use commands now
 % \end{lstlisting}
 %
 % \end{function}
@@ -1197,20 +1202,32 @@ and the derived file cooking-units.sty.
 %  copied and pasted from (a maybe older version of) \pkg{siunitx}.
 % \end{cunote}
 %
-% \begin{function}{symbol, gender, set-options, add-to-group, natural-unit}
-%   Those keys can only be used in the optional argument of 
-%   \mycs{declarecookingunit}, \mycs{newcookingunit} or \mycs{providecookingunit}.
-%   \cookingTODO
+% \begin{function}{symbol, gender, set-option, add-to-group, natural-unit}
+%
 %   \begin{syntax}
 %     symbol = \meta{symbol}
-%     gender = \meta{gender}
-%     set-options = \meta{key-val-list}
+%     gender = \meta{m/f/n}
+%     set-option = \marg{key-val-list}
 %     add-to-group = \meta{group}
 %     natural-unit = \meta{true/false}
 %   \end{syntax}
 %  
+%   Those keys can only be used in the optional argument of 
+%   \mycs{declarecookingunit}, \mycs{newcookingunit} or \mycs{providecookingunit}.
+%   They can be used to define some properties of the unit during its initialization.
 %   
+%   \opt{symbol} allows you to set the printed symbol of the unit. A similar effect can be
+%    achieved by just using the optional argument. Use this option if you want to
+%    use other keys during the definition.
 %
+%    \opt{gender} sets the gender of the unit (default ist |m|).  Allowed is |m|, |f| or |n|.
+%    Note that this sets the default gender for all languages.
+%    \opt{set-option} allows to add some key-vals to the specific unit which are
+%    activated once the unit is used. See \cpageref{code:set-option}. 
+%    \opt{add-to-group} adds the unit defined to \meta{group}. See \cref{sec:opt:unit-spec}
+%    for more information.
+%    \opt{natural-unit} is a simple true/false switch. If |true| the unit will be specified to be
+%    a \enquote{natural-unit}. This is more or less a joke option.
 % \end{function}
 %
 %
@@ -1222,7 +1239,7 @@ and the derived file cooking-units.sty.
 %   \end{syntax}
 %
 %   \emph{This function is experimental}. Defines new units which are a combination
-%   of the units given in \meta{unit-list} \emph{and} their linked-units.
+%   of the units given in \meta{unit-list} \emph{and} their key-chain.
 %  \meta{unit-key}, \meta{mathematical-relation} and \meta{unit-symbol}
 %  accept |#1| to |#n| as arguments with $n$ being the number of units
 %  given in \meta{unit-list}. $n$ \emph{cannot} be greater than $8$ (and it will
@@ -1234,34 +1251,38 @@ and the derived file cooking-units.sty.
 %
 % \end{function}
 %
-% \begin{cunote}
-%   Due to  catcodes (and my inability to deal with them properly) 
-%   there can be problems when using |:|
-%   (and probably other signs) inside \meta{unit-key}.
-% \end{cunote}
-%
 % \begin{cuexample}
 %  Your homework is to change the unit of energy \si{\kg\m\squared\per\s\squared}
 %  into \si{\ounce\inch\squared\per\minute\squared}. To check if you are correct
 %  you use \mycs{declarecookingderivatives}:
 %    \begin{lstlisting}
-%      \declarecookingderivatives{kg,m,s}{#1*#2-#3}
+%      \declarecookingderivatives{kg,m,s}{#1*#2:#3}
 %      { (#1)*(#2)^2/(#3)^2 } {\sfrac{#1\,#2${}^2$}{#3${}^2$}}
 %    \end{lstlisting}
 %
-% Using |\cunum[kg*m-s=oz*in-min]{1}{kg*m-s}| shows that
-% \cunum{1}{kg*m-s} is equal to \cunum[kg*m-s=oz*in-min]{1}{kg*m-s} \cunum{196829101.34}{oz*in-min}.  
-% (Note: This is \emph{really} experimental and it can easily happen that
-% an \enquote{overflow-error} occurs) (like for me which is why I hard-coded the
-% results after testing).
+% Using |\cunum[kg*m:s=oz*in:min]{1}{kg*m:s}| shows that
+% \cunum{1}{kg*m:s} is equal to \cunum[kg*m:s=oz*in:min]{1}{kg*m:s}. 
+%^^A\cunum{196829101.34}{oz*in:min}
 %
-% \cunum[m-s=in-h]{1}{m-s}
+%^^A \cunum[m:s=km:h]{1}{m:s}
 %
 % \end{cuexample}
+%
+% \begin{cunote}
+%   As this is a bit more experimental and can easily lead to overflow-errors,
+%   no actual \LaTeX\ keys are created with \mycs{declarecookingderivatives}.
+%   Internally the keys and possible values are stored in a \emph{huge} property list.
+%   If an unknown key is encountered, it checks if said key can be found in the
+%   property list. 
+% \end{cunote}
+%
+%
+%
 %
 %
 % \section{Defining options to change units}
 % \label{sec:defining-opt}
+% \cookingunitsCONTINUE
 % Options (to change units) can be newly defined or added to already existing keys (units)
 % using
 % \begin{itemize}
@@ -1787,7 +1808,7 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{function}{\cusetoptionfor,\cuaddoptionfor,\cuclearoptionfor}
-%
+%   \label{code:set-option}
 %   \begin{syntax}
 %     \mycs{cusetoptionfor}\marg{unit-list}\marg{options}
 %     \mycs{cuaddoptionfor}\marg{unit-list}\marg{options}
@@ -4876,16 +4897,16 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{set-options}
+% \begin{macro}{set-option}
 %  To be implemented. Key used during definition of new units.
 %  Adds options to a specific key during definition of unit.
 %    \begin{macrocode}
-  definition / set-options .code:n = 
+  definition / set-option .code:n = 
     { 
       \bool_set_true:N \l_@@_contains_valid_key_bool
       \@@_set_options_for:Vn \l_@@_original_unit_tl {#1} 
     },
-  definition / set-options .value_required:n = { true } ,
+  definition / set-option .value_required:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7273,7 +7294,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\@@_split_and_parse_input: }
-% If the weitd option \Opt{42} is used, set the state to \enquote{42}.
+% If the weitd option \opt{42} is used, set the state to \enquote{42}.
 % Copy the original amount and prepapre to split the input.
 %    \begin{macrocode}
 \cs_new:Npn \@@_split_and_parse_input:
