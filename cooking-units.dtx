@@ -217,7 +217,8 @@ and the derived file cooking-units.sty.
     declarecookingderivatives , 
     cufrac ,
     cusetoptionfor, cuaddoptionfor, cuclearoptionfor,
-    cudeclareunitgroup, cuaddtounitgroup, cuclearunitgroup
+    cudeclareunitgroup, cuaddtounitgroup, cuclearunitgroup ,
+    cudefinekeys ,
   }
 
 \NewDocumentCommand \mycs { m }
@@ -591,10 +592,15 @@ and the derived file cooking-units.sty.
 \newcookingunit {ft}
 \newcookingunit {km}
 
-\cuaddkeys {lb}  
-  { 
-    {st} { 1/14 }  %% 1 lb are 1/14 st
-  }        
+%\cuaddkeys {lb}  
+%  { 
+%    {st} { 1/14 }  %% 1 lb are 1/14 st
+%  }        
+\cuaddtokeychain
+  {
+    {lb} { 14 }
+    {st} { 1 }
+  }
 \cuaddtokeys {m} {ft} {0.3048}
 \cuaddtokeys {m} {km} {1000}
 \cuaddsinglekeys {C}
@@ -6629,7 +6635,7 @@ and the derived file cooking-units.sty.
 %
 % Defining some states.
 %    \begin{macrocode}
-\@@_def_new_type:nnn { state } { TF , T , F } 
+\@@_def_new_type:nnn { state } { TF , T , F , p } 
   { normal , special_sign , 42 , error }
 \@@_def_new_type:nnn { cmd_type } { TF , T , p } 
   { cunum , cCutext , cuam }
@@ -8356,18 +8362,83 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_initialice_cukeys_define:n #1
   {
+    \@@_set_state_to:n { normal }
     \seq_clear:N \l_@@_tmpa_seq
     \seq_clear:N \l_@@_tmpb_seq
     \prop_clear:N \l_@@_tmpa_prop
-    \@@_set_state_to:n { normal }
+    \tl_set:Nn \l_@@_new_key_base_tl { 1 }
     \@@_error_if_unit_not_defined:nNT {#1} \l_@@_original_unit_tl
       { \@@_set_state_to:n { error } }
-    \tl_set:Nn \l_@@_new_key_base_tl { 1 }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \newcukeysadd , \newcukeysaddto , \newcusinglekeysadd }
+%
+% \begin{macro}{\cudefinekeychain}
+% The command that is going to replace \mycs{cudefinekeys} and friends
+% (but \emph{not} the single key variants). Nothing going on here.
+% The biggest difference to \mycs{cudefinekeys} is that we do not know
+% the base key by default. Thus we make a short detour to grab the first unit
+% we encounter in |#1| (and its value) and the rest proceeeds as before.
+%    \begin{macrocode}
+\NewDocumentCommand \cudefinekeychain { m }
+  {
+    \bool_set_false:N \l_@@_single_key_bool
+    \@@_initialice_cukeychain_define:n {#1}
+    \@@_cukeys_prepare_parsing_keys:n {#1}
+  }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_initialice_cukeychain_define:n}
+% Initializing the key-chain. First, grab the first unit in |#1|. This needs to
+% be done as the old code expects us to already know a base unit. Here the first
+% unit that is encountered is taken as the base unit. Its value is stored in |\l_@@_base_tl|.
+% This is needed to normalice the values in relation to the base unit. Remember,
+% the base unit is defined to be exactly |1|, thus all further values need to be
+% changed to reflect that. The normalization factor is stored inside |\l_@@_new_key_base_tl|.
+% |\l_@@_curr_unit_tl| is cleared to remind me, that it is not a unit per se
+% (as it is not set \emph{via} |\@@_set_unit:Nn|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_cukeychain_define:n #1
+  {
+    \@@_cukeychain_get_first_unit_aux:nn #1
+      \q_recursion_tail \q_recursion_tail \q_recursion_stop
+    \@@_if_state_equal:nF { error }
+      {
+        \exp_args:NV \@@_initialice_cukeys_define:n \l_@@_curr_unit_tl
+        \@@_tl_eval:Nn \l_@@_new_key_base_tl { 1 / (\l_@@_base_tl) }
+        \tl_clear:N \l_@@_curr_unit_tl
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_cukeychain_get_first_unit_aux:nn}
+% Nothing fancy here. Just grab the first unit and its value.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cukeychain_get_first_unit_aux:nn #1#2
+  {
+    \quark_if_recursion_tail_stop_do:nn {#1}
+      { \@@_set_state_to:n { error } }
+    \quark_if_recursion_tail_stop_do:nn {#2} 
+      {
+        \msg_error:nn { cooking-units } { missing-argument } 
+        \@@_set_state_to:n { error }
+      }
+    \tl_set:Nn \l_@@_curr_unit_tl {#1}
+    \tl_set:Nn \l_@@_base_tl {#2}
+    \use_none_delimit_by_q_recursion_stop:w
+    \@@_cukeychain_get_first_unit_aux:nn
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
+%
+%
+% \begin{macro}{ \cuaddkeys , \cuaddtokeys , \cuaddsinglekeys }
 %  Thanks to rewriting the code the |add| commands and the |define|
 %  commands share a lot of code. The difference is the initialicing, which is a bit
 %  different.
@@ -8409,7 +8480,7 @@ and the derived file cooking-units.sty.
 %  the values we stored and got during the definition of keys.
 %
 %  First, get the |\l_@@_original_unit_tl|. This one is the unit given in the first argument
-%  of either |\cudefinekeys| or |\cudefinesinglekey|. It is the base unit
+%  of either |cudefinekeys| or |\cudefinesinglekey|. It is the base unit
 %  for those keys. Afterwards retrieve the other values. Get the property list
 %  which stores the unit-value pairs, get the list of units we can transform the unit to
 %  and -- to make sure -- make sure a single key is only added to a single key and vice versa.
@@ -8444,28 +8515,110 @@ and the derived file cooking-units.sty.
       }
     \use_none_delimit_by_q_stop:w \q_stop
   }
+\cs_generate_variant:Nn \@@_initialice_cukeys_add:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_cukeys_prepare_parsing_keys:nn }
+%
+% \begin{macro}{\cuaddtokeychain}
+% This command is going to replace \mycs{cuaddkeys} and \mycs{cuaddtokeys}.
+% It is similar to \mycs{cudefinekeychain}. Just with some more hoops before the keys
+% can be defined.
+%    \begin{macrocode}
+\NewDocumentCommand \cuaddtokeychain { m }
+  {
+    \bool_set_false:N \l_@@_single_key_bool
+    \@@_initialice_cukeys_keychain_add:n {#1}
+    \@@_cukeys_prepare_parsing_keys:n {#1}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_initialice_cukeys_keychain_add:n}
+% Initiliazing the key chain. Like \mycs{cudefinekeychain} we first need to get
+% the base unit. Afterwards, the \enquote{normal} initialization command is used
+% (with the found base key) and |\l_@@_new_key_base_tl| is normalized.
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_cukeys_keychain_add:n #1
+  {
+    \@@_cukeys_keychain_get_first_valid_unit:n {#1}   
+    \@@_if_state_equal:nF { error }
+      {
+        \@@_initialice_cukeys_add:V \l_@@_curr_unit_tl
+        \@@_tl_eval:Nn \l_@@_new_key_base_tl { (\l_@@_new_key_base_tl) / (\l_@@_base_tl) }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_cukeys_keychain_get_first_valid_unit:n
+%    , \@@_cukeys_keychain_get_first_valid_unit_aux:nn
+%  }
+%
+% Just a wrapper for the loop.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cukeys_keychain_get_first_valid_unit:n #1
+  {
+    \@@_cukeys_keychain_get_first_valid_unit_aux:nn #1
+      \q_recursion_tail \q_recursion_tail \q_recursion_stop
+  }
+%    \end{macrocode}
+% Finding the base unit is a bit more complex than just taking the first
+% one found, but not by much. The idea is simple: Loop through the units
+% till one is found that has an existing key. This allows the user to set the
+% new unit(s) first in the loop and the base unit at last place (or an arbitrary place). 
+% We set this unit to be the |\l_@@_original_unit_tl| and its value as  |\l_@@_base_tl|
+% (not evaluated at this place). If a unit is found, break the loop.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cukeys_keychain_get_first_valid_unit_aux:nn #1#2
+  {
+    \quark_if_recursion_tail_stop_do:nn {#1}
+      {
+        \tl_show:n { Error-no-unit-found }
+        \@@_set_state_to:n { error }
+      }
+    \quark_if_recursion_tail_stop_do:nn {#2} 
+      {
+        \msg_error:nn { cooking-units } { missing-argument } 
+        \@@_set_state_to:n { error }
+      }
+    \@@_if_unit_has_a_key:nT  {#1}
+      {
+        \@@_error_if_unit_not_defined:nNT {#1} \l_@@_curr_unit_tl
+          { \@@_set_state_to:n { error } }
+        \tl_set_eq:NN \l_@@_original_unit_tl \l_@@_curr_unit_tl
+        \tl_set:Nn \l_@@_base_tl {#2}
+        \use_none_delimit_by_q_recursion_stop:w
+      }
+    \@@_cukeys_keychain_get_first_valid_unit_aux:nn
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+%
+% \begin{macro}{ \@@_cukeys_prepare_parsing_keys:n
+%   , \@@_cukeys_prepare_parsing_keys:nn 
+%  }
+% Just a wrapper. |#1| is the base unit and thus defined to be |1|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_cukeys_prepare_parsing_keys:nn #1#2
+  {
+    \@@_cukeys_prepare_parsing_keys:n { {#1} { 1.0 } #2 }
+  }
 %  After initialising the variables we go to this command.
-%  At first it seperates the input in |#2| into unit-value pairs via |\@@_cukeys_parse_keys|.
+%  At first it seperates the input in |#1| into unit-value pairs via |\@@_cukeys_parse_keys|.
 %  If no error happened, we go to the definition of keys.
 %
 %  As we add new keys and potentially change the values of old ones we need
 %  to globally clear |\g_@@_master_changer_prop|.
-%    \begin{macrocode}
-\cs_new:Npn \@@_cukeys_prepare_parsing_keys:nn #1#2
+\cs_new:Npn \@@_cukeys_prepare_parsing_keys:n #1
   {
-%    %% ToDo: Add keval system?
-%    \cudefinekeys { kg }
-%      {
-%        dag= 100,
-%        g= 1000,
-%        kg= 1,
-%      }
-    \@@_cukeys_parse_keys:nn {#1} {#2}
-    \@@_if_state_equal:nF { error }
+    \@@_cukeys_parse_keys:n {#1}
+    \bool_lazy_or:nnF
+      { \int_compare_p:nNn \l_@@_nr_of_units_int = 0 }
+      { \@@_if_state_equal_p:n { error } }
       {
         \prop_gclear:N \g_@@_master_changer_prop
         \@@_cukeys_prepare_lists:N \l_@@_original_unit_tl
@@ -8480,9 +8633,10 @@ and the derived file cooking-units.sty.
 %  Seperates the input into key-value pairs. This cs doesn't do much as the main
 %  stuff is done in |\@@_cukeys_parse_keys_aux:nn|.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cukeys_parse_keys:nn #1#2
+\cs_new:Npn \@@_cukeys_parse_keys:n #1
   {
-    \@@_cukeys_parse_keys_aux:nn {#1} { 1.0 } #2
+    \int_zero:N \l_@@_nr_of_units_int
+    \@@_cukeys_parse_keys_aux:nn #1
       \q_recursion_tail \q_recursion_tail \q_recursion_stop
   }
 %    \end{macrocode}
@@ -8524,7 +8678,7 @@ and the derived file cooking-units.sty.
 %
     \tl_set:Nn \l_@@_tmpb_tl {#2}
     \tl_if_in:NVT \l_@@_tmpb_tl \g_@@_input_str_hash_one_tl 
-      { 
+      {
         \bool_if:NTF \l_@@_single_key_bool
           { \tl_replace_all:NVn \l_@@_tmpb_tl \g_@@_input_str_hash_one_tl { \l_@@_tmpa_fp } }
           {
@@ -8534,8 +8688,9 @@ and the derived file cooking-units.sty.
       }
     \@@_if_state_equal:nF { error }
       {
+        \int_incr:N \l_@@_nr_of_units_int
         \bool_if:NF \l_@@_single_key_bool
-          { \@@_tl_eval:Nn \l_@@_tmpb_tl { (\l_@@_tmpb_tl) * \l_@@_new_key_base_tl } }
+          { \@@_tl_eval:Nn \l_@@_tmpb_tl { (\l_@@_tmpb_tl) * (\l_@@_new_key_base_tl) } }
         \seq_if_in:NVF \l_@@_tmpa_seq \l_@@_option_unit_tl
           { \seq_put_right:NV \l_@@_tmpa_seq \l_@@_option_unit_tl }
         \prop_put:NnV \l_@@_tmpa_prop {#1} \l_@@_tmpb_tl
@@ -8587,7 +8742,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_new_cukeys_create_keys:n #1
   {
-    %% #1: original_unit
+%   % #1: original_unit
     \clist_set_from_seq:NN \l_@@_tmpa_clist \l_@@_tmpa_seq
     \bool_if:NTF \l_@@_single_key_bool
       { 
@@ -8632,7 +8787,6 @@ and the derived file cooking-units.sty.
           { \@@_change_unit_from_to:nVn {#1} \l_keys_choice_tl {#3} } ,
         #1 / unknown .code:n= 
           { 
-%            %% seq_use:N... as it needs to be expandable
             \seq_set_split:Nnn \l_tmpa_seq { , } {#2}
             \msg_error:nnxxx
               { cooking-units } 
@@ -8717,6 +8871,20 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_cukeys_calculate_change_value:nnn { VVV }
 %    \end{macrocode}
 % \end{macro}
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
 %
 %
 % \section {Creating New Units}
@@ -10101,8 +10269,9 @@ and the derived file cooking-units.sty.
 %
 %
 %    \begin{macrocode}
-\cudefinekeys { kg }
+\cudefinekeychain
   {
+    { kg } { 1 }
     { dag }{ 100 }
     { g }  { 1000 }
     { lb } { 1/0.45359237 } 
@@ -10110,6 +10279,15 @@ and the derived file cooking-units.sty.
     { stick } { 4/0.45359237 }
     { eVc-2 } { 560958865.0e+27 } %% (560958865.0 +- 3.5) e+27
   }
+%\cudefinekeys { kg }
+%  {
+%    { dag }{ 100 }
+%    { g }  { 1000 }
+%    { lb } { 1/0.45359237 } 
+%    { oz } { 16/0.45359237 } 
+%    { stick } { 4/0.45359237 }
+%    { eVc-2 } { 560958865.0e+27 } %% (560958865.0 +- 3.5) e+27
+%  }
 %    \end{macrocode}
 %    \begin{macrocode}
 \cudefinekeys { d }
@@ -10219,6 +10397,12 @@ and the derived file cooking-units.sty.
       } ,
     round-precision = 2 ,
   }
+  
+  
+%  \NewDocumentCommand \cudefinekeys { } { \cudefinekeys }
+  
+  
+  
 %\AtBeginDocument{
 %\keys_define:nn { cooking-units }
 %  {
