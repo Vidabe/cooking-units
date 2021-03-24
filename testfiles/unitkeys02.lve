@@ -1,0 +1,176 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+
+
+\cs_new:Npn \KeyChainExpecttion #1 #2#3#4#5
+  {
+    \MYTYPE {a} { \testcunum{#2}{U#1} }
+    \MYTYPE {b} { \testcunum{#3}{U#1} }
+    \MYTYPE {c} { \testcunum{#4}{U#1} }
+    \MYTYPE {d} { \testcunum{#5}{U#1} }
+  }
+\cs_new:Npn \KeyChainExpectionII #1 #2#3#4#5#6
+  {
+    \MYTYPE {a} { \testcunum{#2}{U#1} }
+    \MYTYPE {b} { \testcunum{#3}{U#1} }
+    \MYTYPE {c} { \testcunum{#4}{U#1} }
+    \MYTYPE {d} { \testcunum{#5}{U#1} }
+    \MYTYPE {e} { \testcunum{#6}{U#1} }
+  }
+\cs_new:Npn \KeyChainExpectionIII #1 #2#3#4#5#6#7
+  {
+    \MYTYPE {a} { \testcunum{#2}{U#1} }
+    \MYTYPE {b} { \testcunum{#3}{U#1} }
+    \MYTYPE {c} { \testcunum{#4}{U#1} }
+    \MYTYPE {d} { \testcunum{#5}{U#1} }
+    \MYTYPE {e} { \testcunum{#6}{U#1} }
+    \MYTYPE {f} { \testcunum{#7}{U#1} }
+  }
+\cs_new:Npn \KeyChainExpectionIV #1 #2#3#4#5#6#7#8
+  {
+    \MYTYPE {a} { \testcunum{#2}{U#1} }
+    \MYTYPE {b} { \testcunum{#3}{U#1} }
+    \MYTYPE {c} { \testcunum{#4}{U#1} }
+    \MYTYPE {d} { \testcunum{#5}{U#1} }
+    \MYTYPE {e} { \testcunum{#6}{U#1} }
+    \MYTYPE {f} { \testcunum{#7}{U#1} }
+    \MYTYPE {g} { \testcunum{#8}{U#1} }
+  }
+\cs_new:Npn \KeyChainExpectionV #1 #2#3#4#5#6#7#8#9
+  {
+    \MYTYPE {a} { \testcunum{#2}{U#1} }
+    \MYTYPE {b} { \testcunum{#3}{U#1} }
+    \MYTYPE {c} { \testcunum{#4}{U#1} }
+    \MYTYPE {d} { \testcunum{#5}{U#1} }
+    \MYTYPE {e} { \testcunum{#6}{U#1} }
+    \MYTYPE {f} { \testcunum{#7}{U#1} }
+    \MYTYPE {g} { \testcunum{#8}{U#1} }
+    \MYTYPE {h} { \testcunum{#9}{U#1} }
+  }
+
+
+\ExplSyntaxOff
+
+
+\newcookingunit{Ua}
+\newcookingunit{Ub}
+\newcookingunit{Uc}
+\newcookingunit{Ud}
+\newcookingunit{Ue}
+\newcookingunit{Uf}
+\newcookingunit{Ug}
+\newcookingunit{Uh}
+
+
+\cudefinekeychain
+  {
+    {Ua} { 18 }
+    {Ub} { 450 }
+    {Uc} { 1.8 }
+    {Ud} { 612 }
+  }
+
+
+
+\begin{document}
+
+\START
+
+\TEST{Key-Chain-Test}{
+  \KeyChainExpecttion {a} {1} {0.04} {10} {0.03}
+  \KeyChainExpecttion {b} {25}{1}{250}{0.74}
+  \KeyChainExpecttion {c} {0.1}{0}{1}{0}
+  \KeyChainExpecttion {d} {34}{1.36}{340}{1}
+}
+
+
+\cudefinekeychain
+  {
+    {Ub} { 2 }
+    {Uc} { 3 }
+    {Ua} { 1 }
+    {Ud} { 4 }
+    {Ue} { 5 }
+  }
+
+\TEST{Key-Chain-Test-Redefined}{
+  \KeyChainExpectionII {a} {1}{0.5}{0.33}{0.25}{0.2}
+  \KeyChainExpectionII {b} {2}{1}{0.67}{0.5}{0.4}
+  \KeyChainExpectionII {c} {3}{1.5}{1}{0.75}{0.6}
+  \KeyChainExpectionII {d} {4}{2}{1.33}{1}{0.8}
+  \KeyChainExpectionII {e} {5}{2.5}{1.67}{1.25}{1}
+}
+
+
+\cuaddtokeychain
+  {
+    {Uf} {246}
+    {Ub} { 2 }
+  }
+
+\TEST{Key-Chain-Test-Added}{
+  \KeyChainExpectionIII {a} {1}{0.5}{0.33}{0.25}{0.2}{0}
+  \KeyChainExpectionIII {b} {2}{1}{0.67}{0.5}{0.4}{0.01}
+  \KeyChainExpectionIII {c} {3}{1.5}{1}{0.75}{0.6}{0.01}
+  \KeyChainExpectionIII {d} {4}{2}{1.33}{1}{0.8}{0.02}
+  \KeyChainExpectionIII {e} {5}{2.5}{1.67}{1.25}{1}{0.02}
+  \KeyChainExpectionIII {f} {246}{123}{82}{61.5}{49.2}{1}
+}
+
+\cuaddtokeychain
+  {
+    {Uf} { 1 }
+    {Ug} {124}
+  }
+
+\TEST{Key-Chain-Test-Added-2}{
+  \KeyChainExpectionIV {a} {1}{0.5}{0.33}{0.25}{0.2}{0}{0}
+  \KeyChainExpectionIV {b} {2}{1}{0.67}{0.5}{0.4}{0.01}{0}
+  \KeyChainExpectionIV {c} {3}{1.5}{1}{0.75}{0.6}{0.01}{0}
+  \KeyChainExpectionIV {d} {4}{2}{1.33}{1}{0.8}{0.02}{0}
+  \KeyChainExpectionIV {e} {5}{2.5}{1.67}{1.25}{1}{0.02}{0}
+  \KeyChainExpectionIV {f} {246}{123}{82}{61.5}{49.2}{1}{0.01}
+  \KeyChainExpectionIV {g} {30504}{15252}{10168}{7626}{6100.8}{124}{1}
+}
+
+%\cuaddtokeys {Uc} {Uh} {9}
+\cuaddtokeychain
+  {
+    {Uc} { 9 }
+    {Uh} {1}
+  }
+
+\TEST{cuaddtokeys}{
+  \KeyChainExpectionV {a} {1}{0.5}{0.33}{0.25}{0.2}{0}{0}{3}
+  \KeyChainExpectionV {b} {2}{1}{0.67}{0.5}{0.4}{0.01}{0}{6}
+  \KeyChainExpectionV {c} {3}{1.5}{1}{0.75}{0.6}{0.01}{0}{9}
+  \KeyChainExpectionV {d} {4}{2}{1.33}{1}{0.8}{0.02}{0}{12}
+  \KeyChainExpectionV {e} {5}{2.5}{1.67}{1.25}{1}{0.02}{0}{15}
+  \KeyChainExpectionV {f} {246}{123}{82}{61.5}{49.2}{1}{0.01}{738}
+  \KeyChainExpectionV {g} {30504}{15252}{10168}{7626}{6100.8}{124}{1}{91512}
+  \KeyChainExpectionV {h} {0.33}{0.17}{0.11}{0.08}{0.07}{0}{0}{1}
+}
+
+
+
+\END
