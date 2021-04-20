@@ -219,6 +219,7 @@ and the derived file cooking-units.sty.
     cusetoptionfor, cuaddoptionfor, cuclearoptionfor,
     cudeclareunitgroup, cuaddtounitgroup, cuclearunitgroup ,
     cudefinekeys ,
+    , cudefinekeychain , cuaddtokeychain
   }
 
 \NewDocumentCommand \mycs { m }
@@ -1288,20 +1289,66 @@ and the derived file cooking-units.sty.
 %
 % \section{Defining options to change units}
 % \label{sec:defining-opt}
-% \cookingunitsCONTINUE
-% Options (to change units) can be newly defined or added to already existing keys (units)
+%
+%
+% \textcolor{red}{\textbf{A keychain has mutiple keys! Adding a key to a keychain allows you to "convert" each key into another key from the same chain!} for singlekeys, they just have one key which can unlock several "values". So key-chain and single key are good.}
+%
+% Options (to change units) can be newly defined or added to already existing ones
 % using
 % \begin{itemize}
-%   \item \mycs{cudefinekeys}
+%    \item \mycs{cudefinekeychain}
+%^^A   \item \mycs{cudefinekeys}
 %   \item \mycs{cudefinesinglekey}
-%   \item \mycs{cuaddkeys}
+%    \item \mycs{cuaddtokeychain}
+%^^A   \item \mycs{cuaddkeys}
 %   \item \mycs{cuaddsinglekeys}
-%   \item \mycs{cuaddtokeys}
+%^^A   \item \mycs{cuaddtokeys}
 % \end{itemize}
-% I apologize for the (name) inconsistency between \mycs{cudefinekeys} and
-% \mycs{cudefinesinglekey} (although they are named similarly, they work differently).
 %
-% \begin{function}{\cudefinekeys,\cudefinesinglekey}
+%
+% 
+% \begin{function}{\cudefinekeychain, \cudefinesinglekey }
+%    \begin{syntax}
+%      \mycs{cudefinekeychain}
+%      \ \ \{
+%     \ \ \ \ \marg{unit-key-1} \marg{value}
+%     \ \ \ \ \marg{unit-key-2} \marg{... unit-key-2 are \meta{value} unit-key-1}
+%     \ \ \ \ \marg{unit-key-3} \marg{... unit-key-3 are \meta{value} unit-key-1}
+%     \ \ \ \ \dots
+%      \ \ \}
+%
+%     \mycs{cudefinesinglekey}\marg{unit-key-1}
+%     \ \ \{
+%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-2 are \dots\ unit-key-1}
+%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-3 are \dots\ unit-key-1}
+%     \ \ \ \ \dots
+%     \ \ \}
+%    \end{syntax}
+%   If you define new units (see \cref{sec:def-units}) and cannot add
+%   them to already existing keys you may use
+%   \mycs{cudefinekeychain} or  \mycs{cudefinesinglekey}  respectively to
+%   define new key chains or single keys.
+%
+%  \mycs{cudefinekeychain} collects the unit-key's given and defines a key-chain.
+%  This allows you to change every unit into every other unit given in the list.
+%  So \marg{unit-key-1} can take \marg{unit-key-1}, \marg{unit-key-2}, \marg{unit-key-3},
+%  \dots\ as values; \marg{unit-key-2} can take \marg{unit-key-1}, \marg{unit-key-2}, 
+%  \marg{unit-key-3}, \dots\ as values, etc. Please note that \meta{\dots} has to
+%   be a number.
+%
+%   Sometimes it is not that easy and the conversion of one unit into
+%   another needs are more complicated formula (see for example
+%   temperatures).  If that is the case use
+%   \mycs{cudefinesinglekey}. As the name says it defines
+%   \emph{only} a single key \meta{unit-key-1} with the values
+%   \meta{unit-key-1}, \meta{unit-key-2}, etc. The advantage of this
+%   command is that now \meta{\dots} can be a formula and the
+%   numerical input of \mycs{cunum}, etc.\ can be placed explicitly using \texttt{\#1}.
+% \end{function}
+%
+%
+%
+% \begin{function}{cudefinekeys}
 %   \begin{syntax}
 %     \mycs{cudefinekeys}\marg{unit-key-1}
 %     \ \ \{
@@ -1310,42 +1357,21 @@ and the derived file cooking-units.sty.
 %     \ \ \ \ \marg{unit-key-4} \marg{$1$ unit-key-1 are \dots\ unit-key-4}
 %     \ \ \ \ \dots
 %     \ \ \}
-%    
-%     \mycs{cudefinesinglekey}\marg{unit-key-1}
-%     \ \ \{
-%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-2 are \dots\ unit-key-1}
-%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-3 are \dots\ unit-key-1}
-%     \ \ \ \ \dots
-%     \ \ \}
-%   \end{syntax}
+%  \end{syntax}
 %
-%   If you define new units (see \cref{sec:def-units}) and cannot add
-%   them to already existing keys you can use
-%   \lstinline|\cudefinekeys| or  \lstinline|\cudefinesinglekey|  respectively to
-%   define new keys.
+%   \emph{This command is going to be obsolete at one point. It is advised to use
+%     \mycs{cudefinekeychain} instead.}
 %
-%   \lstinline|\cudefinekeys| takes  \marg{unit-key-1} as a
+%   \mycs{cudefinekeys} takes  \marg{unit-key-1} as a
 %   \enquote{basis}, defines a key with the name \meta{unit-key-1} and
 %   adds the values \meta{unit-key-1}, \meta{unit-key-2},
 %   \meta{unit-key-3}, etc. Furthermore this command also defines the
 %   keys \meta{unit-key-2}, \meta{unit-key-3}, etc.  with the same
 %   values as \meta{unit-key-1}. Please note that \meta{\dots} has to
 %   be a number. 
-%  
-%   Sometimes it is not that easy and the conversion of one unit into
-%   another needs are more complicated formula (see for example
-%   temperatures).  If that is the case use
-%   \lstinline|\cudefinesinglekey|. As the name says it defines
-%   \emph{only} the key \meta{unit-key-1} with the values
-%   \meta{unit-key-1}, \meta{unit-key-2}, etc. The advantage of this
-%   command is that now \meta{\dots} can be a formula and the
-%   numerical input can be placed explicitly using \texttt{\#1}.
-%
-%
 % \end{function}
 %
 % \begin{cuexample}
-%
 % This example defines following keys with their respective value:
 % \begin{itemize}
 % \item the key \myunit{kg} with the values \myunit{kg}, \myunit{dag},
@@ -1356,8 +1382,6 @@ and the derived file cooking-units.sty.
 %   \myunit{g} and \myunit{oz}
 % \item the key \myunit{oz} with the values \myunit{kg}, \myunit{dag},
 %   \myunit{g} and \myunit{oz}
-% \item the key \myunit{d} with the values \myunit{d}, \myunit{h},
-%   \myunit{min} and \myunit{s}
 % \item \dots
 % \end{itemize}
 % \begin{align*}
@@ -1368,22 +1392,41 @@ and the derived file cooking-units.sty.
 %   \SI{1}{\kg}&= \SI{2.204 622 6}{\pound} 
 % \end{align*}
 % \begin{lstlisting}
-%  \cudefinekeys {kg} 
+%  \cudefinekeychain 
 %    {
+%      {kg} { 1 }
 %      {dag}{ 100 } %% 1 kg are 100 dag
 %      {g}  { 1000 } %% 1 kg are 1000 g
 %      {oz} { 35.27399 }  %% 1 kg are 35.27399 oz
 %      {lb} { 2.204 622 6 } %% 1 kg are  2.204 622 6 lb
 %    }
 %
-%  \cudefinekeys {d}
+%  \cudefinekeychain 
 %    {
+%      {d} { 1 }
 %      {h}  { 24 } %% 1 day are 24 hours
 %      {min}{ 1440 } %% 1 day are 1440 minutes
 %      {s}  { 86400 } %% 1 day are 86400 seconds
 %    }
 % \end{lstlisting}
+% \end{cuexample}
 %
+% \begin{cunote}
+%   The value of the first item can be something different from $1$. 
+%   So something like this is also possible:
+% \begin{lstlisting}
+%  \cudefinekeychain 
+%    {
+%      {kg} { 0.4535924 }
+%      {dag}{ 45.35924 } 
+%      {g}  { 453,5924 } 
+%      {oz} { 16 }  
+%      {lb} { 1 } 
+%    }
+% \end{lstlisting}
+% \end{cunote}
+%
+% \begin{cuexample}
 % To convert degree Fahrenheit to degree Celsius, kelvin and degree R\'eamur one 
 % needs the formulas\footnote{See Wikipedia.}
 % \begin{align*}
@@ -1394,7 +1437,7 @@ and the derived file cooking-units.sty.
 % with $T_F$ being the input temperature in degree Fahrenheit and
 % $T_C$ being the same temperature in degree Celsius, etc. Using
 % \lstinline|\cudefinesinglekey| the key \myunit{F} with values
-% \myunit{C}, \myunit{K} and \myunit{Re} is defined:
+% \myunit{C}, \myunit{K} and \myunit{Re} is defined by:
 % 
 % \begin{lstlisting}
 %  \cudefinesinglekey {F}
@@ -1412,14 +1455,13 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{function}{\cuaddkeys,\cuaddsinglekeys}
-%
+% \begin{function}{\cuaddtokeychain,\cuaddsinglekeys}
 %   \begin{syntax}
-%     \mycs{cuaddkeys}\marg{unit-key-1}
+%     \mycs{cuaddtokeychain}
 %     \ \ \{
-%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-1 are \dots\ unit-key-2}
-%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-1 are \dots\ unit-key-3}
-%     \ \ \ \ \marg{unit-key-4} \marg{$1$ unit-key-1 are \dots\ unit-key-4}
+%     \ \ \ \ \marg{unit-key-1} \marg{number}
+%     \ \ \ \ \marg{unit-key-2} \marg{... unit-key-2 are \meta{value} unit-key-1}
+%     \ \ \ \ \marg{unit-key-3} \marg{... unit-key-3 are \meta{value} unit-key-1}
 %     \ \ \ \ \dots
 %     \ \ \}
 %    
@@ -1431,26 +1473,25 @@ and the derived file cooking-units.sty.
 %     \ \ \}
 %   \end{syntax}
 %
-%   These commands add \meta{unit-key-2}, etc. to the already defined
-%   key \meta{unit-key-1}.
-%
-%   \lstinline|\cuaddkeys| takes the already defined key
-%   \marg{unit-key-1} as a \enquote{basis}, and adds
-%   \meta{unit-key-2}, \meta{unit-key-3}, etc. to its
-%   values. Furthermore it adds those new values to other keys linked
-%   to \meta{unit-key-1} and defines the new keys \meta{unit-key-2},
-%   etc.\ with the same values as \meta{unit-key-1}.
+%   \mycs{cuaddtokeychain} first parses through its unit-list and searches for
+%    a base unit key which is already in a key-chain 
+%    (aka.\ was defined by \mycs{cudefinekeychain}). The other units, not yet
+%    part of a key-chain, are added to the same key chain as the base unit.
+%    So the newly added units are available as a key and a value for the other
+%    units in the same key-chain. Note that \meta{...} must be a number.
 %  
 %  
 %   If the conversion is more complicated use
 %   \lstinline|\cuaddsinglekeys|.  It adds \meta{unit-key-2}, etc.\ as
 %   values to \meta{unit-key-1}.  The numerical input can be placed
-%   using \myunit{\#1} (see \lstinline|\cudefinesinglekey|).  This
-%   command neither defines new keys nor does it add values to other
-%   keys than \meta{unit-key-1}.
+%   using \myunit{\#1} (see \mycs{cudefinesinglekey}).  This
+%   command neither defines new keys nor does it add values to 
+%   keys other than \meta{unit-key-1}.
 %
 %
 % \end{function}
+%
+%
 %
 %
 % \begin{cuexample}
@@ -1464,10 +1505,11 @@ and the derived file cooking-units.sty.
 %   latter one.
 % \begin{lstlisting}
 %  \newcookingunit{st} %% defining new unit 'stone'
-%  \cuaddkeys{lb}  %% adding st to lb (could also add to kg, dag and oz)
-%    { 
-%      {st} { 1/14 }  %% 1 lb are 1/14 st as 14 lb are 1 st
-%    }        
+%  \cuaddtokeychain
+%    {
+%      {lb} { 14 } %% unit already in a key-chain.
+%      {st} { 1 } %% new unit. 1st = 14lb
+%    }
 % \end{lstlisting}
 % \begin{cuexamplecode}
 % \cunum[lb=st]{1}{lb} \\
@@ -1479,6 +1521,17 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 % \end{cuexample}
 %
+% \begin{cunote}
+% Of course using
+% \begin{lstlisting}
+%  \cuaddtokeychain
+%    {
+%      {st} { 1/14 } %% 1lb = 1/14st
+%      {lb} { 1 } %% unit already in a key-chain.
+%    }
+% \end{lstlisting}
+% is also possible
+% \end{cunote}
 %
 % \begin{cuexample}
 %   Now you want to add degree R{\o}mer and convert Celsius to degree
@@ -1490,14 +1543,11 @@ and the derived file cooking-units.sty.
 % \begin{lstlisting}
 %  %% defining new unit 'degree R{\o}mer'
 %  \newcookingunit [\ensuremath{ {} ^ { \circ } }\kern-\scriptspace R{\o}] {Ro} 
-%  \cuaddsinglekeys {C} %% adds value 'Ro' to 'C'.
+%  \cuaddsinglekeys {C} %% adds value 'Ro' to key 'C'.
 %    {
 %      {Ro} { #1 * 21/40 + 7.5 }
 %    }
-%  \cusetup %% round to integer automatically
-%    {
-%      set-option-for-Ro = { round-precision = 0 }
-%    }
+%  \cusetoptionfor{Ro}{ round-precision = 0 } %% round to integer automatically
 % \end{lstlisting}
 % \begin{cuexamplecode}
 % \cunum{10}{C} \\
@@ -1513,12 +1563,33 @@ and the derived file cooking-units.sty.
 %
 %
 %
+%  
 %
 %
-% \begin{function}{\cuaddtokeys}
+% \begin{function}{\cuaddkeys,\cuaddtokeys}
 %   \begin{syntax}
+%     \mycs{cuaddkeys}\marg{unit-key-1}
+%     \ \ \{
+%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-1 are \dots\ unit-key-2}
+%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-1 are \dots\ unit-key-3}
+%     \ \ \ \ \marg{unit-key-4} \marg{$1$ unit-key-1 are \dots\ unit-key-4}
+%     \ \ \ \ \dots
+%     \ \ \}
+%
 %     \mycs{cuaddtokeys} \marg{unit-key-1} \marg{unit-key-2} \marg{$1$ unit-key-2 are \dots\ unit-key-1}
 %   \end{syntax}
+%
+%   \emph{Those commands are going to be obsolete at one point. It is advised to use
+%     \mycs{cuaddtokeychain} instead.}
+%
+%
+%   \lstinline|\cuaddkeys| takes the already defined key
+%   \marg{unit-key-1} as a \enquote{basis}, and adds
+%   \meta{unit-key-2}, \meta{unit-key-3}, etc. to its
+%   values. Furthermore it adds those new values to other keys linked
+%   to \meta{unit-key-1} and defines the new keys \meta{unit-key-2},
+%   etc.\ with the same values as \meta{unit-key-1}.
+%
 %   Works similar to \mycs{cuaddkeys} regarding the definition of keys.
 % \end{function}
 %
@@ -1554,6 +1625,8 @@ and the derived file cooking-units.sty.
 %
 % \section{Language support}
 % \label{sec:language}
+%
+% \CONTINUE
 %
 % Unit names and symbols depend on the language.  To change the
 % name and symbol for given language you can use \lstinline|\cudefinename|;
@@ -4057,7 +4130,8 @@ and the derived file cooking-units.sty.
 %
 %
 % \begin{macro}{\l_@@_nr_of_units_int, \l_@@_depth_int}
-%   Also some variables used in \mycs{declarecookingderivatives}.
+%   Also some variables used in \mycs{declarecookingderivatives}. (And for one check during
+%   definitions of keys).
 %    \begin{macrocode}
 \int_new:N \l_@@_nr_of_units_int
 \int_new:N \l_@@_depth_int
@@ -5716,7 +5790,7 @@ and the derived file cooking-units.sty.
           { \tl_map_break:n { \bool_set_false:N \l_@@_tmpa_bool } }
       }
     \bool_if:NTF \l_@@_tmpa_bool 
-      { \prg_return_true:  }
+      { \prg_return_true: }
       { \prg_return_false: }
   }
 %    \end{macrocode}
