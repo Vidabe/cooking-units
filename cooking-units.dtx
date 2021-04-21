@@ -1225,7 +1225,8 @@ and the derived file cooking-units.sty.
 %   
 %   \opt{symbol} allows you to set the printed symbol of the unit. A similar effect can be
 %    achieved by just using the optional argument. Use this option if you want to
-%    use other keys during the definition.
+%    use other keys during the definition. This symbol is used as a fallback for all
+%    langauges, if no explicit symbol is found for said langauge.
 %
 %    \opt{gender} sets the gender of the unit (default ist |m|).  Allowed is |m|, |f| or |n|.
 %    Note that this sets the default gender for all languages.
@@ -1331,9 +1332,9 @@ and the derived file cooking-units.sty.
 %
 %  \mycs{cudefinekeychain} collects the unit-key's given and defines a key-chain.
 %  This allows you to change every unit into every other unit given in the list.
-%  So \marg{unit-key-1} can take \marg{unit-key-1}, \marg{unit-key-2}, \marg{unit-key-3},
-%  \dots\ as values; \marg{unit-key-2} can take \marg{unit-key-1}, \marg{unit-key-2}, 
-%  \marg{unit-key-3}, \dots\ as values, etc. Please note that \meta{\dots} has to
+%  So \meta{unit-key-1} can take \meta{unit-key-1}, \meta{unit-key-2}, \meta{unit-key-3},
+%  \dots\ as values; \meta{unit-key-2} can take \meta{unit-key-1}, \meta{unit-key-2}, 
+%  \meta{unit-key-3}, \dots\ as values, etc. Please note that \meta{\dots} has to
 %   be a number.
 %
 %   Sometimes it is not that easy and the conversion of one unit into
@@ -1626,7 +1627,6 @@ and the derived file cooking-units.sty.
 % \section{Language support}
 % \label{sec:language}
 %
-% \CONTINUE
 %
 % Unit names and symbols depend on the language.  To change the
 % name and symbol for given language you can use \lstinline|\cudefinename|;
@@ -1648,11 +1648,10 @@ and the derived file cooking-units.sty.
 %   you may also use the keys \opt{one(m)}, \opt{one(f)} and
 %   \opt{one(n)}. Integers below a certain
 %   value (see option \opt{use-numerals-below}) are written-out. The
-%   only problem is the written-out \enquote{1} mostly depends on the
+%   problem is that the written-out \enquote{1}  depends on the
 %   gender of the word following (e.g. \enquote{ein Baum} (m),
-%   \enquote{eine Pflanze} (f) and \enquote{ein Auto} (n)). To set the
-%   written-out \enquote{1} to be correct with the gender of the used unit, use
-%   these keys (see also examples below)
+%   \enquote{eine Pflanze} (f) and \enquote{ein Auto} (n)). Use those keys
+%   to set the specific gender of \enquote{1} (see also examples below).
 % \end{function}
 %
 % \begin{function}{\cudefinename}
@@ -1678,7 +1677,7 @@ and the derived file cooking-units.sty.
 %   \lstinline|\Cutext| is equal to $1$.
 %
 %   \meta{gender} can be \texttt{m} (maskulin), \texttt{f} (feminin) or
-%   \texttt{n} (neutrum). If not given \texttt{m} is used as default.
+%   \texttt{n} (neutrum). If not given, \texttt{m} is used as default.
 % \end{function}
 %
 % \begin{lstlisting}
@@ -1797,7 +1796,7 @@ and the derived file cooking-units.sty.
 %
 % Each language has synonyms for certain (integer) numbers. This package
 % supports those phrases and they can be implemented with the following
-% command and used by \mycs{cuam}:
+% command to be used by \mycs{cuam}:
 %
 % \begin{function}{\cudefinephrase}
 %   \begin{syntax}
@@ -1811,11 +1810,12 @@ and the derived file cooking-units.sty.
 %   
 %   This command pairs for a given \marg{Language} (see package \pkg{translations})
 %   the number \marg{integer-1}
-%   with \marg{phrase-1} (\& plural and gender). The package then checks if the amount
+%   with \marg{phrase-1} (\& \meta{phrase-1-plural} and \meta{gender-1}). 
+%   Afterwards the package can check if an amount
 %   given in \mycs{cuam} is either this number or a \emph{multiple} of it.
 %
 %   If the behavior of checking for a multiple is not wanted, you can use the optional
-%   star \texttt{*} for a given \marg{integer}
+%   star \texttt{*}.
 %
 %   \meta{gender} can be \opt{m}, \opt{f} or \opt{n}. It is \opt{m} by default.
 %   
@@ -1823,9 +1823,6 @@ and the derived file cooking-units.sty.
 %   the phrase with the highest number is used (if used at all).
 %
 %   Furthermore, it chooses star (|*|) phrases over non-star phrases.   
-%   \begin{cunote}
-%     Numbers with the optional star |*| are stored as negative numbers. 
-%   \end{cunote}
 % \end{function}
 % \begin{cuexample}
 %   The following example creates some phrases for the language
