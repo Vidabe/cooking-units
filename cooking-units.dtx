@@ -1853,8 +1853,10 @@ and the derived file cooking-units.sty.
 %     \cusetup{use-phrases=true} @
 %     \cuam{12} \\
 %     \cuam{24} \\
+%     \cuam{25} \\
 %     \cuam{60} \\
 %     \cuam{120} \\
+%     \cuam{121} \\
 %     \cuam{6} \\
 %     \cuam{18} 
 %   \end{cuexamplecode}
@@ -5273,6 +5275,19 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
+% Error message for an undefined key.
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { Key-chain-unit-not-found } 
+  { 
+    It \ appears \ that \ \token_to_str:N \cuaddtokeychain\  was \ not \ able \ to \ find
+    a \ key-chain-unit. Define \ key-chains \ first \ using \token_to_str:N \cudefinekeychain.
+  } 
+  { 
+    No \ key-chain-unit\ was \ found, \ perhaps \ you  \ misspelled \ it?
+    \msg_see_documentation_text:n {cooking-units} 
+  }
+%    \end{macrocode}
+%
 % If the temperature is too low print this error message.
 % Now prints all units for which a zero-point is defined.
 %    \begin{macrocode}
@@ -5783,13 +5798,12 @@ and the derived file cooking-units.sty.
   {
     \tl_concat:NNN \l_@@_tmpa_tl
       \l_@@_input_digits_tl \l_@@_allwed_integer_math_operators_tl
-    \bool_set_true:N \l_@@_tmpa_bool
     \tl_map_inline:nn {#1}
       {
         \tl_if_in:NnF \l_@@_tmpa_tl {##1}
-          { \tl_map_break:n { \bool_set_false:N \l_@@_tmpa_bool } }
+          { \tl_map_break:n { \use_iii:nnn } }
       }
-    \bool_if:NTF \l_@@_tmpa_bool 
+    \use_i:nn 
       { \prg_return_true: }
       { \prg_return_false: }
   }
@@ -8248,7 +8262,7 @@ and the derived file cooking-units.sty.
             \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_tl } = {#1}
               {
                 \tl_set_eq:NN #2 \l_tmpa_tl
-                \tl_set:Nf #3 { \int_abs:n {##1} }
+                \tl_set:Nn #3 {##1}
                 \bool_set_true:N \l_@@_lokal_phrase_bool
                 \seq_map_break:
               }
@@ -8259,9 +8273,9 @@ and the derived file cooking-units.sty.
   {
     \int_set:Nn \l_tmpa_int 
       { 
-        \int_div_truncate:nn {#1} { \l_@@_phrase_number_tl } 
+        \int_div_truncate:nn {#1} { \int_abs:n {\l_@@_phrase_number_tl } } 
       }
-    \int_compare:nNnTF { \l_@@_phrase_number_tl * \l_tmpa_int } = {#1}
+    \int_compare:nNnTF { \int_abs:n {\l_@@_phrase_number_tl} * \l_tmpa_int } = {#1}
       {
         \int_set_eq:NN #2 \l_tmpa_int
         \bool_set_true:N \l_@@_lokal_phrase_bool
@@ -8647,7 +8661,7 @@ and the derived file cooking-units.sty.
   {
     \quark_if_recursion_tail_stop_do:nn {#1}
       {
-        \tl_show:n { Error-no-unit-found }
+        \msg_error:nn { cooking-units } { Key-chain-unit-not-found }
         \@@_set_state_to:n { error }
       }
     \quark_if_recursion_tail_stop_do:nn {#2} 
@@ -9714,7 +9728,7 @@ and the derived file cooking-units.sty.
             \int_set:Nn \l_@@_tmpa_int {#1}   
             \tl_set:NV \l_@@_curr_unit_tl \l_@@_tmpa_int
             \bool_if:NT \l_@@_tmpa_bool
-              { \tl_put_left:Nn \l_@@_tmpa_bool { - } }    
+              { \tl_put_left:Nn \l_@@_curr_unit_tl { - } }    
           }{
             \@@_set_state_to:n { error } 
             \msg_error:nnn { cooking-units} { phrase-unit-not-an-integer } {#1}
