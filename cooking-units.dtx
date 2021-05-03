@@ -220,6 +220,7 @@ and the derived file cooking-units.sty.
     cudeclareunitgroup, cuaddtounitgroup, cuclearunitgroup ,
     cudefinekeys ,
     , cudefinekeychain , cuaddtokeychain
+    , cudeclareunitgroup
   }
 
 \NewDocumentCommand \mycs { m }
@@ -297,6 +298,7 @@ and the derived file cooking-units.sty.
         \char_set_catcode_other:N \} %
         \char_set_catcode_other:N \_ %
         \char_set_catcode_other:N \~ %
+%        \char_set_catcode_other:N \# %
       }
       { \BODY }
     \tl_map_inline:Nn \l_tmpa_tl
@@ -320,9 +322,8 @@ and the derived file cooking-units.sty.
                       {
                         \token_if_parameter:NTF ##1
                           { 
-                           \int_incr:N \l_tmpa_int
                             \int_compare:nNnTF { \l_tmpa_int } = { 0 }
-                              { \c_hash_str }
+                              { \c_hash_str \int_incr:N \l_tmpa_int }
                               { \int_zero:N \l_tmpa_int }
                           }
                           { ##1 {} }
@@ -407,7 +408,7 @@ and the derived file cooking-units.sty.
   }
 \cs_new_eq:NN \__table_default_midrule: \__table_midrule:
 
-\cs_new:Npn \_cook_use:n #1
+\cs_new:Npn \__cu_use:n #1
   { \cs_if_exist_use:cF { __cookingunits_#1 } {\ERRORcommandNOTexist} }
 
 \NewDocumentCommand \CreateTableForLanguages { s >{\TrimSpaces} m }
@@ -416,8 +417,8 @@ and the derived file cooking-units.sty.
       { \clist_gset_eq:NN \l_tmpa_clist \l_list_of_textunits_clist }
       { \clist_gset_eq:NN \l_tmpa_clist \l_list_of_units_clist }
     \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
-%    \CreateTableHeader {#2} 
-%    \CreateTableRow {#2} 
+    \CreateTableHeader {#2} 
+    \CreateTableRow {#2} 
   }
 
 \NewDocumentCommand \CreateTableHeader { m }
@@ -435,60 +436,68 @@ and the derived file cooking-units.sty.
             { THEEND } { \\ \bottomrule }
           }{
             \__table_midrule:
-            \texttt{##1}
-               & 
-                 \clist_if_in:NnTF \l_list_of_textunits_clist {##1}
-                   { \l_translation_does_not_exist_tl }
-                   { 
-                     \_cook_use:n { translate_let:nNnV } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_unit_tl 
-                     \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
-                       { \l_translation_does_not_exist_tl }
-                       { \l_tmpa_tl }
-                   }
-               & 
-               \_cook_use:n { translate_let:nNnV } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_name_tl 
-               \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
-                 { \l_translation_does_not_exist_tl }
-                 { \l_tmpa_tl }
-               & 
-               \_cook_use:n { translate_let:nNnV } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_name_tl 
-               \_cook_use:n { translate_let:nNnV } {#1} \l_tmpb_tl {##1} \c__cookingunits_postfix_name_pl_tl 
-               \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
-                 { 
-                   \tl_if_in:NnTF \l_tmpb_tl \q__cookingunits_no_translation
-                     { \l_translation_does_not_exist_tl  }
-                     { (\l_tmpb_tl)  }
-                 }
-               &
-               \_cook_use:n { translate_let:nNnV } {#1} \l_tmpa_tl {##1} \c__cookingunits_postfix_gender_tl 
-               \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
-                 { \l_translation_does_not_exist_tl }
-                 { \l_tmpa_tl }
+            \__cookingunits_doc_print_table_row:nn {#1} {##1}
           }
       } 
   }
 
+\cs_new:Npn \__cookingunits_doc_print_table_row:nn #1#2
+  {
+    \texttt{#2}
+    & 
+    \clist_if_in:NnTF \l_list_of_textunits_clist {#2}
+      { \l_translation_does_not_exist_tl }
+      { 
+        \__cu_use:n { culang_let_for:nnnN } {#1} { unit-symbol } {#2} \l_tmpa_tl
+        \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+          { \l_translation_does_not_exist_tl }
+          { \l_tmpa_tl }
+      }
+    & 
+    \__cu_use:n { culang_let_for:nnnN } {#1} { name } {#2} \l_tmpa_tl
+    \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+      { \l_translation_does_not_exist_tl }
+      { \l_tmpa_tl }
+    & 
+    \__cu_use:n { culang_let_for:nnnN } {#1} { name } {#2} \l_tmpa_tl
+    \__cu_use:n { culang_let_for:nnnN } {#1} { name-pl } {#2} \l_tmpb_tl
+    \str_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
+      { 
+        \tl_if_in:NnTF \l_tmpb_tl \q__cookingunits_no_translation
+          { \l_translation_does_not_exist_tl }
+          { (\l_tmpb_tl) }
+      }
+    &
+    \__cu_use:n { culang_let_for:nnnN } {#1} { gender } {#2} \l_tmpa_tl
+    \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+      { \l_translation_does_not_exist_tl }
+      { \l_tmpa_tl }
+  }
+
 \NewDocumentCommand \CreateTableForPhrases { >{\TrimSpaces}  m }
   {
-%    \tl_set:Nn \l_tmpa_tl {#1}
-%    \__cookingunits_phrase_list_get_for:NNTF \l_tmpa_prop \l_tmpa_tl
-%      { 
-%          \__cookingunits_translate_let:VNnV \l_tmpa_tl \l_tmpa_seq 
-%            { phrase-clist } \c__cookingunits_postfix_phrase_tl
-%      }
-%      { \ERRORCreateTable }
-%    \seq_gput_right:Nn \l_tmpa_seq { THEEND }
-%    \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
-%        \begin{tabular}{ l l l l l }
-%          \toprule 
-%          \meta{Phrase-key} &  phrase & (plural) & gender 
-%          \CreatePhraseTableRow {#1} 
-%        \end{tabular}
+    \seq_clear:N \l_tmpa_seq
+    \__cu_use:n { culang_let_for:nnnN } {#1} { phrase } { phrase-prop } \l_tmpa_prop
+    \prop_if_exist:NTF \l_tmpa_prop
+      {
+        \tl_if_eq:NNTF \q__cooking_units_no_translation \l_tmpa_prop
+          { \ERRORCreateTablePhraseII }
+          {
+            \prop_get:NnN \l_tmpa_prop { seq } \l_tmpa_seq
+          }
+      }
+      { \ERRORCreateTablePhraseI }
+    \seq_gput_right:Nn \l_tmpa_seq { THEEND }
+    \cs_gset_eq:NN \__table_midrule: \__table_default_midrule:
+    \begin{tabular}{ l l l l l }
+      \toprule 
+      \meta{Phrase-key} &  phrase & (plural) & gender 
+          \CreatePhraseTableRow {#1} 
+    \end{tabular}
   }
 
 \NewDocumentCommand \CreatePhraseTableRow { m }
   {
-%    \tl_show:n { Fix Phrase Table }
     \seq_map_inline:Nn \l_tmpa_seq
       { 
         \str_case:nnF {##1}
@@ -498,16 +507,15 @@ and the derived file cooking-units.sty.
           }{
             \__table_midrule:
             ##1
-               & 
-                 \prop_get:NnN \l__cookingunits_phrase_prop {##1} \l_tmpa_tl
-                 \tl_gset:NV \l_tmpa_tl \l_tmpa_tl %% Damit global
-                 \l_tmpa_tl
-               & 
-                 \prop_get:NnN \l__cookingunits_phrase_prop {##1-pl} \l_tmpb_tl
-                 \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl { \l_tmpb_tl }
-               &
-            \__cookingunits_translate_let:nNnV {#1} 
-              \l_tmpa_tl { ##1 -phrase-gender } \c__cookingunits_postfix_gender_tl
+            & 
+              \prop_get:NnN \l_tmpa_prop {##1} \l_tmpa_tl
+              \tl_gset:NV \l_tmpa_tl \l_tmpa_tl %% Damit global
+              \l_tmpa_tl
+            & 
+              \prop_get:NnN \l_tmpa_prop {##1-pl} \l_tmpb_tl
+              \tl_if_eq:NNF \l_tmpa_tl \l_tmpb_tl { \l_tmpb_tl }
+            &
+            \prop_get:NnN \l_tmpa_prop {##1-gender} \l_tmpa_tl
                \l_tmpa_tl
           }
       }
@@ -585,6 +593,9 @@ and the derived file cooking-units.sty.
         curef,
         cudefinephrase,
         declarecookingderivatives,
+        , cudefinekeychain
+        , cuaddtokeychain
+        , cudeclareunitgroup
       }
   }
 
@@ -817,7 +828,6 @@ and the derived file cooking-units.sty.
 % \tableofcontents
 %
 % \section{Introduction}
-% \cookingunitsChecked
 %
 % While writing on a cookery book I used -- for some reasons whatsoever --
 % three different units for weight: kilogram (kg), gram (g) and
@@ -835,7 +845,6 @@ and the derived file cooking-units.sty.
 %
 %
 % \subsection{Supported languages}
-% \cookingunitsChecked
 % \begin{itemize}
 %  \item German
 %  \item English
@@ -847,7 +856,7 @@ and the derived file cooking-units.sty.
 %
 % \section {The Commands}
 % \label{sec:commands}
-% \cookingunitsChecked
+% 
 %
 % This package offers the following commands for unit printing (and
 % converting):
@@ -983,7 +992,7 @@ and the derived file cooking-units.sty.
 %
 % \section{Label \& refs: Changing the amount of the recipe}
 % \label{sec:labeletref}
-% \cookingunitsChecked
+% 
 %
 % What if you don't want to change units, but the amounts of the recipe because
 % you cook not for 4 persons, but for 2 and don't like to do the math? 
@@ -1049,7 +1058,7 @@ and the derived file cooking-units.sty.
 %
 %
 %\subsection{Rounding temperatures}
-% \cookingunitsChecked
+% 
 %
 % By default temperatures are rounded to integers (using \opt{round-precision=0}).
 % Since v1.30 it is possible to round amounts to a negative precision. 
@@ -1070,7 +1079,7 @@ and the derived file cooking-units.sty.
 %
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
-% \cookingunitsChecked
+% 
 %
 %
 % In \cref{tab:def-units} and you can find all predefined units which can be
@@ -1162,7 +1171,7 @@ and the derived file cooking-units.sty.
 %
 % \section{Defining units}
 % \label{sec:def-units}
-% \cookingunitsChecked
+% 
 %
 % New units can be defined using 
 % \begin{itemize}
@@ -2033,7 +2042,7 @@ and the derived file cooking-units.sty.
 %     \mycs{cudeclareunitgroup} \marg{group-name} \marg{unit-list}
 %   \end{syntax}
 %   Defines the group \meta{group-name} containing the list \meta{unit-list}.
-%   This allows the usage of |\meta{group-name}=\meta{unit-key}| to
+%   This allows the usage of \texttt{\meta{group-name}=\meta{unit-key}} to
 %   change all units in the group \meta{group-name} to \meta{unit-key}
 %   (which has to be part of \meta{unit-list}).
 % \end{function}
@@ -2079,33 +2088,34 @@ and the derived file cooking-units.sty.
 %     \    \dots 
 %     \  \}
 %  \end{syntax}
+%  \emph{This option is going to be obsolete at one point.}
 %  Adds each \meta{unit-key} in \meta{unit-keys-list} to \meta{group}.
 % The key-val equivalent of \mycs{cuaddtounitgroup}.
 % \end{function}
-% \begin{cuexample}
-% The same as above: 
-%   This example adds the unit \myunit{st} to the group \mygroup{weight}
-%   and \myunit{Ro} to \mygroup{temperature}.
-% \begin{lstlisting}
-%  \cusetup 
-%    { 
-%      add-unit-to-group = { weight = {st} , temperature = {Ro} }
-%    }
-% \end{lstlisting}
-%
-%  \cusetup{ add-unit-to-group = { weight = {st} } }
-%
-% \begin{cuexamplecode}
-%  \cusetup{weight=g} @
-%  \cunum{1}{kg} \\
-%  \cunum{1}{dag} \\
-%  \cunum{1}{g} \\
-%  \cunum{1}{oz} \\
-%  \cunum{1}{lb} \\
-%  \cunum{1}{stick} \\
-%  \cunum{1}{st} 
-% \end{cuexamplecode}
-% \end{cuexample}
+%^^A \begin{cuexample}
+%^^A The same as above: 
+%^^A   This example adds the unit \myunit{st} to the group \mygroup{weight}
+%^^A   and \myunit{Ro} to \mygroup{temperature}.
+%^^A \begin{lstlisting}
+%^^A  \cusetup 
+%^^A    { 
+%^^A      add-unit-to-group = { weight = {st} , temperature = {Ro} }
+%^^A    }
+% ^^A\end{lstlisting}
+%^^A
+%^^A  \cusetup{ add-unit-to-group = { weight = {st} } }
+%^^A
+%^^A \begin{cuexamplecode}
+%^^A  \cusetup{weight=g} @
+%^^A  \cunum{1}{kg} \\
+%^^A  \cunum{1}{dag} \\
+%^^A  \cunum{1}{g} \\
+%^^A  \cunum{1}{oz} \\
+%^^A  \cunum{1}{lb} \\
+%^^A  \cunum{1}{stick} \\
+%^^A  \cunum{1}{st} 
+%^^A \end{cuexamplecode}
+%^^A \end{cuexample}
 %
 %
 % 
@@ -2114,6 +2124,7 @@ and the derived file cooking-units.sty.
 %     set-option-for-\meta{unit-key} = \marg{ key1 = value1, \dots\ }
 %     add-option-for-\meta{unit-key} = \marg{ key1 = value1, \dots\ }
 %  \end{syntax}
+%  \emph{This option is going to be obsolete at one point.}
 %  Sets and adds \meta{key1=value1,\dots} to a specific
 %  \meta{unit-key},
 %  \opt{erase-all-options} (see below) is used to erase all options for all
@@ -2136,24 +2147,23 @@ and the derived file cooking-units.sty.
 %  
 % \end{function}
 % 
-% \begin{cuexample}
-%  The following rounds the values to integers for \myunit{F}, \myunit{C}, 
-%  \myunit{K} and \myunit{Re}:
-% \begin{lstlisting}
-%  \cusetup 
-%    { 
-%      set-option-for-F  = { round-precision = 0 } ,
-%      set-option-for-C  = { round-precision = 0 } ,
-%      set-option-for-K  = { round-precision = 0 } ,
-%      set-option-for-Re = { round-precision = 0 } 
-%    }
-% \end{lstlisting}
-% although note that it would be easier to simply write
-% \begin{lstlisting}
-%  \cusetoptionfor {F,C,K,Re} { round-precision = 0 } 
-% \end{lstlisting}
-%
-% \end{cuexample}
+%^^A \begin{cuexample}
+%^^A  The following rounds the values to integers for \myunit{F}, \myunit{C}, 
+%^^A  \myunit{K} and \myunit{Re}:
+%^^A \begin{lstlisting}
+%^^A  \cusetup 
+%^^A    { 
+%^^A      set-option-for-F  = { round-precision = 0 } ,
+%^^A      set-option-for-C  = { round-precision = 0 } ,
+%^^A      set-option-for-K  = { round-precision = 0 } ,
+%^^A      set-option-for-Re = { round-precision = 0 } 
+%^^A    }
+%^^A \end{lstlisting}
+%^^A although note that it would be easier to simply write
+%^^A \begin{lstlisting}
+%^^A  \cusetoptionfor {F,C,K,Re} { round-precision = 0 } 
+%^^A \end{lstlisting}
+%^^A \end{cuexample}
 %
 %
 % \begin{function}{set-option-for, add-option-for}
@@ -2171,6 +2181,7 @@ and the derived file cooking-units.sty.
 %     \    \dots
 %     \  \}
 %  \end{syntax}
+%  \emph{This option is going to be obsolete at one point.}
 %  Sets/adds each \meta{keys=vals} to the specific \meta{unit-key}. Works pretty much
 %  the same way their \opt{set-option-for-\meta{unit-key}} and
 % \opt{add-option-for-\meta{unit-key}} counterparts.
@@ -2179,27 +2190,28 @@ and the derived file cooking-units.sty.
 % \mycs{cuaddoptionfor}.
 % \end{function}
 %
-% \begin{cuexample}
-% The following example does the same as the example above: 
-% \begin{lstlisting}
-%  \cusetup 
-%    { 
-%      set-option-for = 
-%        { 
-%          F  = { round-precision = 0 } ,
-%          C  = { round-precision = 0 } ,
-%          K  = { round-precision = 0 } ,
-%          Re = { round-precision = 0 }
-%        }
-%    }
-% \end{lstlisting}
-% \end{cuexample}
+%^^A \begin{cuexample}
+%^^A The following example does the same as the example above: 
+%^^A \begin{lstlisting}
+%^^A  \cusetup 
+%^^A    { 
+%^^A      set-option-for = 
+%^^A        { 
+%^^A          F  = { round-precision = 0 } ,
+%^^A          C  = { round-precision = 0 } ,
+%^^A          K  = { round-precision = 0 } ,
+%^^A          Re = { round-precision = 0 }
+%^^A        }
+%^^A    }
+%^^A \end{lstlisting}
+%^^A \end{cuexample}
 %
 % \begin{function}{erase-all-options, erase-all-options-for}
 %   \begin{syntax}
 %     erase-all-options
 %     erase-all-options-for = \marg{unit-key1, unit-key2, \dots}
 %   \end{syntax}
+%  \emph{This option is going to be obsolete at one point.}
 %   Erase options added to units. \opt{erase-all-options} erases all options
 %   for \emph{all} \meta{unit-key}s.
 %
@@ -2211,18 +2223,18 @@ and the derived file cooking-units.sty.
 %
 % \end{function}
 %
-% \begin{cuexample}
-%  The following code erases all attached options from \myunit{C}, \myunit{F}, 
-%  \myunit{K} and \myunit{Re}:
-%
-%   \begin{lstlisting}
-%     \cusetup{ erase-all-options-for = {C, F, K, Re} }
-%   \end{lstlisting}
-%  It's the same as
-%   \begin{lstlisting}
-%     \cuclearoptionfor {C, F, K, Re}
-%   \end{lstlisting}
-% \end{cuexample}
+%^^A \begin{cuexample}
+%^^A  The following code erases all attached options from \myunit{C}, \myunit{F}, 
+%^^A  \myunit{K} and \myunit{Re}:
+%^^A
+%^^A   \begin{lstlisting}
+%^^A     \cusetup{ erase-all-options-for = {C, F, K, Re} }
+%^^A   \end{lstlisting}
+%^^A  It's the same as
+%^^A   \begin{lstlisting}
+%^^A     \cuclearoptionfor {C, F, K, Re}
+%^^A   \end{lstlisting}
+%^^A \end{cuexample}
 %
 %
 %
@@ -2384,7 +2396,8 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     set-cutext-translation-message = \meta{error/warning/none}
 %   \end{syntax}
-%   If a translation for \cCutext\ is not available the commands are replaced
+%   If a translation for \cCutext\ is not available for the language,
+%   the commands are replaced
 %   by \mycs{cunum}. Currently -- if this is happening -- a warning is shown,
 %  you may change the behavior of the message (error, warning or not showing at all)
 %  using this option.
@@ -2402,7 +2415,7 @@ and the derived file cooking-units.sty.
 %  is automatically set to \true.
 %
 %  If you want to use another package, just set this option to \true\ and
-%  use \opt{numeral-function} and \opt{Numeral-function}.
+%  use \opt{numeral-function} and \opt{Numeral-function}).
 % 
 %^^A   If the package option \opt{use-fmtcount-numerals} is set to \true\ you can
 %^^A   deactivate the printing of numerals by setting \opt{print-numerals} to 
@@ -2515,7 +2528,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{function}{range-sign}
+% \begin{function}{range-sign, cunum-range-sign, cutext-range-sign}
 %   \begin{syntax}
 %     range-sign = \marg{string}
 %     cunum-range-sign = \marg{string}
@@ -2531,7 +2544,7 @@ and the derived file cooking-units.sty.
 %  The default for \meta{string} is \texttt{-{}-} (for both).
 % \end{function}
 %
-% Since version 1.45 there also exits the language symbol \opt{cutext-range-sign}
+% Since version 1.45 there also exists the language symbol \opt{cutext-range-sign}
 % (see \cref{sec:language}). If the \emph{option} \opt{cutext-range-sign} is set
 % the language symbol will be ignored.
 %
@@ -2600,8 +2613,7 @@ and the derived file cooking-units.sty.
 %  \end{syntax}
 %  Rounds the amount automatically to \meta{integer} digits after the
 %  colon.  Note that units like \myunit{C}, \myunit{F}, \myunit{K} and
-%  \myunit{Re} are still rounded to integers due to
-%  \texttt{set-option-for-<unit-key>}.
+%  \myunit{Re} are still rounded to integers due to \mycs{cusetoptionfor}.
 % \end{function}
 %
 %  
@@ -2621,7 +2633,7 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 %
 % \begin{cunote}
-%  Also negative numbers are allowed.
+%  Negative numbers are also allowed.
 % \begin{cuexamplecode}
 %   \cusetoptionfor{C,F}{round-precision=-1} @
 %   \cunum{-271,2}{C} \\
@@ -2803,13 +2815,12 @@ and the derived file cooking-units.sty.
 %     cutext-space = \marg{string}
 %   \end{syntax}
 %   \meta{string} is inserted between the numeral part and the unit part
-%   when using \cCutext. By default it is set to \cs{space}. Use this option
-%  if you want to e.g.\ insert an unbreakable space.
+%   when using \cCutext. By default it is set an unbreakable space |~|.
 % \end{function}
 % \begin{cuexamplecode}
 %   \cutext{1}{kg}\\
 %   \Cutext{10}{kg}\\ 
-%   \cusetup { cutext-space = ~ } @
+%   \cusetup { cutext-space = \space } @
 %   \cutext{1}{kg}\\
 %   \Cutext{10}{kg}\\
 %   \cusetup { cutext-space = {} } @
@@ -2826,8 +2837,8 @@ and the derived file cooking-units.sty.
 %     phrase-space = \marg{string}
 %   \end{syntax}
 %   \meta{string} is inserted between the numeral part and the phrase part
-%   while using \mycs{cuam}. By default it is set to \cs{space}. Use this option
-%  if you want to e.g.\ insert an unbreakable space.
+%   while using \mycs{cuam}. By default it is set to the unbreakable space |~|. Use this option
+%  if you want to e.g.\ insert a normal space.
 % \end{function}
 %^^A \begin{myde}
 %  \cusetup{use-phrases=true}
@@ -2836,7 +2847,7 @@ and the derived file cooking-units.sty.
 %   \selectlanguage{ngerman} @
 %   \cuam{12}\\
 %   \cuam{144}\\
-%   \cusetup { phrase-space = ~ } @
+%   \cusetup { phrase-space = \space } @
 %   \cuam{12}\\
 %   \cuam{144}\\
 %   \cusetup { phrase-space = {} } @
@@ -2900,28 +2911,31 @@ and the derived file cooking-units.sty.
 %   \curef{anotherrecipe}~persons \\ 
 %   \cunum<anotherrecipe>{1}{kg}\\
 %   \cuam<anotherrecipe>{1}\\
-%   \cutext<anotherrecipe>{10}{kg}\\
+%   \Cutext[ref=anotherrecipe]{10}{kg}\\
+%   &
 %   \cusetup{ recalculate-amount = true } @
 %   \curef{anotherrecipe}~persons \\ 
 %   \cunum<anotherrecipe>{1}{kg}\\
 %   \cuam<anotherrecipe>{1}\\
-%   \cutext<anotherrecipe>{10}{kg}\\
 %   \Cutext[ref=anotherrecipe]{10}{kg}\\
+% &
 % \cusetup { set-number-of-persons = 3 } @
 %   \curef{anotherrecipe}~persons \\ 
 %   \cunum<anotherrecipe>{1}{kg} \\
 %   \cuam<anotherrecipe>{1} \\
-%  \cutext<anotherrecipe>{10}{kg}\\
+%   \Cutext[ref=anotherrecipe]{10}{kg}\\
+% &
 %   \cusetup { set-number-of-persons = 2 } @
 %   \curef{anotherrecipe}~persons \\ 
 %   \cunum<anotherrecipe>{1}{kg}\\
 %   \cuam<anotherrecipe>{1}\\
 %   \cutext<anotherrecipe>{10}{kg}\\
+% &
 %   \cusetup { set-number-of-persons = 1 } @
 %   \curef{anotherrecipe}~persons \\ 
 %   \cunum<anotherrecipe>{1}{kg}\\
 %  \cuam<anotherrecipe>{1}\\
-%  \cutext<anotherrecipe>{10}{kg}\\
+%   \Cutext[ref=anotherrecipe]{10}{kg}\\
 % \end{cuexamplecode}
 % 
 %
@@ -3161,8 +3175,33 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 %
 %
+% \begin{function}{nothing-special, going-bonkers, fully-bonkers, xD-lol}
+%   \begin{syntax}
+%      nothing-special = \meta{true/false}
+%      going-bonkers = \meta{true/false}
+%      fully-bonkers = \meta{true/false}
+%      xD-lol = \meta{true/false}
+%   \end{syntax}
+%   Options that do \dots\ stuff. The four stages of madness in option for.
 %
+%   \begin{description}
+%   \item[nothing-special] is your default. The package behaves as intended.
 %
+%   \item[going-bonkers] is a bit more strange. It converts an unit into another random unit
+%   (if it can) and does so throughout the document. So if |unit-A| is converted
+%   into |unit-B|, it is going to be converted this way the entire document through.
+%   For an unit to be converted it must have a key, see\cref{sec:defining-opt}.
+%  
+%
+%  \item[fully-bonkers] converts one unit into another random unit (if it can) and does so for 
+%  each unit it encounters. So  |unit-A| might be converted into |unit-B| the first time,
+%  but |unit-C| the second. Each conversion picks a random unit for the conversion
+%  (but the conversion itself makes sense, e.g.\ |kg| into |g|, but not into |cm|).
+%
+% \item[xD-lol] is pure insanity. A unit is transformed into another, if it makes sense
+%  or not, and its value is replaced by a random number. 
+%  \end{description}
+% \end{function}
 % 
 %
 %
@@ -4710,7 +4749,7 @@ and the derived file cooking-units.sty.
 % and unit.
 %    \begin{macrocode}
     cutext-numeral-space .tl_set:N = \l_@@_cutext_numeral_space_tl ,
-    cutext-numeral-space .default:n = { space } ,
+    cutext-numeral-space .default:n = { \space } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4718,7 +4757,7 @@ and the derived file cooking-units.sty.
 % Same as before, but for phrases
 %    \begin{macrocode}
     phrase-space .tl_set:N = \l_@@_cuphrase_space_tl ,
-    phrase-space .default:n = { \space } ,
+    phrase-space .default:n = { ~ } ,
 %    \end{macrocode}
 % \end{macro}
 %
@@ -5114,7 +5153,6 @@ and the derived file cooking-units.sty.
 % Ending the definition of keys.
 %    \begin{macrocode}
   }
-
 %\keys_set:nn { cooking-units } {#2}
 %    \end{macrocode}
 % \end{macro}
