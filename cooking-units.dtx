@@ -596,6 +596,8 @@ and the derived file cooking-units.sty.
         , cudefinekeychain
         , cuaddtokeychain
         , cudeclareunitgroup
+        , cusetoptionfor
+        , usepackage
       }
   }
 
@@ -791,8 +793,14 @@ and the derived file cooking-units.sty.
 % \changes {2018/09/24} {1.45} {New section in documentation.}
 % \changes {2018/09/24} {1.45} {Remove exhaustive expansion from internals (shouldn't change anything for users).}
 %
-% \changes {2020/03/21} {vVERSIONv} {Remove exhaustive expansion from translations. Shouldn't really change much if anything.}
-% \changes {2020/03/21} {vVERSIONv} {New options: \opt{definition/symbol}, \opt{definition/gender}, \opt{definition/set-option}, \opt{definition/add-to-group}. }
+% \changes {2020/03/21} {2.00} {Overall reworking of internal code.}
+% \changes {2020/03/21} {2.00} {Much better error handling.}
+% \changes {2020/03/21} {2.00} {Remove exhaustive expansion from translations. Shouldn't really change much if anything.}
+% \changes {2020/03/21} {2.00} {New options: \opt{definition/symbol}, \opt{definition/gender}, \opt{definition/set-option}, \opt{definition/add-to-group}. }
+% \changes {2020/03/21} {2.00} {Adding keys to unit definition.}
+% \changes {2020/03/21} {2.00} {Updatet |\declarecookingderivatives|.}
+% \changes {2020/03/21} {2.00} {New commands: |\cudefinekeychain|, |\cuaddtokeychain|}
+% \changes {2020/03/21} {2.00} {New joke options: \opt{nothing-special}, \opt{going-bonkers}, \opt{fully-bonkers} and \opt{xD-lol}.}
 % 
 %
 %
@@ -816,8 +824,8 @@ and the derived file cooking-units.sty.
 %   between them and  change your recipes to a given
 %   number of persons.
 %   
-%  For not implemented units or differences between Imperial and U.S.\ unit
-%  you may have a look at \cref{sec:other-units}.
+%   For not implemented units or differences between Imperial and U.S.\ unit
+%   you may have a look at \cref{sec:other-units}.
 %
 %   It should be used for light-hearted things like
 %   cookery books (and not e.g. scientific texts; use e.g.\ \pkg{siunitx} for those).
@@ -858,7 +866,7 @@ and the derived file cooking-units.sty.
 % \label{sec:commands}
 % 
 %
-% This package offers the following commands for unit printing (and
+% This package offers the following commands for number/unit printing (and
 % converting):
 %
 % \begin{itemize}
@@ -930,7 +938,7 @@ and the derived file cooking-units.sty.
 %   \cutext{12}{l} \\
 %   \Cutext{13}{l} 
 % \end{cuexamplecode}
-% and using (e.g.) package option \opt{use-fmtcount-numerals=true}
+% and using (e.g.)\ package option \opt{use-fmtcount-numerals=true}
 % \cusetup{print-numerals=true}
 % \begin{cuexamplecode}
 %   \cutext{1}{l} \\
@@ -1088,7 +1096,7 @@ and the derived file cooking-units.sty.
 % \Cref{tab:strange-units} pretty much exists just for fun.
 %
 %
-% \begin{table}[tbp]
+% \begin{table}[htb]
 %   \centering
 %   \caption{^^A
 %   This table shows all units which  can be transformed into each other, sorted
@@ -1124,7 +1132,7 @@ and the derived file cooking-units.sty.
 %   \label{tab:def-units}
 % \end{table}
 %
-% \begin{table}[htbp]
+% \begin{table}[htb]
 %   \centering
 %   \caption{A (not only) spoonful of (more or less) country and
 %   language dependent units.  Please note that sometimes a
@@ -1150,7 +1158,7 @@ and the derived file cooking-units.sty.
 %   \label{tab:some-more-units}
 % \end{table}
 % 
-% \begin{table}[htbp]
+% \begin{table}[htb]
 %   \centering
 %   \caption{List of (not really) nonsense units (exist just for fun, there will be
 %   no support for those units; unless -- of course -- you really want it).}
@@ -1188,7 +1196,7 @@ and the derived file cooking-units.sty.
 %   \end{syntax}
 %
 %   These commands define the unit  \meta{unit-key}. Note that \meta{unit-key}
-%   can neither contain |/| nor |,|; but is allowed to be a command since v2.0 
+%   can neither contain |/| nor |,|; but it is allowed to be a command since v2.00 
 %   (see examples below).
 %
 %   If the key is not the same as the printed symbol use the optional argument.
@@ -1221,11 +1229,11 @@ and the derived file cooking-units.sty.
 % \begin{function}{symbol, gender, set-option, add-to-group, natural-unit}
 %
 %   \begin{syntax}
-%     symbol = \meta{symbol}
-%     gender = \meta{m/f/n}
+%     symbol = \marg{symbol}
+%     gender = \marg{m/f/n}
 %     set-option = \marg{key-val-list}
-%     add-to-group = \meta{group}
-%     natural-unit = \meta{true/false}
+%     add-to-group = \marg{group}
+%     natural-unit = \marg{true/false}
 %   \end{syntax}
 %  
 %   Those keys can only be used in the optional argument of 
@@ -1239,10 +1247,13 @@ and the derived file cooking-units.sty.
 %
 %    \opt{gender} sets the gender of the unit (default ist |m|).  Allowed is |m|, |f| or |n|.
 %    Note that this sets the default gender for all languages.
+%
 %    \opt{set-option} allows to add some key-vals to the specific unit which are
 %    activated once the unit is used. See \cpageref{code:set-option}. 
+%
 %    \opt{add-to-group} adds the unit defined to \meta{group}. See \cref{sec:opt:unit-spec}
 %    for more information.
+%
 %    \opt{natural-unit} is a simple true/false switch. If |true| the unit will be specified to be
 %    a \enquote{natural-unit}. This is more or less a joke option.
 % \end{function}
@@ -1301,7 +1312,6 @@ and the derived file cooking-units.sty.
 % \label{sec:defining-opt}
 %
 %
-% \textcolor{red}{\textbf{A keychain has mutiple keys! Adding a key to a keychain allows you to "convert" each key into another key from the same chain!} for singlekeys, they just have one key which can unlock several "values". So key-chain and single key are good.}
 %
 % Options (to change units) can be newly defined or added to already existing ones
 % using
@@ -1337,7 +1347,7 @@ and the derived file cooking-units.sty.
 %   If you define new units (see \cref{sec:def-units}) and cannot add
 %   them to already existing keys you may use
 %   \mycs{cudefinekeychain} or  \mycs{cudefinesinglekey}  respectively to
-%   define new key chains or single keys.
+%   define new key-chains or single keys.
 %
 %  \mycs{cudefinekeychain} collects the unit-key's given and defines a key-chain.
 %  This allows you to change every unit into every other unit given in the list.
@@ -1358,28 +1368,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{function}{cudefinekeys}
-%   \begin{syntax}
-%     \mycs{cudefinekeys}\marg{unit-key-1}
-%     \ \ \{
-%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-1 are \dots\ unit-key-2}
-%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-1 are \dots\ unit-key-3}
-%     \ \ \ \ \marg{unit-key-4} \marg{$1$ unit-key-1 are \dots\ unit-key-4}
-%     \ \ \ \ \dots
-%     \ \ \}
-%  \end{syntax}
-%
-%   \emph{This command is going to be obsolete at one point. It is advised to use
-%     \mycs{cudefinekeychain} instead.}
-%
-%   \mycs{cudefinekeys} takes  \marg{unit-key-1} as a
-%   \enquote{basis}, defines a key with the name \meta{unit-key-1} and
-%   adds the values \meta{unit-key-1}, \meta{unit-key-2},
-%   \meta{unit-key-3}, etc. Furthermore this command also defines the
-%   keys \meta{unit-key-2}, \meta{unit-key-3}, etc.  with the same
-%   values as \meta{unit-key-1}. Please note that \meta{\dots} has to
-%   be a number. 
-% \end{function}
 %
 % \begin{cuexample}
 % This example defines following keys with their respective value:
@@ -1469,7 +1457,7 @@ and the derived file cooking-units.sty.
 %   \begin{syntax}
 %     \mycs{cuaddtokeychain}
 %     \ \ \{
-%     \ \ \ \ \marg{unit-key-1} \marg{number}
+%     \ \ \ \ \marg{unit-key-1} \marg{value}
 %     \ \ \ \ \marg{unit-key-2} \marg{... unit-key-2 are \meta{value} unit-key-1}
 %     \ \ \ \ \marg{unit-key-3} \marg{... unit-key-3 are \meta{value} unit-key-1}
 %     \ \ \ \ \dots
@@ -1486,7 +1474,7 @@ and the derived file cooking-units.sty.
 %   \mycs{cuaddtokeychain} first parses through its unit-list and searches for
 %    a base unit key which is already in a key-chain 
 %    (aka.\ was defined by \mycs{cudefinekeychain}). The other units, not yet
-%    part of a key-chain, are added to the same key chain as the base unit.
+%    part of a key-chain, are added to the same key-chain as the base unit.
 %    So the newly added units are available as a key and a value for the other
 %    units in the same key-chain. Note that \meta{...} must be a number.
 %  
@@ -1576,6 +1564,36 @@ and the derived file cooking-units.sty.
 %  
 %
 %
+%
+%
+%
+% \subsection{Obsolete Commands}
+%
+% \begin{function}{cudefinekeys}
+%   \begin{syntax}
+%     \mycs{cudefinekeys}\marg{unit-key-1}
+%     \ \ \{
+%     \ \ \ \ \marg{unit-key-2} \marg{$1$ unit-key-1 are \dots\ unit-key-2}
+%     \ \ \ \ \marg{unit-key-3} \marg{$1$ unit-key-1 are \dots\ unit-key-3}
+%     \ \ \ \ \marg{unit-key-4} \marg{$1$ unit-key-1 are \dots\ unit-key-4}
+%     \ \ \ \ \dots
+%     \ \ \}
+%  \end{syntax}
+%
+%   \emph{This command is going to be obsolete at one point. It is advised to use
+%     \mycs{cudefinekeychain} instead.}
+%
+%   \mycs{cudefinekeys} takes  \marg{unit-key-1} as a
+%   \enquote{basis}, defines a key with the name \meta{unit-key-1} and
+%   adds the values \meta{unit-key-1}, \meta{unit-key-2},
+%   \meta{unit-key-3}, etc. Furthermore this command also defines the
+%   keys \meta{unit-key-2}, \meta{unit-key-3}, etc.  with the same
+%   values as \meta{unit-key-1}. Please note that \meta{\dots} has to
+%   be a number. 
+% \end{function}
+%
+%
+%
 % \begin{function}{\cuaddkeys,\cuaddtokeys}
 %   \begin{syntax}
 %     \mycs{cuaddkeys}\marg{unit-key-1}
@@ -1602,30 +1620,6 @@ and the derived file cooking-units.sty.
 %
 %   Works similar to \mycs{cuaddkeys} regarding the definition of keys.
 % \end{function}
-%
-% \begin{cuexample}
-% Continuing the example from before, this time with \lstinline|\cuaddtokeys|:
-% \begin{lstlisting}
-%  \newcookingunit{st} %% defining (again) new unit 'stone'
-%  \cuaddtokeys {lb} {st} { 14 }  %% 1 st are 14 lb
-% \end{lstlisting}
-% \begin{cuexamplecode}
-% \cunum[lb=st]{1}{lb} \\
-% \cunum[st=lb]{1}{st} \\
-% \cunum[st=g]{1}{st} \\
-% \cunum[st=kg]{1}{st} \\
-% \cunum[kg=st]{1}{kg} \\
-% \cunum[st=kg]{16}{st} 
-% \end{cuexamplecode}
-% \end{cuexample}
-%
-%
-%
-%
-%
-%
-%
-%
 %
 %
 %
@@ -2408,7 +2402,7 @@ and the derived file cooking-units.sty.
 %     print-numerals = \meta{true/false}
 %   \end{syntax}
 %
-%  Prints numerals for integers smaller then \opt{use-numerals-below} if
+%  Prints numerals for integers smaller than \opt{use-numerals-below} if
 %  set to \true. If set to \false\ no numerals are printed. 
 %
 %  If you use the package option \opt{use-fmtcount-numerals} this option 
@@ -3707,14 +3701,14 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2020/01/13}
-  {1.46} 
+  {2021/05/16}
+  {2.00} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
 % Checking if \pkg{expl3} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2020/08/07 }
+\@ifpackagelater { expl3 } { 2021/05/07 }
   { }
   {
     \PackageError { cooking-units } { Support~package~expl3~too~old }
@@ -3735,7 +3729,7 @@ and the derived file cooking-units.sty.
 %
 % Checking if \pkg{translations} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { translations } { 2020/04/28 }
+\@ifpackagelater { translations } { 2021/01/17 }
   { }
   {
     \PackageError { cooking-units } { Support~package~translations~too~old }
@@ -3956,6 +3950,7 @@ and the derived file cooking-units.sty.
 %    , \l_@@_decided_unit_tl
 %    , \l_@@_stored_units_tl
 %    , \l_@@_stored_formula_tl
+%    , \l_@@_base_tl
 %  }
 % Quite a lot of tl's.
 %    \begin{macrocode}
@@ -3994,6 +3989,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_decided_unit_tl
 \tl_new:N \l_@@_stored_units_tl
 \tl_new:N \l_@@_stored_formula_tl
+\tl_new:N \l_@@_base_tl
 %    \end{macrocode}
 %    \begin{macrocode}
 \tl_new:N \l_@@_cmd_hook_tl
@@ -8658,7 +8654,7 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 % \begin{macro}{\@@_initialice_cukeys_keychain_add:n}
-% Initiliazing the key chain. Like \mycs{cudefinekeychain} we first need to get
+% Initiliazing the key-chain. Like \mycs{cudefinekeychain} we first need to get
 % the base unit. Afterwards, the \enquote{normal} initialization command is used
 % (with the found base key) and |\l_@@_new_key_base_tl| is normalized.
 %    \begin{macrocode}
