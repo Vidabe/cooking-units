@@ -34,7 +34,7 @@
   , natural-unit
   , symbol={test-i}
   , gender=n
-  , set-options={round-precision=0}
+  , set-option = {round-precision=0}
 ]{testi}
 \newcookingunit[just-unknown-unit]{testj}
 \newcookingunit[just-unknown-unit, gender=n]{testk}
