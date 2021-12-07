@@ -7373,12 +7373,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_create_internal_error:nN #1#2
   {
-    \@@_set_case_to:n { error }
+    \@@_set_state_to:n { error }
     \msg_error:nnnV { cooking-units } { internal-error } {#1} #2 
   }
 \cs_new:Npn \@@_create_error:n #1
   {
-    \@@_set_case_to:n { error }
+    \@@_set_state_to:n { error }
     \msg_error:nnV { cooking-units } {#1} \l_@@_original_amount_tl 
   }
 \cs_new:Npn \@@_create_error_and_stop:n #1
@@ -7388,7 +7388,7 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_create_error:nn #1#2
   {
-    \@@_set_case_to:n { error }
+    \@@_set_state_to:n { error }
     \msg_error:nnnV { cooking-units } {#1} {#2} \l_@@_original_amount_tl 
   }
 %    \end{macrocode}
