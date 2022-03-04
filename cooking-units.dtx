@@ -3205,7 +3205,7 @@ and the derived file cooking-units.sty.
 % 
 %
 %
-%
+% 
 %
 %
 % 
@@ -3365,7 +3365,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
+% 
 %
 %
 %
@@ -3383,6 +3383,7 @@ and the derived file cooking-units.sty.
 % shown.
 %
 % \small
+% 
 %
 %\clearpage
 % \subsection{English}
@@ -3447,7 +3448,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
+% \normalsize
 %
 %
 % \section{US, Imperial and Other units}
@@ -3551,108 +3552,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-%
-%
-%
-%
-%
-%
-%
-% \begin{comment}
-%^^A \section{Notes and other stuff}
-%^^A This section contains stuff which might or might not be interesting.
-%^^A
-%^^A \subsection{More or less FAQ}
-%^^A
-%^^A \num{624150912.6 +- 3.9 e+10}
-%^^A \num{6.241509126 +- 0.000000039 e+18}
-%^^A
-%^^A \num{8.6173303 +- 00000.0000050 e-5}
-%^^A
-%^^A \subsection{Calculation}
-%^^A This subsection deals with some regarding the conversion to certain units.
-%^^A Mostly to (I like to call them) \enquote{electron volt units} (or natural units).
-%^^A Let's begin.
-%^^A
-%^^A We start with the easiest one: conversion of joule into electron volt.
-%^^A Easy because Wikipedia and nearly every physics book knows the answer. 
-%^^A And according to Wikipedia
-%^^A \begin{align}
-%^^A  \SI{1}{\eV} &= \SI{1.6021766208(98)e-19}{\joule} \\
-%^^A  \SI{1}{\joule} &= \SI{6.241509126 +- 0.000000039 e+18}{\eV}
-%^^A \end{align}
-%^^A Adding this is no problem: 
-%^^A \begin{lstlisting}
-%^^A   \cuaddtokeys {J} {eV} { 1.6021766208e-19 }
-%^^A \end{lstlisting}
-%^^A
-%^^A
-%^^A Great, next Temperature (kelvin) to electron volt. Also no problem at all
-%^^A because joule and kelvin are related by the boltzmann constant $k_B$ with
-%^^A \begin{equation}
-%^^A   energy (\si{\joule}) = k_B \cdot temperature (\si{\kelvin})
-%^^A \end{equation}
-%^^A as $[k_B]= \sfrac{\si{\joule}}{\si{\kelvin}}$ and 
-%^^A $k_B= \SI{1.38064852(79)e-23}{\joule\per\kelvin}$. Now using the power
-%^^A of (more or less basic, but somehow annoying) mathematics we get:
-%^^A \begin{align}
-%^^A  [k_B] &= \SI{1.38064852(79)e-23}{\joule\per\kelvin} = \\
-%^^A &= \num{1.38064852(79)e-23} \cdot \SI{6.241509126 +- 0.000000039 e+18 }{\eV\per\K} = \\
-%^^A &= \SI{8.6173303 +- 0.0000050 e-5 }{\eV\per\K} 
-%^^A \end{align}
-%
-%
-%^^A \section{Notes and other stuff}
-%^^A \subsection{Some details to electron volts}
-%^^A This section explains how I calculated the values for conversion into electron volt
-%^^A or the respective derivative. Let's begin with some constants (from Wikipedia), note that
-%^^A \begin{equation*}
-%^^A   \num{1.23456(78)e-9} = \num[separate-uncertainty = true]{1.23456(78)e-9}
-%^^A \end{equation*}
-%^^A just for info.
-%^^A
-%^^A \begin{align}
-%^^A   \SI{1}{\eV} &= \SI{1.6021766208(98)e-19}{\J} \\
-%^^A   \hbar &= \SI{1.054571800(13)e-34}{\J\s} \\
-%^^A   k_B &= \SI{1.38064852(79)e-23}{\J\per\K} = \SI{8.6173303(50)e-5}{\eV\per\K}\\
-%^^A   c &= \SI{299792458}{\m\per\s} 
-%^^A \end{align}
-%^^A
-%^^A Note that all those and following values are rounded to the second relevant figure of the 
-%^^A uncertainty of the value.
-%^^A
-%^^A Well then, next are temperatures.
-%^^A
-%^^A Temperatures are fairly easy. Just convert the temperature of your choice to kelvin
-%^^A and multiplicate it with $k_B$:
-%^^A \begin{align}
-%^^A   \SI{1}{\K} * k_B &= \SI{8.6173303(50)e-5}{\eV}
-%^^A \end{align}
-%^^A
-%^^A Next is more complicated. To compute the resulting unceartanity I using
-%^^A \enquote{Gauß'sches Fehlerfortpflanzungsgesetz} (I don't know if this has 
-%^^A a translation). Anyway.  We know that
-%^^A \begin{align*}
-%^^A    \frac{\SI{1}{\eV}}{c^2} &= \frac{\SI{1.6021766208e-19}{\J}}{(\SI{299792458}{\m\per\s})^2}
-%^^A    = \frac{\SI{1.6021766208e-19}{\kg\m\squared\per\s\squared}}{\SI{8,98755178736818E16}{\m\squared\per\s\squared}} = \\
-%^^A &\frac{\SI{1.6021766208e-3}{\kg}}{\num{8,98755178736818}} =
-%^^A \SI{1782661906,94091624922088}{\kg}
-%^^A \end{align*}
-%^^A
-%^^A Great, now we have to calucalte the unceartinity:
-%^^A \begin{align}
-%^^A   f(\si{\eV},c) &= \frac{\si{\eV}}{c^2} \\
-%^^A   df(\si\eV,c) &= \sqrt{ (\frac{\partial f}{\partial \si\eV})^2 * (\Delta \si\eV)^2 +  (\frac{\partial f}{\partial c})^2  * (\Delta c)^2 } = \\
-%^^A &= \sqrt{  (\frac{1}{c^2})^2 * (\Delta \si\eV)^2 + (-2\frac{eV}{c^{-3}})^2  * (\Delta c)^2 }  
-%^^A \end{align}
-%^^A
-%^^A Now we know that $\Delta c = 0$:
-%^^A \begin{align}
-%^^A   df(\si\eV,c) &= \sqrt{  (\frac{1}{c^2})^2 * (\Delta \si\eV)^2 }  = 
-%^^A \sqrt{ \frac{1}{(\SI{299792458}{\m\per\s} )^2} * (\SI{0.0000000098e-19}{\J})^2 } \\
-%^^A &= 
-%^^A \end{align}
-% \end{comment}
 %
 %
 %
@@ -4065,7 +3964,6 @@ and the derived file cooking-units.sty.
 %   The dimension between the fraction and the mixed fraction part is
 %   stored within this macro. There is no real reason why I have
 %   chosen this distance to be 0.1em, I just thought that it looks
-%   best.  But if someone has some ideas of how large this distance
 %   best.  But if someone has some ideas of how large this distancee
 %   should be I am happy to listen.
 %    \begin{macrocode}
