@@ -244,7 +244,7 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \PrintUnit { o m }
   {
     \__cookingunits_culang_let:nnN { name } {#2} \l_tmpa_tl
-    \tl_if_eq:NNF \l_tmpa_tl \q__cookingunits_no_translation
+    \tl_if_eq:NNF \l_tmpa_tl \c__cookingunits_no_translation_str
       { \l_tmpa_tl }
     \IfNoValueF {#1} {#1}
     &
@@ -449,13 +449,13 @@ and the derived file cooking-units.sty.
       { \l_translation_does_not_exist_tl }
       { 
         \__cu_use:n { culang_let_for:nnnN } {#1} { unit-symbol } {#2} \l_tmpa_tl
-        \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+        \tl_if_in:NnTF \l_tmpa_tl \c__cookingunits_no_translation_str
           { \l_translation_does_not_exist_tl }
           { \l_tmpa_tl }
       }
     & 
     \__cu_use:n { culang_let_for:nnnN } {#1} { name } {#2} \l_tmpa_tl
-    \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+    \tl_if_eq:NNTF \l_tmpa_tl \c__cookingunits_no_translation_str
       { \l_translation_does_not_exist_tl }
       { \l_tmpa_tl }
     & 
@@ -463,13 +463,13 @@ and the derived file cooking-units.sty.
     \__cu_use:n { culang_let_for:nnnN } {#1} { name-pl } {#2} \l_tmpb_tl
     \str_if_eq:NNF \l_tmpa_tl \l_tmpb_tl
       { 
-        \tl_if_in:NnTF \l_tmpb_tl \q__cookingunits_no_translation
+        \tl_if_eq:NNTF \l_tmpb_tl \c__cookingunits_no_translation_str
           { \l_translation_does_not_exist_tl }
           { (\l_tmpb_tl) }
       }
     &
     \__cu_use:n { culang_let_for:nnnN } {#1} { gender } {#2} \l_tmpa_tl
-    \tl_if_in:NnTF \l_tmpa_tl \q__cookingunits_no_translation
+    \tl_if_eq:NNTF \l_tmpa_tl \c__cookingunits_no_translation_str
       { \l_translation_does_not_exist_tl }
       { \l_tmpa_tl }
   }
@@ -477,14 +477,12 @@ and the derived file cooking-units.sty.
 \NewDocumentCommand \CreateTableForPhrases { >{\TrimSpaces}  m }
   {
     \seq_clear:N \l_tmpa_seq
-    \__cu_use:n { culang_let_for:nnnN } {#1} { phrase } { phrase-prop } \l_tmpa_prop
+    \__cu_use:n { culang_get_phrase_prop_for:nN } {#1} \l_tmpa_prop
     \prop_if_exist:NTF \l_tmpa_prop
       {
-        \tl_if_eq:NNTF \q__cooking_units_no_translation \l_tmpa_prop
+        \tl_if_eq:NNTF \c__cookingunits_no_translation_str \l_tmpa_prop
           { \ERRORCreateTablePhraseII }
-          {
-            \prop_get:NnN \l_tmpa_prop { seq } \l_tmpa_seq
-          }
+          { \prop_get:NnN \l_tmpa_prop { seq } \l_tmpa_seq }
       }
       { \ERRORCreateTablePhraseI }
     \seq_gput_right:Nn \l_tmpa_seq { THEEND }
@@ -4068,6 +4066,7 @@ and the derived file cooking-units.sty.
 %   stored within this macro. There is no real reason why I have
 %   chosen this distance to be 0.1em, I just thought that it looks
 %   best.  But if someone has some ideas of how large this distance
+%   best.  But if someone has some ideas of how large this distancee
 %   should be I am happy to listen.
 %    \begin{macrocode}
 \dim_new:N \l_@@_mixed_frac_dim
@@ -4308,11 +4307,12 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
-% \begin{macro}{ \q_@@_no_translation }
+% \begin{macro}{ \q_@@_no_translation_str }
 %  Checking value if a translation is avaiable.
 %    \begin{macrocode}
-\quark_new:N \q_@@_no_translation
-%\cs_new:Npn \q_@@_no_translation { asdasd\ewhkerhjkwejhk } 
+\quark_new:N \q_@@_no_translation_str
+\str_const:Nn \c_@@_no_translation_str { no-translation-sady-found-@@ }
+%\cs_new:Npn \q_@@_no_translation_str { asdasd\ewhkerhjkwejhk } 
 %    \end{macrocode}
 %\end{macro}
 %
@@ -6620,7 +6620,7 @@ and the derived file cooking-units.sty.
 \prg_new_conditional:Npnn \@@_culang_unitname_let:Nn #1#2 { TF, F , T }
   {
     \@@_culang_let:nnN { name } {#2} #1
-    \tl_if_eq:NNTF #1 \q_@@_no_translation
+    \tl_if_eq:NNTF #1 \c_@@_no_translation_str
       { \prg_return_false: }
       { \prg_return_true: }
   }
@@ -6676,17 +6676,17 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { decimal-mark }  { . }
-\@@_culang_def_base:nnn { name-pl } { decimal-mark } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { decimal-mark } { \c_@@_no_translation_str }
 \@@_culang_def_for:nnnn { German } { name-pl } { decimal-mark } { , }
 %    \end{macrocode}
 % Note that the plural versions just exist for completing the set.
 %    \begin{macrocode}
-\@@_culang_def_base:nnn { name } { one (m) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name } { one (f) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name } { one (n) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name-pl } { one (m) }  { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name-pl } { one (f) } { \q_@@_no_translation }
-\@@_culang_def_base:nnn { name-pl } { one (n) } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name } { one (m) } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name } { one (f) } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name } { one (n) } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name-pl } { one (m) }  { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name-pl } { one (f) } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name-pl } { one (n) } { \c_@@_no_translation_str }
 %    \end{macrocode}
 %    \begin{macrocode}
 \@@_culang_def_for:nnnn { English } { name } { one (m) } { one }
@@ -6701,7 +6701,7 @@ and the derived file cooking-units.sty.
 %
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { cutext-range-sign } { -- }
-\@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \c_@@_no_translation_str }
 \@@_culang_def_for:nnnn { German } { name } { cutext-range-sign } { ~bis~ }
 \@@_culang_def_for:nnnn { English } { name } { cutext-range-sign } { ~to~ }
 %    \end{macrocode}
@@ -8253,8 +8253,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
   {
-    \@@_culang_let:nnN { phrase } { phrase-prop } \l_@@_phrase_prop
-    \tl_if_eq:NNT \q_@@_no_translation \l_@@_phrase_prop
+    \@@_culang_get_phrase_prop:N \l_@@_phrase_prop
+    \tl_if_eq:NNT \c_@@_no_translation_str \l_@@_phrase_prop
       { \use_none_delimit_by_q_stop:w }
     \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
 %  
@@ -9125,8 +9125,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_set_cooking_unit_base_translation:n #1
   {
-    \@@_culang_def_base:nnn { name } {#1} \q_@@_no_translation
-    \@@_culang_def_base:nnn { name-pl } {#1} \q_@@_no_translation
+    \@@_culang_def_base:nnn { name } {#1} \c_@@_no_translation_str
+    \@@_culang_def_base:nnn { name-pl } {#1} \c_@@_no_translation_str
     \@@_culang_def_base:nnn { gender } {#1} { m }
   }
 %    \end{macrocode}
@@ -9641,14 +9641,35 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ \@@_cuprint_define_printed_unit:nn }
+% \begin{macro}{ }
 %  Defining phrases. Phrases (sadly) depend on the language. 
 %  The idea is going to be: Each language has its own property list
 %  which is going to be stored for each language. Later, the property
 %  list is recoverd for the language currently used. If no phrase is defined
-%  the fallback |\q_@@_no_translation| is returned.
+%  the fallback |\c_@@_no_translation_str| is returned.
 %    \begin{macrocode}
-\@@_culang_def_base:nnn { phrase } { phrase-prop } { \q_@@_no_translation }
+\@@_culang_def_base:nnn { phrase } { phrase-prop } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { phrase } { phrase-lang } { Humphry-Drumphy }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{  }
+%    \begin{macrocode}
+\cs_new:Npn \@@_culang_get_phrase_prop:N #1
+  {
+    \@@_culang_let:nnN { phrase } { phrase-lang } \l_@@_language_tl
+    \prop_if_exist:cTF { l_@@_ \l_@@_language_tl _phrase_prop }
+      {
+        \prop_set_eq:Nc #1 { l_@@_ \l_@@_language_tl _phrase_prop }
+      }
+      { \tl_set_eq:NN #1 \c_@@_no_translation_str  }
+  }
+\cs_new:Npn \@@_culang_get_phrase_prop_for:nN #1#2
+  {
+    \prop_set_eq:Nc #2 { l_@@_ #1 _phrase_prop }
+%    \prop_if_exist:cT { l_@@_ #1 _phrase_prop }
+%      { \prop_set_eq:Nc \l_@@_phrase_prop { l_@@_ #1 _phrase_prop } }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -9690,21 +9711,26 @@ and the derived file cooking-units.sty.
   {
     \tl_set:Nn \l_@@_language_tl {#1}
     \@@_culang_if_translation_exists_for:VnnTF \l_@@_language_tl 
-      { phrase } { phrase-prop }
+      { phrase } { phrase-lang }
       {  
-        \@@_culang_let_for:VnnN \l_@@_language_tl { phrase } { phrase-prop }
-          \l_@@_phrase_prop
+%        \@@_culang_let_for:VnnN \l_@@_language_tl { phrase } { phrase-prop }
+%          \l_@@_phrase_prop
+        \prop_set_eq:Nc \l_@@_phrase_prop { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
       }{
+        \prop_new:c { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_clear:N \l_@@_phrase_prop
         \seq_clear:N \l_@@_phrase_numbers_seq
       }
-      \@@_sanitize_arrows:n {#2}
-      \@@_parse_phrase:V \l_@@_sanitise_tl
-      \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
-      \prop_put:NnV \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-      \@@_culang_def_for:VnnV 
-        \l_@@_language_tl { phrase } { phrase-prop } \l_@@_phrase_prop
+    \@@_sanitize_arrows:n {#2}
+    \@@_parse_phrase:V \l_@@_sanitise_tl
+    \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
+    \prop_put:NnV \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
+    \prop_set_eq:cN { l_@@_ \l_@@_language_tl _phrase_prop } \l_@@_phrase_prop
+%    \@@_culang_def_for:VnnV 
+%      \l_@@_language_tl { phrase } { phrase-prop } \l_@@_phrase_prop
+    \@@_culang_def_for:VnnV 
+      \l_@@_language_tl { phrase } { phrase-lang } \l_@@_language_tl
   }
 %    \end{macrocode}
 % \end{macro}
