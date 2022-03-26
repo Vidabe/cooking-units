@@ -39,7 +39,7 @@
   {
     #1 ~ #2
  }
-\cs_new:Npn \testcuam #1#2
+\cs_new:Npn \testcuam #1
   {
     #1
  }
@@ -121,7 +121,7 @@
   \BOXTYPE { \testcuam{1\_1} }
   \BOXTYPE { \testcuam{12.345} }
   \BOXTYPE { \testcuam{12.345} }
-  \BOXTYPE { \testcutext{12.345}{kilogramme} }
+  \BOXTYPE { \testcunum{12.345}{kg} }
 }
 
 
