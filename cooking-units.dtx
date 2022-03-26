@@ -82,7 +82,7 @@ for the details of that license.
 %\keepsilent
 \askforoverwritefalse
 \preamble
-Copyright (C) 2016--2021 by Ben Vitecek (current Maintainer)
+Copyright (C) 2016--2022 by Ben Vitecek (current Maintainer)
 
 This file may be distributed and/or modified under the 
 conditions of the LaTeX Project Public License, either 
@@ -802,6 +802,9 @@ and the derived file cooking-units.sty.
 % \changes {2021/03/21} {2.00} {New commands to define keys: \mycs{cudefinekeychain} and \mycs{cuaddtokeychain}.}
 % \changes {2021/03/21} {2.00} {Using commands as unit-keys now works.}
 % 
+% \changes {2022/03/26} {2.00a} {Bugfix: Fixing property list retrival error (storing property lists via translations did not work too well).}
+% \changes {2022/03/26} {2.00a} {Bugfix: |\cuam| prints a unit in case of an error. This also happens with \opt{parse-number=false}.}
+% \changes {2022/03/26} {2.00a} {Bugfix: Remove \cs{peek_meaning_ignore_spaces:NTF}.}
 %
 %
 %
@@ -3600,14 +3603,14 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2021/05/16}
-  {2.00} 
+  {2022/03/26}
+  {2.00a} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
 % Checking if \pkg{expl3} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2021/05/07 }
+\@ifpackagelater { expl3 } { 2022/02/24 }
   { }
   {
     \PackageError { cooking-units } { Support~package~expl3~too~old }
@@ -3628,7 +3631,7 @@ and the derived file cooking-units.sty.
 %
 % Checking if \pkg{translations} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { translations } { 2021/01/17 }
+\@ifpackagelater { translations } { 2022/02/05 }
   { }
   {
     \PackageError { cooking-units } { Support~package~translations~too~old }
