@@ -9402,9 +9402,12 @@ and the derived file cooking-units.sty.
         \@@_error_if_unit_not_defined:nNT {#1} \l_@@_curr_unit_tl 
           { \@@_set_state_to:n { error } }
       }
-    \peek_meaning_ignore_spaces:NTF [
-      { \@@_parse_definename_optional_unitsymbol:w }
-      { \@@_parse_definename_singular:n }  
+    \peek_remove_spaces:n
+      {
+        \peek_meaning:NTF [
+          { \@@_parse_definename_optional_unitsymbol:w }
+          { \@@_parse_definename_singular:n }  
+      }
   }
 %    \end{macrocode}
 % \end{macro}  
@@ -9439,9 +9442,12 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#1} 
       { \msg_error:nn { cooking-units } { missing-argument } }
     \prop_put:Nnn \l_@@_tmpa_prop { name } {#1}
-    \peek_meaning_ignore_spaces:NTF [
-      { \@@_parse_definename_optional_plural:w }
-      { \@@_parse_definename_optional_plural:w [#1] }
+    \peek_remove_spaces:n 
+      {
+        \peek_meaning:NTF [
+          { \@@_parse_definename_optional_plural:w }
+          { \@@_parse_definename_optional_plural:w [#1] }
+      }
   }
 %    \end{macrocode}
 % \end{macro}  
@@ -9453,9 +9459,12 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_parse_definename_optional_plural:w [#1]
   {
     \prop_put:Nnn \l_@@_tmpa_prop { name-pl } {#1}
-    \peek_meaning_ignore_spaces:NTF <
-      { \@@_parse_definename_optional_gender:w  }
-      { \@@_parse_definename_optional_gender:w <m> }
+    \peek_remove_spaces:n
+      {
+        \peek_meaning:NTF <
+          { \@@_parse_definename_optional_gender:w  }
+          { \@@_parse_definename_optional_gender:w <m> }
+      }
   }
 %    \end{macrocode}
 % \end{macro}  
@@ -9714,9 +9723,12 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_phrase_optionals:n #1
   {
-    \peek_meaning_ignore_spaces:NTF [
-      { \@@_parse_stuff_plural:w }
-      { \@@_parse_stuff_plural:w [#1] }
+    \peek_remove_spaces:n
+      {
+        \peek_meaning:NTF [
+          { \@@_parse_stuff_plural:w }
+          { \@@_parse_stuff_plural:w [#1] }
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -9729,9 +9741,12 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_parse_stuff_plural:w [#1]
   {
     \prop_put:Nnn \l_@@_tmpa_prop { -pl } {#1}
-    \peek_meaning_ignore_spaces:NTF <
-      { \@@_parse_stuff_gender:w }
-      { \@@_parse_stuff_gender:w  <m> }
+    \peek_remove_spaces:n
+      {
+        \peek_meaning:NTF <
+          { \@@_parse_stuff_gender:w }
+          { \@@_parse_stuff_gender:w  <m> }
+      }
   }
 %    \end{macrocode}
 % \end{macro}
