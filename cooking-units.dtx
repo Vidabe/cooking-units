@@ -7121,7 +7121,11 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_new_print_unit_correctly:
   {
     \@@_if_state_equal:nTF { error }
-      { \@@_print_unit_in_case_of_error: }
+      { 
+        \tl_case:NnF \l_@@_cmd_type_tl
+          { \c_@@_cmd_type_cuam_tl { } }
+          { \@@_print_unit_in_case_of_error: }
+      }
       {
         \tl_case:NnF \l_@@_cmd_type_tl
           {
