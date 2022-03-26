@@ -1,0 +1,112 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\usepackage[ngerman, main=english]{babel}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\RequirePackage[T1]{fontenc}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+
+
+
+\ExplSyntaxOff
+
+
+\newcookingunit{testa}
+\newcookingunit[test-b]{testb}
+\newcookingunit[natural-unit]{testc}
+\newcookingunit[symbol={test-d}]{testd}
+\newcookingunit[natural-unit, symbol={test-e}]{teste}
+\newcookingunit[natural-unit, symbol={test-f}, gender=f]{testf}
+\newcookingunit[natural-unit, symbol={test-g}, gender=n, set-option={round-precision=0}]{testg}
+\newcookingunit[add-to-group=weight
+  ,natural-unit
+  , symbol={test-i}
+  , gender=n
+  , set-option = {round-precision=0}
+]{testi}
+\newcookingunit[just-unknown-unit]{testj}
+\newcookingunit[just-unknown-unit, gender=n]{testk}
+\newcookingunit[gender=n]{testl}
+\newcookingunit[set-option={round-precision=-1}]{testm}
+\newcookingunit{\%}
+
+\cudefinesymbol {English}
+  {
+    {testl} {yet-another-thingy}
+  }
+
+\cudefinename {English}
+  {
+    {testb}{TESTB}
+  }
+
+\cudefinekeychain 
+  {
+    {testa} { 1 }  
+    {testb} { 10 }
+    {testl} { 1.2 }
+  }
+
+
+\cusetup{print-numerals=false}
+
+\begin{document}
+
+\START
+
+\cusetup{parse-number=false}
+
+\TEST{parse-number}{
+  \BOXTYPE { \cunum{12.345}{testa} }
+  \BOXTYPE { \cunum{12.345}{testb} }
+  \BOXTYPE { \cunum{12.345}{testc} }
+  \BOXTYPE { \cunum{12.345}{testd} }
+  \BOXTYPE { \cunum{12.345}{teste} }
+  \BOXTYPE { \cunum{12.345}{testf} }
+  \BOXTYPE { \cunum{12.345}{testg} }
+  \BOXTYPE { \cunum{12.345}{testi} }
+  \BOXTYPE { \cunum{12.345}{testj} }
+  \BOXTYPE { \cunum{12.345}{testk} }
+  \BOXTYPE { \cunum{12.345}{testl} }
+  \BOXTYPE { \cunum{12.345}{testm} }
+  \BOXTYPE { \cunum{12.345}{\%} }
+  \BOXTYPE { \cunum{1/2}{testm} }
+  \BOXTYPE { \cunum{1_1/2}{testm} }
+  \BOXTYPE { \cunum{1_1/2}{testm} }
+}
+
+\TEST{parse-number-2}{
+  \BOXTYPE { \cunum[testa=testb]{12.345}{testa} }
+  \BOXTYPE { \cunum[testa=testb]{2-oi4fpn09}{testa} }
+  \BOXTYPE { \cutext[testa=testb]{2oi-4fpn08}{testa} }
+  \BOXTYPE { \cuam{12--.345} }
+  \BOXTYPE { \cuam{12--.34x5} }
+  \BOXTYPE { \cuam{1_1/2} }
+  \BOXTYPE { \cuam{1_1} }
+  \BOXTYPE { \cuam{12.345} }
+  \BOXTYPE { \cuam{12.345} }
+  \BOXTYPE { \cutext{12.345}{kg} }
+}
+
+
+
+
+
+
+
+
+\END

@@ -1,0 +1,129 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\usepackage[ngerman, main=english]{babel}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[use-fmtcount-numerals=true]{cooking-units}
+\RequirePackage[T1]{fontenc}
+\ExplSyntaxOn
+\debug_on:n {check-declarations , deprecation , log-functions}
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{------}
+    \tl_set:Nn \msg_line_number: {1}
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+ }
+
+
+
+\cs_new_eq:NN \minusSign \c__cookingunits_minus_tl
+
+
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn {cooking-units} {amount-not-known} {#1}
+ }
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \thinspace #2
+ }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 ~ #2
+ }
+\cs_new:Npn \testCutext #1#2
+  {
+    #1 ~ #2
+ }
+\cs_new:Npn \testcuam #1#2
+  {
+    #1
+ }
+
+
+
+\ExplSyntaxOff
+
+
+\newcookingunit{testa}
+\newcookingunit[test-b]{testb}
+\newcookingunit[natural-unit]{testc}
+\newcookingunit[symbol={test-d}]{testd}
+\newcookingunit[natural-unit, symbol={test-e}]{teste}
+\newcookingunit[natural-unit, symbol={test-f}, gender=f]{testf}
+\newcookingunit[natural-unit, symbol={test-g}, gender=n, set-option={round-precision=0}]{testg}
+\newcookingunit[add-to-group=weight
+  ,natural-unit
+  , symbol={test-i}
+  , gender=n
+  , set-option = {round-precision=0}
+]{testi}
+\newcookingunit[just-unknown-unit]{testj}
+\newcookingunit[just-unknown-unit, gender=n]{testk}
+\newcookingunit[gender=n]{testl}
+\newcookingunit[set-option={round-precision=-1}]{testm}
+\newcookingunit{\%}
+
+\cudefinesymbol {English}
+  {
+    {testl} {yet-another-thingy}
+ }
+
+
+\cudefinekeychain 
+  {
+    {testa} {1}  
+    {testb} {10}
+    {testl} {1.2}
+ }
+
+\cudefinename {English}
+  {
+    {testb}{TESTB}
+  }
+
+\begin{document}
+
+\START
+
+
+\TEST{parse-number}{
+  \BOXTYPE { \testcunum{12.345}{testa} }
+  \BOXTYPE { \testcunum{12.345}{test-b} }
+  \BOXTYPE { \testcunum{12.345}{testc} }
+  \BOXTYPE { \testcunum{12.345}{test-d} }
+  \BOXTYPE { \testcunum{12.345}{test-e} }
+  \BOXTYPE { \testcunum{12.345}{test-f} }
+  \BOXTYPE { \testcunum{12.345}{test-g} }
+  \BOXTYPE { \testcunum{12.345}{test-i} }
+  \BOXTYPE { \testcunum{12.345}{just-unknown-unit} }
+  \BOXTYPE { \testcunum{12.345}{testk} }
+  \BOXTYPE { \testcunum{12.345}{yet-another-thingy} }
+  \BOXTYPE { \testcunum{12.345}{testm} }
+  \BOXTYPE { \testcunum{12.345}{\%} }
+  \BOXTYPE { \testcunum{1/2}{testm} }
+  \BOXTYPE { \testcunum{1\_1/2}{testm} }
+  \BOXTYPE { \testcunum{1\_1/2}{testm} }
+}
+
+
+\TEST{parse-number-2}{
+  \BOXTYPE { \testcunum{12.345}{testa} }
+  \BOXTYPE { \testcunum{2-oi4fpn09}{testa} }
+  \BOXTYPE { \testcunum{2oi-4fpn08}{testa} }
+  \BOXTYPE { \testcuam{12--.345} }
+  \BOXTYPE { \testcuam{12--.34x5} }
+  \BOXTYPE { \testcuam{1\_1/2} }
+  \BOXTYPE { \testcuam{1\_1} }
+  \BOXTYPE { \testcuam{12.345} }
+  \BOXTYPE { \testcuam{12.345} }
+  \BOXTYPE { \testcutext{12.345}{kilogramme} }
+}
+
+
+
+\END
