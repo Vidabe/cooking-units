@@ -1760,7 +1760,8 @@ and the derived file cooking-units.sty.
 %      {dl} {dL}
 %      {cl} {cL}
 %      {ml} {mL}
-%      {decimal-mark} {.}
+%      {cutext-range-sign} {~\`{a}~}
+%      {decimal-mark} {,}
 %      {one(m)} {un}
 %      {one(f)} {une}
 %      {one(n)} {un}
@@ -6579,6 +6580,7 @@ and the derived file cooking-units.sty.
 \@@_culang_def_base:nnn { name } { decimal-mark }  { . }
 \@@_culang_def_base:nnn { name-pl } { decimal-mark } { \c_@@_no_translation_str }
 \@@_culang_def_for:nnnn { German } { name-pl } { decimal-mark } { , }
+\@@_culang_def_for:nnnn { French } { name-pl } { decimal-mark } { , }
 %    \end{macrocode}
 % Note that the plural versions just exist for completing the set.
 %    \begin{macrocode}
@@ -6599,12 +6601,18 @@ and the derived file cooking-units.sty.
 \@@_culang_def_for:nnnn { German } { name } { one (f) } { eine }
 \@@_culang_def_for:nnnn { German } { name } { one (n) } { ein }
 %    \end{macrocode}
+%    \begin{macrocode}
+\@@_culang_def_for:nnnn { French } { name } { one (m) } { un }
+\@@_culang_def_for:nnnn { French } { name } { one (f) } { une }
+\@@_culang_def_for:nnnn { French } { name } { one (n) } { un }
+%    \end{macrocode}
 %
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { name } { cutext-range-sign } { -- }
 \@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \c_@@_no_translation_str }
 \@@_culang_def_for:nnnn { German } { name } { cutext-range-sign } { ~bis~ }
 \@@_culang_def_for:nnnn { English } { name } { cutext-range-sign } { ~to~ }
+\@@_culang_def_for:nnnn { French } { name } { cutext-range-sign } { ~\`{a}~ }
 %    \end{macrocode}
 %
 %
@@ -10290,8 +10298,8 @@ and the derived file cooking-units.sty.
   {
     { kg } { kilogramme } [ kilogrammes ]
     { dag } { d\'{e}cagramme } [ d\'{e}cagrammes]
-    { g } { gramme } [ gramme ]
-    { oz } { once } < f >
+    { g } { gramme } [ grammes ]
+    { oz } { once } [ onces ] < f >
     { lb } { livre } [ livres ] < f >
 %    \end{macrocode}
 %    \begin{macrocode}
@@ -10320,19 +10328,19 @@ and the derived file cooking-units.sty.
     { ml } [ mL ] { millilitre } [ millilitres ]
 %    \end{macrocode}
 %    \begin{macrocode}
-    { cal } { calorie } [ calorie ]
-    { kcal } { kilocalorie } [ kilocalories ]
+    { cal } { calorie } [ calories ] < f >
+    { kcal } { kilocalorie } [ kilocalories ] < f >
     { J } { joule } [ joules ]
     { kJ } { kilojoule } [ kilojoules ]
     { eV } { \'{e}lectron-volt } [ \'{e}lectron-volts ]
 %    \end{macrocode}
 %    \begin{macrocode}
-    { pn } { pinc\'{e}e } < f > 
-    { EL } [c.\`{a}.s.] { cuill\`{e}re  \space \`{a} \space  soupe } < f >
-    { TL } [c.\`{a}.c.] { cuill\`{e}re  \space \`{a} \space  caf\'{e} } < f >
+    { pn } [ pinc\'{e}e ] { pinc\'{e}e } [ pinc\'{e}es ] < f >
+    { EL } [c.\`{a}.s.] { cuill\`{e}re  \space \`{a} \space  soupe } [ cuill\`{e}res  \space \`{a} \space  soupe ] < f >
+    { TL } [c.\`{a}.c.] { cuill\`{e}re  \space \`{a} \space  caf\'{e} } [ cuill\`{e}res  \space \`{a} \space  caf\'{e} ] < f >
 %    \end{macrocode}
 %    \begin{macrocode}
-    { decimal-mark } { . }
+    { decimal-mark } { , }
     { one (m) } { un }
     { one (f) } { une }
     { one (n) } { un }
