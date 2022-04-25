@@ -4150,7 +4150,7 @@ and the derived file cooking-units.sty.
 %    , \l_@@_pckopt_print_numeral_bool
 %    , \l_@@_lokal_numeral_bool
 %    , \l_@@_phrase_negative_bool
-%    , \l_@@_cutext_last_amount_equ_one_bool
+%    , \l_@@_cutext_use_single_bool
 %    , \l_@@_symbol_was_set_by_key_bool
 %    , \l_@@_contains_valid_key_bool
 %    , \l_@@_check_decimal_bool
@@ -4185,7 +4185,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_pckopt_print_numeral_bool
 \bool_new:N \l_@@_lokal_numeral_bool
 \bool_new:N \l_@@_phrase_negative_bool
-\bool_new:N \l_@@_cutext_last_amount_equ_one_bool
+\bool_new:N \l_@@_cutext_use_single_bool
 \bool_new:N \l_@@_symbol_was_set_by_key_bool
 \bool_new:N \l_@@_contains_valid_key_bool
 \bool_new:N \l_@@_check_decimal_bool
@@ -6762,7 +6762,7 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NT \l_@@_pckopt_cutext_to_cunum_bool
       { \@@_set_cmd_type_to:n { cunum } }
-    \bool_set_false:N \l_@@_cutext_last_amount_equ_one_bool
+    \bool_set_false:N \l_@@_cutext_use_single_bool
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7978,7 +7978,7 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_lokal_numeral_bool
       { \l_@@_cutext_numeral_space_tl }
       { \l_@@_cutext_space_tl }
-    \bool_if:NTF \l_@@_cutext_last_amount_equ_one_bool
+    \bool_if:NTF \l_@@_cutext_use_single_bool
       { \@@_culang_print:nV { name } \l_@@_decided_unit_tl }
       { \@@_culang_print:nV { name-pl }  \l_@@_decided_unit_tl }
   }
@@ -8027,8 +8027,8 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext_post_process_input:NN #1#2
   {
     \@@_if_parse_and_process_type_equal:nTF { range }
-      { \@@_cutext_check_if_amount_single:N #2 }
-      { \@@_cutext_check_if_amount_single:N #1 }
+      { \@@_cutext_check_if_plural_is_needed:N #2 }
+      { \@@_cutext_check_if_plural_is_needed:N #1 }
     \bool_if:NT \l_@@_lokal_numeral_bool
       { 
         \@@_if_contain_decimals:NNTF #1#2
@@ -8038,18 +8038,20 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 % \end{macro}
-% \begin{macro} { \@@_cutext_check_if_amount_single:N }
+% \begin{macro} { \@@_cutext_check_if_plural_is_needed:N }
 % Check if the input is equal to |#1|. Use fp as it is not necessary an integer.
 % Set the boolean according to the result.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cutext_check_if_amount_single:N #1
+\cs_new:Npn \@@_cutext_check_if_plural_is_needed:N #1
   {
     \fp_compare:nNnTF {#1} = { 1.0 }
       { \bool_set_true:N  } { \bool_set_false:N }
-    \l_@@_cutext_last_amount_equ_one_bool
+    \l_@@_cutext_use_single_bool
   }
 %    \end{macrocode}
 % \end{macro}
+%
+%
 % \begin{macro} { \@@_check_if_integer_can_be_numerals:NN }
 % At this point we know that we have integers, so check if they are
 % below |\l_@@_print_numerals_below_int|. If they are, fine. Else,
