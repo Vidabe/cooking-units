@@ -7038,9 +7038,14 @@ and the derived file cooking-units.sty.
       \l_@@_mixed_fraction_tl
       \l_@@_number_tmpa_tl
       \l_@@_number_tmpb_tl
-    \@@_if_print_type_equal:nT { number }
+    \@@_if_print_type_equal:nTF { number }
       {
         \@@_convert_fraction_to_number_in_input:NNN
+          \l_@@_mixed_fraction_tl
+          \l_@@_number_tmpa_tl
+          \l_@@_number_tmpb_tl
+      }{
+        \@@_post_process_fraction_accordingly:NNN
           \l_@@_mixed_fraction_tl
           \l_@@_number_tmpa_tl
           \l_@@_number_tmpb_tl
@@ -7229,6 +7234,25 @@ and the derived file cooking-units.sty.
 %        \c_@@_cmd_type_cucomp_tl { }
       }{ 
         \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_post_process_fraction_accordingly:NNN }
+% Decided to make this into its own command. This post processes fractions
+% which is only needed by \cCutext.
+%    \begin{macrocode}
+\cs_new:Npn \@@_post_process_fraction_accordingly:NNN #1#2#3
+  {
+    \tl_case:NnF \l_@@_cmd_type_tl
+      {
+        \c_@@_cmd_type_cunum_tl { }
+        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process_input:NN #1#2 }
+        \c_@@_cmd_type_cuam_tl { }
+%        \c_@@_cmd_type_cucomp_tl { }
+      }{ 
+        \@@_create_internal_error:nN { post-process-frac } \l_@@_cmd_type_tl
       }
   }
 %    \end{macrocode}
@@ -8138,7 +8162,7 @@ and the derived file cooking-units.sty.
 %
 %
 % Just a helper macro to tidy up the main macro.  The first thing to
-% do is to check if the nummerical input consits of integers. This
+% do is to check if the numerical input consits of integers. This
 % is done both both numerical values (if a range exists).
 % Afterwards check if phrases are used and can be used at all. This needs
 % to be done before the numeral check as it can change the input.
@@ -9520,6 +9544,76 @@ and the derived file cooking-units.sty.
 \cs_generate_variant:Nn \@@_parse_name_finish_cycle_and_start_new:nn { VV }
 %    \end{macrocode}
 % \end{macro}  
+%
+%
+% \subsection {Define when to use plural for \cCutext}
+%
+% \begin{macro}{  }
+%    \begin{macrocode}
+\@@_culang_def_base:nnn { pluraltest } { normal } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { pluraltest } { range } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { pluraltest } { fraction } { \c_@@_no_translation_str }
+
+\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :N } #1
+  {
+    \fp_compare:nNnTF {#1} = { 1.0 }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l_@@_cutext_use_single_bool
+  }
+\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :NN } #1#2
+  {
+    \fp_compare:nNnTF {#2} = { 1.0 }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l_@@_cutext_use_single_bool
+  }
+\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :NNN } #1#2#3
+  {
+    \quark_if_nil:NTF #1
+      { \fp_compare:nNnTF {#2} = { 1.0 } }
+      { \use_ii:nn }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l_@@_cutext_use_single_bool
+  }
+
+
+\cs_new:Npn \@@_pluraltest_define:nnn #1#2
+  {
+    \@@_culang_def_for:nnnn {#1} { pluraltest } { normal } {#1}
+    \cs_set:cpn { @@_pluraltest_ #1 :N } ##1 {#2}
+  }
+\cs_new:Npn \@@_pluraltest_define_range:nnn #1#2
+  {
+    \@@_culang_def_for:nnnn {#1} { pluraltest } { range } {#1}
+    \cs_set:cpn { @@_pluraltest_ #1 :NN } ##1##2 {#2}
+  }
+\cs_new:Npn \@@_pluraltest_define_fraction:nnn #1#2
+  {
+    \@@_culang_def_for:nnnn {#1} { pluraltest } { fraction } {#1}
+    \cs_set:cpn { @@_pluraltest_ #1 :NNN } ##1##2##3 {#2}
+  }
+\@@_pluraltest_define:nn { French }
+  {  
+    \fp_compare:nNnTF {#1} > { 2 }
+      { \bool_set_false:N } { \bool_set_true:N  }
+    \l_@@_cutext_use_single_bool
+  }
+\@@_pluraltest_define_range:nn { French }
+  {  
+    \fp_compare:nNnTF {#2} > { 2 }
+      { \bool_set_false:N } { \bool_set_true:N  }
+    \l_@@_cutext_use_single_bool
+  }
+\@@_pluraltest_define_fraction:nn { French }
+  {  
+    \quark_if_nil:NTF #1
+      { \fp_compare:nNnTF { #2/#3 } > { 2 } }
+      { \fp_compare:nNnTF { #1 + #2/#3 } > { 2 } }
+      { \bool_set_false:N } { \bool_set_true:N  }
+    \l_@@_cutext_use_single_bool
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 %
 % \subsection {cudefinesymbol}
 %
