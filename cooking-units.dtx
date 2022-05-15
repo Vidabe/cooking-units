@@ -59,7 +59,7 @@ Supported Languages
 
 * German
 * English
-* French (suboptimal)
+* French
 
 License
 -------
@@ -8052,11 +8052,11 @@ and the derived file cooking-units.sty.
     \@@_if_parse_and_process_type_equal:nTF { range }
       { 
         \@@_culang_let:nnN { pluraltest } { range } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_ \l_@@_translation_tmpa_tl :NN } #1#2
+        \use:c { @@_pluraltest_range_ \l_@@_translation_tmpa_tl :NN } #1#2
 %        \@@_cutext_check_if_plural_is_needed:N #2 
       }{ 
         \@@_culang_let:nnN { pluraltest } { normal } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_ \l_@@_translation_tmpa_tl :N } #1
+        \use:c { @@_pluraltest_normal_ \l_@@_translation_tmpa_tl :N } #1
 %        \@@_cutext_check_if_plural_is_needed:N #1 
       }
     \bool_if:NT \l_@@_lokal_numeral_bool
@@ -8073,7 +8073,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext_post_process_fraction_input:NNN #1#2#3
   {
     \@@_culang_let:nnN { pluraltest } { fraction } \l_@@_translation_tmpa_tl
-    \use:c { @@_pluraltest_ \l_@@_translation_tmpa_tl :NNN } #1#2#3
+    \use:c { @@_pluraltest_fraction_ \l_@@_translation_tmpa_tl :NNN } #1#2#3
   }
 %    \end{macrocode}
 % \end{macro}
@@ -9568,61 +9568,64 @@ and the derived file cooking-units.sty.
 \@@_culang_def_base:nnn { pluraltest } { normal } { \c_@@_no_translation_str }
 \@@_culang_def_base:nnn { pluraltest } { range } { \c_@@_no_translation_str }
 \@@_culang_def_base:nnn { pluraltest } { fraction } { \c_@@_no_translation_str }
-
-\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :N } #1
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_set:cpn { @@_pluraltest_normal_ \c_@@_no_translation_str :N } #1
   {
     \fp_compare:nNnTF {#1} = { 1.0 }
       { \bool_set_true:N  } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
-\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :NN } #1#2
+\cs_set:cpn { @@_pluraltest_range_ \c_@@_no_translation_str :NN } #1#2
   {
     \fp_compare:nNnTF {#2} = { 1.0 }
       { \bool_set_true:N  } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
-\cs_set:cpn { @@_pluraltest_ \c_@@_no_translation_str :NNN } #1#2#3
+\cs_set:cpn { @@_pluraltest_fraction_ \c_@@_no_translation_str :NNN } #1#2#3
   {
     \tl_if_empty:NTF #1
       { \fp_compare:nNnTF {#2} = { 1.0 } } { \use_ii:nn }
       { \bool_set_true:N  } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
-
-
+%    \end{macrocode}
+%    \begin{macrocode}
 \cs_new:Npn \@@_pluraltest_define:nn #1#2
   {
     \@@_culang_def_for:nnnn {#1} { pluraltest } { normal } {#1}
-    \cs_set:cpn { @@_pluraltest_ #1 :N } ##1 {#2}
+    \cs_set:cpn { @@_pluraltest_normal_ #1 :N } ##1 {#2}
   }
 \cs_new:Npn \@@_pluraltest_define_range:nn #1#2
   {
     \@@_culang_def_for:nnnn {#1} { pluraltest } { range } {#1}
-    \cs_set:cpn { @@_pluraltest_ #1 :NN } ##1##2 {#2}
+    \cs_set:cpn { @@_pluraltest_range_ #1 :NN } ##1##2 {#2}
   }
 \cs_new:Npn \@@_pluraltest_define_fraction:nn #1#2
   {
     \@@_culang_def_for:nnnn {#1} { pluraltest } { fraction } {#1}
-    \cs_set:cpn { @@_pluraltest_ #1 :NNN } ##1##2##3 {#2}
+    \cs_set:cpn { @@_pluraltest_fraction_ #1 :NNN } ##1##2##3 {#2}
   }
+%    \end{macrocode}
+%    \begin{macrocode}
 \@@_pluraltest_define:nn { French }
   {  
-    \fp_compare:nNnTF {#1} > { 2 }
-      { \bool_set_false:N } { \bool_set_true:N  }
+    \fp_compare:nNnTF { \fp_abs:n {#1} } < { 2.0 }
+      { \bool_set_true:N } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
 \@@_pluraltest_define_range:nn { French }
   {  
-    \fp_compare:nNnTF {#2} > { 2 }
-      { \bool_set_false:N } { \bool_set_true:N  }
+    \fp_compare:nNnTF { \fp_abs:n {#2} } < { 2.0 }
+      { \bool_set_true:N } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
 \@@_pluraltest_define_fraction:nn { French }
   {  
     \quark_if_nil:NTF #1
-      { \fp_compare:nNnTF { #2/#3 } > { 2 } }
-      { \fp_compare:nNnTF { #1 + #2/#3 } > { 2 } }
-      { \bool_set_false:N } { \bool_set_true:N  }
+      { \fp_compare:nNnTF { \fp_abs:n { #2/#3 } } < { 2.0 } }
+      { \fp_compare:nNnTF { \fp_abs:n { #1 } + \fp_abs:n { #2/#3 } } < { 2.0 } }
+      { \bool_set_true:N } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
 %    \end{macrocode}
