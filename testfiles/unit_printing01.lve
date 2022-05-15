@@ -29,7 +29,7 @@
 \newcookingunit[symbol={test-d}]{testd}
 \newcookingunit[natural-unit, symbol={test-e}]{teste}
 \newcookingunit[natural-unit, symbol={test-f}, gender=f]{testf}
-\newcookingunit[natural-unit, symbol={test-g}, gender=n, set-options={round-precision=0}]{testg}
+\newcookingunit[natural-unit, symbol={test-g}, gender=n, set-option={round-precision=0}]{testg}
 \newcookingunit[add-to-group=weight
   , natural-unit
   , symbol={test-i}
@@ -39,7 +39,7 @@
 \newcookingunit[just-unknown-unit]{testj}
 \newcookingunit[just-unknown-unit, gender=n]{testk}
 \newcookingunit[gender=n]{testl}
-\newcookingunit[set-options={round-precision=-1}]{testm}
+\newcookingunit[set-option={round-precision=-1}]{testm}
 \newcookingunit{\%}
 
 \cudefinesymbol {English}
