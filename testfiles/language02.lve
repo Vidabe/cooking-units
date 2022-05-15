@@ -1,0 +1,84 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[english,french,ngerman]{babel}
+\RequirePackage{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+
+
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \textcutext #1#2
+  {
+    #1 \space #2
+  }
+\cs_new:Npn \textcutextfrac #1#2#3
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+
+\ExplSyntaxOff
+
+
+\begin{document}
+
+\START
+
+\selectlanguage{cooking-units-standardlanguage}
+
+\TEST{plural-choosing-default}
+  {
+\BOXTYPE { \textcutext{1}{Stand} }
+\BOXTYPE { \textcutext{1.5}{Standos} }
+\BOXTYPE { \textcutext{2}{Standos} }
+\BOXTYPE { \textcutext{3}{Standos} }
+\BOXTYPE { \textcutext{\textcutextfrac{}{1}{2}}{Stand} }
+\BOXTYPE { \textcutext{\textcutextfrac{}{3}{2}}{Standos} }
+\BOXTYPE { \textcutext{\textcutextfrac{}52}{Standos} }
+\BOXTYPE { \textcutext{\textcutextfrac{1}12}{Standos} }
+\BOXTYPE { \textcutext{\textcutextfrac{2}12}{Standos} }
+\BOXTYPE { \textcutext{\textcutextfrac{}13}{Stand} }
+\BOXTYPE { \textcutext{1--2}{Standos} }
+\BOXTYPE { \textcutext{1--1.5}{Standos} }
+\BOXTYPE { \textcutext{0.8--1}{Stand} }
+}
+
+\selectlanguage{cooking-units-testlanguage}
+
+\TEST{plural-choosing-test}
+  {
+\BOXTYPE { \textcutext{1}{Test} }
+\BOXTYPE { \textcutext{1.5}{Test} }
+\BOXTYPE { \textcutext{2}{Testos} }
+\BOXTYPE { \textcutext{3}{Testos} }
+\BOXTYPE { \textcutext{\textcutextfrac{}{1}{2}}{Test} }
+\BOXTYPE { \textcutext{\textcutextfrac{}{3}{2}}{Test} }
+\BOXTYPE { \textcutext{\textcutextfrac{}52}{Testos} }
+\BOXTYPE { \textcutext{\textcutextfrac{1}12}{Test} }
+\BOXTYPE { \textcutext{\textcutextfrac{2}12}{Testos} }
+\BOXTYPE { \textcutext{\textcutextfrac{}13}{Test} }
+\BOXTYPE { \textcutext{1--2}{Testos} }
+\BOXTYPE { \textcutext{1--1.5}{Test} }
+\BOXTYPE { \textcutext{0.8--1}{Test} }
+  }
+
+
+
+\END

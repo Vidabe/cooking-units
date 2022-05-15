@@ -1,0 +1,113 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage[english,french,ngerman]{babel}
+\RequirePackage{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+
+\DeclareLanguage{cooking-units-standardlanguage}
+\DeclareLanguage{cooking-units-testlanguage}
+
+\newcookingunit{test-a}
+\cudefinename{cooking-units-standardlanguage}
+  {
+    {test-a} {Stand} [Standos]
+  }
+\cudefinename{cooking-units-testlanguage}
+  {
+    {test-a} {Test} [Testos]
+  }
+
+
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{ ------ }
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \textcutext #1#2
+  {
+    #1 \space #2
+  }
+
+
+ \__cookingunits_pluraltest_define:nn
+   { cooking-units-testlanguage }
+   {
+    \fp_compare:nNnTF { \fp_abs:n {#1} } < { 2.0 }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l__cookingunits_cutext_use_single_bool
+   }
+ \__cookingunits_pluraltest_define_range:nn 
+   { cooking-units-testlanguage }
+   {
+    \fp_compare:nNnTF { \fp_abs:n {#2} } < { 2.0 }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l__cookingunits_cutext_use_single_bool
+   }
+\__cookingunits_pluraltest_define_fraction:nn
+   { cooking-units-testlanguage }
+   {
+    \quark_if_nil:NTF #1
+      { \fp_compare:nNnTF { \fp_abs:n { #2/#3 } } < { 2.0 } }
+      { \fp_compare:nNnTF { \fp_abs:n { #1  + #2/#3 } } < { 2.0 } }
+      { \bool_set_true:N  } { \bool_set_false:N }
+    \l__cookingunits_cutext_use_single_bool
+   }
+
+\ExplSyntaxOff
+
+
+\begin{document}
+
+\START
+
+\selectlanguage{cooking-units-standardlanguage}
+
+\TEST{plural-choosing-default}
+  {
+\BOXTYPE { \cutext{1}{test-a} }
+\BOXTYPE { \cutext{1.5}{test-a} }
+\BOXTYPE { \cutext{2}{test-a} }
+\BOXTYPE { \cutext{3}{test-a} }
+\BOXTYPE { \cutext{1/2}{test-a} }
+\BOXTYPE { \cutext{3/2}{test-a} }
+\BOXTYPE { \cutext{5/2}{test-a} }
+\BOXTYPE { \cutext{1_1/2}{test-a} }
+\BOXTYPE { \cutext{2_1/2}{test-a} }
+\BOXTYPE { \cutext{1/3}{test-a} }
+\BOXTYPE { \cutext{1--2}{test-a} }
+\BOXTYPE { \cutext{1--1.5}{test-a} }
+\BOXTYPE { \cutext{0.8--1}{test-a} }
+}
+
+\selectlanguage{cooking-units-testlanguage}
+
+\TEST{plural-choosing-test}
+  {
+\BOXTYPE { \cutext{1}{test-a} }
+\BOXTYPE { \cutext{1.5}{test-a} }
+\BOXTYPE { \cutext{2}{test-a} }
+\BOXTYPE { \cutext{3}{test-a} }
+\BOXTYPE { \cutext{1/2}{test-a} }
+\BOXTYPE { \cutext{3/2}{test-a} }
+\BOXTYPE { \cutext{5/2}{test-a} }
+\BOXTYPE { \cutext{1_1/2}{test-a} }
+\BOXTYPE { \cutext{2_1/2}{test-a} }
+\BOXTYPE { \cutext{1/3}{test-a} }
+\BOXTYPE { \cutext{1--2}{test-a} }
+\BOXTYPE { \cutext{1--1.5}{test-a} }
+\BOXTYPE { \cutext{0.8--1}{test-a} }
+  }
+
+
+
+\END
