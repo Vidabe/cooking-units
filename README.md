@@ -49,7 +49,7 @@ Supported Languages
 
 * German
 * English
-* French (suboptimal)
+* French
 
 License
 -------
