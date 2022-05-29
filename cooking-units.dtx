@@ -1066,9 +1066,9 @@ and the derived file cooking-units.sty.
 %
 %
 %
+% \section{Good to know stuff}
 %
-%
-%\subsection{Rounding temperatures}
+% \subsection{Rounding temperatures}
 % 
 %
 % By default temperatures are rounded to integers (using \opt{round-precision=0}).
@@ -1087,6 +1087,40 @@ and the derived file cooking-units.sty.
 %   \cunum[C=Re]{180}{C} \\
 %   \cunum[C=K]{180}{C} \\
 % \end{cuexamplecode}
+%
+%
+% \subsection{At which point is the plural used?}
+% While using \cCutext\ one may wonder which rules are used in order to determine
+% if the printed unit is singular or plural. If rules for a specific language are not found
+% the default ruleset is used. There are currently two rule sets: One default
+% and one if you are using french.
+%
+% Each set has three seperate rules: one for \enquote{normal} numbers, one for
+% ranges and one for fractions.
+%
+% \subsection{French}
+%
+% Use singular if:
+% \begin{description}
+%    \item[normal] The absolute value of the number is smaller $2$
+%    \item[fraction] The absolute value of the evaluated fraction is smaller $2$.
+%     (e.g.\ $1\,\sfrac{1}{2} = 1.5$, $2\,\sfrac{3}{4} = 2.75$).
+%    \item[range] The absolute value of the second number is smaller $2$. 
+%       (e.g.\ \cuam{1--2}: Take $2$.)
+% \end{description}
+%
+% For sources see \cite{Plural-French-Academia}, \cite{Plural-French-absolute-1} \&
+% \cite{Plural-French-absolute-2}\footnote{Thanks a lot to Alexis Jeandeau! I never would 
+% have imagined that the french language uses the sinfular for everything smaller $2$.}.
+%
+% \subsection{Default (all other languages)} 
+% 
+% Use singular if:
+% \begin{description}
+%    \item[normal] The number is equal to $1$.
+%    \item[fraction] There is no mixed fraction part and the nominator is equal to $1$.
+%    \item[range] The second number is equal to $1$.  (e.g.\ \cuam{1--2}: Take $2$.)
+% \end{description}
 %
 % \section{Predefined units \& some notes}
 % \label{sec:pred-units}
@@ -3236,8 +3270,7 @@ and the derived file cooking-units.sty.
 % header).
 %
 % Furthermore, as you can see I am not able to speak too many
-% languages (german and english to be precise; I managed to add french
-% with the help of the internet, which is not optimal) so if you are
+% languages (german and english to be precise) so if you are
 % able to speak a language not yet implemented and would like to help
 % you can send me  the translations known to you. A list of all units
 % (and their current translations) is given in \cref{sec:Translations}.
@@ -9561,14 +9594,24 @@ and the derived file cooking-units.sty.
 % \end{macro}  
 %
 %
-% \subsection {Define when to use plural for \cCutext}
+% \subsection {Define plural-usage for \cCutext}
 %
-% \begin{macro}{  }
+% \begin{macro}{ pluraltest: normal/range/fraction }
+%  Some translations used in a second. Define one for \enquote{normal}
+% (just a number), \enquote{range} and \enquote{fraction}.
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { pluraltest } { normal } { \c_@@_no_translation_str }
 \@@_culang_def_base:nnn { pluraltest } { range } { \c_@@_no_translation_str }
 \@@_culang_def_base:nnn { pluraltest } { fraction } { \c_@@_no_translation_str }
 %    \end{macrocode}
+% \end{macro}
+% \begin{macro}{ @@_pluraltest_normal_<default>:N, 
+%                         @@_pluraltest_range_<default>:NN, 
+%                         @@_pluraltest_fraction_<default>:NNN }
+%  Here we define the default behavior, if no explicit rule is given for a language.
+%  By default, use the singular only if the value in question is equal to $1$.
+%  For ranges take the last value, for fractions make sure there are no mixed fractions
+%  and that the nominator is equal to $1$.
 %    \begin{macrocode}
 \cs_set:cpn { @@_pluraltest_normal_ \c_@@_no_translation_str :N } #1
   {
@@ -9590,6 +9633,10 @@ and the derived file cooking-units.sty.
     \l_@@_cutext_use_single_bool
   }
 %    \end{macrocode}
+% \end{macro}
+% \begin{macro}{ \@@_pluraltest_define:nn , \@@_pluraltest_define_range:nn , \@@_pluraltest_define_fraction:nn }
+%  Allow to define a when to use the singular/plural for a given language.
+%  Nothing more happens here. The default was already defined in the last step.
 %    \begin{macrocode}
 \cs_new:Npn \@@_pluraltest_define:nn #1#2
   {
@@ -9607,6 +9654,15 @@ and the derived file cooking-units.sty.
     \cs_set:cpn { @@_pluraltest_fraction_ #1 :NNN } ##1##2##3 {#2}
   }
 %    \end{macrocode}
+% \end{macro}
+% \begin{macro}{ Pluraltest: French }
+%   As source see 
+%    \begin{itemize}
+%      \item \url{https://github.com/Vidabe/cooking-units/pull/29#issue-1190629683}
+%      \item \url{https://www.dictionnaire-academie.fr/article/A9P2979} 
+%    \end{itemize}
+%  Note: At this point the minus signs were already removed from fractions; thus
+%  all their values are positive.
 %    \begin{macrocode}
 \@@_pluraltest_define:nn { French }
   {  
@@ -10644,6 +10700,20 @@ and the derived file cooking-units.sty.
 %    \url{https://www.legislation.gov.uk/ukpga/1985/72}
 %
 %  \bibitem{StickSource} \url{https://cooking.stackexchange.com/questions/784/translating-cooking-terms-between-us-uk-au-ca-nz}
+%
+%  \bibitem{Plural-French-Academia} 
+%    Dictionnaire de l’Académie française.
+%    \url{https://www.dictionnaire-academie.fr/article/A9P2979} 
+%    [Last checked: 2022-05-29]
+%
+%  \bibitem{Plural-French-absolute-1} 
+%    \url{https://www.antidote.info/fr/blogue/enquetes/15-gramme-ou-15-grammes} 
+%    [Last checked: 2022-05-29]
+%
+%  \bibitem{Plural-French-absolute-2} 
+%    \url{https://french.stackexchange.com/q/1975} 
+%    [Last checked: 2022-05-29]
+%
 %
 % \end{thebibliography}
 % 
