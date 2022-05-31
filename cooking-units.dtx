@@ -8375,6 +8375,44 @@ and the derived file cooking-units.sty.
 %
 %
 %
+%
+% \subsection{Public Primitives}
+%
+%    \begin{macrocode}
+\cs_new:Npn \cookingunits_print_fraction:nnn #1#2#3
+  {
+    \group_begin:
+    \@@_set_amount:Nn \l_@@_mixed_fraction_tl {#1}
+    \@@_set_amount:Nn \l_@@_number_tmpa_tl {#2}
+    \@@_set_amount:Nn \l_@@_number_tmpb_tl {#3}
+%    \@@_process_and_remove_minus_in_fraction:NNNN \l_@@_minus_bool
+%      \l_@@_mixed_fraction_tl
+%      \l_@@_number_tmpa_tl
+%      \l_@@_number_tmpb_tl
+%    \@@_culang_let:nnN { name } { decimal-mark } \l_@@_translation_tmpa_tl
+%    \tl_replace_once:Nnn \l_@@_mixed_fraction_tl { . } \l_@@_translation_tmpa_tl
+%    \tl_replace_once:Nnn \l_@@_number_tmpa_tl { . } \l_@@_translation_tmpa_tl
+%    \tl_replace_once:Nnn \l_@@_number_tmpb_tl { . } \l_@@_translation_tmpa_tl
+    \@@_print_fractions:Nnn 
+      \l_@@_mixed_fraction_tl 
+      \l_@@_number_tmpa_tl 
+      \l_@@_number_tmpb_tl  
+    \group_end:
+  }                  
+%    \end{macrocode}
+%    \begin{macrocode}
+\cs_new:Npn \cookingunits_print_range:nn #1#2
+  {
+%    \@@_set_amount:Nn \l_@@_number_tmpa_tl {#1}
+%    \@@_set_amount:Nn \l_@@_number_tmpb_tl {#2}
+%    \@@_print_numerical_input:N \l_@@_number_tmpa_tl
+    #1
+    \@@_print_range_sign:
+    #2
+%    \@@_print_numerical_input:N \l_@@_number_tmpb_tl
+  }
+%    \end{macrocode}
+%
 % \subsection{\mycs{cucomp}}
 %
 %
