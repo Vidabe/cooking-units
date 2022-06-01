@@ -221,14 +221,21 @@ and the derived file cooking-units.sty.
     cudefinekeys ,
     , cudefinekeychain , cuaddtokeychain
     , cudeclareunitgroup
+    , cookingunits_print_fraction:nnn , cookingunits_print_range:nn
+    , ExplSyntaxOff, ExplSyntaxOn
   }
 
 \NewDocumentCommand \mycs { m }
   {
-    \clist_if_in:NnTF \l_cookingunits_list_of_defined_befehlen_clist {#1}
+    \tl_set_rescan:Nnn \l_tmpa_tl 
+      {  
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_letter:N \: %
+      } {#1}
+    \clist_if_in:NVTF \l_cookingunits_list_of_defined_befehlen_clist \l_tmpa_tl
       { 
-        \cs_if_exist:cTF {#1}
-          { \cs{\textcolor{blue}{#1}} }
+        \cs_if_exist:cTF { \l_tmpa_tl }
+          { \cs{\textcolor{blue}{ \l_tmpa_tl }} }
           { \tl_show:n {#1}\mycsERRORII }
       }
       { \tl_show:n {#1} \mycsERROR }
@@ -3235,6 +3242,52 @@ and the derived file cooking-units.sty.
 %  \end{description}
 % \end{function}
 % 
+%
+%
+%
+%
+%
+% \section{Public Commands}
+% 
+% This section describes some public functions, Their main usage is the printing of
+% stuff. They are primtivies used between an \mycs{ExplSyntaxOn} and 
+% \mycs{ExplSyntaxOff}; for usage in a document you may do the following:
+% \begin{lstlisting}
+%   \ExplSyntaxOn
+%   \NewDocumentCommand \cuprintfrac { O{} m m }
+%     {
+%       \cookingunits_print_fraction:nnn {#1} {#2} {#3}
+%     }
+%   \NewDocumentCommand \cuprintrange { m m }
+%     {
+%       \cookingunits_print_range:nn {#1} {#2}
+%     }
+%   \ExplSyntaxOff
+% \end{lstlisting} 
+%
+%
+% \begin{function}{\cookingunits_print_fraction:nnn}
+%   \begin{syntax}
+%     \mycs{cookingunits_print_fraction:nnn} \marg{mixed-part}\marg{numerator}\marg{denominator}
+%  \end{syntax}
+%  \emph{Note:} There is no parsing and processing done in this command, it just
+%  prints the input.
+%
+%  Uses the internal fraction printing command to print a fraction. \Arg{mixed-part}
+%  can be empty if no mixed part is needed.
+% \end{function}
+%
+%
+% \begin{function}{\cookingunits_print_range:nn}
+%   \begin{syntax}
+%     \mycs{cookingunits_print_range:nn} \marg{left-part}\marg{right-part}
+%  \end{syntax}
+%  \emph{Note:} There is no parsing and processing done in this command, ist just
+%  prints the input.
+%
+%  Uses the internal range printing command to print a range (using the same range sign as
+%  \mycs{cunum} would use)
+% \end{function}
 %
 %
 %^^A \section{Notes}
@@ -8378,6 +8431,8 @@ and the derived file cooking-units.sty.
 %
 % \subsection{Public Primitives}
 %
+% Two public commands.
+% \begin{macro}{ \cookingunits_print_fraction:nnn }
 %    \begin{macrocode}
 \cs_new:Npn \cookingunits_print_fraction:nnn #1#2#3
   {
@@ -8385,14 +8440,6 @@ and the derived file cooking-units.sty.
     \@@_set_amount:Nn \l_@@_mixed_fraction_tl {#1}
     \@@_set_amount:Nn \l_@@_number_tmpa_tl {#2}
     \@@_set_amount:Nn \l_@@_number_tmpb_tl {#3}
-%    \@@_process_and_remove_minus_in_fraction:NNNN \l_@@_minus_bool
-%      \l_@@_mixed_fraction_tl
-%      \l_@@_number_tmpa_tl
-%      \l_@@_number_tmpb_tl
-%    \@@_culang_let:nnN { name } { decimal-mark } \l_@@_translation_tmpa_tl
-%    \tl_replace_once:Nnn \l_@@_mixed_fraction_tl { . } \l_@@_translation_tmpa_tl
-%    \tl_replace_once:Nnn \l_@@_number_tmpa_tl { . } \l_@@_translation_tmpa_tl
-%    \tl_replace_once:Nnn \l_@@_number_tmpb_tl { . } \l_@@_translation_tmpa_tl
     \@@_print_fractions:Nnn 
       \l_@@_mixed_fraction_tl 
       \l_@@_number_tmpa_tl 
@@ -8400,18 +8447,20 @@ and the derived file cooking-units.sty.
     \group_end:
   }                  
 %    \end{macrocode}
+% \end{macro}
+% \begin{macro}{ \cookingunits_print_range:nn }
 %    \begin{macrocode}
 \cs_new:Npn \cookingunits_print_range:nn #1#2
   {
-%    \@@_set_amount:Nn \l_@@_number_tmpa_tl {#1}
-%    \@@_set_amount:Nn \l_@@_number_tmpb_tl {#2}
-%    \@@_print_numerical_input:N \l_@@_number_tmpa_tl
+    \group_begin:
+    \@@_set_cmd_type_to:n { cunum }
     #1
     \@@_print_range_sign:
     #2
-%    \@@_print_numerical_input:N \l_@@_number_tmpb_tl
+    \group_end:
   }
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsection{\mycs{cucomp}}
 %
