@@ -813,8 +813,11 @@ and the derived file cooking-units.sty.
 % \changes {2022/03/26} {2.00a} {Bugfix: |\cuam| prints a unit in case of an error. This also happens with \opt{parse-number=false}.}
 % \changes {2022/03/26} {2.00a} {Bugfix: Remove \cs{peek_meaning_ignore_spaces:NTF}.}
 %
+% \changes {2022/06/06} {2.01} {Correction of french language. Thanks to Alexis Jeandeau}
+% \changes {2022/06/06} {2.01} {Implement a way to define the plural-finding algorithm.}
+% \changes {2022/06/06} {2.01} {Add two public commands \cs{cookingunits_print_fraction:nnn} and \cs{cookingunits_print_range:nn}.}
 %
-%
+%.
 %
 %
 % \GetFileInfo{\jobname.sty}
@@ -1105,13 +1108,13 @@ and the derived file cooking-units.sty.
 % Each set has three seperate rules: one for \enquote{normal} numbers, one for
 % ranges and one for fractions.
 %
-% \subsection{French}
+% \subsubsection*{French}
 %
 % Use singular if:
 % \begin{description}
 %    \item[normal] The absolute value of the number is smaller $2$
 %    \item[fraction] The absolute value of the evaluated fraction is smaller $2$.
-%     (e.g.\ $1\,\sfrac{1}{2} = 1.5$, $2\,\sfrac{3}{4} = 2.75$).
+%     (e.g.\ $1\,\sfrac{1}{2} = 1.5$ uses singular, $2\,\sfrac{3}{4} = 2.75$ uses plural).
 %    \item[range] The absolute value of the second number is smaller $2$. 
 %       (e.g.\ \cuam{1--2}: Take $2$.)
 % \end{description}
@@ -1120,7 +1123,7 @@ and the derived file cooking-units.sty.
 % \cite{Plural-French-absolute-2}\footnote{Thanks a lot to Alexis Jeandeau! I never would 
 % have imagined that the french language uses the sinfular for everything smaller $2$.}.
 %
-% \subsection{Default (all other languages)} 
+% \subsubsection*{Default (all other languages)} 
 % 
 % Use singular if:
 % \begin{description}
@@ -3690,8 +3693,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2022/03/26}
-  {2.00a} 
+  {2022/06/06}
+  {2.01} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
