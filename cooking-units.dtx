@@ -6832,6 +6832,642 @@ and the derived file cooking-units.sty.
     \@@_new_print_unit_correctly:
   }
 \cs_generate_variant:Nn \@@_do_the_stuff:nnnnnn { nnnnV }
+
+
+\bool_new:N \l_@@_rf_contains_fraction_bool
+\bool_new:N \l_@@_rf_contains_range_bool
+\bool_new:N \l_@@_rf_contains_special_sign_bool
+\bool_new:N \l_@@_rf_check_fraction_bool
+
+\cs_new:Npn \@@_rf_main_command:nnnnnn #1#2#3#4#5#6
+  {
+%  #1 -- label
+%  #2 -- options
+%  #3 -- amount
+%  #4 -- space
+%  #5 -- unit
+    \@@_rf_initialice_accordingly:nnnn {#1} {#4} {#2} {#5}
+    \@@_use_hook_accordingly:
+    \@@_rf_parse_the_amount:n {#3}
+    \@@_general_checkups:
+    \@@_if_state_equal:nTF { normal }
+      { 
+        \@@_rf_process_amount_normally:n {#2} 
+        \@@_rf_post_process:N \l_@@_processed_seq
+      }
+      { \@@_process_amount_special: }
+      \@@_rf_prepare_amount_printing:N \l_@@_post_processed_seq
+    \@@_rf_print_amount_correctly:
+    \@@_rf_print_unit_correctly:
+  }
+\cs_generate_variant:Nn \@@_rf_main_command:nnnnnn { nnnnV }
+
+\cs_new:Npn \@@_rf_initialice_accordingly:nnnn #1#2#3#4
+  {
+    \@@_initialize_new_default:nnn {#1} {#3} {#4}
+    \@@_rf_initialize_default_units:
+    \@@_rf_setup_bools_for_process_and_prints:
+    \tl_case:NnF \l_@@_cmd_type_tl
+      {
+        \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#2} }
+        \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
+        \c_@@_cmd_type_cuam_tl { }
+      }
+      { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
+  }
+
+\cs_new:Npn \@@_rf_initialice_default:nnn #1#2#3
+  {
+    \tl_clear:N \l_@@_option_unit_tl
+    \tl_if_empty:nF {#2} { \keys_set:nn { cooking-units } {#2} }
+    \IfNoValueF {#1}
+      { \@@_reference_label_and_persons:n {#1} }
+    \@@_expand_unit_input:Nn \l_@@_original_unit_tl {#3}
+    \@@_error_if_unit_not_defined:VTF \l_@@_original_unit_tl
+      { 
+        \@@_set_state_to:n { error } 
+        \bool_set_true:N \l_@@_unit_error_bool
+      } 
+      { \@@_set_state_to:n { normal } }
+    \@@_set_print_type_to:n { unknown }
+    \tl_clear:N \l_@@_phantom_tl
+  }
+\cs_new:Npn \@@_rf_initialize_default_units:
+  {
+    \@@_if_no_unit_marker:NTF \l_@@_original_unit_tl
+      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
+      { 
+        \bool_if:NTF \l_@@_pckopt_bonkers_bool
+          { \@@_changing_unit_bonkers:N \l_@@_original_unit_tl }
+          {
+            \bool_if:NT \l_@@_pckopt_convert_to_eV_bool
+              { \@@_convert_to_eV:N \l_@@_original_unit_tl }
+          }
+        \prop_get:NVNF \l_@@_change_unit_prop \l_@@_original_unit_tl \l_@@_option_unit_tl
+          { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
+      }
+  }
+
+\cs_new:Npn \@@_rf_setup_bools_for_process_and_prints:
+  {
+    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
+    \bool_set_false:N \l_@@_lokal_eval_fractions_bool
+    \bool_lazy_and:nnT
+      { \l_@@_reference_given_bool } 
+      { \l_@@_pckopt_recalculate_amount_bool }
+      { 
+        \int_compare:nNnF 
+          { \l_@@_wanted_number_of_persons_int }
+          =
+          { \l_@@_local_number_of_persons_int }
+          { \bool_set_true:N \l_@@_lokal_recalc_for_people_bool }
+      }
+        \bool_lazy_or:nnTF
+          { \l_@@_pckopt_eval_fractions_bool }
+          { \l_@@_lokal_recalc_for_people_bool }
+          { \bool_set_true:N \l_@@_lokal_eval_fractions_bool }
+          {
+%          "Convert" fractions \emph{only} if a unit change is requested.
+            \bool_lazy_and:nnT
+              { \l_@@_pckopt_convert_fractions_bool }
+              { ! \tl_if_eq_p:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }              
+              { \bool_set_true:N \l_@@_lokal_eval_fractions_bool }
+          }
+  }
+
+
+
+\cs_new:Npn \@@_rf_parse_the_amount:n #1
+  {
+    \@@_expand_amount_input:Nn \l_@@_original_amount_tl {#1}
+    \tl_set_rescan:NnV \l_@@_original_amount_tl
+      {
+        \char_set_catcode_letter:N \_ %
+        \char_set_catcode_ignore:N \ %
+        \char_set_catcode_other:N ? %
+      } \l_@@_original_amount_tl
+    \bool_lazy_any:nTF
+      {
+        { \tl_if_empty_p:N \l_@@_original_amount_tl }
+        { \l_@@_pckopt_draft_bool }
+      }
+      { \@@_prepare_just_print_input: }
+      { 
+        \@@_rf_split_and_parse_input:N \l_@@_original_amount_tl
+      }
+  }
+
+
+\cs_new:Npn \@@_rf_split_and_parse_input:N #1
+  {
+    \bool_if:NT \l_@@_pckopt_fourty_two_bool
+      { \@@_set_state_to:n { 42 } }
+    \tl_set_eq:NN \l_@@_tmpa_tl #1
+    \@@_rf_prepare_input_before_split:N \l_@@_tmpa_tl
+  }
+
+\cs_new:Npn \@@_rf_prepare_input_before_split:N #1
+  {
+    \@@_rf_prepare_input_check_for_special_sign:N #1
+    \@@_rf_prepare_input_check_for_range_sign:N #1
+    \@@_rf_split_input:V #1
+    \@@_rf_parse_input:N \l_@@_split_input_seq
+    \use_none_delimit_by_q_nil:w \q_nil
+  }
+\cs_new:Npn \@@_rf_prepare_input_check_for_special_sign:N #1
+  {
+    \tl_map_inline:Nn \l_@@_input_allowed_special_signs_tl
+      {
+        \tl_if_in:NnT #1 {##1}
+          {
+            \@@_if_state_equal:nF { error }
+              { 
+                \@@_set_state_to:n { special_sign } 
+                \bool_set_true:N \l_@@_rf_contains_special_sign_bool
+              }
+            \tl_map_break:
+          }
+      }
+  }
+\cs_new:Npn \@@_rf_prepare_input_check_for_range_sign:N #1
+  {
+    \tl_if_in:NVT #1 \l_@@_input_range_sign_tl
+      {
+        \tl_replace_all:NVn #1 \l_@@_input_range_sign_tl { \q_@@_range } 
+        \bool_set_true:N \l_@@_rf_contains_range_bool
+      }
+  }
+
+
+\cs_new:Npn \@@_rf_split_input:n #1
+  {
+    \seq_clear:N \l_@@_split_input_seq
+    \seq_set_split_keep_spaces:Nnn \l_@@_tmpa_seq { \q_@@_range } {#1}
+    \seq_map_function:NN \l_@@_tmpa_seq \@@_rf_split_inividual_part:n
+  }
+\cs_generate_variant:Nn \@@_rf_split_input:n { V }
+
+\cs_new:Npn \@@_rf_split_inividual_part:n #1
+  {
+    %% rough scetch
+    \tl_if_in:nnTF {#1} { / }
+      { \@@_rf_split_fraction:ww #1 \q_stop }
+      {
+        %% normal number
+        \tl_if_empty:nT {#1}
+          { \@@_create_error:n { empty-argument } }
+        \seq_put_right:Nn \l_@@_split_input_seq { { \c_false_bool }  {} {} {#1} }
+      }
+  }
+
+\cs_new:Npn \@@_rf_split_fraction:ww #1 / #2 \q_stop
+  {
+    \tl_if_in:nnT {#2} { _ }
+      { \@@_create_error:n { fraction-wrong-order } }
+    \tl_if_empty:nT {#2}
+      { \@@_create_error:n { empty-argument } }
+    \bool_set_true:N \l_@@_rf_contains_fraction_bool
+    \tl_if_in:nnTF {#1} { _ }
+      {
+        \@@_rf_split_mixed_fraction:wwn #1 \q_stop {#2}
+      }{
+        \tl_if_empty:nT {#1}
+          { \@@_create_error:n { empty-argument } }
+        \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {} {#1} {#2} }
+      }
+  }
+\cs_new:Npn \@@_rf_split_mixed_fraction:wwn #1 _ #2 \q_stop #3
+  {
+    \tl_if_empty:nT {#1}
+      { \@@_create_error:n { empty-argument } }
+    \tl_if_empty:nT {#2}
+      { \@@_create_error:n { empty-argument } }
+    \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {#1} {#2} {#3} }
+  }
+
+
+\cs_new:Npn \@@_rf_parse_input:N #1
+  {
+    \seq_clear:N \l_@@_parsed_seq
+    \seq_map_inline:Nn #1
+      { \@@_rf_parse_input:nnnn ##1 }
+  }
+\cs_new:Npn \@@_rf_parse_input:nnnn #1 #2#3#4
+  {
+    \bool_if:NTF #1
+      { 
+        \bool_set_true:N \l_@@_rf_check_fraction_bool 
+        \@@_parse_input_and_safe_in:nN {#2} \l_@@_mixed_fraction_tl
+        \@@_parse_input_and_safe_in:nN {#3} \l_@@_number_tmpa_tl
+        \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
+        \bool_set_false:N \l_@@_minus_bool
+        \@@_rf_frac_remove_minus:N
+          \l_@@_mixed_fraction_tl 
+          \l_@@_number_tmpa_tl 
+          \l_@@_number_tmpb_tl 
+          \q_no_value
+        \@@_rf_seq_put_right:NnVVVV 
+          \l_@@_parsed_seq 
+          {#1} \l_@@_minus_bool 
+          \l_@@_mixed_fraction_tl 
+          \l_@@_number_tmpa_tl  
+          \l_@@_number_tmpb_tl
+      }{ 
+        \bool_set_false:N \l_@@_rf_check_fraction_bool 
+        \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
+        \@@_rf_seq_put_right:NnnnnV \l_@@_parsed_seq
+          {#1} { } { } { }  \l_@@_number_tmpb_tl
+      }
+  }
+\cs_new:Npn \@@_rf_seq_put_right:Nnnnnn #1 #2#3#4#5#6
+  { \seq_put_right:Nn #1 { {#2} {#3} {#4} {#5} {#6} } }
+\cs_generate_variant:Nn \@@_rf_seq_put_right:Nnnnnn { NnVVVV, NnnnnV }
+
+\cs_new:Npn \@@_rf_frac_remove_minus:N #1
+  {
+    \quark_if_no_value:NF #1
+      { 
+        \tl_if_empty:NF #1
+          {
+            \exp_last_unbraced:NNV
+            \@@_rf_frac_remove_minus_aux:NNw #1 #1 \q_stop 
+          }
+        \@@_rf_frac_remove_minus:N
+      }
+  }
+\cs_new:Npn \@@_rf_frac_remove_minus_aux:NNw #1 #2#3 \q_stop
+  {
+    \tl_if_eq:NNTF #2 -
+      { 
+        \@@_bool_reverse:N \l_@@_minus_bool
+        \tl_set:Nn #1 {#3} 
+      }
+      { \tl_set:Nn #1 {#2#3} }
+  }
+  
+  
+\cs_new:Npn \@@_rf_process_amount_normally:n #1
+  {
+    \@@_initialise_new_after_parsing:n {#1}
+    \seq_clear:N \l_@@_processed_seq
+    \seq_map_inline:Nn \l_@@_parsed_seq
+      {
+        \@@_rf_process_amount_normally:nnnnn ##1
+      }
+  }
+
+\cs_new:Npn \@@_rf_process_amount_normally:nnnnn #1#2#3#4#5
+  {
+    \bool_if:NTF #1
+      {
+        \bool_if:NTF \l_@@_lokal_eval_fractions_bool
+          {
+            \bool_set_false:N \l_@@_rf_contains_fraction_bool
+            \fp_compare:nNnT {#5} = { 0 }
+              { \@@_create_error:n { Division-by-zero } }
+            \tl_if_empty:nTF {#3}
+              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 } }
+              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 + #3 } }
+            \int_compare:nNnT {#2} = { \c_zero_int }
+              { \tl_put_left:Nn \l_@@_number_tmpb_tl { - } }
+            \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
+            \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq 
+              { \c_false_bool } { } {} {} \l_@@_number_tmpb_tl
+          }{
+            %% Currently: Do nothing
+            \@@_rf_seq_put_right:Nnnnnn \l_@@_processed_seq
+              {#1} {#2} {#3} {#4} {#5}
+          }
+      }{
+        \tl_if_empty:nF {#2}
+          { \tl_show:n { ERROR-wrong-a } }
+        \tl_set:Nn \l_@@_number_tmpb_tl {#5}
+        \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
+        \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
+          {#1} {#2} {} {} \l_@@_number_tmpb_tl
+      }
+  }
+
+%\cs_new:Npn \@@_put_processed_right:nnnnn #1#2#3#4#5
+%  {
+%    \seq_put_right:Nn \l_@@_processed_seq { {#1} {#2} {#3} {#4} {#5} }
+%  }  
+
+
+\cs_new:Npn \@@_rf_post_process:N #1
+  {
+    \seq_set_eq:NN \l_@@_post_processed_seq #1
+    %% all: check if all numbers are numerals
+    %% cutext: check for plural in  for plural (range: last unit)
+    %% cuam: phrases
+    \tl_case:NnF \l_@@_cmd_type_tl
+      {
+        \c_@@_cmd_type_cunum_tl { \@@_cunum_post_process:N #1 }
+        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process:N #1 }
+        \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process:N #1  }
+      }{ 
+        \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
+      }
+  }
+
+\cs_new:Npn \@@_cunum_post_process:N #1 { }
+
+\cs_new:Npn \@@_cutext_post_process:N #1
+  {
+    \@@_rf_check_plural:N #1
+    \bool_lazy_and:nnT \l_@@_lokal_numeral_bool \l_@@_rf_contains_fraction_bool
+      { 
+        \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
+          { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_tmpa_seq }
+      }
+  }
+\cs_new:Npn \@@_rf_check_plural:N #1
+  {
+    \seq_get_right:NN #1 \l_@@_tmpa_tl
+    \exp_after:wN \@@_rf_check_plural_aux:nnnnn \l_@@_tmpa_tl
+  }
+\cs_new:Npn \@@_rf_check_plural_aux:nnnnn #1#2#3#4#5
+  {
+    \bool_if:NTF #1
+      {
+        \@@_culang_let:nnN { pluraltest } { fraction } \l_@@_translation_tmpa_tl
+        \use:c { @@_pluraltest_fraction_ \l_@@_translation_tmpa_tl :nnn } 
+          {#3} {#4} {#5}
+      }{
+        \@@_culang_let:nnN { pluraltest } { normal } \l_@@_translation_tmpa_tl
+        \use:c { @@_pluraltest_normal_ \l_@@_translation_tmpa_tl :n } {#5}
+      }
+  }
+\prg_new_conditional:Npnn \@@_rf_check_if_decimal:NN #1#2 { TF }
+  {
+    \tl_clear:N \l_@@_tmpa_tl
+    \seq_clear:N #2
+    \seq_map_inline:Nn #1
+      { 
+        \@@_rf_check_if_decimal_aux:Nnnnnn #2 ##1
+      }
+    \tl_if_in:NnTF \l_@@_tmpa_tl { . }
+      { \prg_return_true: }
+      { \prg_return_false: }
+  }
+\cs_new:Npn \@@_rf_check_if_decimal_aux:Nnnnnn #1#2#3#4#5#6
+  {
+    \tl_put_right:Nn \l_@@_tmpa_tl {#6} 
+    \seq_put_right:Nn #1 {#6}
+  }
+
+\cs_new:Npn \@@_rf_check_if_numerals_can_be_used:N #1
+  {
+    \seq_map_inline:Nn #1
+      {
+        \bool_lazy_and:nnF
+          { \int_compare_p:nNn {##1} < { \l_@@_print_numerals_below_int } }
+          { \int_compare_p:nNn {##1} > { 0 } }
+          { 
+            \bool_set_false:N \l_@@_lokal_numeral_bool 
+            \seq_map_break:
+          }
+      }
+  }
+
+\cs_new:Npn \@@_cuam_post_process:N #1
+  {
+    \bool_if:NF \l_@@_rf_contains_fraction_bool
+      {
+    \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+      {
+        \bool_if:NT \l_@@_pckopt_use_phrases_bool
+          { \@@_rf_cuam_post_process_input_phrases:NN #1 \l_@@_tmpa_seq }
+        \bool_if:NT \l_@@_lokal_numeral_bool
+          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_tmpa_seq }
+      }
+      }
+  }
+
+
+\cs_new:Npn \@@_rf_cuam_post_process_input_phrases:NN #1#2
+  {
+    \@@_culang_get_phrase_prop:N \l_@@_phrase_prop
+    \tl_if_eq:NNT \c_@@_no_translation_str \l_@@_phrase_prop
+      { \use_none_delimit_by_q_stop:w }
+    \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
+    
+  \@@_get_largest_common_divisor:NN #2 \l_@@_tmpb_int
+  %% If one -> No largest divisor: do nothing
+  \int_compare:nNnF { \l_@@_tmpb_int } = { 1 }
+    {
+      \@@_find_common_phrase:NNV #1#2 \l_@@_tmpb_int 
+    }
+  }
+
+\cs_new:Npn \@@_get_largest_common_divisor:NN #1#2
+  {
+    \seq_get_left:NN #1 \l_@@_tmpa_tl
+    \int_set:Nn #2 { \l_@@_tmpa_tl }
+    \seq_show:N #1
+    \int_compare:nNnT { \seq_count:N #1 } > { 1 }
+      { 
+        \seq_map_inline:Nn #1
+          { 
+            \@@_find_largest_commin_divisor:Nn #2 {##1} 
+            \int_compare:nNnT {#2} = { 1 }
+              { \seq_map_break: }
+          }
+      }
+    \int_show:N #2
+  }
+\cs_new:Npn \@@_find_largest_commin_divisor:Nn #1#2
+  {
+    \int_set:Nn \l_tmpb_int {#2}
+    \int_until_do:nNnn { \l_tmpb_int } = { 0 }
+      {
+        \int_set_eq:NN \l_tmpa_int \l_tmpb_int
+        \int_set:Nn \l_tmpb_int 
+          { \int_mod:nn {#1} { \l_tmpb_int } }
+        \int_set_eq:NN #1 \l_tmpa_int
+      }
+  }
+
+
+\cs_new:Npn \@@_find_common_phrase:NNn #1 #2#3
+  {
+    %% Shit is to be done
+    \bool_set_false:N \l_@@_lokal_phrase_bool
+    \seq_map_inline:Nn \l_@@_phrase_numbers_seq
+      {
+        \int_compare:nNnF { \use_i:nn ##1 } > { #3 }
+          {
+            \bool_set_true:N \l_@@_tmpa_bool
+            \@@_find_common_phrase_aux:Nnn #2 ##1 
+            \bool_if:NT \l_@@_tmpa_bool
+              { 
+                \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
+                  { \prop_get:NnN \l_@@_phrase_prop { ##1 } \l_@@_phrase_text_tl }
+                  { \prop_get:NnN \l_@@_phrase_prop { ##1 -pl } \l_@@_phrase_text_tl }
+                \prop_get:NnN \l_@@_phrase_prop { ##1 -gender } \l_@@_phrase_gender_tl
+                \seq_map_break: 
+              }
+          }
+      }
+    \bool_if:NT \l_@@_tmpa_bool
+      { \@@_update_values:NN #1 \l_@@_tmpb_seq }
+  }
+\cs_generate_variant:Nn \@@_find_common_phrase:NNn { NNV }
+\cs_new:Npn \@@_find_common_phrase_aux:Nnn #1 #2#3
+  {
+    \seq_clear:N \l_@@_tmpb_seq
+    \seq_map_inline:Nn #1
+      {
+        \bool_if:NTF #3 
+          { \int_set:Nn \l_@@_tmpa_int { 1 } }
+          { \int_set:Nn \l_@@_tmpa_int { \int_div_truncate:nn {##1} {#2} } }
+        \int_compare:nNnTF { \l_@@_tmpa_int * #2 }  = {##1}
+          { \seq_put_right:NV \l_@@_tmpb_seq \l_@@_tmpa_int }
+          { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
+      }        
+  }
+\cs_new:Npn \@@_update_values:NN #1#2
+  {
+    \seq_clear:N \l_@@_post_processed_seq
+    \seq_map_inline:Nn #1
+      {
+        \@@_update_values_aux:NNnnnnn \l_@@_post_processed_seq #2 ##1
+      }
+  }
+\cs_new:Npn \@@_update_values_aux:NNnnnnn #1#2#3#4#5#6#7
+  { 
+    %% During testing.
+        \tl_if_empty:nF {#5#6}
+          { \tl_show:n { ERROR-empty-a } }
+        \seq_pop_left:NN #2 \l_@@_tmpa_tl
+        \@@_rf_seq_put_right:NnnnnV \l_@@_post_processed_seq
+          {#3} {#4} {#5} {#6} \l_@@_tmpa_tl
+  }
+
+
+\cs_new:Npn \@@_rf_prepare_amount_printing:N #1
+  {
+    \seq_clear:N \l_@@_prepared_printing_seq
+    \seq_map_inline:Nn #1
+      {
+        \@@_rf_prepare_amount_printing_aux:nnnnn ##1
+      }
+  }
+
+\seq_new:N \l_@@_prepared_printing_seq
+\cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnn #1#2#3#4#5
+  {
+    \bool_if:NTF #1
+      {
+        \@@_rf_put_rght_prepared_printing:n
+          { \@@_print_fraction:nnnn {#2} {#3} {#4} {#5} }
+      }{
+        \@@_rf_put_rght_prepared_printing:n
+          { 
+%            \@@_print_number:n {#5} 
+              \@@_print_number_default:n {#5}
+%            \@@_cutext_print_number:n {#5}
+%            \@@_cuam_print_number:n {#5}
+          }
+      }
+  }
+\cs_new:Npn \@@_rf_put_rght_prepared_printing:n #1
+  {
+    \seq_put_right:Nn \l_@@_prepared_printing_seq {#1}
+  }
+
+\seq_new:N \l_@@_post_processed_seq
+\cs_new:Npn \@@_rf_print_amount_correctly:
+  {
+    \seq_use:Nn \l_@@_prepared_printing_seq { \@@_print_range_sign: }
+  }
+\cs_new:Npn \@@_rf_print_unit_correctly:
+  {
+    \@@_new_print_unit_correctly:
+  }
+
+\cs_new:Npn \@@_print_fraction:nnnn #1#2#3#4
+  {
+%    \tl_show:n {#1-#2-#3-#4}
+    \int_compare:nNnT {#1} = { 1 } { \c_@@_minus_tl }
+    \tl_if_empty:nF {#2}
+      {
+        #2
+        \skip_horizontal:N \l_@@_mixed_frac_dim
+      }
+    \@@_frac:nn {#3} {#4}
+  }
+
+
+\cs_new:Npn \@@_print_number_default:n #1
+  {
+    \tl_set:Nn \l_@@_tmpa_tl {#1}
+    \tl_if_in:NnT \l_@@_tmpa_tl { . }
+      {
+        \@@_culang_let:nnN { name } { decimal-mark } \l_@@_translation_tmpa_tl
+        \tl_replace_once:Nnn  \l_@@_tmpa_tl { . } { \l_@@_translation_tmpa_tl }
+      }
+    \tl_replace_once:Nnn \l_@@_tmpa_tl { - } \c_@@_minus_tl
+    \l_@@_tmpa_tl
+  }
+  
+\cs_new_protected:Npn \@@_cutext_print_number:n #1
+  {
+    \bool_if:NTF \l_@@_lokal_numeral_bool
+      { \@@_cutext_print_input_aux:nV {#1} \l_@@_decided_unit_tl }
+      { \@@_print_number_default:n {#1} }
+  }
+\cs_new_protected:Npn \@@_cutext_print_input_aux:nn #1#2
+  {
+    \int_compare:nNnTF {#1} = { 1 }
+      {
+        \@@_culang_one_let:NnT \l_@@_translation_tmpa_tl {#2}
+          {
+            \bool_if:NT \l_@@_cutext_uppercase_word_bool
+              {
+                \text_uppercase:x { \tl_head:V \l_@@_translation_tmpa_tl }
+                \tl_tail:V 
+              }
+          }
+        \l_@@_translation_tmpa_tl
+      }{
+        \bool_if:NTF \l_@@_cutext_uppercase_word_bool
+          { \@@_print_Numeral:n {#1} }
+          { \@@_print_numeral:n {#1} }
+      }
+  }
+\cs_generate_variant:Nn \@@_cutext_print_input_aux:nn { nV }
+
+\cs_new_protected:Npn \@@_cuam_print_number:n #1
+  {
+    \bool_lazy_and:nnTF
+      { \l_@@_lokal_phrase_bool } 
+      { \l_@@_lokal_numeral_bool }
+      {
+        \@@_cuam_print_numerical_input_aux:nV {#1} \l_@@_phrase_number_tl
+      }
+      { \@@_print_number_default:n {#1} }
+  }
+
+\cs_new:Npn \@@_cuam_print_numerical_input_aux:nn #1#2
+  {
+    \int_compare:nNnTF {#1} = { 1 }
+      {
+        \@@_culang_one_let_by_gender:NVTF 
+          \l_@@_translation_tmpa_tl \l_@@_phrase_gender_tl
+          { \l_@@_translation_tmpa_tl  }
+          { 
+            \@@_print_numeral:n {#1}
+            \bool_set_false:N \l_@@_lokal_numeral_bool
+          }
+      }
+      { \@@_print_numeral:n {#1} } 
+  }
+\cs_generate_variant:Nn \@@_cuam_print_numerical_input_aux:nn { nV }
+
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6890,7 +7526,7 @@ and the derived file cooking-units.sty.
         \bool_set_true:N \l_@@_unit_error_bool
       } 
       { \@@_set_state_to:n { normal } }
-    \@@_set_parse_and_process_type_to:n { number }
+%    \@@_set_parse_and_process_type_to:n { number }
     \@@_set_print_type_to:n { unknown }
     \tl_clear:N \l_@@_phantom_tl
     \@@_initialize_new_default_units:
@@ -7025,7 +7661,10 @@ and the derived file cooking-units.sty.
   {
     \tl_set_eq:NN \l_@@_print_type_tl \l_@@_parse_and_process_type_tl
     \@@_if_state_equal:nT { normal }
-      { \@@_new_setup_bools_for_process_and_prints: }
+      { 
+%        \@@_new_setup_bools_for_process_and_prints: 
+        \@@_rf_setup_bools_for_process_and_prints:
+      }
     \@@_decide_unit:
     \@@_if_cmd_type_equal:nT { cCutext }
       { \@@_cutext_check_if_translation_available: }
@@ -7475,477 +8114,6 @@ and the derived file cooking-units.sty.
 
 
 
-\cs_new:Npn \@@_rf_main_command:nnnnnn #1#2#3#4#5#6
-  {
-%  #1 -- label
-%  #2 -- options
-%  #3 -- amount
-%  #4 -- space
-%  #5 -- unit
-    \@@_rf_initialice_accordingly:nnnn {#1} {#4} {#2} {#5}
-    \@@_use_hook_accordingly:
-    \@@_rf_parse_the_amount:n {#3}
-    \@@_general_checkups:
-    \@@_if_state_equal:nTF { normal }
-      { 
-        \@@_rf_process_amount_normally:n {#2} 
-        \@@_rf_post_process:N \l_@@_processed_seq
-      }
-      { \@@_process_amount_special: }
-      \@@_rf_prepare_amount_printing:N \l_@@_post_processed_seq
-    \@@_rf_print_amount_correctly:
-    \@@_rf_print_unit_correctly:
-  }
-
-\cs_new:Npn \@@_rf_initialice_accordingly:nnnn #1#2#3#4
-  {
-    \@@_initialize_new_default:nnn {#1} {#3} {#4}
-    \@@_initialize_new_default_units:
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#2} }
-        \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
-        \c_@@_cmd_type_cuam_tl { }
-      }
-      { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
-  }
-
-\cs_new:Npn \@@_rf_setup_bools_for_process_and_prints:
-  {
-    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
-    \bool_set_false:N \l_@@_lokal_eval_fractions_bool
-    \bool_lazy_and:nnT
-      { \l_@@_reference_given_bool } 
-      { \l_@@_pckopt_recalculate_amount_bool }
-      { 
-        \int_compare:nNnF 
-          { \l_@@_wanted_number_of_persons_int }
-          =
-          { \l_@@_local_number_of_persons_int }
-          { \bool_set_true:N \l_@@_lokal_recalc_for_people_bool }
-      }
-        \bool_lazy_or:nnTF
-          { \l_@@_pckopt_eval_fractions_bool }
-          { \l_@@_lokal_recalc_for_people_bool }
-          { \bool_set_true:N \l_@@_lokal_eval_fractions_bool }
-          {
-%          "Convert" fractions \emph{only} if a unit change is requested.
-            \bool_lazy_and:nnT
-              { \l_@@_pckopt_convert_fractions_bool }
-              { ! \tl_if_eq_p:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }              
-              { \bool_set_true:N \l_@@_lokal_eval_fractions_bool }
-          }
-  }
-
-
-
-\cs_new:Npn \@@_rf_parse_the_amount:n #1
-  {
-    \@@_expand_amount_input:Nn \l_@@_original_amount_tl {#1}
-    \tl_set_rescan:NnV \l_@@_original_amount_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N \ %
-        \char_set_catcode_other:N ? %
-      } \l_@@_original_amount_tl
-    \bool_lazy_any:nTF
-      {
-        { \tl_if_empty_p:N \l_@@_original_amount_tl }
-        { \l_@@_pckopt_draft_bool }
-      }
-      { \@@_prepare_just_print_input: }
-      { 
-        \@@_rf_split_and_parse_input:
-      }
-  }
-
-
-\cs_new:Npn \@@_rf_split_and_parse_input:
-  {
-    \bool_if:NT \l_@@_pckopt_fourty_two_bool
-      { \@@_set_state_to:n { 42 } }
-    \tl_set_eq:NN \l_@@_tmpa_tl \l_@@_original_amount_tl
-    \@@_rf_prepare_input_before_split:N \l_@@_tmpa_tl
-  }
-
-\cs_new:Npn \@@_rf_prepare_input_before_split:N #1
-  {
-    \@@_rf_prepare_input_check_for_special_sign:N #1
-    \@@_rf_prepare_input_check_for_range_sign:N #1
-    \@@_rf_split_input:V #1
-    \@@_rf_parse_input:N \l_@@_split_input_seq
-    \use_none_delimit_by_q_nil:w \q_nil
-  }
-\cs_new:Npn \@@_rf_prepare_input_check_for_special_sign:N #1
-  {
-    \tl_map_inline:Nn \l_@@_input_allowed_special_signs_tl
-      {
-        \tl_if_in:NnT #1 {##1}
-          {
-            \@@_if_state_equal:nF { error }
-              { \@@_set_state_to:n { special_sign } }
-            \tl_map_break:
-          }
-      }
-  }
-\cs_new:Npn \@@_rf_prepare_input_check_for_range_sign:N #1
-  {
-    \tl_if_in:NVT #1 \l_@@_input_range_sign_tl
-      {
-        \tl_replace_all:NVn #1 \l_@@_input_range_sign_tl { \q_@@_range } 
-        \@@_set_parse_and_process_type_to:n { range }
-        \bool_set_true:N \l_@@_rf_contains_range_bool
-      }
-  }
-
-\bool_new:N \l_@@_rf_contains_fraction_bool
-\bool_new:N \l_@@_rf_contains_range_bool
-\bool_new:N \l_@@_rf_check_fraction_bool
-\bool_new:N \l_@@_rf_contains_range_bool
-
-\cs_new:Npn \@@_rf_split_input:n #1
-  {
-    \seq_clear:N \l_@@_split_input_seq
-    \seq_clear:N \l_@@_parsed_seq
-    \seq_set_split_keep_spaces:Nnn \l_@@_tmpa_seq { \q_@@_range_sign } {#1}
-    \seq_map_function:NN \l_@@_tmpa_seq \@@_rf_split_inividual_part:n
-  }
-
-\cs_new:Npn \@@_rf_split_inividual_part:n #1
-  {
-    %% Check if empty -> Error?
-    %% rough scetch
-    \tl_if_in:nnTF {#1} { / }
-      {
-        \bool_set_true:N \l_@@_rf_contains_fraction_bool
-        \@@_rf_split_fraction:ww #1 \q_stop
-      }{
-        %% normal number
-        \seq_put_right:Nn \l_@@_split_input_seq { { \c_false_bool }  {} {} {#1} }
-      }
-  }
-
-\cs_new:Npn \@@_rf_split_fraction:ww #1 / #2 \q_stop
-  {
-    \tl_if_in:nnT {#2} { _ }
-      { \@@_create_error:n { fraction-wrong-order } }
-    \tl_if_in:nnTF {#1} { _ }
-      {
-        \@@_rf_split_mixed_fraction:wwn #1 \q_stop {#3}
-      }{
-        \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {} {#1} {#2} }
-      }
-  }
-\cs_new:Npn \@@_rf_split_mixed_fraction:wwn #1 _ #2 \q_stop #3
-  {
-    \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {#1} {#2} {#3} }
-  }
-
-
-\cs_new:Npn \@@_rf_parse_input:N #1
-  {
-    \seq_map_inline:Nn #1
-      { \@@_rf_parse_input:nnnn ##1 }
-  }
-\cs_new:Npn \@@_rf_parse_input:nnnn #1 #2#3#4
-  {
-    \bool_if:NTF #1
-      { 
-        \bool_set_true:N \l_@@_rf_check_fraction_bool 
-        \@@_parse_input_and_safe_in:nN {#2} \l_@@_mixed_fraction_tl
-        \@@_parse_input_and_safe_in:nN {#3} \l_@@_number_tmpa_tl
-        \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
-        \bool_set_false:N \l_@@_minus_bool
-        \@@_rf_frac_remove_minus:N
-          \l_@@_mixed_fraction_tl 
-          \l_@@_number_tmpa_tl 
-          \l_@@_number_tmpb_tl 
-          \q_no_value
-        \@@_rf_put_in_seq:nVnnV {#1} \l_@@_minus_bool { } { }  \l_@@_number_tmpb_tl
-      }{ 
-        \bool_set_false:N \l_@@_rf_check_fraction_bool 
-        \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
-        \@@_rf_put_in_seq:nnnnV {#1} { } { } { }  \l_@@_number_tmpb_tl
-      }
-  }
-\cs_new:Npn \@@_rf_put_in_seq:nnnn #1#2#3#4#5
-  {
-    \seq_put_right:Nn \l_@@_parsed_seq { {#1} {#2} {#3} {#4} {#5} }
-  }  
-\cs_new:Npn \@@_rf_frac_remove_minus:N #1
-  {
-    \quark_if_no_value:NF #1
-      { 
-        \exp_last_unbraced:NNV
-        \@@_rf_frac_remove_minus_aux:NNw #1 #1 \q_stop 
-        \@@_rf_frac_remove_minus:N
-      }
-  }
-\cs_new:Npn \@@_rf_frac_remove_minus_aux:NNw #1 #2#3 \q_stop
-  {
-    \tl_if_eq:NNTF #2 -
-      { 
-        \@@_bool_reverse:N \l_@@_minus_bool
-        \tl_set:Nn #1 {#2} 
-      }
-      { \tl_set:Nn #1 {#2#3} }
-  }
-  
-  
-\cs_new:Npn \@@_rf_process_amount_normally:n #1
-  {
-    \@@_initialise_new_after_parsing:n {#1}
-    \seq_clear:N \l_@@_processed_seq
-    \seq_map_inline:Nn \l_@@_parsed_seq
-      {
-        \@@_rf_process_amount_normally:nnnnn ##1
-      }
-  }
-
-\cs_new:Npn \@@_rf_process_amount_normally:nnnnn #1#2#3#4#5
-  {
-    %% check beforehand if special sign.
-    \bool_if:NTF #1
-      {
-        \bool_if:NTF \l_@@_lokal_eval_fraction
-          {
-            \fp_compare:nNnT {#5} = { 0 }
-              { \@@_create_error:n { Division-by-zero } }
-            \tl_if_empty:nTF {#3}
-              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 } }
-              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 + #3 } }
-            \int_compare:nNnT {#2} = { 0 }
-              { \tl_put_left:Nn \l_@@_number_tmpb_tl { - } }
-            \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
-            \@@_put_processed_right:nnnnV {#1} {#2} {} {} \l_@@_number_tmpb_tl
-          }{
-            %% Currently: Do nothing
-            \@@_put_processed_right:nnnnn {#1} {#2} {#3} {#4} {#5}
-          }
-      }{
-        \tl_set:Nn \l_@@_number_tmpb_tl {#4}
-        \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
-        \@@_put_processed_right:nnnnV {#1} {#2} {} {} \l_@@_number_tmpb_tl
-      }
-  }
-
-\cs_new:Npn \@@_put_processed_right:nnnnn #1#2#3#4#5
-  {
-    \seq_put_right:Nn \l_@@_processed_seq { {#1} {#2} {#3} {#4} {#5} }
-  }  
-
-
-\cs_new:Npn \@@_rf_post_process:N #1
-  {
-    \seq_clar:N \l_@@_post_processed_seq
-    %% all: check if all numbers are numerals
-    %% cutext: check for plural in  for plural (range: last unit)
-    %% cuam: phrases
-  }
-
-\cs_new:Npn \@@_cutext_post_process:N #1
-  {
-    \@@_rf_check_plural:N #1
-    \bool_if:NT \l_@@_lokal_numeral_bool
-      { 
-        \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
-          { \bool_set_false:N \l_@@_lokal_numeral_bool }
-          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_tmpb_tl }
-      }
-  }
-\cs_new:Npn \@@_rf_check_plural:N #1
-  {
-    \seq_get_right:NN #1 \l_@@_tmpa_tl
-    \exp_after:wN \@@_rf_check_plural_aux:nnnnn \l_@@_tmpa_tl
-  }
-\cs_new:Npn \@@_rf_check_plural_aux:nnnnn #1#2#3#4#5
-  {
-    \bool_if:NTF #1
-      {
-        \@@_culang_let:nnN { pluraltest } { fraction } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_fraction_ \l_@@_translation_tmpa_tl :nnn } 
-          {#3} {#4} {#5}
-      }{
-        \@@_culang_let:nnN { pluraltest } { normal } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_normal_ \l_@@_translation_tmpa_tl :n } {#5}
-      }
-  }
-\prg_new_conditional:Npnn \@@_rf_check_if_decimal:NN #1#2 { TF }
-  {
-    \tl_clear:N \l_@@_tmpa_tl
-    \seq_clear:N #2
-    \seq_map_inline:Nn #1
-      { 
-        \tl_put_right:Nn \l_@@_tmpa_tl {##5} 
-        \seq_push:Nn #2 { ##5 }
-      }
-    \tl_if_in:NnTF \l_@@_tmpa_tl { . }
-      { \prg_return_false: }
-      { \prg_return_true: }
-  }
-
-\cs_new:Npn \@@_rf_check_if_numerals_can_be_used:N #1
-  {
-    \seq_map_inline:Nn #1
-      {
-        \bool_lazy_and:nnF
-          { \int_compare_p:nNn {##1} < { \l_@@_print_numerals_below_int } }
-          { \int_compare_p:nNn {##1} > { 0 } }
-          { 
-            \bool_set_false:N \l_@@_lokal_numeral_bool 
-            \seq_map_break:
-          }
-      }
-  }
-
-\cs_new:Npn \@@_cuam_post_process:N #1
-  {
-    \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
-      {
-        \bool_if:NT \l_@@_pckopt_use_phrases_bool
-          { \@@_rf_cuam_post_process_input_phrases:N \l_@@_tmpa_seq }
-        \bool_if:NT \l_@@_lokal_numeral_bool
-          { \@@_rf_check_if_numerals_can_be_used:N #1 }
-      }
-  }
-
-
-\cs_new:Npn \@@_rf_cuam_post_process_input_phrases:N #1
-  {
-    \@@_culang_get_phrase_prop:N \l_@@_phrase_prop
-    \tl_if_eq:NNT \c_@@_no_translation_str \l_@@_phrase_prop
-      { \use_none_delimit_by_q_stop:w }
-    \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-    
-    \seq_get_left:NN #1 \l_@@_tmpa_tl
-    \int_set:Nn \l_@@_tmpa_int { \l_@@_tmpa_tl }
-    \int_set_eq:NN \l_@@_tmpb_int \l_@@_tmpa_int
-    \int_compare:nNnT { \seq_count:N #1 } > { 1 }
-      { 
-        \seq_map_inline:Nn #1
-          { \@@_find_largest_commin_divisor:Nn \l_@@_tmpb_int {##1} }
-      }
-  %% If one -> No largest divisor
-  \@@_get_thingy:NN #1 \l_@@_tmpb_int 
-  %% Shit does thing
-    
-%    \tl_clear:N \l_@@_list_of_found_phrases_seq
-  }
-
-\cs_new:Npn \@@_get_thingy:NN #1 #2
-  {
-    %% Shit is to be done
-    \bool_set_false:N \l_@@_lokal_phrase_bool
-    \seq_map_inline:Nn \l_@@_phrase_full_seq
-      {
-        \@@_get_thingy_aux:Nnnnnnn #1 {#2} ##1 
-        \bool_if:NT \l_@@_tmpa_bool
-          {
-            %% found it!
-            %% Replace old solutions with new one:
-            \seq_map_break:
-          }
-      }
-    \bool_if:NT \l_@@_tmpa_bool
-      {
-        \@@_update_values:NN #1 \l_@@_tmpb_seq
-      }
-  }
-\cs_new:Npn \@@_get_thingy_aux:Nnnnnnn #1 #2#3#4#5#6#7
-  {
-    %% #3: number; #4: single (1) or not (0); #5: phrase; #6: phrase-plural; #7: Gender
-    \int_compare:nNnF {#2} > {#3}
-      {
-        \seq_clear:N \l_@@_tmpb_seq
-        \bool_set_true:N \l_@@_tmpa_bool
-        \int_compare:nNnTF {#4} = { 1 }
-          {
-            \seq_map_inline:Nn #1
-              {
-                \int_set:Nn \l_@@_tmpa_int { 1 }
-                \int_compare:nNnTF {#2} = {##1}
-                  { \seq_put_right:Nn \l_@@_tmpb_seq { 1 } }
-                  { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
-              }
-          }{
-            \seq_map_inline:Nn #1
-              {
-                \int_set:Nn \l_@@_tmpa_int { \int_div_truncate:nn {#2} {#3} }
-                \int_compare:nNnTF { \l_@@_tmpa_int * #3 }  = {#2}
-                  { \seq_put_right:NV \l_@@_tmpb_seq { \l_@@_tmpa_int } }
-                  { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
-              }
-          }
-        \bool_if:NT \l_@@_tmpa_bool
-          {
-            \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
-              { \tl_set:Nn \l_@@_phrase_text_tl {#5} }
-              { \tl_set:Nn \l_@@_phrase_text_tl {#6} }
-            \tl_set:Nn \l_@@_phrase_gender_tl {#7}
-          }
-      }
-  }
-\cs_new:Npn \@@_update_values:NN #1#2
-  {
-    \seq_map_inline:Nn #1
-      {
-        \seq_pop_left:NN #2 \l_@@_tmpa_tl
-        \@@_put_stuff_right:nnVnn {##1} {##2} {##3} {##4} \l_@@_tmpa_tl
-      }
-  }
-\cs_new:Npn \@@_put_stuff_right:nnnnn #1#2#3#4#5
-  { \seq_put_right:Nn \l_@@_processed_seq { {#1} {#2} {#3} {#4} {#5} }   }
-
-\cs_new:Npn \@@_find_largest_commin_divisor:Nn #1#2
-  {
-    \int_set:Nn \l_tmpb_int {#2}
-    \int_while_do:nNnn { \l_tmpb_int } = { \c_zero_int }
-      {
-        \int_set_eq:NN \l_tmpa_int \l_tmpb_int
-        \int_set:Nn \l_tmpb_int 
-          { \int_mod:nn {#1} { \l_tmpb_int } }
-        \int_set_eq:NN #1 \l_tmpa_int
-      }
-  }
-
-
-\cs_new:Npn \@@_rf_prepare_amount_printing:N #1
-  {
-    \seq_clear:N \l_@@_prepared_printing_seq
-    \seq_map_inline:Nn #1
-      {
-        \@@_rf_prepare_amount_printing_aux:nnnnn {#1} {#2} {#3} {#4} {#5}
-      }
-  }
-
-\cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnn #1#2#3#4#5
-  {
-    \bool_if:NTF #1
-      {
-        \@@_rf_put_rght_prepared_printing:n
-          { \@@_print_fraction:nnnn {#2} {#3} {#4} {#5} }
-      }{
-        \@@_rf_put_rght_prepared_printing:n
-          { \@@_print_number:n {#5} }
-      }
-  }
-\cs_new:Npn \@@_rf_put_rght_prepared_printing:n #1
-  {
-    \seq_put_right:Nn \l_@@_prepared_printing_seq {#1}
-  }
-
-
-\cs_new:Npn \@@_rf_print_amount_correctly:
-  {
-    \seq_use:Nn \l_@@_post_processed_seq { \@@_print_range_sign: }
-  }
-\cs_new:Npn \@@_rf_print_unit_correctly:
-  {
-    \@@_new_print_unit_correctly:
-  }
-
-
 
 
 
@@ -8201,13 +8369,13 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_parse_input_and_safe_in:nN #1 #2
   {
-        \tl_clear:N \l_@@_tmpa_tl
-        \bool_set_false:N \l_@@_check_decimal_bool
-        \bool_set_false:N \l_@@_minus_bool
-        \cs_set_eq:NN \@@_parse:N \@@_start_loop:N 
-        \tl_map_function:nN {#1} \@@_parse:N
-        \@@_if_state_equal:nF { error }
-          { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
+    \tl_clear:N \l_@@_tmpa_tl
+    \bool_set_false:N \l_@@_check_decimal_bool
+    \bool_set_false:N \l_@@_minus_bool
+    \cs_set_eq:NN \@@_parse:N \@@_start_loop:N 
+    \tl_map_function:nN {#1} \@@_parse:N
+    \@@_if_state_equal:nF { error }
+      { \tl_set_eq:NN #2 \l_@@_tmpa_tl }
   }  
 %    \end{macrocode}
 % \end{macro}
@@ -8554,7 +8722,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cunum:nnnnn #1#2#3#4#5
   {
     \@@_set_cmd_type_to:n { cunum }
-    \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} {#4} {#5} { }
+    \@@_rf_main_command:nnnnnn {#1} {#2} {#3} {#4} {#5} { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8624,7 +8792,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cutext:nnnn #1#2#3#4
   {
     \@@_set_cmd_type_to:n { cCutext }
-    \@@_do_the_stuff:nnnnnn {#1} {#2} {#3} { } {#4} { }
+    \@@_rf_main_command:nnnnnn {#1} {#2} {#3} { } {#4} { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8856,7 +9024,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_cuam:nnn #1#2#3
   {
     \@@_set_cmd_type_to:n { cuam }
-    \@@_do_the_stuff:nnnnVn {#1} {#2} {#3} { } \c_@@_no_unit_marker_tl { }
+    \@@_rf_main_command:nnnnVn {#1} {#2} {#3} { } \c_@@_no_unit_marker_tl { }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -10457,6 +10625,9 @@ and the derived file cooking-units.sty.
 %  Defining some phrases. This command is just a wrapper for the
 %  subcommand.
 %    \begin{macrocode}
+\tl_new:N \l_@@_phrase_tmp_tl
+\tl_new:N \l_@@_phrase_tmpb_tl
+\seq_new:N \l_@@_phrase_full_seq
 \NewDocumentCommand \cudefinephrase { m m }
   {
     \@@_new_cuphrase_add:nn {#1} {#2}
@@ -10497,15 +10668,19 @@ and the derived file cooking-units.sty.
 %          \l_@@_phrase_prop
         \prop_set_eq:Nc \l_@@_phrase_prop { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
+%        \prop_get:NnN \l_@@_phrase_prop { full } \l_@@_phrase_full_seq
       }{
         \prop_new:c { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_clear:N \l_@@_phrase_prop
         \seq_clear:N \l_@@_phrase_numbers_seq
+        \seq_clear:N \l_@@_phrase_full_seq
       }
     \@@_sanitize_arrows:n {#2}
     \@@_parse_phrase:V \l_@@_sanitise_tl
+%    \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
     \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
     \prop_put:NnV \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
+%    \prop_put:NnV \l_@@_phrase_prop { full } \l_@@_phrase_full_seq
     \prop_set_eq:cN { l_@@_ \l_@@_language_tl _phrase_prop } \l_@@_phrase_prop
 %    \@@_culang_def_for:VnnV 
 %      \l_@@_language_tl { phrase } { phrase-prop } \l_@@_phrase_prop
@@ -10530,13 +10705,13 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ \@@_parse_phrase_start_cycle: }
 %  Starts the parsing cycle. Clear some variables, set state to normal.
 %    \begin{macrocode}
-\tl_new:N \l_@@_phrase_tmp_tl
 \cs_new:Npn \@@_parse_phrase_start_cycle:
   {
     \@@_set_state_to:n { normal }
     \bool_set_false:N \l_@@_tmpa_bool
     \tl_clear:N \l_@@_curr_unit_tl
     \tl_clear:N \l_@@_phrase_tmp_tl
+    \tl_clear:N \l_@@_phrase_tmpb_tl
     \prop_clear:N \l_@@_tmpa_prop
     \@@_parse_stuff_mandatories_plus_star:nn
   }
@@ -10574,17 +10749,23 @@ and the derived file cooking-units.sty.
           {
             \int_set:Nn \l_@@_tmpa_int {#1}   
             \tl_set:NV \l_@@_curr_unit_tl \l_@@_tmpa_int
-             \tl_put_right:Nx \l_@@_phrase_tmp_tl { { \l_@@_curr_unit_tl } }
-            \bool_if:NT \l_@@_tmpa_bool
-              { \tl_put_left:Nn \l_@@_curr_unit_tl { - } }   
+             \tl_put_right:Nx \l_@@_phrase_tmpb_tl { { \l_@@_curr_unit_tl } }
+%            \bool_if:NT \l_@@_tmpa_bool
+%              { \tl_put_left:Nn \l_@@_curr_unit_tl { - } }   
           }{
             \@@_set_state_to:n { error } 
             \msg_error:nnn { cooking-units} { phrase-unit-not-an-integer } {#1}
           }
+        \bool_if:NTF \l_@@_tmpa_bool
+          {
+            \tl_put_right:Nn \l_@@_phrase_tmpb_tl { { \c_true_bool } }
+          }{
+            \tl_put_right:Nn \l_@@_phrase_tmpb_tl { { \c_false_bool } }
+          }
+%
         \prop_put:Nnn \l_@@_tmpa_prop { } {#2}
         \tl_put_right:Nn \l_@@_phrase_tmp_tl { {#2} }
         \prop_put:NnV \l_@@_tmpa_prop { - singlebool } \l_@@_tmpa_bool
-        \tl_put_right:Nx \l_@@_phrase_tmp_tl { { \bool_if:NTF \l_@@_tmpa_bool { 1 } { 0 } } }
         \@@_parse_phrase_optionals:n {#2}
       }
   }
@@ -10638,8 +10819,8 @@ and the derived file cooking-units.sty.
         \prop_put:Nnn \l_@@_tmpa_prop { -gender } {#1} 
         \tl_put_right:Nn \l_@@_phrase_tmp_tl { {#1} }
       }
-    \@@_parse_phrase_finish_cycle_and_start_anew:VV 
-      \l_@@_curr_unit_tl \l_@@_phrase_tmp_tl
+    \@@_parse_phrase_finish_cycle_and_start_anew:VVV
+      \l_@@_curr_unit_tl \l_@@_phrase_tmp_tl \l_@@_phrase_tmpb_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -10651,23 +10832,21 @@ and the derived file cooking-units.sty.
 %  As an example, if we had \enquote{12}, |\l_@@_phrase_prop| would then contain
 %  the keys \enquote{12}, \enquote{12-pl}, \enquote{12-gender}, \enquote{12-singlebool}.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_phrase_finish_cycle_and_start_anew:nn #1#2
+\cs_new:Npn \@@_parse_phrase_finish_cycle_and_start_anew:nnn #1#2#3
   {
     \@@_if_state_equal:nT { normal }
       {
-        \seq_if_in:NnF \l_@@_phrase_numbers_seq {#1}
-          { \seq_put_right:Nn \l_@@_phrase_numbers_seq {#1} }
-        \seq_if_in:NnF \l_@@_phrase_full_seq {#1}
-          { \seq_put_right:Nn \l_@@_phrase_full_seq {#2} }
+        \seq_if_in:NnF \l_@@_phrase_numbers_seq {#3}
+          { \seq_push:Nn \l_@@_phrase_numbers_seq {#3} }
         \prop_map_inline:Nn \l_@@_tmpa_prop
           { 
-            \prop_put:Nnn \l_@@_phrase_prop { #1 ##1 } {##2} 
+            \prop_put:Nnn \l_@@_phrase_prop { #3 ##1 } {##2} 
           }
-        \prop_put:Nnn \l_@@_phrase_prop { #1 -all } {#2}
+        \prop_put:Nnn \l_@@_phrase_prop { #3 -all } {#2}
       }
     \@@_parse_phrase_start_cycle:
   }
-\cs_generate_variant:Nn \@@_parse_phrase_finish_cycle_and_start_anew:nn { VV }
+\cs_generate_variant:Nn \@@_parse_phrase_finish_cycle_and_start_anew:nnn { VVV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -10680,22 +10859,37 @@ and the derived file cooking-units.sty.
   {
     \seq_sort:Nn #1
       {
-        \int_set:Nn \l_@@_tmpa_int { \int_abs:n {##1} }
-        \int_set:Nn \l_@@_tmpb_int { \int_abs:n {##2} }
+        \int_set:Nn \l_@@_tmpa_int { \use_i:nn ##1 }
+        \int_set:Nn \l_@@_tmpb_int { \use_i:nn ##2 }
         \int_compare:nNnTF { \l_@@_tmpa_int } < { \l_@@_tmpb_int }
           { \sort_return_swapped: }
           { 
             \int_compare:nNnTF { \l_@@_tmpa_int } > { \l_@@_tmpb_int }
               { \sort_return_same: }
               {
-                \prop_get:NnN \l_@@_phrase_prop { ##1 - singlebool } \l_@@_tmpa_int
-                \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
+                \bool_if:nTF { \use_ii:nn ##1 }
                   { \sort_return_same: }
                   { \sort_return_swapped: }
               }
           }
+%        \int_set:Nn \l_@@_tmpa_int { \int_abs:n {##1} }
+%        \int_set:Nn \l_@@_tmpb_int { \int_abs:n {##2} }
+%        \int_compare:nNnTF { \l_@@_tmpa_int } < { \l_@@_tmpb_int }
+%          { \sort_return_swapped: }
+%          { 
+%            \int_compare:nNnTF { \l_@@_tmpa_int } > { \l_@@_tmpb_int }
+%              { \sort_return_same: }
+%              {
+%                \prop_get:NnN \l_@@_phrase_prop { ##1 - singlebool } \l_@@_tmpa_int
+%                \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
+%                  { \sort_return_same: }
+%                  { \sort_return_swapped: }
+%              }
+%          }
       }
   }
+%\cs_new:Npn \@@_use_i:nnnnn #1#2#3#4#5 {#1}
+%\cs_new:Npn \@@_use_ii:nnnnn #1#2#3#4#5 {#2}
 %    \end{macrocode}
 % \end{macro}
 %
