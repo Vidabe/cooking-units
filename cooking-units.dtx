@@ -919,6 +919,8 @@ and the derived file cooking-units.sty.
 %   \cunum{1/2}{m}  \\
 %   \cunum{1_1/2}{m}  \\
 %   \cunum[m=cm]{1_1/2}{m}  \\
+%   \cunum{1_1/2--2}{m}  \\
+%   \cunum[m=cm]{1--1_1/2}{m}  \\
 %   \cunum{?}{l}  \\
 %   \cunum{50}{dag}  \\
 %   \cunum{5}[0]{dag}  \\
@@ -6191,7 +6193,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_change_unit: { TF }
   { 
-    \@@_if_print_type_equal:nTF { fraction }
+    \bool_if:NTF \l_@@_rf_contains_fraction_bool
       { \prg_return_false: }
       { 
         \@@_if_state_equal:nTF { special_sign }
@@ -6853,10 +6855,10 @@ and the derived file cooking-units.sty.
     \@@_if_state_equal:nTF { normal }
       { 
         \@@_rf_process_amount_normally:n {#2} 
-        \@@_rf_post_process:N \l_@@_processed_seq
+        \@@_rf_post_process_amount:
       }
       { \@@_process_amount_special: }
-      \@@_rf_prepare_amount_printing:N \l_@@_post_processed_seq
+      \@@_rf_prepare_amount_printing:N \l_@@_processed_seq
     \@@_rf_print_amount_correctly:
     \@@_rf_print_unit_correctly:
   }
@@ -6889,7 +6891,6 @@ and the derived file cooking-units.sty.
         \bool_set_true:N \l_@@_unit_error_bool
       } 
       { \@@_set_state_to:n { normal } }
-    \@@_set_print_type_to:n { unknown }
     \tl_clear:N \l_@@_phantom_tl
   }
 \cs_new:Npn \@@_rf_initialize_default_units:
@@ -6981,10 +6982,7 @@ and the derived file cooking-units.sty.
         \tl_if_in:NnT #1 {##1}
           {
             \@@_if_state_equal:nF { error }
-              { 
-                \@@_set_state_to:n { special_sign } 
-                \bool_set_true:N \l_@@_rf_contains_special_sign_bool
-              }
+              { \@@_set_state_to:n { special_sign } }
             \tl_map_break:
           }
       }
@@ -7045,7 +7043,7 @@ and the derived file cooking-units.sty.
     \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {#1} {#2} {#3} }
   }
 
-
+\seq_new:N \l_@@_parsed_seq
 \cs_new:Npn \@@_rf_parse_input:N #1
   {
     \seq_clear:N \l_@@_parsed_seq
@@ -7054,18 +7052,16 @@ and the derived file cooking-units.sty.
   }
 \cs_new:Npn \@@_rf_parse_input:nnnn #1 #2#3#4
   {
+    \bool_set_eq:NN \l_@@_rf_check_fraction_bool #1
     \bool_if:NTF #1
       { 
-        \bool_set_true:N \l_@@_rf_check_fraction_bool 
         \@@_parse_input_and_safe_in:nN {#2} \l_@@_mixed_fraction_tl
         \@@_parse_input_and_safe_in:nN {#3} \l_@@_number_tmpa_tl
         \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
-        \bool_set_false:N \l_@@_minus_bool
-        \@@_rf_frac_remove_minus:N
+        \@@_rf_frac_remove_minus:NNN
           \l_@@_mixed_fraction_tl 
           \l_@@_number_tmpa_tl 
           \l_@@_number_tmpb_tl 
-          \q_no_value
         \@@_rf_seq_put_right:NnVVVV 
           \l_@@_parsed_seq 
           {#1} \l_@@_minus_bool 
@@ -7073,7 +7069,6 @@ and the derived file cooking-units.sty.
           \l_@@_number_tmpa_tl  
           \l_@@_number_tmpb_tl
       }{ 
-        \bool_set_false:N \l_@@_rf_check_fraction_bool 
         \@@_parse_input_and_safe_in:nN {#4} \l_@@_number_tmpb_tl
         \@@_rf_seq_put_right:NnnnnV \l_@@_parsed_seq
           {#1} { } { } { }  \l_@@_number_tmpb_tl
@@ -7083,28 +7078,29 @@ and the derived file cooking-units.sty.
   { \seq_put_right:Nn #1 { {#2} {#3} {#4} {#5} {#6} } }
 \cs_generate_variant:Nn \@@_rf_seq_put_right:Nnnnnn { NnVVVV, NnnnnV }
 
-\cs_new:Npn \@@_rf_frac_remove_minus:N #1
+
+\cs_new:Npn \@@_rf_frac_remove_minus:NNN #1#2#3
   {
-    \quark_if_no_value:NF #1
+    \bool_set_false:N \l_@@_minus_bool
+    \tl_if_empty:NF #1
       { 
-        \tl_if_empty:NF #1
-          {
-            \exp_last_unbraced:NNV
-            \@@_rf_frac_remove_minus_aux:NNw #1 #1 \q_stop 
-          }
-        \@@_rf_frac_remove_minus:N
+        \exp_last_unbraced:NNV
+        \@@_rf_frac_remove_minus_aux:Nww #1 #1 \q_stop 
       }
+    \exp_last_unbraced:NNV
+    \@@_rf_frac_remove_minus_aux:Nww #2 #2 \q_stop 
+    \exp_last_unbraced:NNV
+    \@@_rf_frac_remove_minus_aux:Nww #3 #3 \q_stop 
   }
-\cs_new:Npn \@@_rf_frac_remove_minus_aux:NNw #1 #2#3 \q_stop
+\cs_new:Npn \@@_rf_frac_remove_minus_aux:Nww #1 #2#3 \q_stop
   {
-    \tl_if_eq:NNTF #2 -
+    \token_if_eq_charcode:NNTF #2 -
       { 
         \@@_bool_reverse:N \l_@@_minus_bool
         \tl_set:Nn #1 {#3} 
       }
       { \tl_set:Nn #1 {#2#3} }
   }
-  
   
 \cs_new:Npn \@@_rf_process_amount_normally:n #1
   {
@@ -7125,9 +7121,7 @@ and the derived file cooking-units.sty.
             \bool_set_false:N \l_@@_rf_contains_fraction_bool
             \fp_compare:nNnT {#5} = { 0 }
               { \@@_create_error:n { Division-by-zero } }
-            \tl_if_empty:nTF {#3}
-              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 } }
-              { \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #4/#5 + #3 } }
+            \@@_tl_set_eval:Nn \l_@@_number_tmpb_tl { #3 + #4/#5 }
             \int_compare:nNnT {#2} = { \c_zero_int }
               { \tl_put_left:Nn \l_@@_number_tmpb_tl { - } }
             \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
@@ -7144,31 +7138,24 @@ and the derived file cooking-units.sty.
         \tl_set:Nn \l_@@_number_tmpb_tl {#5}
         \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
         \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
-          {#1} {#2} {} {} \l_@@_number_tmpb_tl
+          {#1} { } { } { } \l_@@_number_tmpb_tl
       }
   }
 
-%\cs_new:Npn \@@_put_processed_right:nnnnn #1#2#3#4#5
-%  {
-%    \seq_put_right:Nn \l_@@_processed_seq { {#1} {#2} {#3} {#4} {#5} }
-%  }  
 
-
-\cs_new:Npn \@@_rf_post_process:N #1
+\cs_new:Npn \@@_rf_post_process_amount:
   {
-    \seq_set_eq:NN \l_@@_post_processed_seq #1
-    %% all: check if all numbers are numerals
-    %% cutext: check for plural in  for plural (range: last unit)
-    %% cuam: phrases
     \tl_case:NnF \l_@@_cmd_type_tl
       {
-        \c_@@_cmd_type_cunum_tl { \@@_cunum_post_process:N #1 }
-        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process:N #1 }
-        \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process:N #1  }
+        \c_@@_cmd_type_cunum_tl { \@@_cunum_post_process:N \l_@@_processed_seq }
+        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process:N \l_@@_processed_seq }
+        \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process:N \l_@@_processed_seq  }
       }{ 
         \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
       }
   }
+
+\seq_new:N \l_@@_numbers_to_check_seq
 
 \cs_new:Npn \@@_cunum_post_process:N #1 { }
 
@@ -7177,9 +7164,9 @@ and the derived file cooking-units.sty.
     \@@_rf_check_plural:N #1
     \bool_lazy_and:nnT \l_@@_lokal_numeral_bool \l_@@_rf_contains_fraction_bool
       { 
-        \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
+        \@@_rf_check_if_decimal:NNTF #1 \l_@@_numbers_to_check_seq
           { \bool_set_false:N \l_@@_lokal_numeral_bool }
-          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_tmpa_seq }
+          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_numbers_to_check_seq }
       }
   }
 \cs_new:Npn \@@_rf_check_plural:N #1
@@ -7235,14 +7222,14 @@ and the derived file cooking-units.sty.
   {
     \bool_if:NF \l_@@_rf_contains_fraction_bool
       {
-    \@@_rf_check_if_decimal:NNTF #1 \l_@@_tmpa_seq
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
-      {
-        \bool_if:NT \l_@@_pckopt_use_phrases_bool
-          { \@@_rf_cuam_post_process_input_phrases:NN #1 \l_@@_tmpa_seq }
-        \bool_if:NT \l_@@_lokal_numeral_bool
-          { \@@_rf_check_if_numerals_can_be_used:N \l_@@_tmpa_seq }
-      }
+        \@@_rf_check_if_decimal:NNTF #1 \l_@@_numbers_to_check_seq
+          { \bool_set_false:N \l_@@_lokal_numeral_bool }
+          {
+            \bool_if:NT \l_@@_pckopt_use_phrases_bool
+              { \@@_rf_cuam_post_process_input_phrases:NN #1 \l_@@_numbers_to_check_seq }
+            \bool_if:NT \l_@@_lokal_numeral_bool
+              { \@@_rf_check_if_numerals_can_be_used:N \l_@@_numbers_to_check_seq }
+          }
       }
   }
 
@@ -7260,14 +7247,14 @@ and the derived file cooking-units.sty.
     {
       \@@_find_common_phrase:NNV #1#2 \l_@@_tmpb_int 
     }
+  \seq_show:N #1
   }
 
 \cs_new:Npn \@@_get_largest_common_divisor:NN #1#2
   {
     \seq_get_left:NN #1 \l_@@_tmpa_tl
     \int_set:Nn #2 { \l_@@_tmpa_tl }
-    \seq_show:N #1
-    \int_compare:nNnT { \seq_count:N #1 } > { 1 }
+    \bool_if:NT \l_@@_rf_contains_range_bool
       { 
         \seq_map_inline:Nn #1
           { 
@@ -7276,7 +7263,6 @@ and the derived file cooking-units.sty.
               { \seq_map_break: }
           }
       }
-    \int_show:N #2
   }
 \cs_new:Npn \@@_find_largest_commin_divisor:Nn #1#2
   {
@@ -7290,6 +7276,7 @@ and the derived file cooking-units.sty.
       }
   }
 
+\seq_new:N \l_@@_reduced_numbers_seq
 
 \cs_new:Npn \@@_find_common_phrase:NNn #1 #2#3
   {
@@ -7297,7 +7284,7 @@ and the derived file cooking-units.sty.
     \bool_set_false:N \l_@@_lokal_phrase_bool
     \seq_map_inline:Nn \l_@@_phrase_numbers_seq
       {
-        \int_compare:nNnF { \use_i:nn ##1 } > { #3 }
+        \int_compare:nNnF { \use_i:nn ##1 } > {#3}
           {
             \bool_set_true:N \l_@@_tmpa_bool
             \@@_find_common_phrase_aux:Nnn #2 ##1 
@@ -7305,72 +7292,82 @@ and the derived file cooking-units.sty.
               { 
                 \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
                   { \prop_get:NnN \l_@@_phrase_prop { ##1 } \l_@@_phrase_text_tl }
-                  { \prop_get:NnN \l_@@_phrase_prop { ##1 -pl } \l_@@_phrase_text_tl }
-                \prop_get:NnN \l_@@_phrase_prop { ##1 -gender } \l_@@_phrase_gender_tl
+                  { \prop_get:NnN \l_@@_phrase_prop { ##1 - pl } \l_@@_phrase_text_tl }
+                \prop_get:NnN \l_@@_phrase_prop { ##1 - gender } \l_@@_phrase_gender_tl
                 \seq_map_break: 
               }
           }
       }
     \bool_if:NT \l_@@_tmpa_bool
-      { \@@_update_values:NN #1 \l_@@_tmpb_seq }
+      { \@@_update_values:NN #1 \l_@@_reduced_numbers_seq }
   }
 \cs_generate_variant:Nn \@@_find_common_phrase:NNn { NNV }
 \cs_new:Npn \@@_find_common_phrase_aux:Nnn #1 #2#3
   {
-    \seq_clear:N \l_@@_tmpb_seq
+    \seq_clear:N \l_@@_reduced_numbers_seq
     \seq_map_inline:Nn #1
       {
         \bool_if:NTF #3 
           { \int_set:Nn \l_@@_tmpa_int { 1 } }
           { \int_set:Nn \l_@@_tmpa_int { \int_div_truncate:nn {##1} {#2} } }
         \int_compare:nNnTF { \l_@@_tmpa_int * #2 }  = {##1}
-          { \seq_put_right:NV \l_@@_tmpb_seq \l_@@_tmpa_int }
+          { \seq_put_right:NV \l_@@_reduced_numbers_seq \l_@@_tmpa_int }
           { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
       }        
   }
 \cs_new:Npn \@@_update_values:NN #1#2
   {
-    \seq_clear:N \l_@@_post_processed_seq
-    \seq_map_inline:Nn #1
+    \seq_set_eq:NN \l_@@_tmpa_seq \l_@@_processed_seq
+    \seq_clear:N \l_@@_processed_seq
+    \seq_map_inline:Nn \l_@@_tmpa_seq
       {
-        \@@_update_values_aux:NNnnnnn \l_@@_post_processed_seq #2 ##1
+        \@@_update_values_aux:Nnnnnn #2 ##1
       }
   }
-\cs_new:Npn \@@_update_values_aux:NNnnnnn #1#2#3#4#5#6#7
+\cs_new:Npn \@@_update_values_aux:Nnnnnn #1#2#3#4#5#6
   { 
     %% During testing.
-        \tl_if_empty:nF {#5#6}
-          { \tl_show:n { ERROR-empty-a } }
-        \seq_pop_left:NN #2 \l_@@_tmpa_tl
-        \@@_rf_seq_put_right:NnnnnV \l_@@_post_processed_seq
-          {#3} {#4} {#5} {#6} \l_@@_tmpa_tl
+    \tl_if_empty:nF {#4#5}
+      { \tl_show:n { ERROR-empty-a } }
+    \seq_pop_left:NN #1 \l_@@_tmpa_tl
+    \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
+      {#2} {#3} {#4} {#5} \l_@@_tmpa_tl
   }
 
 
 \cs_new:Npn \@@_rf_prepare_amount_printing:N #1
   {
     \seq_clear:N \l_@@_prepared_printing_seq
-    \seq_map_inline:Nn #1
+    \tl_case:NnF \l_@@_cmd_type_tl
       {
-        \@@_rf_prepare_amount_printing_aux:nnnnn ##1
+        \c_@@_cmd_type_cunum_tl 
+          { \cs_set_eq:NN \@@_print_number:n \@@_print_number_default:n }
+        \c_@@_cmd_type_cCutext_tl 
+          { \cs_set_eq:NN \@@_print_number:n \@@_cutext_print_number:n }
+        \c_@@_cmd_type_cuam_tl 
+          { \cs_set_eq:NN \@@_print_number:n \@@_cuam_print_number:n }
+      }
+      { \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl }
+    \seq_map_indexed_inline:Nn #1
+      {
+        \@@_rf_prepare_amount_printing_aux:nnnnnn {##1} ##2
       }
   }
 
 \seq_new:N \l_@@_prepared_printing_seq
-\cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnn #1#2#3#4#5
+\cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnnn #1#2#3#4#5#6
   {
-    \bool_if:NTF #1
+    \bool_if:NTF #2
       {
         \@@_rf_put_rght_prepared_printing:n
-          { \@@_print_fraction:nnnn {#2} {#3} {#4} {#5} }
+          {
+            \@@_print_fraction:nnnn {#3} {#4} {#5} {#6} 
+            \int_compare:nNnF {#1} = { \seq_count:N \l_@@_processed_seq }
+              { \, }
+          }
       }{
         \@@_rf_put_rght_prepared_printing:n
-          { 
-%            \@@_print_number:n {#5} 
-              \@@_print_number_default:n {#5}
-%            \@@_cutext_print_number:n {#5}
-%            \@@_cuam_print_number:n {#5}
-          }
+          { \@@_print_number:n {#6} }
       }
   }
 \cs_new:Npn \@@_rf_put_rght_prepared_printing:n #1
@@ -7378,6 +7375,7 @@ and the derived file cooking-units.sty.
     \seq_put_right:Nn \l_@@_prepared_printing_seq {#1}
   }
 
+\seq_new:N \l_@@_processed_seq
 \seq_new:N \l_@@_post_processed_seq
 \cs_new:Npn \@@_rf_print_amount_correctly:
   {
@@ -7390,7 +7388,6 @@ and the derived file cooking-units.sty.
 
 \cs_new:Npn \@@_print_fraction:nnnn #1#2#3#4
   {
-%    \tl_show:n {#1-#2-#3-#4}
     \int_compare:nNnT {#1} = { 1 } { \c_@@_minus_tl }
     \tl_if_empty:nF {#2}
       {
@@ -7400,7 +7397,7 @@ and the derived file cooking-units.sty.
     \@@_frac:nn {#3} {#4}
   }
 
-
+\cs_new:Npn \@@_print_number:n #1 {}
 \cs_new:Npn \@@_print_number_default:n #1
   {
     \tl_set:Nn \l_@@_tmpa_tl {#1}
@@ -7701,6 +7698,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_process_amount_special:
   {
+    \seq_set_eq:NN \l_@@_processed_seq \l_@@_parsed_seq
     \@@_if_state_equal:nT { special_sign }
       { \msg_warning:nnV { cooking-units } { amount-not-known } \l_@@_original_amount_tl }
     \bool_if:NT \l_@@_pckopt_fourty_two_bool
@@ -8391,11 +8389,11 @@ and the derived file cooking-units.sty.
   {
     \tl_if_in:NnTF \l_@@_input_value_signs_tl {#1}
       { 
-        \token_if_eq_charcode:NNF #1 -
+        \token_if_eq_charcode:NNT #1 -
           { \@@_bool_reverse:N \l_@@_minus_bool }
       }{ 
         \bool_if:NT \l_@@_minus_bool
-          { \tl_put_right:Nn \l_@@_tmpa_tl { - } }
+          { \tl_put_left:Nn \l_@@_tmpa_tl { - } }
         \cs_set_eq:NN \@@_parse:N \@@_parse_input_loop_aux:N
         \tl_map_function:nN {#1} \@@_parse:N 
       }
