@@ -39,29 +39,47 @@
   }
 
 
- \__cookingunits_pluraltest_define:nn
+% \__cookingunits_pluraltest_define:nn
+%   { cooking-units-testlanguage }
+%   {
+%    \fp_compare:nNnTF { \fp_abs:n {#1} } < { 2.0 }
+%      { \bool_set_true:N  } { \bool_set_false:N }
+%    \l__cookingunits_cutext_use_single_bool
+%   }
+% \__cookingunits_pluraltest_define_range:nn 
+%   { cooking-units-testlanguage }
+%   {
+%    \fp_compare:nNnTF { \fp_abs:n {#2} } < { 2.0 }
+%      { \bool_set_true:N  } { \bool_set_false:N }
+%    \l__cookingunits_cutext_use_single_bool
+%   }
+%\__cookingunits_pluraltest_define_fraction:nn
+%   { cooking-units-testlanguage }
+%   {
+%    \quark_if_nil:NTF #1
+%      { \fp_compare:nNnTF { \fp_abs:n { #2/#3 } } < { 2.0 } }
+%      { \fp_compare:nNnTF { \fp_abs:n { #1  + #2/#3 } } < { 2.0 } }
+%      { \bool_set_true:N  } { \bool_set_false:N }
+%    \l__cookingunits_cutext_use_single_bool
+%   }
+
+\__cookingunits_pluraltest_define:nn
    { cooking-units-testlanguage }
    {
     \fp_compare:nNnTF { \fp_abs:n {#1} } < { 2.0 }
       { \bool_set_true:N  } { \bool_set_false:N }
     \l__cookingunits_cutext_use_single_bool
    }
- \__cookingunits_pluraltest_define_range:nn 
-   { cooking-units-testlanguage }
-   {
-    \fp_compare:nNnTF { \fp_abs:n {#2} } < { 2.0 }
-      { \bool_set_true:N  } { \bool_set_false:N }
-    \l__cookingunits_cutext_use_single_bool
-   }
 \__cookingunits_pluraltest_define_fraction:nn
    { cooking-units-testlanguage }
    {
-    \quark_if_nil:NTF #1
+    \tl_if_empty:nTF {#1}
       { \fp_compare:nNnTF { \fp_abs:n { #2/#3 } } < { 2.0 } }
       { \fp_compare:nNnTF { \fp_abs:n { #1  + #2/#3 } } < { 2.0 } }
       { \bool_set_true:N  } { \bool_set_false:N }
     \l__cookingunits_cutext_use_single_bool
    }
+
 
 \ExplSyntaxOff
 
