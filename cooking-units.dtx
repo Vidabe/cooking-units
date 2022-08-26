@@ -8596,12 +8596,19 @@ and the derived file cooking-units.sty.
 %  persons is different then the one given by |\culabel|. Before
 %  evaluation, check if the unit is one of those that cannot be changed.
 %    \begin{macrocode}
+\bool_new:N \l_@@_curef_forbidden_unit_msg_used_bool
 \cs_new:Npn \@@_calc_references_and_store_in:N #1
   {
     \bool_if:NT \l_@@_lokal_recalc_for_people_bool
       { 
         \seq_if_in:NVTF \l_@@_curef_do_not_change_seq \l_@@_decided_unit_tl
-          { \msg_error:nnV { cooking-units } { curef-forbidden-unit } \l_@@_decided_unit_tl }
+          { 
+            \bool_if:NF \l_@@_curef_forbidden_unit_msg_used_bool
+              {
+                \msg_error:nnV { cooking-units } { curef-forbidden-unit } \l_@@_decided_unit_tl 
+                \bool_set_true:N \l_@@_curef_forbidden_unit_msg_used_bool
+              }
+          }
           { \@@_calc_references_and_store_in_aux:N #1 }
       }
   }
