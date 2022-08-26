@@ -1,0 +1,84 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \textcufrac #1#2#3
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcunumtextfrac #1#2#3 #4
+  {
+    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
+  }
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+
+
+\ExplSyntaxOff
+
+\begin{document}
+
+\START
+
+\TEST{Primitive-Print-Fraction}{
+  \MYTYPE {f1} { \textcufrac{}12 }
+  \MYTYPE {f2} { \textcufrac312 }
+  \MYTYPE {f3} { \textcufrac3{}2 }
+  \MYTYPE {f4} { \textcufrac3{}{} }
+  \MYTYPE {f5} { \textcufrac3{\cookingunitsminux1}{2} }
+}
+
+\TEST{Primitive-Print-Range}{
+  \MYTYPE {r1} { 1--2 }
+  \MYTYPE {r2} { \cookingunitsminux1--2 }
+  \MYTYPE {r3} { \cookingunitsminux1--\cookingunitsminux2 }
+}
+
+
+
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

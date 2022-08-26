@@ -40,6 +40,7 @@
     \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
   }
 
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
 
 \ExplSyntaxOff
 
@@ -69,6 +70,7 @@
   \MYTYPE {rf?} { \printUnknownAmountMsg{1_2/3--?_5/6}\testcunum{\textcufrac123\,--\textcufrac{?}{5}{6}}{kg} }
 }
 
+
 \TEST{Range-and-fraction-conversion-tests-eval}
   {
     \MYTYPE {rf-eval1} { \testcunum{666.67}{g} }
@@ -84,6 +86,38 @@
     \MYTYPE {rf-conv2} { \testcunum{\textcufrac{}23\,--6}{kg} }
     \MYTYPE {rf-conv3} { \testcunum{666.67--1857.14}{g} }
     \MYTYPE {rf-conv?} { \printUnknownAmountMsg{?/3--1_6/7}\testcunum{\textcufrac{}?3\,--\textcufrac167}{kg} }
+  }
+
+
+\TEST{Fraction-Minus-Sign-Conversions-tests}
+  {
+    \MYTYPE {fm1} { \testcunum{\cookingunitsminux\textcufrac{}{1}{2}}{kg} }
+    \MYTYPE {fm2} { \testcunum{\cookingunitsminux\textcufrac{}{1}{2}}{kg} }
+    \MYTYPE {fm3} { \testcunum{\textcufrac{}{1}{2}}{kg} }
+    \MYTYPE {fmM1} { \testcunum{\cookingunitsminux\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM2} { \testcunum{\cookingunitsminux\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM3} { \testcunum{\cookingunitsminux\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM4} { \testcunum{\cookingunitsminux\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM5} { \testcunum{\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM6} { \testcunum{\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM7} { \testcunum{\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM8} { \testcunum{\cookingunitsminux\textcufrac{1}{1}{2}}{kg} }
+    \MYTYPE {fmM?} { \testcunum{\printUnknownAmountMsg{-?_-1/-2}\cookingunitsminux\textcufrac{?}{1}{2}}{kg} }
+  }
+
+\TEST{Fraction-Minus-Sign-Conversions-tests-eval}
+  {
+    \MYTYPE {fm-eval1} { \testcunum{\cookingunitsminux500}{g} }
+    \MYTYPE {fm-eval2} { \testcunum{\cookingunitsminux500}{g} }
+    \MYTYPE {fm-eval3} { \testcunum{500}{g} }
+    \MYTYPE {fm-evalM1} { \testcunum{\cookingunitsminux1500}{g} }
+    \MYTYPE {fm-evalM2} { \testcunum{\cookingunitsminux1500}{g} }
+    \MYTYPE {fm-evalM3} { \testcunum{\cookingunitsminux1500}{g} }
+    \MYTYPE {fm-evalM4} { \testcunum{\cookingunitsminux1500}{g} }
+    \MYTYPE {fm-evalM5} { \testcunum{1500}{g} }
+    \MYTYPE {fm-evalM6} { \testcunum{1500}{g} }
+    \MYTYPE {fm-evalM7} { \testcunum{1500}{g} }
+    \MYTYPE {fm-evalM8} { \testcunum{\cookingunitsminux1500}{g} }
   }
 
 

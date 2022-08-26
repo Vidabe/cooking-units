@@ -46,6 +46,7 @@
   \MYTYPE {rf?} { \cunum[kg=g]{1_2/3--?_5/6}{kg} }
 }
 
+
 \TEST{Range-and-fraction-conversion-tests-eval}
   {
     \MYTYPE {rf-eval1} { \cunum[kg=g,eval-fraction=true]{2/3}{kg} }
@@ -62,6 +63,38 @@
     \MYTYPE {rf-conv3} { \cunum[kg=g,convert-fraction=true]{2/3--1_6/7}{kg} }
     \MYTYPE {rf-conv?} { \cunum[kg=g,convert-fraction=true]{?/3--1_6/7}{kg} }
   }
+
+\TEST{Fraction-Minus-Sign-Conversions-tests}
+  {
+    \MYTYPE {fm1} { \cunum{-1/2}{kg} }
+    \MYTYPE {fm2} { \cunum{1/-2}{kg} }
+    \MYTYPE {fm3} { \cunum{-1/-2}{kg} }
+    \MYTYPE {fmM1} { \cunum{-1_1/2}{kg} }
+    \MYTYPE {fmM2} { \cunum{1_-1/2}{kg} }
+    \MYTYPE {fmM3} { \cunum{1_-1/2}{kg} }
+    \MYTYPE {fmM4} { \cunum{1_1/-2}{kg} }
+    \MYTYPE {fmM5} { \cunum{-1_-1/2}{kg} }
+    \MYTYPE {fmM6} { \cunum{-1_1/-2}{kg} }
+    \MYTYPE {fmM7} { \cunum{1_-1/-2}{kg} }
+    \MYTYPE {fmM8} { \cunum{-1_-1/-2}{kg} }
+    \MYTYPE {fmM?} { \cunum{-?_-1/-2}{kg} }
+  }
+
+\TEST{Fraction-Minus-Sign-Conversions-tests-eval}
+  {
+    \MYTYPE {fm-eval1} { \cunum[kg=g,eval-fraction=true]{-1/2}{kg} }
+    \MYTYPE {fm-eval2} { \cunum[kg=g,eval-fraction=true]{1/-2}{kg} }
+    \MYTYPE {fm-eval3} { \cunum[kg=g,eval-fraction=true]{-1/-2}{kg} }
+    \MYTYPE {fm-evalM1} { \cunum[kg=g,eval-fraction=true]{-1_1/2}{kg} }
+    \MYTYPE {fm-evalM2} { \cunum[kg=g,eval-fraction=true]{1_-1/2}{kg} }
+    \MYTYPE {fm-evalM3} { \cunum[kg=g,eval-fraction=true]{1_-1/2}{kg} }
+    \MYTYPE {fm-evalM4} { \cunum[kg=g,eval-fraction=true]{1_1/-2}{kg} }
+    \MYTYPE {fm-evalM5} { \cunum[kg=g,eval-fraction=true]{-1_-1/2}{kg} }
+    \MYTYPE {fm-evalM6} { \cunum[kg=g,eval-fraction=true]{-1_1/-2}{kg} }
+    \MYTYPE {fm-evalM7} { \cunum[kg=g,eval-fraction=true]{1_-1/-2}{kg} }
+    \MYTYPE {fm-evalM8} { \cunum[kg=g,eval-fraction=true]{-1_-1/-2}{kg} }
+  }
+
 
 \END
 

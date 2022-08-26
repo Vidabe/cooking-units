@@ -1,0 +1,254 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE {#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
+  }
+\cs_new:Npn \printTokenNotAllowedMsg #1#2
+  {
+    \msg_error:nnnn { cooking-units } {Token-not-allowed} {#1} {#2}
+  }
+\cs_new:Npn \printForbiddenUnitMsg #1
+  {
+    \msg_error:nnn { cooking-units } {curef-forbidden-unit} {#1}
+  }
+
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \testcuam #1
+  {
+    #1
+  }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 ~ #2
+  }
+\cs_new:Npn \textcufrac #1#2#3
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcufracDim #1#2#3#4
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:n {#4}
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcunumtextfrac #1#2#3 #4
+  {
+    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
+  }
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+
+
+\cs_new:Npn \cuprintfrac #1#2 { up#1below#2 }
+\cs_new:Npn \cuprintfracM #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfrac {#2} {#3} 
+  }
+
+\cs_new:Npn \cuprintfracinline #1#2 { inline#1down#2 }
+\cs_new:Npn \cuprintfracMinline #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfracinline {#2} {#3} 
+  }
+
+
+\cs_new:Npn \cuvalamount { 13 }
+\cs_new:Npn \cuvalunit { kg }
+
+
+\ExplSyntaxOff
+
+\begin{document}
+
+\START
+
+
+\TEST{Options-command-behavior}{
+  \MYTYPE {oc1ct} { \testcunum{1}{kg} }
+  \MYTYPE {oc1Ct} { \testcunum{1}{kg} }
+  \MYTYPE {oc1cf} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oc1Cf} { \testcutext{1}{kilogramme} }
+
+  \MYTYPE {oc2ct} { \testcutext{1000}{gramme} }
+  \MYTYPE {oc2Ct} { \testcutext{1000}{gramme} }
+  \MYTYPE {oc2cf} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oc2Cf} { \testcutext{1}{kilogramme} }
+
+  \MYTYPE {oc3ct} { \testcunum{1000}{g} }
+  \MYTYPE {oc3Ct} { \testcunum{1000}{g} }
+  \MYTYPE {oc3cf} { \testcunum{1000}{g} }
+  \MYTYPE {oc3Cf} { \testcunum{1000}{g} }
+}
+
+\TEST{Options-Hooks}{
+  \MYTYPE {oh1.0} { \testcunum{text1}{kg} }
+  \MYTYPE {oh1.1} { \testcutext{text1}{kilogramme} }
+  \MYTYPE {oh1.2} { \testcutext{text1}{kilogramme} }
+  \MYTYPE {oh1.3} { \testcuam{text1} }
+
+  \MYTYPE {oh2.0} { \testcunum{text1}{kg} }
+  \MYTYPE {oh2.1} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh2.2} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh2.3} { \testcuam{1} }
+
+  \MYTYPE {oh3.0} { \testcunum{1}{kg} }
+  \MYTYPE {oh3.1} { \testcutext{text1}{kilogramme} }
+  \MYTYPE {oh3.2} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh3.3} { \testcuam{1} }
+
+  \MYTYPE {oh4.0} { \testcunum{1}{kg} }
+  \MYTYPE {oh4.1} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh4.2} { \testcutext{text1}{kilogramme} }
+  \MYTYPE {oh4.3} { \testcuam{1} }
+
+  \MYTYPE {oh5.0} { \testcunum{1}{kg} }
+  \MYTYPE {oh5.1} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh5.2} { \testcutext{1}{kilogramme} }
+  \MYTYPE {oh5.3} { \testcuam{text1} }
+
+  \MYTYPE {oh6.0} { \testcunum{text1}{kg} }
+  \MYTYPE {oh6.1} { \testcunum{text1}{kg} }
+  \MYTYPE {oh6.2} { \testcunum{text1}{kg} }
+  \MYTYPE {oh6.3} { \testcunum{1}{kg} }
+  \MYTYPE {oh6.4} { \testcunum{1}{kg} }
+  \MYTYPE {oh6.5} { \testcunum{1}{kg} }
+  \MYTYPE {oh6.6} { \testcunum{1}{kg} }
+  \MYTYPE {oh6.7} { \testcunum{1}{kg} }
+  \MYTYPE {oh6.8} { \testcunum{1}{kg} }
+}
+
+\TEST{Options-inputs-and-outputs}{
+  \MYTYPE {oio1.1} { \testcunum{\cuvalamount}{kg} }
+  \MYTYPE {oio1.2} { \testcunum{13}{\cuvalunit} }
+  \MYTYPE {oio1.3} { \testcunum{\cuvalamount}{\cuvalunit} }
+
+  \MYTYPE {oio2.1} { \printUnknownAmountMsg{y?}\testcunum{y?}{kg} }
+  \MYTYPE {oio2.2} { \printUnknownAmountMsg{y}\testcunum{y}{kg} }
+  \MYTYPE {oio2.3} { \printTokenNotAllowedMsg{?}{y?}\testcunum{y?}{kg} }
+
+  \MYTYPE {oio3.1.1} { \testcunum{1lange2}{kg} }
+  \MYTYPE {oio3.1.2} { \testcutext{1lange2}{kilogramme} }
+  \MYTYPE {oio3.1.3} { \testcutext{1lange2}{kilogramme} }
+  \MYTYPE {oio3.2.1} { \testcunum{1lange2}{kg} }
+  \MYTYPE {oio3.2.2} { \testcutext{1 to 2}{kilogramme} }
+  \MYTYPE {oio3.2.3} { \testcutext{1 to 2}{kilogramme} }
+  \MYTYPE {oio3.3.1} { \testcunum{1--2}{kg} }
+  \MYTYPE {oio3.3.2} { \testcutext{1lange2}{kilogramme} }
+  \MYTYPE {oio3.3.3} { \testcutext{1lange2}{kilogramme} }
+}
+
+\TEST{Options-rounding}{
+  \MYTYPE {or1} { \testcunum{1.23}{kg} }
+  \MYTYPE {or2} { \testcunum{1234.6}{kg} }
+  \MYTYPE {or3} { \testcunum{1230}{kg} }
+  \MYTYPE {or4} { \testcunum{1235}{kg} }
+
+  \MYTYPE {or5} { \testcunum{0}{kg} }
+  \MYTYPE {or6} { \testcunum{0.01}{kg} }
+  \MYTYPE {or7} { \testcunum{\cookingunitsminux0}{kg} }
+  \MYTYPE {or8} { \testcunum{\cookingunitsminux0.01}{kg} }
+}
+
+
+\TEST{Options-fraction-commands}{
+  \MYTYPE {of1} { \testcunum{\cuprintfrac12}{kg} }
+  \MYTYPE {of2} { \testcunum{\cuprintfracM123}{kg} }
+  \MYTYPE {of3} { \testcunum{\cuprintfracM123\,--\cuprintfrac45}{kg} }
+
+  \MYTYPE {of4} { \testcunum{\cuprintfracinline12}{kg} }
+  \MYTYPE {of5} { \testcunum{\cuprintfracMinline123}{kg} }
+  \MYTYPE {of5} { \testcunum{\cuprintfracMinline123\,--\cuprintfracinline45}{kg} }
+}
+
+\TEST{Options-spaces}{
+  \MYTYPE {os1.1} { \testcunum{\textcufracDim{}12{10cm}}{kg} }
+  \MYTYPE {os1.2} { \testcunum{\textcufracDim134{10cm}}{kg} }
+
+  \MYTYPE {os2.1} { \testcunum{1}{kg} }
+  \MYTYPE {os2.2} { 1textspacekilogramme }
+  \MYTYPE {os2.2} { 1textspacekilogramme }
+
+  \MYTYPE {os3.1} { 1textspacekg }
+  \MYTYPE {os3.2} { \testcutext{1}{kilogramme} }
+  \MYTYPE {os3.2} { \testcutext{1}{kilogramme} }
+}
+
+\TEST{Options-label-and-refs}{
+  \MYTYPE {olr0} { 1 }
+  \MYTYPE {olr0.1} { \testcunum{1}{kg} }
+  \MYTYPE {olr1} { \testcunum{3}{kg} }
+  \MYTYPE {olr2} { \testcunum{1.5}{kg} }
+  \MYTYPE {olr3} { \testcunum{1.5--9}{kg} }
+  \MYTYPE {olr4} { \testcutext{9 to 12}{kilogramme} }
+  \MYTYPE {olr5} { \testcuam{9--12} }
+  
+  \cusetup{set-number-of-persons=4}
+  \MYTYPE {olr6} { 4 }
+  \MYTYPE {olr6.1} { \testcunum{1}{kg} }
+  \MYTYPE {olr7} { \testcunum{4}{kg} }
+  \MYTYPE {olr8} { \testcunum{2}{kg} }
+  \MYTYPE {olr9} { \testcunum{2--12}{kg} }
+  \MYTYPE {olr10} { \testcutext{12 to 16}{kilogramme} }
+  \MYTYPE {olr11} { \testcuam{12--16} }
+
+  \MYTYPE {olr12} { \testcuam{12--16} }
+  
+  \MYTYPE {olr13} { \printForbiddenUnitMsg{kg}\testcunum{3--4}{kg} }
+  \MYTYPE {olr14} { \testcunum{12--16}{kg} }
+  \MYTYPE {olr15} { \testcunum{12--16}{kg} }
+}
+
+
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

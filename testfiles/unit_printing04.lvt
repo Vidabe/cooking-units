@@ -1,0 +1,87 @@
+%
+%  Test file
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+
+\cudefinesymbol { English }
+  {
+    { C } { C }
+    { F } { F }
+  }
+
+
+\ExplSyntaxOff
+
+\begin{document}
+
+\START
+
+\TEST{Standard-rounding-test}{
+  \MYTYPE {r1} { \cunum{0.25}{kg} }
+  \MYTYPE {r2} { \cunum{0.255}{kg} }
+  \MYTYPE {r2.1} { \cunum{0.252}{kg} }
+  \MYTYPE {r2.2} { \cunum{0.258}{kg} }
+  \MYTYPE {r3} { \cunum{0.265}{kg} }
+  \MYTYPE {r4} { \cunum[kg=g]{0.265}{kg} }
+  \MYTYPE {r5} { \cunum[kg=g]{0.000265}{kg} }
+}
+
+\TEST{Standard-rounding-test-round-precision}{
+  \MYTYPE {p1} { \cunum[round-precision=1]{0.25}{kg} }
+  \MYTYPE {p2} { \cunum[round-precision=1]{0.255}{kg} }
+  \MYTYPE {p3} { \cunum[round-precision=1]{0.265}{kg} }
+  \MYTYPE {p4} { \cunum[kg=g,round-precision=1]{0.265}{kg} }
+  \MYTYPE {p5} { \cunum[kg=g,round-precision=1]{0.000265}{kg} }
+}
+
+\TEST{Standard-rounding-test-hooked-options}{
+  \MYTYPE {C1} { \cunum{185.254}{C} }
+  \MYTYPE {C2} { \cunum[C=F]{185.254}{C} }
+  \MYTYPE {C2.1} { \cunum[C=F]{185.354}{C} }
+  \MYTYPE {C3} { \cunum[round-precision=-1]{185.254}{C} }
+  \MYTYPE {C4} { \cunum[C=F,round-precision=-1]{185.254}{C} }
+  \MYTYPE {C5} { \cunum[C=F,round-precision=2]{185.254}{C} }
+  \MYTYPE {C6} { \cunum[C=F,round-precision=-2]{185.254}{C} }
+}
+
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

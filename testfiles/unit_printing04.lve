@@ -1,0 +1,121 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
+  }
+
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \textcufrac #1#2#3
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcunumtextfrac #1#2#3 #4
+  {
+    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
+  }
+
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+
+\ExplSyntaxOff
+
+
+
+\begin{document}
+
+\START
+
+\TEST{Standard-rounding-test}{
+  \MYTYPE {r1} { \testcunum{0.25}{kg} }
+  \MYTYPE {r2} { \testcunum{0.26}{kg} }
+  \MYTYPE {r2.1} { \testcunum{0.25}{kg} }
+  \MYTYPE {r2.2} { \testcunum{0.26}{kg} }
+  \MYTYPE {r3} { \testcunum{0.26}{kg} }
+  \MYTYPE {r4} { \testcunum{265}{g} }
+  \MYTYPE {r5} { \testcunum{0.26}{g} }
+}
+
+\TEST{Standard-rounding-test-round-precision}{
+  \MYTYPE {p1} { \testcunum{0.2}{kg} }
+  \MYTYPE {p2} { \testcunum{0.3}{kg} }
+  \MYTYPE {p3} { \testcunum{0.3}{kg} }
+  \MYTYPE {p4} { \testcunum{265}{g} }
+  \MYTYPE {p5} { \testcunum{0.3}{g} }
+}
+
+\TEST{Standard-rounding-test-hooked-options}{
+  \MYTYPE {C1} { \testcunum{185}{C} }
+  \MYTYPE {C2} { \testcunum{365}{F} }
+  \MYTYPE {C2.1} { \testcunum{366}{F} }
+  \MYTYPE {C3} { \testcunum{190}{C} }
+  \MYTYPE {C4} { \testcunum{370}{F} }
+  \MYTYPE {C5} { \testcunum{365.46}{F} }
+  \MYTYPE {C6} { \testcunum{400}{F} }
+}
+
+
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
