@@ -184,6 +184,27 @@
   \MYTYPE {olr15} { \cunum[ref=testrecipe,recalculate-amount = true]{3--4}{kg} }
 }
 
+
+\TEST{Weird-options-42}{
+  \MYTYPE {o42-1} { \cunum[42]{1}{kg} }
+  \MYTYPE {o42-2} { \cunum[42]{1/2}{kg} }
+  \MYTYPE {o42-3} { \cunum[42]{3_1/2}{kg} }
+  \MYTYPE {o42-4} { \cunum[42]{1--2}{kg} }
+  \MYTYPE {o42-5} { \cunum[42]{?}{kg} }
+  \MYTYPE {o42-6} { \cunum[42]{?--?}{kg} }
+}
+
+
+\TEST{Weird-options-T}{
+  \OMIT
+  \cusetup{ add-temperature-to-check = { kg = 0 } }
+  \TIMO
+
+  \MYTYPE {oT1} { \cunum[check-temperature]{-1}{kg} }
+  \MYTYPE {oT2} { \cunum[check-temperature]{-1000}{g} }
+  \MYTYPE {oT3} { \cunum[g=kg,check-temperature]{-1000}{g} }
+}
+
 \END
 
 

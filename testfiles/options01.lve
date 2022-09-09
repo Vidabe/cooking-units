@@ -29,7 +29,12 @@
   {
     \msg_error:nnn { cooking-units } {curef-forbidden-unit} {#1}
   }
-
+\cs_new:Npn \printTemperatureToCheckkg #1
+  {
+    \msg_error:nnxx { cooking-units } { Temperature-too-low }
+      {#1 \space kg }
+      { 0 \space kg }
+  }
 
 \cs_new:Npn \testcunum #1#2
   {
@@ -85,6 +90,8 @@
 
 \cs_new:Npn \cuvalamount { 13 }
 \cs_new:Npn \cuvalunit { kg }
+
+
 
 
 \ExplSyntaxOff
@@ -227,6 +234,24 @@
   \MYTYPE {olr13} { \printForbiddenUnitMsg{kg}\testcunum{3--4}{kg} }
   \MYTYPE {olr14} { \testcunum{12--16}{kg} }
   \MYTYPE {olr15} { \testcunum{12--16}{kg} }
+}
+
+
+\TEST{Weird-options-42}{
+  \MYTYPE {o42-1} { \testcunum{42}{kg} }
+  \MYTYPE {o42-2} { \testcunum{\textcufrac{}{42}{42}}{kg} }
+  \MYTYPE {o42-3} { \testcunum{\textcufrac{42}{42}{42}}{kg} }
+  \MYTYPE {o42-4} { \testcunum{42--42}{kg} }
+  \MYTYPE {o42-5} { \testcunum{42(!)}{kg} }
+  \MYTYPE {o42-6} { \testcunum{42(!)--42(!)}{kg} }
+}
+
+
+
+\TEST{Weird-options-T}{
+  \MYTYPE {oT1} { \printTemperatureToCheckkg{-1}\testcunum{-1}{kg} }
+  \MYTYPE {oT2} { \testcunum{-1000}{g} }
+  \MYTYPE {oT3} { \printTemperatureToCheckkg{-1}\testcunum{-1}{kg} }
 }
 
 

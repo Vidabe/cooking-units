@@ -1,0 +1,153 @@
+%
+%   File of expected output!
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE {#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
+  }
+\cs_new:Npn \printTokenNotAllowedMsg #1#2
+  {
+    \msg_error:nnnn { cooking-units } {Token-not-allowed} {#1} {#2}
+  }
+\cs_new:Npn \printForbiddenUnitMsg #1
+  {
+    \msg_error:nnn { cooking-units } {curef-forbidden-unit} {#1}
+  }
+\cs_new:Npn \printTemperatureToCheckkg #1
+  {
+    \msg_error:nnxx { cooking-units } { Temperature-too-low }
+      {#1 \space kg }
+      { 0 \space kg }
+  }
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \, #2
+  }
+\cs_new:Npn \testcuam #1
+  {
+    #1
+  }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 ~ #2
+  }
+\cs_new:Npn \textcufrac #1#2#3
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcufracDim #1#2#3#4
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:n {#4}
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcunumtextfrac #1#2#3 #4
+  {
+    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
+  }
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+
+
+\cs_new:Npn \cuprintfrac #1#2 { up#1below#2 }
+\cs_new:Npn \cuprintfracM #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfrac {#2} {#3} 
+  }
+
+\cs_new:Npn \cuprintfracinline #1#2 { inline#1down#2 }
+\cs_new:Npn \cuprintfracMinline #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfracinline {#2} {#3} 
+  }
+
+
+\cs_new:Npn \cuvalamount { 13 }
+\cs_new:Npn \cuvalunit { kg }
+
+
+
+
+\ExplSyntaxOff
+
+\begin{document}
+
+\START
+
+%\cudefinephrase{English}
+%  {
+%    {4} {Dude} [Dudes] <f>
+%    {20} {Hello} <n>
+%    {10} {Nope} {Nopes}
+%    {3} {Guy} 
+%  }
+%\cudefinephrase{English}
+%  {
+%      {12} {PDE} [PDEs] 
+%      {6} * {half QWE} [half QWEs]
+%      {6}  {QWE} [QWEs]
+%  }
+
+
+\TEST{Options-phrases}{
+  \MYTYPE{op1}{ \testcutext{1}{Guy} }
+  \MYTYPE{op2}{ \testcutext{1}{Dude} }
+  \MYTYPE{op3}{ \testcutext{2}{Dudes} }
+  \MYTYPE{op4}{ \testcutext{1}{Nope} }
+  \MYTYPE{op5}{ \testcuam{11} }
+  \MYTYPE{op6}{ \testcutext{1}{PDE} }
+  \MYTYPE{op7}{ \testcutext{5}{Guy} }
+  \MYTYPE{op8}{ \testcutext{3}{QWEs} }
+  \MYTYPE{op9}{ \testcutext{1}{half QWE} }
+  \MYTYPE{op11}{ \testcutext{1}{Hello} }
+  \MYTYPE{op12}{ \testcutext{2}{Hello} }
+}
+
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

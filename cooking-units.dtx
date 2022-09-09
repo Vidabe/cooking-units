@@ -3856,9 +3856,9 @@ and the derived file cooking-units.sty.
 % Commands to print numerals. Either use default or set yourself.
 %    \begin{macrocode}
 \cs_new:Npn \@@_print_numeral:n #1 
-  { \msg_error:nnn {cooking-units} { define-numeral-function } }
+  { \msg_error:nn {cooking-units} { define-numeral-function } #1 }
 \cs_new:Npn \@@_print_Numeral:n #1 
-  { \msg_error:nnn {cooking-units} { define-Numeral-function } }
+  { \msg_error:nn {cooking-units} { define-Numeral-function } #1 }
 \bool_if:NT \g_@@_opt_numeral_bool
   {
     \cs_set_eq:NN \@@_print_numeral:n \numberstringnum
@@ -6868,8 +6868,7 @@ and the derived file cooking-units.sty.
       { 
         \@@_rf_process_amount_normally:n {#2} 
         \@@_rf_post_process_amount:
-      }
-      { 
+      }{ 
         \@@_rf_process_amount_special: 
       }
     \@@_rf_prepare_amount_printing:N \l_@@_processed_seq
@@ -7274,14 +7273,14 @@ and the derived file cooking-units.sty.
       { \use_none_delimit_by_q_stop:w }
     \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
     
-  \@@_get_largest_common_divisor:NN #2 \l_@@_tmpb_int
-  %% If one -> No largest divisor: do nothing
-  \int_compare:nNnF { \l_@@_tmpb_int } = { 1 }
-    {
-      \@@_find_common_phrase:NNV #1#2 \l_@@_tmpb_int 
-    }
-  \use_none_delimit_by_q_stop:w
-  \q_stop
+    \@@_get_largest_common_divisor:NN #2 \l_@@_tmpb_int
+    %% If one -> No largest divisor: do nothing
+    \int_compare:nNnF { \l_@@_tmpb_int } = { 1 }
+      {
+        \@@_find_common_phrase:NNV #1#2 \l_@@_tmpb_int 
+      }
+    \use_none_delimit_by_q_stop:w
+    \q_stop
   }
 
 \cs_new:Npn \@@_get_largest_common_divisor:NN #1#2
@@ -7323,7 +7322,7 @@ and the derived file cooking-units.sty.
             \bool_set_true:N \l_@@_tmpa_bool
             \@@_find_common_phrase_aux:Nnn #2 ##1 
             \bool_if:NT \l_@@_tmpa_bool
-              { 
+              {
                 \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
                   { \prop_get:NnN \l_@@_phrase_prop { ##1 } \l_@@_phrase_text_tl }
                   { \prop_get:NnN \l_@@_phrase_prop { ##1 - pl } \l_@@_phrase_text_tl }
@@ -7333,7 +7332,11 @@ and the derived file cooking-units.sty.
           }
       }
     \bool_if:NT \l_@@_tmpa_bool
-      { \@@_update_values:NN #1 \l_@@_reduced_numbers_seq }
+      { 
+        \bool_set_true:N \l_@@_lokal_phrase_bool 
+        \seq_set_eq:NN #2 \l_@@_reduced_numbers_seq
+        \@@_update_values:NN #1 \l_@@_reduced_numbers_seq 
+      }
   }
 \cs_generate_variant:Nn \@@_find_common_phrase:NNn { NNV }
 \cs_new:Npn \@@_find_common_phrase_aux:Nnn #1 #2#3
@@ -7433,7 +7436,10 @@ and the derived file cooking-units.sty.
           { \c_@@_cmd_type_cuam_tl { } }
           { \@@_print_unit_in_case_of_error: }      
       }
-      { \@@_new_print_unit_correctly: }
+      { 
+%        \@@_new_print_unit_correctly: 
+        \@@_rf_print_unit_or_phrase:
+      }
   }
 
 \cs_new:Npn \@@_print_fraction:nnnn #1#2#3#4
@@ -7513,6 +7519,26 @@ and the derived file cooking-units.sty.
       { \@@_print_numeral:n {#1} } 
   }
 \cs_generate_variant:Nn \@@_cuam_print_numerical_input_aux:nn { nV }
+
+
+\cs_new:Npn \@@_rf_print_unit_or_phrase:
+  {
+%    \@@_if_state_equal:nTF { error }
+%      { 
+%        \tl_case:NnF \l_@@_cmd_type_tl
+%          { \c_@@_cmd_type_cuam_tl { } }
+%          { \@@_print_unit_in_case_of_error: }
+%      }
+%      {
+        \tl_case:NnF \l_@@_cmd_type_tl
+          {
+            \c_@@_cmd_type_cunum_tl { \@@_cunum_print_correct_unit: }
+            \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_correct_unitname: }
+            \c_@@_cmd_type_cuam_tl { \@@_cuam_print_correct_unitphrase: }
+          }
+          { \@@_create_internal_error:nN { print-unit-acc } \l_@@_cmd_type_tl }
+%      }
+  }
 
 
 %    \end{macrocode}
