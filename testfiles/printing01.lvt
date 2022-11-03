@@ -1,0 +1,101 @@
+%
+%  Test file
+%
+\documentclass{minimal}
+\input{regression-test}
+\RequirePackage[T1]{fontenc}
+\RequirePackage[enable-debug]{expl3}
+\RequirePackage{cooking-units}
+
+\ExplSyntaxOn
+\debug_on:n { check-declarations , deprecation , log-functions }
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+\ExplSyntaxOn
+
+\NewDocumentCommand \cuprimitivefraction { m m m }
+  {
+    \cookingunits_print_fraction:nnn {#1} {#2} {#3}
+  }
+\NewDocumentCommand \cuprimitiverange { m m }
+  {
+    \cookingunits_print_range:nn {#1} {#2}
+  }
+
+\cs_new:Npn \cuprintfrac #1#2 { up#1below#2 }
+
+
+\cs_new:Npn \cuvalamount { 13 }
+\cs_new:Npn \cuvalunit { kg }
+
+
+
+\cs_new:Npn \PrintTheTests #1#2#3
+  {
+    \MYTYPE {p#11} { #2{1}#3 }
+    \MYTYPE {p#12} { #2{1--2}#3 }
+    \MYTYPE {p#13} { #2{1,1--2,2}#3 }
+    \MYTYPE {p#14} { #2{2.1--1/2,2}#3 }
+    \MYTYPE {p#14.1} { #2{1_2/3--1/2,2}#3 }
+    \MYTYPE {p#15} { #2{3.1x2,2}#3 }
+    \MYTYPE {p#16} { #2{4.1 x 2,2 x 3.3}#3 }
+    \MYTYPE {p#17} { #2{5.1 \times 1_2,2/2 x 3.3}#3 }
+    \MYTYPE {p#18} { #2{1.1 x 1_2,2/2 x 3.3 \times 4.4 \times 5.5 \times 6.611}#3 }
+  }
+
+\ExplSyntaxOff
+
+\begin{document}
+
+\START
+
+\TEST{Printing-cunum}{
+  \PrintTheTests {} \cunum {{kg}}
+}
+
+\TEST{Printing-cutext}{
+  \PrintTheTests {c} \cutext {{kg}}
+}
+
+\TEST{Printing-Cutext}{
+  \PrintTheTests {C} \Cutext {{kg}}
+}
+
+\TEST{Printing-cuam}{
+  \PrintTheTests {cm} \cuam {}
+}
+
+\TEST{Printing-error}{
+  \MYTYPE {pe1} { \cunum{1--2--3--4--5}{kg} }
+  \MYTYPE {pe2} { \cunum{1--2 x 3--4--5}{kg} }
+  \MYTYPE {pe3} { \cunum{1 x 2 x 3 x 4--5}{kg} }
+%  \MYTYPE {pec4} { \cutext{1--2--3--4--5}{kg} }
+%  \MYTYPE {pec5} { \cutext{1--2 x 3--4--5}{kg} }
+%  \MYTYPE {pec6} { \cutext{1 x 2 x 3 x 4--5}{kg} }
+  \MYTYPE {peC4} { \cuam{1--2--3--4--5} }
+  \MYTYPE {peC5} { \cuam{1--2 x 3--4--5} }
+  \MYTYPE {peC6} { \cuam{1 x 2 x 3 x 4--5} }
+}
+\END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
