@@ -1130,7 +1130,7 @@ and the derived file cooking-units.sty.
 % Use singular if:
 % \begin{description}
 %    \item[normal] The number is equal to $1$.
-%    \item[fraction] There is no mixed fraction part and the nominator is equal to $1$.
+%    \item[fraction] There is no mixed fraction part and the numerator is equal to $1$.
 %    \item[range] The second number is equal to $1$.  (e.g.\ \cuam{1--2}: Take $2$.)
 % \end{description}
 %
@@ -2984,7 +2984,7 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 % 
 %
-% \begin{function}{label}
+% \begin{function}{label} \TODO{Check label \& Co.}
 %   \begin{syntax}
 %     label = \{\meta{string}*\meta{integer}\}
 %   \end{syntax}
@@ -3216,6 +3216,7 @@ and the derived file cooking-units.sty.
 %   \cunum{180}{C} \\
 %   \cunum{15/4}{s} \\
 %   \cunum{1--2}{min} \\
+%   \cunum{1x2x3}{min} \\
 %   \cunum{?}{l}
 % \end{cuexamplecode}
 %
@@ -3924,6 +3925,7 @@ and the derived file cooking-units.sty.
 %    , \l_@@_input_allowed_special_signs_tl 
 %    , \g_@@_input_str_hash_one_tl 
 %    , \l_@@_input_range_sign_tl
+%    , \l_@@_input_times_sign_tl
 %    , \l_@@_cutext_space_tl
 %    , \l_@@_cutext_numeral_space_tl
 %    , \l_@@_cuphrase_space_tl
@@ -3968,6 +3970,7 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_input_allowed_special_signs_tl 
 \tl_new:N \g_@@_input_str_hash_one_tl 
 \tl_new:N \l_@@_input_range_sign_tl
+\tl_new:N \l_@@_input_times_sign_tl
 \tl_new:N \l_@@_cutext_space_tl
 \tl_new:N \l_@@_cutext_numeral_space_tl
 \tl_new:N \l_@@_cuphrase_space_tl
@@ -4007,6 +4010,7 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \tl_set:Nn \l_@@_input_digits_tl { 0123456789 }
 \tl_set:Nn \l_@@_input_range_sign_tl { -- }
+\tl_set:Nn \l_@@_input_times_sign_tl { \times x X }
 \tl_set:Nn \l_@@_input_fraction_sign_tl { / }
 \tl_set:Nn \l_@@_input_mixed_fraction_sign_tl { _ }
 \tl_set:Nn \l_@@_input_decimal_mark_tl { . , }
@@ -4282,6 +4286,15 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_contains_valid_key_bool
 \bool_new:N \l_@@_check_decimal_bool
 \bool_new:N \l_@@_unit_error_bool
+\bool_new:N \l_@@_rf_contains_fraction_bool
+\bool_new:N \l_@@_rf_contains_range_bool
+\bool_new:N \l_@@_rf_contains_times_bool
+\bool_new:N \l_@@_rf_check_fraction_bool
+\bool_new:N \l_@@_lokal_eval_fractions_bool
+\seq_new:N \l_@@_split_input_seq
+\seq_new:N \l_@@_parsed_seq
+\seq_new:N \l_@@_numbers_to_check_seq
+\int_new:N \l_@@_largest_common_divisor_int
 %    \end{macrocode}
 % \end{macro}
 %
@@ -4517,13 +4530,27 @@ and the derived file cooking-units.sty.
       { 
         \tl_map_inline:nn {#1} 
           {
-            \str_if_eq:nnT {##1} { < }
+            \str_if_eq:nnTF {##1} { < }
               { 
                 \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
                 \tl_map_break:n { \use_none:nn }
               }
           }
-        \use:n { \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} }
+        \use:n 
+          { 
+            \str_if_in:nnTF {#1} { x }
+              { 
+                \tl_remove_all:Nn \l_@@_input_times_sign_tl { x }  
+                \tl_remove_all:Nn \l_@@_input_times_sign_tl { X }  
+              }{
+                \str_if_in:nnT {#1} { X }
+                  { 
+                    \tl_remove_all:Nn \l_@@_input_times_sign_tl { x }  
+                    \tl_remove_all:Nn \l_@@_input_times_sign_tl { X }  
+                  }
+              }
+            \tl_set:Nn  \l_@@_input_allowed_special_signs_tl {#1} 
+          }
       } ,
     set-special-sign .groups:n = { parse } ,
 %    \end{macrocode}
@@ -4539,6 +4566,13 @@ and the derived file cooking-units.sty.
               { 
                 \msg_error:nn { cooking-units } { <-not-allowed-as-special-sign }
               }{
+                \bool_lazy_or:nnT
+                  { \str_if_eq_p:nn {##1} { x } }
+                  { \str_if_eq_p:nn {##1} { X } }
+                  { 
+                    \tl_remove_all:Nn \l_@@_input_times_sign_tl { x }  
+                    \tl_remove_all:Nn \l_@@_input_times_sign_tl { X }  
+                  }
                 \tl_put_right:Nn  \l_@@_input_allowed_special_signs_tl {##1}
               }
           }
@@ -5180,12 +5214,34 @@ and the derived file cooking-units.sty.
 % I do not allow fractions and ranges  in the same input. Maybe I will
 % change this.
 %    \begin{macrocode}
-\msg_new:nnnn { cooking-units } { fraction-not-allowed-with-range }
+%\msg_new:nnnn { cooking-units } { fraction-not-allowed-with-range }
+%  { 
+%    You \ cannot \ use \ '/' \ ( and  \ '_' )\ in \ combination \
+%    with \ '\l_@@_input_range_sign_tl' \ in \  '#1'.
+%  }{ 
+%    You \ cannot \ use \ fractions \ with \ a \ range.
+%    \msg_see_documentation_text:n { cooking-units } 
+%  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { range-too-many-items }
   { 
-    You \ cannot \ use \ '/' \ ( and  \ '_' )\ in \ combination \
-    with \ '\l_@@_input_range_sign_tl' \ in \  '#1'.
+    A \ range \ is \ only \ allowed \ to \ have \ a \ maximum \ of
+    \ two \ items. \ You \ have \ #1 \ items \ in \ '#2'.
   }{ 
-    You \ cannot \ use \ fractions \ with \ a \ range.
+    You \ cannot \ use \ more \ than \ two \ '--' .
+    \msg_see_documentation_text:n { cooking-units } 
+  }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\msg_new:nnnn { cooking-units } { range-and-times-not-allowed }
+  { 
+    It \ is \ not \ allowed \ to \ mix \ ranges \ ('--') \ and \
+    times \ in \ '#1'.
+  }{ 
+    Do \ not \ use \ times \ and \ ranges \ in \ the \ same \ command.
     \msg_see_documentation_text:n { cooking-units } 
   }
 %    \end{macrocode}
@@ -6186,9 +6242,17 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\@@_rf_seq_put_right:Nnnnnn, \@@_rf_seq_put_right:NnVVVV, \@@_rf_seq_put_right:NnnnnV}
+%  Nothing special here, just a wrapper used later.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_seq_put_right:Nnnnnn #1 #2#3#4#5#6
+  { \seq_put_right:Nn #1 { {#2} {#3} {#4} {#5} {#6} } }
+\cs_generate_variant:Nn \@@_rf_seq_put_right:Nnnnnn { NnVVVV, NnnVVV, NnnnnV }
+%    \end{macrocode}
+% \end{macro}
 %
 %
-% \begin{macro}{  }
+% \begin{macro}{ \@@_change_unit:TF }
 % I am using this construction often enough, so \dots\ yeah.
 % Note that if the evaluation is |true|, the path taken is the |false| one.
 %    \begin{macrocode}
@@ -6823,36 +6887,8 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ \@@_do_the_stuff:nnnnn , \@@_do_the_stuff:nnnnn }
-%   Main command shared by |\cunum|, etc.\ It reads the input
-%   parses options and decides (depending on which command was used)
-%   what to do with the stuff and how to print it.
+% \begin{macro}{ \@@_rf_main_command:nnnnnnm \@@_rf_main_command:nnnnnV }
 %    \begin{macrocode}
-\cs_new:Npn \@@_do_the_stuff:nnnnnn #1#2#3#4#5#6
-  {
-%  #1 -- label
-%  #2 -- options
-%  #3 -- amount
-%  #4 -- space
-%  #5 -- unit
-    \@@_initialice_accordingly:nnnn {#1} {#4} {#2} {#5}
-    \@@_use_hook_accordingly:
-    \@@_parse_the_amount:n {#3}
-    \@@_general_checkups:
-    \@@_if_state_equal:nTF { normal }
-      { \@@_process_amount_normally:n {#2} }
-      { \@@_process_amount_special: }
-    \@@_new_print_amount_correctly:
-    \@@_new_print_unit_correctly:
-  }
-\cs_generate_variant:Nn \@@_do_the_stuff:nnnnnn { nnnnV }
-
-
-\bool_new:N \l_@@_rf_contains_fraction_bool
-\bool_new:N \l_@@_rf_contains_range_bool
-\bool_new:N \l_@@_rf_contains_special_sign_bool
-\bool_new:N \l_@@_rf_check_fraction_bool
-
 \cs_new:Npn \@@_rf_main_command:nnnnnn #1#2#3#4#5#6
   {
 %  #1 -- label
@@ -6860,10 +6896,10 @@ and the derived file cooking-units.sty.
 %  #3 -- amount
 %  #4 -- space
 %  #5 -- unit
-    \@@_rf_initialice_accordingly:nnnn {#1} {#4} {#2} {#5}
-    \@@_use_hook_accordingly:
+    \@@_rf_initialice:nnnn {#1} {#2} {#5} {#4}
+    \@@_rf_use_hook_accordingly:
     \@@_rf_parse_the_amount:n {#3}
-    \@@_general_checkups:
+    \@@_rf_general_checkups:
     \@@_if_state_equal:nTF { normal }
       { 
         \@@_rf_process_amount_normally:n {#2} 
@@ -6876,24 +6912,47 @@ and the derived file cooking-units.sty.
     \@@_rf_print_unit_correctly:
   }
 \cs_generate_variant:Nn \@@_rf_main_command:nnnnnn { nnnnV }
-
-\cs_new:Npn \@@_rf_initialice_accordingly:nnnn #1#2#3#4
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{Initialization}
+%
+% \begin{macro}{\@@_rf_initialice:nnnn }
+% A hub command for several steps. See the inividual commands for more
+% details. As each command is slightly different in execution, do some setup
+% depending on which command is currently in use.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_initialice:nnnn #1#2#3#4
   {
-    \@@_rf_initialice_default:nnn {#1} {#3} {#4}
-    \@@_rf_initialize_default_units:
+    \@@_rf_initialice_default:nnn {#1} {#2} {#3}
+    \@@_rf_initialize_units:
     \@@_rf_setup_bools_for_process_and_prints:
     \tl_case:NnF \l_@@_cmd_type_tl
       {
-        \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#2} }
+        \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#4} }
         \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
         \c_@@_cmd_type_cuam_tl { }
       }
       { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
   }
+%    \end{macrocode}
+% \end{macro}
 
+% \begin{macro}{\@@_rf_initialice_default:nnn}
+% Set some variables to their default value, set the options (unit changes, etc.), check if 
+% a label
+% is used and make sure the units are defined. 
+%
+%  We set the state to |42| in case of using the \opt{42} option to later proceeed to the
+%  special post-processing case.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_initialice_default:nnn #1#2#3
   {
+    \tl_clear:N \l_@@_phantom_tl
     \tl_clear:N \l_@@_option_unit_tl
+    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
+    \bool_set_false:N \l_@@_lokal_eval_fractions_bool
     \tl_if_empty:nF {#2} { \keys_set:nn { cooking-units } {#2} }
     \IfNoValueF {#1}
       { \@@_reference_label_and_persons:n {#1} }
@@ -6904,9 +6963,23 @@ and the derived file cooking-units.sty.
         \bool_set_true:N \l_@@_unit_error_bool
       } 
       { \@@_set_state_to:n { normal } }
-    \tl_clear:N \l_@@_phantom_tl
+    \bool_if:NT \l_@@_pckopt_fourty_two_bool
+      { \@@_set_state_to:n { 42 } }
   }
-\cs_new:Npn \@@_rf_initialize_default_units:
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_rf_initialize_units:}
+% Looks more complicated than it is. |\l_@@_option_unit_tl| is the conversion unit (aka.\
+% the unit that should be printed if a unit-change is requested). 
+% If |\cuam| is used there is no unit, but
+% a special marker instead: Set the option unit to the original unit as it does not matter.
+%
+% A bonkers unit change overrules a \enquote{eV}  unit change; so if both are true,
+% prefer the bonkers one. All currently active unit-conversions are stored in the property
+% list |\l_@@_change_unit_prop|; get the conversion unit (if exists) and store it into
+% |\l_@@_option_unit_tl|.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_initialize_units:
   {
     \@@_if_no_unit_marker:NTF \l_@@_original_unit_tl
       { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
@@ -6921,16 +6994,20 @@ and the derived file cooking-units.sty.
           { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
       }
   }
-
-\bool_new:N \l_@@_lokal_eval_fractions_bool
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_rf_setup_bools_for_process_and_prints:}
+% Set some booleans for later use (after parsing). Funnily enough, we can already
+% decide some future interactions like a evaluation of fractions or if the amount should
+% be recalculated to fit the references number of persons. We can do this, as for
+% errors or special-signs we skip the process where those booleans would be needed.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_setup_bools_for_process_and_prints:
   {
-    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
-    \bool_set_false:N \l_@@_lokal_eval_fractions_bool
     \bool_lazy_and:nnT
       { \l_@@_reference_given_bool } 
       { \l_@@_pckopt_recalculate_amount_bool }
-      { 
+      {
         \int_compare:nNnF 
           { \l_@@_wanted_number_of_persons_int }
           =
@@ -6949,17 +7026,58 @@ and the derived file cooking-units.sty.
           { \bool_set_true:N \l_@@_lokal_eval_fractions_bool }
       }
   }
-
-\cs_new:Npn \@@_rf_process_amount_special:
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_initialice_addon_cutext:}
+% For \cCutext\ we first check if the user wants to use \cCutext\ at all.
+% If not, change it to |\cunum|. 
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_addon_cutext:
   {
-    \seq_set_eq:NN \l_@@_processed_seq \l_@@_parsed_seq
-    \@@_if_state_equal:nT { special_sign }
-      { \msg_warning:nnV { cooking-units } { amount-not-known } \l_@@_original_amount_tl }
-    \bool_if:NT \l_@@_pckopt_fourty_two_bool
-      { \@@_prepare_fourty_two_amount: }
+    \bool_set_false:N \l_@@_cutext_use_single_bool
+    \bool_if:NT \l_@@_pckopt_cutext_to_cunum_bool
+      { \@@_set_cmd_type_to:n { cunum } }
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Hooks}
+%
+% \begin{macro}{ \@@_rf_use_hook_accordingly: }
+% Hooks are straightforward. I know the current command and thus use the
+% respective hook.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_use_hook_accordingly:
+  {
+    \l_@@_cmd_hook_tl
+    \tl_case:NnF \l_@@_cmd_type_tl
+      {
+        \c_@@_cmd_type_cunum_tl { \l_@@_cunum_hook_tl }
+        \c_@@_cmd_type_cCutext_tl
+          {
+            \bool_if:NTF \l_@@_cutext_uppercase_word_bool
+              { \l_@@_Cutext_hook_tl }
+              { \l_@@_cutext_hook_tl }
+          }
+        \c_@@_cmd_type_cuam_tl { \l_@@_cuam_hook_tl }
+      }
+      { \@@_create_internal_error:nN { use-hook-acc } \l_@@_cmd_type_tl }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \subsubsection{Parsing}
+%
+% \begin{macro}{\@@_rf_parse_the_amount:n}
+% We finally set the amount. Afterwards make sure some tokens have the correct
+% catcode (and remove all spaces). Not quite sure if I should also set the catcode for
+% |-| or others.
+%
+% If the amount is empty or the draft mode is active do some preperations to just print
+% the input, else parse the amount.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_parse_the_amount:n #1
   {
     \@@_expand_amount_input:Nn \l_@@_original_amount_tl {#1}
@@ -6979,32 +7097,63 @@ and the derived file cooking-units.sty.
         \@@_rf_split_and_parse_input:N \l_@@_original_amount_tl
       }
   }
-
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\@@_rf_prepare_just_print_input:}
+% There is no \enquote{real} \enquote{print the input}, instead act as if there
+% was an error (which is the same as just printing the input).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_prepare_just_print_input:
   {
     \@@_set_state_to:n { error }
     \tl_if_empty:NT \l_@@_original_amount_tl
       { \@@_create_error:nn { cooking-units } { empty-amount } }
   }
+%    \end{macrocode}
+% \end{macro}
 
-
+% \begin{macro}{ \@@_rf_split_and_parse_input:N }
+%  Here we split and parse the amount. First it is split (separating ranges and
+%  times into their separate values). Afterwards the split parts are parsed for
+%  special signs, if they contain the allowed input-tokens, etc.
+%
+% |\use_none_delimit_by_q_nil:w \q_nil| allows me to \enquote{jump} here in case
+% of an error. 
+%
+%  After everything is done everything is stored into |\l_@@_parsed_seq|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_split_and_parse_input:N #1
   {
-    \bool_if:NT \l_@@_pckopt_fourty_two_bool
-      { \@@_set_state_to:n { 42 } }
     \tl_set_eq:NN \l_@@_tmpa_tl #1
     \@@_rf_prepare_input_before_split:N \l_@@_tmpa_tl
-  }
-
-\seq_new:N \l_@@_split_input_seq
-\cs_new:Npn \@@_rf_prepare_input_before_split:N #1
-  {
-    \@@_rf_prepare_input_check_for_special_sign:N #1
-    \@@_rf_prepare_input_check_for_range_sign:N #1
-    \@@_rf_split_input:V #1
+    \@@_rf_split_input:V \l_@@_tmpa_tl
     \@@_rf_parse_input:N \l_@@_split_input_seq
     \use_none_delimit_by_q_nil:w \q_nil
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_prepare_input_before_split:N }
+%  As the name suggests we make some preparations before we split.
+%  We could do this (especially checking for a special sign) during the parsing, 
+%  but I think it is cleaner to do it now. First checks if a special sign is in the amount,
+%  second replaces the times (|\times|, |xX|) or range-sign (|--|) with an internal
+%  token.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_prepare_input_before_split:N #1
+  {
+    \@@_rf_prepare_input_check_for_special_sign:N #1
+    \@@_rf_prepare_input_check_for_range_or_times_sign:N #1
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_prepare_input_check_for_special_sign:N, 
+%                        \@@_rf_prepare_input_check_for_range_or_times_sign:N}
+%  Loops over all user-given (or predefined) special signs and tests the input
+%  for their appearances. If we find one (more are not really necessary), set the state
+%  to |special_sign|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_prepare_input_check_for_special_sign:N #1
   {
     \tl_map_inline:Nn \l_@@_input_allowed_special_signs_tl
@@ -7017,27 +7166,82 @@ and the derived file cooking-units.sty.
           }
       }
   }
-\cs_new:Npn \@@_rf_prepare_input_check_for_range_sign:N #1
+%    \end{macrocode}
+%  Here we replace all valid \enquote{times} signs and \enquote{range} signs
+%  with |\q_@@_range|. Both use the same marker as a combination between those
+%  two is not allowed (cannot use ranges and times). 
+%
+%  Doing the times-loop first (for no real particular reason), all occurrences of a valid
+%  times-sign are replaced. No breaking the loop here as a mix of different signs may
+%  be used.
+%
+%  Afterwards all occurences of the one valid range sign are replaced by |\q_@@_range|.
+%  Furthermore, create an error if times signs and ranges are used both at once.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_prepare_input_check_for_range_or_times_sign:N #1
   {
+    \tl_map_inline:Nn \l_@@_input_times_sign_tl
+      {
+        \tl_if_in:NnT #1 {##1}
+          {
+            \tl_replace_all:Nnn #1 {##1} { \q_@@_range } 
+            \bool_set_true:N \l_@@_rf_contains_times_bool
+          }
+      }
     \tl_if_in:NVT #1 \l_@@_input_range_sign_tl
       {
         \tl_replace_all:NVn #1 \l_@@_input_range_sign_tl { \q_@@_range } 
         \bool_set_true:N \l_@@_rf_contains_range_bool
+        \bool_if:NT \l_@@_rf_contains_times_bool
+          { \@@_create_error:n { range-and-times-not-allowed } }
       }
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_split_input:n, \@@_rf_split_input:V}
+%  Here the splitting the amount into a sequence of values is done.
+%  Sequences are quite handy here as we can just loop over all split items
+%  and we have an arbitrary number of parts (1, 2 or even 20).
+%
+%  Not quite sure if keeping the spaces is necessary, but I guess this is a minor
+%  optimisation (as |keep_spaces| does not actively remove spaces).
+%  
+%  After the \enquote{main} splitting we still need to make some furhter splitting
+%  for frations. This does not result into additional seq-items.
+%
+%  After everything is done, the split parts are stored into the sequence 
+%  |\l_@@_split_input_seq|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_split_input:n #1
   {
     \seq_clear:N \l_@@_split_input_seq
     \seq_set_split_keep_spaces:Nnn \l_@@_tmpa_seq { \q_@@_range } {#1}
-    \seq_map_function:NN \l_@@_tmpa_seq \@@_rf_split_inividual_part:n
+    \bool_if:NT \l_@@_rf_contains_range_bool
+      {
+        \int_compare:nNnT { \seq_count:N \l_@@_tmpa_seq } > { 2 }
+          { 
+            \@@_create_error:nf { range-too-many-items } 
+              { \seq_count:N \l_@@_tmpa_seq }
+          }
+      }
+    \seq_map_function:NN \l_@@_tmpa_seq \@@_rf_split_inividual_item:n
   }
 \cs_generate_variant:Nn \@@_rf_split_input:n { V }
-
-\cs_new:Npn \@@_rf_split_inividual_part:n #1
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_split_inividual_item:n}
+%  For a fraction the |/| token is neccessary. Thus, if not |/| is found we have a normal
+%  number. 
+%
+%  |\l_@@_split_input_seq| contains 4 brace-pairs. First contains a boolean denoting if
+%  we have a fraction or not. 2nd, 3rd and 4th contains the inivdual parts of the fraction
+%  (2nd contains the mixed-fraction part; 3rd the numerator and 4th the denominator).
+%  If there is no fraction we store the number in the 4th brace-pair.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_split_inividual_item:n #1
   {
-    %% rough scetch
     \tl_if_in:nnTF {#1} { / }
       { \@@_rf_split_fraction:ww #1 \q_stop }
       {
@@ -7047,14 +7251,25 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \l_@@_split_input_seq { { \c_false_bool }  {} {} {#1} }
       }
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_split_fraction:ww, \@@_rf_split_mixed_fraction:wwn}
+%  Here we split the fractions into numerator |#1| and denominator |#2|. 
+%  A mixed-fraction sign is only allowed in the numerator part, having it in |#2| throws
+%  an error (case: |1/2_3|). If a mixed fraction sign is found in |#1| we do furhter splitting,
+%  else we store the values in |\l_@@_split_input_seq|.
+%
+%  Furthermore we set |\l_@@_rf_contains_fraction_bool| to true. This is done for all
+%  sequence parts as it changes unit-chaning behavior.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_split_fraction:ww #1 / #2 \q_stop
   {
+    \bool_set_true:N \l_@@_rf_contains_fraction_bool
     \tl_if_in:nnT {#2} { _ }
       { \@@_create_error:n { fraction-wrong-order } }
     \tl_if_empty:nT {#2}
       { \@@_create_error:n { empty-argument } }
-    \bool_set_true:N \l_@@_rf_contains_fraction_bool
     \tl_if_in:nnTF {#1} { _ }
       {
         \@@_rf_split_mixed_fraction:wwn #1 \q_stop {#2}
@@ -7064,6 +7279,10 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {} {#1} {#2} }
       }
   }
+%    \end{macrocode}
+%  Straighforward. |#1| is the mixed-fraction part, |#2| is the numerator and |#3|
+%  is the denominator. Make sure they are not empty and store them.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_split_mixed_fraction:wwn #1 _ #2 \q_stop #3
   {
     \tl_if_empty:nT {#1}
@@ -7072,14 +7291,46 @@ and the derived file cooking-units.sty.
       { \@@_create_error:n { empty-argument } }
     \seq_put_right:Nn \l_@@_split_input_seq { { \c_true_bool } {#1} {#2} {#3} }
   }
-
-\seq_new:N \l_@@_parsed_seq
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\@@_rf_parse_input:N}
+%  Now that splitting is done, we start parsing! Using sequences, we jus loop ober
+%  every item. (Which is extremly useful as we can loop over 1 or 100 items).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_parse_input:N #1
   {
     \seq_clear:N \l_@@_parsed_seq
     \seq_map_inline:Nn #1
       { \@@_rf_parse_input:nnnn ##1 }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_parse_input:nnnn}
+%  Looks more intimidating than it is. The 4 arguments are the ones from 
+%  |\l_@@_split_input_seq| and are thus: 
+%  \begin{itemize}
+%    \item |#1|: Contains this item a fraction?
+%    \item |#2|: mixed-fraction part (if it exists for this item).
+%    \item |#3|: numerator part (if it exists for this item).
+%    \item |#4|: number part or (if it is a fraction) or denominator.
+%  \end{itemize}
+%
+%  If we have a fraction we parse the inividual parts and store them temporarily in
+%  tl's. Afterwards we remove all minus signs, but remember if the whole fraction is
+%  positive or negative. Store the parsed parts into |\l_@@_parsed_seq| (this time with
+%  5 items!).
+%
+%  If we just have a single number, parse it and store it in |\l_@@_parsed_seq|.
+%
+%  |\l_@@_parsed_seq| contains 5 items. First is, again, if the item contains a fraction.
+%  2nd is new, is only used in combination with fractions (else it is empty) and stores
+%  if the fraction is positive or negative (aka.\ if there is a minus sign in front of it
+%  during printing).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_parse_input:nnnn #1 #2#3#4
   {
     \bool_set_eq:NN \l_@@_rf_check_fraction_bool #1
@@ -7104,11 +7355,15 @@ and the derived file cooking-units.sty.
           {#1} { } { } { }  \l_@@_number_tmpb_tl
       }
   }
-\cs_new:Npn \@@_rf_seq_put_right:Nnnnnn #1 #2#3#4#5#6
-  { \seq_put_right:Nn #1 { {#2} {#3} {#4} {#5} {#6} } }
-\cs_generate_variant:Nn \@@_rf_seq_put_right:Nnnnnn { NnVVVV, NnnnnV }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_rf_frac_remove_minus:NNN}
+%  Removes the minus signs from the inividual fraction parts, but remembers
+%  if we have removed an odd or even number of minus signs. This will determine
+%  if the whole fraction is negative or not.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_frac_remove_minus:NNN #1#2#3
   {
     \bool_set_false:N \l_@@_minus_bool
@@ -7122,6 +7377,10 @@ and the derived file cooking-units.sty.
     \exp_last_unbraced:NNV
     \@@_rf_frac_remove_minus_aux:Nww #3 #3 \q_stop 
   }
+%    \end{macrocode}
+%  Not sure if |\token_if_eq_charcode| is the best choice, but I think I stole it from
+%  \pkg{siunitx}, so it should be fine.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_frac_remove_minus_aux:Nww #1 #2#3 \q_stop
   {
     \token_if_eq_charcode:NNTF #2 -
@@ -7131,7 +7390,35 @@ and the derived file cooking-units.sty.
       }
       { \tl_set:Nn #1 {#2#3} }
   }
-  
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%  \subsubsection{Processing}
+%
+%
+%
+% \begin{macro}{\@@_rf_process_amount_special:}
+%  In case the current state is not-normal we end up here. No (real) processing is
+%  done here, just a warning message is printed. Here we also change the input
+%  if \opt{42} is used.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_process_amount_special:
+  {
+    \@@_if_state_equal:nT { special_sign }
+      { \msg_warning:nnV { cooking-units } { amount-not-known } \l_@@_original_amount_tl }
+    \bool_if:NTF \l_@@_pckopt_fourty_two_bool
+      { \@@_rf_prepare_fourty_two_amount: }
+      { \seq_set_eq:NN \l_@@_processed_seq \l_@@_parsed_seq }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_process_amount_normally:n}
+%  Now that we know e.g.\ if we have an unit change (no special sign, fractions?, etc.)
+%  we do some more initializing. Afterwards, process the input (e.g.\ evaluate fractions
+%  if needed, scale the amount depending on the unit, etc.).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_process_amount_normally:n #1
   {
     \@@_rf_initialise_after_parsing:n {#1}
@@ -7141,7 +7428,33 @@ and the derived file cooking-units.sty.
         \@@_rf_process_amount_normally:nnnnn ##1
       }
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_process_amount_normally:nnnnn}
+%  Looks more intimidating (again) as it is. Here are the arguments:
+%
+%  \begin{itemize}
+%    \item |#1|: Contains this item a fraction? (Boolean)
+%    \item |#2|: (Only non-empty for fractions) Is the fraction negative?
+%    \item |#2|: mixed-fraction part (if it exists for this item).
+%    \item |#3|: numerator part (if it exists for this item).
+%    \item |#4|: number part or denominator (if it is a fraction) .
+%  \end{itemize}
+%
+%  Two cases here: Do we have a fraction or not.
+%
+%  If we have a fraction and no evaluation is done, do nothing essentially.
+%  Else an evaluation of the fraction is required and the whole thing is calculated.
+%  Do some Division-by-zero checks; make sure the resulting number is negative
+%  (|#2| argument) and do some further calculations with the resulting number.
+%  Afterwards, store the number in |\l_@@_processed_seq|. (Note that we define the
+%  fraction-boolean as |\c_false_bool|).
+%
+%  If the current item is simply a number, do some further calculations and store the result
+%  in |\l_@@_processed_seq|.
+%    
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_process_amount_normally:nnnnn #1#2#3#4#5
   {
     \bool_if:NTF #1
@@ -7158,21 +7471,27 @@ and the derived file cooking-units.sty.
             \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq 
               { \c_false_bool } { } {} {} \l_@@_number_tmpb_tl
           }{
-            %% Currently: Do nothing
             \@@_rf_seq_put_right:Nnnnnn \l_@@_processed_seq
               {#1} {#2} {#3} {#4} {#5}
           }
       }{
         \tl_if_empty:nF {#2}
-          { \tl_show:n { ERROR-wrong-a } }
+          { \@@_create_internal_error:nN 
+            { non-empty-sign-for-non-fraction } \l_@@_original_amount_tl 
+          }
         \tl_set:Nn \l_@@_number_tmpb_tl {#5}
         \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl
         \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
           {#1} { } { } { } \l_@@_number_tmpb_tl
       }
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_post_process_amount:}
+%  Doing some post-processing. This is dependend on which command was used
+%  (\cCutext\ has some other functionalities than |\cuam|).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_post_process_amount:
   {
     \tl_case:NnF \l_@@_cmd_type_tl
@@ -7184,11 +7503,25 @@ and the derived file cooking-units.sty.
         \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
       }
   }
-
-\seq_new:N \l_@@_numbers_to_check_seq
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_rf_cunum_post_process:N}
+%  Nothing is done here.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_cunum_post_process:N #1 { }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_cutext_post_process:N}
+%  Ok, first decide if we need the plural or singular version of the unit. We can do it
+%  now as we will not \enquote{reduce} the amounts (as |\cuam| is able to do).
+%
+%  If numerals should be used and we do \emph{not} have a fraction (in all items)
+%  we first check if all items only contain integers. If they all are integers, check if numerals
+%  can be used.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_cutext_post_process:N #1
   {
     \@@_rf_check_plural:N #1
@@ -7201,11 +7534,27 @@ and the derived file cooking-units.sty.
           { \@@_rf_check_if_numerals_can_be_used:N \l_@@_numbers_to_check_seq }
       }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@_rf_check_plural:N }
+%  For plural-checking we alawys use the last item (and hope that in no language we would
+%  need to e.g.\ use the first item). |\l_@@_tmpa_tl| contains 5 braced pairs; so one
+%  expansion allows |\@@_rf_check_plural_aux:nnnnn| to get them.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_check_plural:N #1
   {
     \seq_get_right:NN #1 \l_@@_tmpa_tl
     \exp_after:wN \@@_rf_check_plural_aux:nnnnn \l_@@_tmpa_tl
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_check_plural_aux:nnnnn}
+%  So \dots\ the algorithm used to determine plural or singular is depending on the
+%  current language (french has other rules than english or german) and if we have a
+%  fraction or not. Call the respective command and hope that the result is correct.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_check_plural_aux:nnnnn #1#2#3#4#5
   {
     \bool_if:NTF #1
@@ -7218,6 +7567,20 @@ and the derived file cooking-units.sty.
         \use:c { @@_pluraltest_normal_ \l_@@_translation_tmpa_tl :n } {#5}
       }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_rf_check_if_decimal:NN, \@@_rf_check_if_decimal_aux:Nnnnnn}
+%  Test if all items are integers or not. As the numbers are stored in tl's  and not in
+%  fp's or int's we can just check for a |.|. If one is found, we have a decimal.  To do this
+%  efficiently we loop through all items, get the needed number (we have no fractions,
+%  we checked that earlier), store it in |#2| for later use and |\tl_put_right:Nn| it into
+%  |\l_@@_tmpa_tl|. |\l_@@_tmpa_tl| will then contain all numbers that need to be 
+%  checked as a single string. |#2| is a sequence we can use in the future (is is more
+%  practical as it only contains a single number and not 6 braced pairs; making looping
+%  easier it can be placed directly where we need it).
+%    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_rf_check_if_decimal:NN #1#2 { TF }
   {
     \tl_clear:N \l_@@_tmpa_tl
@@ -7230,12 +7593,23 @@ and the derived file cooking-units.sty.
       { \prg_return_true: }
       { \prg_return_false: }
   }
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_check_if_decimal_aux:Nnnnnn #1#2#3#4#5#6
   {
     \tl_put_right:Nn \l_@@_tmpa_tl {#6} 
     \seq_put_right:Nn #1 {#6}
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\@@_rf_check_if_numerals_can_be_used:N}
+%  The items of sequence in |#1| only contains a number and not the 6 braced pairs.
+%  This makes this loop a lot more straightforward to write.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_check_if_numerals_can_be_used:N #1
   {
     \seq_map_inline:Nn #1
@@ -7249,7 +7623,18 @@ and the derived file cooking-units.sty.
           }
       }
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_cuam_post_process:N}
+%  Ok, shit gets real at this point. Compared to the other post process stuffs (especially
+%  |\cunum|) here we do more complicated things. This is mostly due to |\cuam| allowing
+%  phrases (\enquote{12} to \enquote{1 Dutzend}). This needs its own processing algorithm.
+%  Furthermore, we still allow numerals (and we need to be careful because both can be used
+%  at the same time). Of course, all this is only done if the input conists of only integers (and
+%  no fractions)
+%    \begin{macrocode}
 \cs_new:Npn \@@_cuam_post_process:N #1
   {
     \bool_if:NF \l_@@_rf_contains_fraction_bool
@@ -7264,62 +7649,131 @@ and the derived file cooking-units.sty.
           }
       }
   }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_cuam_post_process_input_phrases:NN}
+%  This algorithm is thankfully much simpler compared to the old one!
+%  First, we get the property list for the current language that contains
+%  the phrases. If there are none (aka.\ if it is equal to |\c_@@_no_translation_str|)
+%  we just skip to the end. Else we get the number-sequence from the property
+%  list. |#2| is the list of numbers from the input. |\l_@@_number_tmpa_tl| will contain the
+%  largest common divisor $l$ between those numbers (e.g. $2$, $4$ and $6$ have the 
+%  largest common divisor of $l=2$; $12$ and $16$ have $l=4$). If it is $l=1$ we do
+%  nothing (as there is none). Else, take it as a upper cap (there cannot be a common
+%  divisor above $l$; thus only check phrase numbers $n \leq l$).
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_cuam_post_process_input_phrases:NN #1#2
   {
     \@@_culang_get_phrase_prop:N \l_@@_phrase_prop
     \tl_if_eq:NNT \c_@@_no_translation_str \l_@@_phrase_prop
       { \use_none_delimit_by_q_stop:w }
     \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-    
-    \@@_get_largest_common_divisor:NN #2 \l_@@_tmpb_int
-    %% If one -> No largest divisor: do nothing
-    \int_compare:nNnF { \l_@@_tmpb_int } = { 1 }
+    \@@_get_largest_common_divisor:NN #2 \l_@@_largest_common_divisor_int
+    \int_compare:nNnF { \l_@@_largest_common_divisor_int } = { 1 }
       {
-        \@@_find_common_phrase:NNV #1#2 \l_@@_tmpb_int 
+        \@@_find_common_phrase:NNV #1#2 \l_@@_largest_common_divisor_int 
       }
     \use_none_delimit_by_q_stop:w
     \q_stop
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_get_largest_common_divisor:NN, \@@_get_largest_common_divisor_aux:Nn}
+%  |#1| is the sequence of numbers we want to check (we need in later; thus no 
+%  \enquote{pop}); in |#2| we will store the largest common
+%  divisor $l$. The \enquote{find the largest common divisor} algorithm is only needed
+%  if we have more than $1$ item (so if we have a range or a times). 
+%
+%  $l$ must be the same for all numbers. 
+%
+%    \begin{macrocode}
 \cs_new:Npn \@@_get_largest_common_divisor:NN #1#2
   {
     \seq_get_left:NN #1 \l_@@_tmpa_tl
     \int_set:Nn #2 { \l_@@_tmpa_tl }
-    \bool_if:NT \l_@@_rf_contains_range_bool
+    \bool_lazy_or:nnT 
+      \l_@@_rf_contains_range_bool
+      \l_@@_rf_contains_times_bool
       { 
         \seq_map_inline:Nn #1
           { 
-            \@@_find_largest_commin_divisor:Nn #2 {##1} 
+            \@@_get_largest_common_divisor_aux:Nn #2 {##1} 
             \int_compare:nNnT {#2} = { 1 }
               { \seq_map_break: }
           }
       }
   }
-\cs_new:Npn \@@_find_largest_commin_divisor:Nn #1#2
+%    \end{macrocode}
+%
+% The source for the algorithm is \url{https://en.wikipedia.org/wiki/Euclidean_algorithm#Implementations}.
+%  To make my future life easier, here is the copy-and-pasted code:
+% \begin{verbatim}
+%    function gcd(a, b)
+%        while b \neq 0
+%            t := b
+%            b := a mod b
+%            a := t
+%        return a
+% \end{verbatim}
+%  and here is the algorithm with the current variables:
+% \begin{verbatim}
+%    function gcd(#1, b)
+%        while b \neq 0
+%            a := b
+%            b := #1 mod b
+%            #1 := a
+%        return #2
+% \end{verbatim}
+%
+%    \begin{macrocode}
+\cs_new:Npn \@@_get_largest_common_divisor_aux:Nn #1#2
   {
-    \int_set:Nn \l_tmpb_int {#2}
-    \int_until_do:nNnn { \l_tmpb_int } = { 0 }
+    \int_set:Nn \l_@@_tmpb_int {#2}
+    \int_until_do:nNnn { \l_@@_tmpb_int } = { 0 }
       {
-        \int_set_eq:NN \l_tmpa_int \l_tmpb_int
-        \int_set:Nn \l_tmpb_int 
-          { \int_mod:nn {#1} { \l_tmpb_int } }
-        \int_set_eq:NN #1 \l_tmpa_int
+        \int_set_eq:NN \l_@@_tmpa_int \l_@@_tmpb_int
+        \int_set:Nn \l_@@_tmpb_int 
+          { \int_mod:nn {#1} { \l_@@_tmpb_int } }
+        \int_set_eq:NN #1 \l_@@_tmpa_int
       }
   }
-
-\seq_new:N \l_@@_reduced_numbers_seq
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\@@_find_common_phrase:NNn}
+%  Ok, this one is complicated.
+%  |#1| is the original prcoess sequence; |#2| is the sequence of numbers-to-check
+%  (which were extracted from |#1| in a previous step to make loops easier);
+% |#3| is the largest common divisor $l$ which requires $l>1|$.
+%
+%  As a reminder, |\l_@@_phrase_numbers_seq| contains two braced-pairs:
+%  first is the phrase-number, second is a boolean which defines if multiples of the
+%  phrase-number should be checked too. The phrase-number is thus gained by
+%  |\use_i:nn ##1| which must be smaller or equal to $l$ (I explain why in a previous 
+%  function). So do nothing if it is larger. |\l_@@_phrase_numbers_seq|  is also sorted
+%  from largest to smallest, so no |\seq_map_break:| unless we found a number.
+%
+%  If for the current phrase number all values have an integer quotient (|\l_@@_tmpa_bool| 
+%  remains |true| after |\@@_find_common_phrase_aux:Nnn|) (integer quotients are stored in 
+%  |\l_@@_reduced_numbers_seq|) we gain the other properties from this phrase-number
+%  like the phrase-text (\enquote{Dutzend}) and its gender; break the loop.
+%
+%  If the loop was terminated via a break |\l_@@_tmpa_bool| remains |true| and 
+%  we continue with updating  the values in sequences |#1| and |#2|.
+%    \begin{macrocode}
 \cs_new:Npn \@@_find_common_phrase:NNn #1 #2#3
   {
-    %% Shit is to be done
     \bool_set_false:N \l_@@_lokal_phrase_bool
     \seq_map_inline:Nn \l_@@_phrase_numbers_seq
       {
         \int_compare:nNnF { \use_i:nn ##1 } > {#3}
           {
             \bool_set_true:N \l_@@_tmpa_bool
+            \seq_clear:N \l_@@_reduced_numbers_seq
             \@@_find_common_phrase_aux:Nnn #2 ##1 
             \bool_if:NT \l_@@_tmpa_bool
               {
@@ -7339,9 +7793,27 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_find_common_phrase:NNn { NNV }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_find_common_phrase_aux:Nnn}
+%  Thankfully a lot more simplified compared to a previous version.
+%  The idea is simple: loop over all numbers in |#1| (the \enquote{numbers-to-check}
+%  sequence) and figure out if all its items are a multiple of the phrase-number |#2|.
+%  If multiples should not be checked (boolean |#3|) we set the multiple to be
+% $1$. Else we use |\int_div_truncate:nn| to find the closest (checks Wikipedia for 
+% terminology) integer quotient. Afterwards we see if the quotient (calculated ot $1$)
+%  times the phrase number |#2| is equal to the original value (We check if the modulo is
+%  $0$). We do not use the modulo directly as we need the quotient for further uses
+%  (if an integer quotient without reminder exists).
+%
+%  If integer quotient times phrase number equals the original one, we store the
+%  quotient in |\l_@@_reduced_numbers_seq| for later usage. If we have one whiff 
+%  we break the loop as there are no integer quotients for the current phrase-number.
+%
+%    \begin{macrocode}
 \cs_new:Npn \@@_find_common_phrase_aux:Nnn #1 #2#3
   {
-    \seq_clear:N \l_@@_reduced_numbers_seq
     \seq_map_inline:Nn #1
       {
         \bool_if:NTF #3 
@@ -7352,24 +7824,49 @@ and the derived file cooking-units.sty.
           { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
       }        
   }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_update_values:NN, \@@_update_values_aux:Nnnnnn}
+%  Here we update the numbers in |\l_@@_processed_seq| (given in |#1|) with
+%  the integer quotient numbers in |#2|). Do a copy of |#1| (to loop over it) than clear
+%  the process-sequence |#1|. Looping is not necessary as we technically know
+%  every information, but this makes it a bit easier in case I change things in the future
+%  (I can also add some tests).
 \cs_new:Npn \@@_update_values:NN #1#2
   {
-    \seq_set_eq:NN \l_@@_tmpa_seq \l_@@_processed_seq
-    \seq_clear:N \l_@@_processed_seq
+    \seq_set_eq:NN \l_@@_tmpa_seq #1
+    \seq_clear:N #1
     \seq_map_inline:Nn \l_@@_tmpa_seq
       {
-        \@@_update_values_aux:Nnnnnn #2 ##1
+        \@@_update_values_aux:NNnnnnn #1 #2 ##1
       }
   }
-\cs_new:Npn \@@_update_values_aux:Nnnnnn #1#2#3#4#5#6
+\cs_new:Npn \@@_update_values_aux:NNnnnnn #1 #2#3#4#5#6#7
   { 
-    %% During testing.
-    \tl_if_empty:nF {#4#5}
-      { \tl_show:n { ERROR-empty-a } }
-    \seq_pop_left:NN #1 \l_@@_tmpa_tl
-    \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
-      {#2} {#3} {#4} {#5} \l_@@_tmpa_tl
+    \bool_if:NT #3
+      { \@@_create_internal_error:nn { fraction-wrong-value } {#3} }
+    \tl_if_empty:nF {#4#5#6}
+      { \@@_create_internal_error:nn { update-values-non-empty } {#4;;#5;;#6} }
+    \seq_pop_left:NN #2 \l_@@_tmpa_tl
+    \@@_rf_seq_put_right:NnnnnV #1
+      {#3} {#4} {#5} {#6} \l_@@_tmpa_tl
   }
+%    \end{macrocode}
+% \end{macro}
+
+
+% \begin{macro}{}
+%    \begin{macrocode}
+
+
+
+
+
+
+\seq_new:N \l_@@_reduced_numbers_seq
+\bool_new:N \l_@@_seperator_after_fraction_bool
 
 
 \cs_new:Npn \@@_rf_prepare_amount_printing:N #1
@@ -7385,11 +7882,13 @@ and the derived file cooking-units.sty.
           { \cs_set_eq:NN \@@_print_number:n \@@_cuam_print_number:n }
       }
       { \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl }
+    \bool_set_false:N \l_@@_seperator_after_fraction_bool
     \seq_map_indexed_inline:Nn #1
       {
         \@@_rf_prepare_amount_printing_aux:nnnnnn {##1} ##2
       }
   }
+
 
 \seq_new:N \l_@@_prepared_printing_seq
 \cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnnn #1#2#3#4#5#6
@@ -7399,12 +7898,16 @@ and the derived file cooking-units.sty.
         \@@_rf_put_rght_prepared_printing:n
           {
             \@@_print_fraction:nnnn {#3} {#4} {#5} {#6} 
-            \int_compare:nNnF {#1} = { \seq_count:N \l_@@_processed_seq }
-              { \, }
+            \int_compare:nNnTF {#1} = { \seq_count:N \l_@@_processed_seq }
+              { \bool_set_false:N \l_@@_seperator_after_fraction_bool }
+              { \bool_set_true:N \l_@@_seperator_after_fraction_bool }
           }
       }{
         \@@_rf_put_rght_prepared_printing:n
-          { \@@_print_number:n {#6} }
+          { 
+            \@@_print_number:n {#6} 
+            \bool_set_false:N \l_@@_seperator_after_fraction_bool
+          }
       }
   }
 \cs_new:Npn \@@_rf_put_rght_prepared_printing:n #1
@@ -7413,7 +7916,6 @@ and the derived file cooking-units.sty.
   }
 
 \seq_new:N \l_@@_processed_seq
-\seq_new:N \l_@@_post_processed_seq
 \cs_new:Npn \@@_rf_print_amount_correctly:
   {
     \bool_lazy_any:nTF
@@ -7421,11 +7923,21 @@ and the derived file cooking-units.sty.
         { \tl_if_empty_p:N \l_@@_original_amount_tl }
         { \l_@@_pckopt_draft_bool }
         { \@@_if_state_equal_p:n { error }  }
-      }
-      {
+      }{
         \l_@@_original_amount_tl
       }{
-        \seq_use:Nn \l_@@_prepared_printing_seq { \@@_print_range_sign: }
+        \int_compare:nNnTF { \seq_count:N \l_@@_prepared_printing_seq } = { 1 }
+          {
+            \seq_use:Nn \l_@@_prepared_printing_seq {}
+          }{
+        \bool_if:NTF \l_@@_rf_contains_range_bool
+          { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_rf_print_range_sign: } }
+          {
+            \bool_if:NTF \l_@@_rf_contains_times_bool
+              { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_rf_print_times_sign: } }
+              { \@@_create_internal_error:nx { neither-range-nor-times } { \fp_eval:n { \l_@@_rf_contains_range_bool + 2*\l_@@_rf_contains_times_bool } } }
+          }
+          }
       }
   }
 \cs_new:Npn \@@_rf_print_unit_correctly:
@@ -7434,7 +7946,7 @@ and the derived file cooking-units.sty.
       { 
         \tl_case:NnF \l_@@_cmd_type_tl
           { \c_@@_cmd_type_cuam_tl { } }
-          { \@@_print_unit_in_case_of_error: }      
+          { \@@_rf_print_unit_in_case_of_error: }      
       }
       { 
 %        \@@_new_print_unit_correctly: 
@@ -7527,7 +8039,7 @@ and the derived file cooking-units.sty.
 %      { 
 %        \tl_case:NnF \l_@@_cmd_type_tl
 %          { \c_@@_cmd_type_cuam_tl { } }
-%          { \@@_print_unit_in_case_of_error: }
+%          { \@@_rf_print_unit_in_case_of_error: }
 %      }
 %      {
         \tl_case:NnF \l_@@_cmd_type_tl
@@ -7544,37 +8056,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_initialice_accordingly:nnnn , \@@_initialice_addon_cutext: }
-% This cs first initializes stuff that is equal for all commands, then 
-% does command-specific things. The default stuff includes checking if the
-% unit is valid, setting some bools, sets options (including change of units), etc.
-%
-% For |\cunum| we set the space used for |\phantom|, for |\cuam| we do nothing.
-%    \begin{macrocode}
-\cs_new:Npn \@@_initialice_accordingly:nnnn #1#2#3#4
-  {
-    \@@_initialize_new_default:nnn {#1} {#3} {#4}
-    \@@_initialize_new_default_units:
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#2} }
-        \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
-        \c_@@_cmd_type_cuam_tl { }
-      }
-      { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
-  }
-%    \end{macrocode}
-% For \cCutext\ we first check if the user wants to use \cCutext\ at all.
-% If not, change it to |\cunum|. 
-%    \begin{macrocode}
-\cs_new:Npn \@@_initialice_addon_cutext:
-  {
-    \bool_if:NT \l_@@_pckopt_cutext_to_cunum_bool
-      { \@@_set_cmd_type_to:n { cunum } }
-    \bool_set_false:N \l_@@_cutext_use_single_bool
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 % \begin{macro}{ \@@_initialize_new_default:nnn , \@@_initialize_new_default:nnV  , 
@@ -7586,45 +8067,12 @@ and the derived file cooking-units.sty.
 % if |\cuam| is used, but I think this is more general. If the marker is used
 % we do nothing, else we we check how the units change.
 %    \begin{macrocode}
-\cs_new:Npn \@@_initialize_new_default:nnn #1#2#3
-  {
-    \tl_clear:N \l_@@_option_unit_tl
-    \tl_if_empty:nF {#2} { \keys_set:nn { cooking-units } {#2} }
-    \IfNoValueF {#1}
-      { \@@_reference_label_and_persons:n {#1} }
-    \@@_expand_unit_input:Nn \l_@@_original_unit_tl {#3}
-    \@@_error_if_unit_not_defined:VTF \l_@@_original_unit_tl
-      { 
-        \@@_set_state_to:n { error } 
-        \bool_set_true:N \l_@@_unit_error_bool
-      } 
-      { \@@_set_state_to:n { normal } }
-%    \@@_set_parse_and_process_type_to:n { number }
-%    \@@_set_print_type_to:n { unknown }
-    \tl_clear:N \l_@@_phantom_tl
-    \@@_initialize_new_default_units:
-  }
+
 %    \end{macrocode}
 % First, convert the original unit to eV or a bonkers unit if necessary.
 % If we have an unit-change, store the wanted unit in |\l_@@_option_unit_tl|.
 %    \begin{macrocode}
-\cs_new:Npn \@@_initialize_new_default_units:
-  {
-    \@@_if_no_unit_marker:NTF \l_@@_original_unit_tl
-      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
-      { \@@_intialize_new_default_units_aux: }
-  }
-\cs_new:Npn \@@_intialize_new_default_units_aux:
-  {
-    \bool_if:NTF \l_@@_pckopt_bonkers_bool
-      { \@@_changing_unit_bonkers:N \l_@@_original_unit_tl }
-      {
-        \bool_if:NT \l_@@_pckopt_convert_to_eV_bool
-          { \@@_convert_to_eV:N \l_@@_original_unit_tl }
-      }
-    \prop_get:NVNF \l_@@_change_unit_prop \l_@@_original_unit_tl \l_@@_option_unit_tl
-      { \tl_set_eq:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7682,77 +8130,28 @@ and the derived file cooking-units.sty.
 % It checks if the amount needs to be recalculated; and if fractions should be
 % printed or not.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_setup_bools_for_process_and_prints:
-  {
-    \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
-    \bool_lazy_and:nnT
-      { \l_@@_reference_given_bool } 
-      { \l_@@_pckopt_recalculate_amount_bool }
-      { 
-        \int_compare:nNnF 
-          { \l_@@_wanted_number_of_persons_int }
-          =
-          { \l_@@_local_number_of_persons_int }
-          { \bool_set_true:N \l_@@_lokal_recalc_for_people_bool }
-      }
-    \@@_if_print_type_equal:nT { fraction }
-      {
-        \bool_lazy_or:nnTF
-          { \l_@@_pckopt_eval_fractions_bool }
-          { \l_@@_lokal_recalc_for_people_bool }
-          { \@@_set_print_type_to:n { number } }
-          {
-%          "Convert" fractions \emph{only} if a unit change is requested.
-            \bool_lazy_and:nnT
-              { \l_@@_pckopt_convert_fractions_bool }
-              { ! \tl_if_eq_p:NN \l_@@_option_unit_tl \l_@@_original_unit_tl }              
-              { \@@_set_print_type_to:n { number } }
-          }
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_use_hook_accordingly: }
-% Hooks are straightforward. I know which command I used and thus set the
-% respective hook.
-%    \begin{macrocode}
-\cs_new:Npn \@@_use_hook_accordingly:
-  {
-    \l_@@_cmd_hook_tl
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { \l_@@_cunum_hook_tl }
-        \c_@@_cmd_type_cCutext_tl
-          {
-            \bool_if:NTF \l_@@_cutext_uppercase_word_bool
-              { \l_@@_Cutext_hook_tl }
-              { \l_@@_cutext_hook_tl }
-          }
-        \c_@@_cmd_type_cuam_tl { \l_@@_cuam_hook_tl }
-      }
-      { \@@_create_internal_error:nN { use-hook-acc } \l_@@_cmd_type_tl }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
 %
 %
-% \begin{macro}{ \@@_general_checkups: }
+%
+% \begin{macro}{ \@@_rf_general_checkups: }
 % Doing some general stuff and tests which are done before further processing
 % the amount.
 %    \begin{macrocode}
-\cs_new:Npn \@@_general_checkups: 
+\cs_new:Npn \@@_rf_general_checkups: 
   {
 %    \tl_set_eq:NN \l_@@_print_type_tl \l_@@_parse_and_process_type_tl
     \@@_if_state_equal:nT { normal }
       { 
 %        \@@_new_setup_bools_for_process_and_prints: 
-        \@@_rf_setup_bools_for_process_and_prints:
+%        \@@_rf_setup_bools_for_process_and_prints:
       }
     \@@_decide_unit:
     \@@_if_cmd_type_equal:nT { cCutext }
-      { \@@_cutext_check_if_translation_available: }
+      { \@@_rf_cutext_check_if_translation_available: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7765,17 +8164,7 @@ and the derived file cooking-units.sty.
 % Afterwards, if \cCutext\ is used, check if a translation is available.
 % Then process the input depending on which case (number, range, fraction) we had.
 %    \begin{macrocode}
-\cs_new:Npn \@@_process_amount_normally:n #1
-  {
-    \@@_initialise_new_after_parsing:n {#1}
-    \tl_case:NnF \l_@@_parse_and_process_type_tl
-      {
-        \c_@@_parse_and_process_type_number_tl  \@@_new_process_number_in_input: 
-        \c_@@_parse_and_process_type_range_tl     \@@_new_process_range_in_input:
-        \c_@@_parse_and_process_type_fraction_tl  \@@_new_process_fraction_in_input:  
-      }
-      { \@@_create_internal_error:nN { process_the_input } \l_@@_parse_and_process_type_tl }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7784,37 +8173,70 @@ and the derived file cooking-units.sty.
 % part is skipped. If a special sign was detected, print a warining. If
 % the 42-bool is true, change the amount accordingly. Nothing else is done.
 %    \begin{macrocode}
-\cs_new:Npn \@@_process_amount_special:
-  {
-    \seq_set_eq:NN \l_@@_processed_seq \l_@@_parsed_seq
-    \@@_if_state_equal:nT { special_sign }
-      { \msg_warning:nnV { cooking-units } { amount-not-known } \l_@@_original_amount_tl }
-    \bool_if:NT \l_@@_pckopt_fourty_two_bool
-      { \@@_prepare_fourty_two_amount: }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{ \@@_prepare_fourty_two_amount: }
+% \begin{macro}{ \@@_rf_prepare_fourty_two_amount: }
 % Simply replaces all variables with |42|. We can change all (except for the mixed fraction tl)
 % as we know if we are going to print a \enquote{number}, \enquote{range} or 
 % \enquote{fraction}.
 %    \begin{macrocode}
-\cs_new:Npn \@@_prepare_fourty_two_amount:
+\cs_new:Npn \@@_rf_prepare_fourty_two_amount:
   {
-    \tl_set:Nn \l_@@_number_tmpa_tl { 42 }
-    \tl_set:Nn \l_@@_number_tmpb_tl { 42 }
-    \tl_if_empty:NF \l_@@_mixed_fraction_tl
-      { \tl_set:Nn \l_@@_mixed_fraction_tl { 42 } }
-    \@@_if_state_equal:nT { special_sign }
-      { 
-        \tl_put_right:Nn \l_@@_number_tmpa_tl { (!) } 
-        \tl_put_right:Nn \l_@@_number_tmpb_tl { (!) } 
-        \tl_if_empty:NF \l_@@_mixed_fraction_tl
-          { \tl_put_right:Nn \l_@@_mixed_fraction_tl { (!) }  }
+    \seq_map_inline:Nn \l_@@_parsed_seq
+      {
+        \@@_rf_prepare_fourty_two_amount_aux:nnnnn
+          ##1
       }
+%    \tl_set:Nn \l_@@_number_tmpa_tl { 42 }
+%    \tl_set:Nn \l_@@_number_tmpb_tl { 42 }
+%    \tl_if_empty:NF \l_@@_mixed_fraction_tl
+%      { \tl_set:Nn \l_@@_mixed_fraction_tl { 42 } }
+%    \@@_if_state_equal:nT { special_sign }
+%      { 
+%        \tl_put_right:Nn \l_@@_number_tmpa_tl { (!) } 
+%        \tl_put_right:Nn \l_@@_number_tmpb_tl { (!) } 
+%        \tl_if_empty:NF \l_@@_mixed_fraction_tl
+%          { \tl_put_right:Nn \l_@@_mixed_fraction_tl { (!) }  }
+%      }
   }  
+\tl_const:Nn \c_@@_fourty_two_tl { 42 }
+\tl_const:Nn \c_@@_fourty_two_unknown_tl { 42(!) }
+\cs_new:Npn \@@_rf_prepare_fourty_two_amount_aux:nnnnn #1#2#3#4#5
+  {
+    \tl_clear:N \l_@@_mixed_fraction_tl
+    \tl_clear:N \l_@@_number_tmpa_tl
+    \tl_clear:N \l_@@_number_tmpb_tl
+    \bool_if:NTF #1
+      {
+        \@@_if_state_equal:nTF { special_sign }
+          {
+            \tl_if_empty:nF {#3}
+              { \tl_set_eq:NN \l_@@_mixed_fraction_tl \c_@@_fourty_two_unknown_tl }
+            \tl_if_empty:nF {#4}
+              { \tl_set_eq:NN \l_@@_number_tmpa_tl \c_@@_fourty_two_unknown_tl }
+            \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_unknown_tl
+          }{
+            \tl_if_empty:nF {#3}
+              { \tl_set_eq:NN \l_@@_mixed_fraction_tl \c_@@_fourty_two_tl }
+            \tl_if_empty:nF {#4}
+              { \tl_set_eq:NN \l_@@_number_tmpa_tl \c_@@_fourty_two_tl }
+            \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_tl
+          }
+        \@@_rf_seq_put_right:NnnVVV \l_@@_processed_seq
+          {#1} {#2} \l_@@_mixed_fraction_tl \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
+        %% seq put here
+      }{
+        \@@_if_state_equal:nTF { special_sign }
+          { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_unknown_tl }
+          { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_tl }
+        % seq put here
+        \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
+          {#1} {#2} {#3} {#4} \l_@@_number_tmpb_tl
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7827,23 +8249,14 @@ and the derived file cooking-units.sty.
 % calculate the things necessary and post process it depending on the command
 % (|\cunum|, etc.)\ used.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_process_number_in_input:
-  {
-    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl
-    \@@_post_process_accordingly:NN \l_@@_number_tmpa_tl \q_no_value
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{ \@@_new_process_range_in_input: }
 % Same as before, this time with two variables.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_process_range_in_input:
-  {
-    \@@_calculate_and_store_in:N \l_@@_number_tmpa_tl 
-    \@@_calculate_and_store_in:N \l_@@_number_tmpb_tl 
-    \@@_post_process_accordingly:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7857,52 +8270,18 @@ and the derived file cooking-units.sty.
 % to a number (simply by calculating the fraction). If we have a fraction, nothing
 % else needs to be done.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_process_fraction_in_input:
-  {
-    \@@_process_and_remove_minus_in_fraction:NNNN \l_@@_minus_bool
-      \l_@@_mixed_fraction_tl
-      \l_@@_number_tmpa_tl
-      \l_@@_number_tmpb_tl
-    \@@_if_print_type_equal:nTF { number }
-      {
-        \@@_convert_fraction_to_number_in_input:NNN
-          \l_@@_mixed_fraction_tl
-          \l_@@_number_tmpa_tl
-          \l_@@_number_tmpb_tl
-      }{
-        \@@_post_process_fraction_accordingly:NNN
-          \l_@@_mixed_fraction_tl
-          \l_@@_number_tmpa_tl
-          \l_@@_number_tmpb_tl
-      }
-  }
+
 %    \end{macrocode}
 % This command loops over each variable, removes the minus and reverses the
 % bool if needed.
 %    \begin{macrocode}
-\cs_new:Npn \@@_process_and_remove_minus_in_fraction:NNNN #1 #2#3#4
-  {
-    \bool_set_false:N #1
-    \@@_check_minus_remove_and_reverse:NN
-      #1 #2#3#4
-      \q_nil
-  }  
+
 %    \end{macrocode}
 % Convert a fraction to a number. Check if the denominator is 0, if so, print an
 % error. Else, simply evaluate the fraction. If the minus bool is true,
 % add a minus sign on the left. Afterwards, process it as a number.
 %    \begin{macrocode}
-\cs_new:Npn \@@_convert_fraction_to_number_in_input:NNN #1#2#3
-  {
-    \fp_compare:nNnTF {#3} = { 0 }
-      { \@@_create_error:n { Division-by-zero } }
-      {
-        \@@_tl_set_eval:Nn \l_@@_number_tmpa_tl { #1 + #2 / #3 }
-        \bool_if:NT \l_@@_minus_bool
-          { \tl_put_left:Nn \l_@@_number_tmpa_tl { - } }
-        \@@_new_process_number_in_input:
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7916,73 +8295,23 @@ and the derived file cooking-units.sty.
 % according to the command used (|\cunum|, etc.).  Fractions are printed
 % indipendently from the commands.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_print_amount_correctly:
-  {
-    \@@_if_state_equal:nTF { error }
-      { \l_@@_original_amount_tl }
-      {
-        \tl_case:NnF \l_@@_print_type_tl
-          {
-            \c_@@_print_type_number_tl 
-              { 
-                \@@_print_number_accordingly:N 
-                  \l_@@_number_tmpa_tl 
-              }
-            \c_@@_print_type_range_tl 
-              { 
-                \@@_print_range_accordingly:NN 
-                  \l_@@_number_tmpa_tl 
-                  \l_@@_number_tmpb_tl 
-              }
-            \c_@@_print_type_fraction_tl
-              {
-                \@@_culang_let:nnN { name } { decimal-mark } \l_@@_translation_tmpa_tl
-                \tl_replace_once:Nnn \l_@@_mixed_fraction_tl { . } \l_@@_translation_tmpa_tl
-                \tl_replace_once:Nnn \l_@@_number_tmpa_tl { . } \l_@@_translation_tmpa_tl
-                \tl_replace_once:Nnn \l_@@_number_tmpb_tl { . } \l_@@_translation_tmpa_tl
-                \@@_print_fractions:Nnn 
-                  \l_@@_mixed_fraction_tl 
-                  \l_@@_number_tmpa_tl 
-                  \l_@@_number_tmpb_tl  
-              }
-          }
-          { \@@_create_internal_error:nN { print_the_input } \l_@@_print_type_tl }
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_print_unit_correctly: , \@@_print_unit_in_case_of_error: }
+% \begin{macro}{ \@@_new_print_unit_correctly: , \@@_rf_print_unit_in_case_of_error: }
 % Prints the unit. In case of error, print the unit more or less directly.
 % Even in case of error there needs to be the correct spacing, etc.
 %
 % Else, parse the unit depending on the command used. For |\cuam| no unit
 % is printed, but a phrase can be required.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_print_unit_correctly:
-  {
-    \@@_if_state_equal:nTF { error }
-      { 
-        \tl_case:NnF \l_@@_cmd_type_tl
-          { \c_@@_cmd_type_cuam_tl { } }
-          { \@@_print_unit_in_case_of_error: }
-      }
-      {
-        \tl_case:NnF \l_@@_cmd_type_tl
-          {
-            \c_@@_cmd_type_cunum_tl { \@@_cunum_print_correct_unit: }
-            \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_correct_unitname: }
-            \c_@@_cmd_type_cuam_tl { \@@_cuam_print_correct_unitphrase: }
-%            \c_@@_cmd_type_cucomp_tl { \@@_cunum_print_correct_unit: }
-          }
-          { \@@_create_internal_error:nN { print-unit-acc } \l_@@_cmd_type_tl }
-      }
-  }
+
 %    \end{macrocode}
 % Prints the unit in case of error. Make sure the unit is printed correctly
 % with the correct spacing. If the unit is unknown, just print the input.
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_unit_in_case_of_error:
+\cs_new:Npn \@@_rf_print_unit_in_case_of_error:
   {
     \tl_if_empty:NF \l_@@_phantom_tl { \phantom { \l_@@_phantom_tl } }
     \tl_use:N \l_@@_value_unit_space_tl
@@ -7999,35 +8328,23 @@ and the derived file cooking-units.sty.
 % This command is
 % also used in ranges. 
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_number_accordingly:N #1
-  {
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { \@@_print_numerical_input:N #1 }
-        \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_input:N #1 }
-        \c_@@_cmd_type_cuam_tl { \@@_cuam_print_numerical_input:N #1 }
-      }
-      { \@@_create_internal_error:nN { print-input-acc } \l_@@_cmd_type_tl }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} { \@@_print_range_accordingly:NN , \@@_print_range_sign: }
+% \begin{macro} { \@@_print_range_accordingly:NN , \@@_rf_print_range_sign: }
 % Prints ranges. It simply prints the numbers twice, inbetween a range sign.
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_range_accordingly:NN #1#2
-  {
-    \@@_print_number_accordingly:N #1
-    \@@_print_range_sign:
-    \@@_print_number_accordingly:N #2
-  }
+
 %    \end{macrocode}
 %    \begin{macrocode}
-\cs_new:Npn \@@_print_range_sign:
+\cs_new:Npn \@@_rf_print_range_sign:
   {
    \@@_if_cmd_type_equal:nTF { cunum }
-     { \tl_use:N \l_@@_cunum_range_sign_tl }
-     {
+     { 
+       \bool_if:NT \l_@@_seperator_after_fraction_bool { \, }
+       \tl_use:N \l_@@_cunum_range_sign_tl 
+     }{
         \bool_lazy_or:nnTF
           { \@@_if_cmd_type_equal_p:n { cCutext } }
           { \l_@@_lokal_numeral_bool }
@@ -8036,9 +8353,16 @@ and the derived file cooking-units.sty.
             \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
               { \@@_culang_print:nn { name } { cutext-range-sign } }
               { \tl_use:N \l_@@_cutext_range_sign_tl }
+          }{ 
+            \bool_if:NT \l_@@_seperator_after_fraction_bool { \, }
+            \tl_use:N \l_@@_cunum_range_sign_tl 
           }
-          { \tl_use:N \l_@@_cunum_range_sign_tl }
      }
+  }
+
+\cs_new:Npn \@@_rf_print_times_sign:
+  {
+    \:$\times$\:
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8049,17 +8373,7 @@ and the derived file cooking-units.sty.
 % needs to be done. For \cCutext\ and |\cuam| we post process the values accordingly
 % (checking if integer, etc.)
 %    \begin{macrocode}
-\cs_new:Npn \@@_post_process_accordingly:NN #1#2
-  {
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { }
-        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process_input:NN #1#2 }
-        \c_@@_cmd_type_cuam_tl { \@@_cuam_post_process_input:NN #1#2 }
-      }{ 
-        \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -8067,17 +8381,7 @@ and the derived file cooking-units.sty.
 % Decided to make this into its own command. This post processes fractions
 % which is only needed by \cCutext.
 %    \begin{macrocode}
-\cs_new:Npn \@@_post_process_fraction_accordingly:NNN #1#2#3
-  {
-    \tl_case:NnF \l_@@_cmd_type_tl
-      {
-        \c_@@_cmd_type_cunum_tl { }
-        \c_@@_cmd_type_cCutext_tl { \@@_cutext_post_process_fraction_input:NNN #1#2#3 }
-        \c_@@_cmd_type_cuam_tl { }
-      }{ 
-        \@@_create_internal_error:nN { post-process-frac } \l_@@_cmd_type_tl
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -8142,6 +8446,12 @@ and the derived file cooking-units.sty.
     \@@_set_state_to:n { error }
     \msg_error:nnnV { cooking-units } { internal-error } {#1} #2 
   }
+\cs_new:Npn \@@_create_internal_error:nn #1#2
+  {
+    \@@_set_state_to:n { error }
+    \msg_error:nnnn { cooking-units } { internal-error } {#1} #2 
+  }
+\cs_generate_variant:Nn \@@_create_internal_error:nn { nx }
 \cs_new:Npn \@@_create_error:n #1
   {
     \@@_set_state_to:n { error }
@@ -8157,6 +8467,7 @@ and the derived file cooking-units.sty.
     \@@_set_state_to:n { error }
     \msg_error:nnnV { cooking-units } {#1} {#2} \l_@@_original_amount_tl 
   }
+\cs_generate_variant:Nn \@@_create_error:nn { nf }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -8167,37 +8478,13 @@ and the derived file cooking-units.sty.
 % correct catcodes (last one can be active; screws some stuff up if it is so).
 % Then decides what's supposed to happen next.
 %    \begin{macrocode}
-\cs_new:Npn \@@_parse_the_amount:n #1
-  {
-    \@@_expand_amount_input:Nn \l_@@_original_amount_tl {#1}
-    \tl_set_rescan:NnV \l_@@_original_amount_tl
-      {
-        \char_set_catcode_letter:N \_ %
-        \char_set_catcode_ignore:N \ %
-        \char_set_catcode_other:N ? %
-      } \l_@@_original_amount_tl
-    \bool_lazy_any:nTF
-      {
-        { \tl_if_empty_p:N \l_@@_original_amount_tl }
-        { \l_@@_pckopt_draft_bool }
-      }
-      { \@@_prepare_just_print_input: }
-      { \@@_split_and_parse_input: }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\@@_split_and_parse_input: }
 % If the weitd option \opt{42} is used, set the state to \enquote{42}.
 % Copy the original amount and prepapre to split the input.
 %    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_input:
-  {
-    \bool_if:NT \l_@@_pckopt_fourty_two_bool
-      { \@@_set_state_to:n { 42 } }
-    \tl_set_eq:NN \l_@@_tmpa_tl \l_@@_original_amount_tl
-    \@@_prepare_to_split_input:N \l_@@_tmpa_tl
-  }
-
 
 
 
@@ -8957,13 +9244,13 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_cutext_check_if_translation_available: }
+% \begin{macro}{ \@@_rf_cutext_check_if_translation_available: }
 % Checks if a unitname of the current unit exists. If yes, continue.
 % here we can also decide if the unit should be kept the same or not
 % as we know that we stay in \enquote{cCutext}.
 % If not, change the command to \enquote{cunum}.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cutext_check_if_translation_available:
+\cs_new:Npn \@@_rf_cutext_check_if_translation_available:
   {
     \bool_if:NTF \l_@@_pckopt_cutext_keep_unit_bool
       { \tl_set_eq:NN \l_@@_curr_unit_tl \l_@@_original_unit_tl }
@@ -8996,34 +9283,12 @@ and the derived file cooking-units.sty.
 % need to be integers. If they are not, numerals cannot be used. If one or both
 % are integers, if they are below |\l_@@_print_numerals_below_int|.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cutext_post_process_input:NN #1#2
-  {
-    \@@_if_parse_and_process_type_equal:nTF { range }
-      { 
-        \@@_culang_let:nnN { pluraltest } { range } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_range_ \l_@@_translation_tmpa_tl :NN } #1#2
-%        \@@_cutext_check_if_plural_is_needed:N #2 
-      }{ 
-        \@@_culang_let:nnN { pluraltest } { normal } \l_@@_translation_tmpa_tl
-        \use:c { @@_pluraltest_normal_ \l_@@_translation_tmpa_tl :N } #1
-%        \@@_cutext_check_if_plural_is_needed:N #1 
-      }
-    \bool_if:NT \l_@@_lokal_numeral_bool
-      { 
-        \@@_if_contain_decimals:NNTF #1#2
-          { \bool_set_false:N \l_@@_lokal_numeral_bool }
-          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro} { \@@_cutext_post_process_fraction_input:NNN }
 %    \begin{macrocode}
-\cs_new:Npn \@@_cutext_post_process_fraction_input:NNN #1#2#3
-  {
-    \@@_culang_let:nnN { pluraltest } { fraction } \l_@@_translation_tmpa_tl
-    \use:c { @@_pluraltest_fraction_ \l_@@_translation_tmpa_tl :NNN } #1#2#3
-  }
+
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro} { \@@_cutext_check_if_plural_is_needed:N }
@@ -9085,7 +9350,13 @@ and the derived file cooking-units.sty.
 \prg_new_conditional:Npnn \@@_if_no_unit_marker:N #1 { TF , F }
   {
     \tl_if_eq:NNTF \c_@@_no_unit_marker_tl #1
-      { \prg_return_true: }
+      { 
+        \tl_if_eq:NNF \l_@@_cmd_type_tl \c_@@_cmd_type_cuam_tl
+          {
+            \@@_create_internal_error:nN { cmd-type-no-unit-maker } \l_@@_cmd_type_tl 
+          }
+        \prg_return_true: 
+      }
       { \prg_return_false: }
   }
 \seq_gput_right:NV \g_@@_list_of_defined_units_seq \c_@@_no_unit_marker_tl
@@ -9131,17 +9402,7 @@ and the derived file cooking-units.sty.
 % Afterwards check if phrases are used and can be used at all. This needs
 % to be done before the numeral check as it can change the input.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_cuam_post_process_input:NN #1#2
-  {
-    \@@_if_contain_decimals:NNTF #1#2
-      { \bool_set_false:N \l_@@_lokal_numeral_bool }
-      {
-        \bool_if:NT \l_@@_pckopt_use_phrases_bool
-          { \@@_cuam_post_process_input_phrases:NN #1#2 }
-        \bool_if:NT \l_@@_lokal_numeral_bool
-          { \@@_check_if_integer_can_be_numerals:NN #1#2 }
-      }
-  }
+
 %    \end{macrocode}
 % \end{macro}
 %\begin{macro}{ \@@_cuam_post_process_input_phrases:NN}
@@ -9154,85 +9415,10 @@ and the derived file cooking-units.sty.
 % It is important for ranges to check both values and then decide if phrases
 % are used or not.
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuam_post_process_input_phrases:NN #1#2
-  {
-    \@@_culang_get_phrase_prop:N \l_@@_phrase_prop
-    \tl_if_eq:NNT \c_@@_no_translation_str \l_@@_phrase_prop
-      { \use_none_delimit_by_q_stop:w }
-    \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-%  
-    \@@_cuam_post_process_input_phrases_aux:NNN 
-      #1 \l_@@_tmpa_int \l_@@_phrase_number_tl
-    \bool_if:NF \l_@@_lokal_phrase_bool
-      { \use_none_delimit_by_q_stop:w }
-%        
-    \@@_if_parse_and_process_type_equal:nTF { range }
-      {
-        \bool_if:NT \l_@@_phrase_negative_bool
-          { \use_none_delimit_by_q_stop:w }
-        \@@_cuam_post_process_input_phrases_range:NN
-          #2 \l_@@_tmpb_int
-        \bool_if:NF \l_@@_lokal_phrase_bool
-          { \use_none_delimit_by_q_stop:w }
-        \tl_set:NV #1 \l_@@_tmpa_int
-        \tl_set:NV #2 \l_@@_tmpb_int
-        \@@_cuam_get_phrase_name:NVN 
-          \l_@@_phrase_text_tl \l_@@_phrase_number_tl #2
-      }{ 
-        \tl_set:NV #1 \l_@@_tmpa_int 
-        \@@_cuam_get_phrase_name:NVN 
-          \l_@@_phrase_text_tl \l_@@_phrase_number_tl #1
-      }
-     \use_none_delimit_by_q_stop:w \q_stop
-  }
+
 %    \end{macrocode}
 %    \begin{macrocode}
-\cs_new:Npn \@@_cuam_post_process_input_phrases_aux:NNN #1#2#3
-  {
-    \bool_set_false:N \l_@@_lokal_phrase_bool
-    \seq_map_inline:Nn \l_@@_phrase_numbers_seq
-      {
-        \int_compare:nNnF { \int_abs:n {##1} } > {#1}
-          {
-            \prop_get:NnN \l_@@_phrase_prop { ##1-singlebool } \l_tmpa_tl
-            \int_compare:nNnTF { \l_tmpa_tl } = { 1 }
-              { \bool_set_true:N \l_@@_phrase_negative_bool }
-              { 
-                \bool_set_false:N \l_@@_phrase_negative_bool
-                \tl_set:Nf \l_tmpa_tl { \int_div_truncate:nn {#1} {##1} } 
-              }
-            \int_compare:nNnT { \int_abs:n {##1} * \l_tmpa_tl } = {#1}
-              {
-                \tl_set_eq:NN #2 \l_tmpa_tl
-                \tl_set:Nn #3 {##1}
-                \bool_set_true:N \l_@@_lokal_phrase_bool
-                \seq_map_break:
-              }
-          }
-      }
-  }
-\cs_new:Npn \@@_cuam_post_process_input_phrases_range:NN #1#2
-  {
-    \int_set:Nn \l_tmpa_int 
-      { 
-        \int_div_truncate:nn {#1} { \int_abs:n {\l_@@_phrase_number_tl } } 
-      }
-    \int_compare:nNnTF { \int_abs:n {\l_@@_phrase_number_tl} * \l_tmpa_int } = {#1}
-      {
-        \int_set_eq:NN #2 \l_tmpa_int
-        \bool_set_true:N \l_@@_lokal_phrase_bool
-      }{
-        \bool_set_false:N \l_@@_lokal_phrase_bool
-      }
-  }
-\cs_new:Npn \@@_cuam_get_phrase_name:NnN #1#2#3
-  {
-    \int_compare:nNnTF {#3} = { 1 }
-      { \prop_get:NnN \l_@@_phrase_prop {#2} #1 }
-      { \prop_get:NnN \l_@@_phrase_prop { #2-pl } #1 }
-    \prop_get:NnN \l_@@_phrase_prop { #2-gender } \l_@@_phrase_gender_tl
-  }
-\cs_generate_variant:Nn \@@_cuam_get_phrase_name:NnN { NVN }
+
 %    \end{macrocode}
 % \end{macro}
 %
@@ -9314,7 +9500,7 @@ and the derived file cooking-units.sty.
     \group_begin:
     \@@_set_cmd_type_to:n { cunum }
     \@@_print_number_default:n {#1}
-    \@@_print_range_sign:
+    \@@_rf_print_range_sign:
     \@@_print_number_default:n {#2}
     \group_end:
   }
