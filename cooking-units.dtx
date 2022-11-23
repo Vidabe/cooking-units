@@ -4295,6 +4295,11 @@ and the derived file cooking-units.sty.
 \seq_new:N \l_@@_parsed_seq
 \seq_new:N \l_@@_numbers_to_check_seq
 \int_new:N \l_@@_largest_common_divisor_int
+\seq_new:N \l_@@_reduced_numbers_seq
+\bool_new:N \l_@@_seperator_after_fraction_bool
+\seq_new:N \l_@@_prepared_printing_seq
+\int_new:N \l_@@_nr_of_items
+\seq_new:N \l_@@_processed_seq
 %    \end{macrocode}
 % \end{macro}
 %
@@ -7217,12 +7222,13 @@ and the derived file cooking-units.sty.
   {
     \seq_clear:N \l_@@_split_input_seq
     \seq_set_split_keep_spaces:Nnn \l_@@_tmpa_seq { \q_@@_range } {#1}
+    \int_set:Nn \l_@@_nr_of_items { \seq_count:N \l_@@_tmpa_seq }
     \bool_if:NT \l_@@_rf_contains_range_bool
       {
-        \int_compare:nNnT { \seq_count:N \l_@@_tmpa_seq } > { 2 }
+        \int_compare:nNnT { \l_@@_nr_of_items } > { 2 }
           { 
             \@@_create_error:nf { range-too-many-items } 
-              { \seq_count:N \l_@@_tmpa_seq }
+              { \int_use:N \l_@@_nr_of_items }
           }
       }
     \seq_map_function:NN \l_@@_tmpa_seq \@@_rf_split_inividual_item:n
@@ -7855,23 +7861,21 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 % \end{macro}
-
-
-% \begin{macro}{}
+%
+%
+% \subsubsection{Printing}
+%
+% \begin{macro}{\@@_rf_prepare_amount_printing:N}
+%  Printing the amount depends on the commands and the results-to-be-printed
+%  are stored into |\l_@@_prepared_printing_seq|. If fractions and ranges are combined,
+%  a small space is inserted between the fraction and the range sign,  but \emph{only}
+%  if it is \emph{not} the last item in the sequence. |\l_@@_nr_of_items| stores the number
+%  of items in the sequence. If the last item in the loop is encountered (by checking if
+%  the index |##1| is equal to |\l_@@_tmpa_int|) give the auxiliary function |\c_true_bool|
+%  and it will figure out the rest.
 %    \begin{macrocode}
-
-
-
-
-
-
-\seq_new:N \l_@@_reduced_numbers_seq
-\bool_new:N \l_@@_seperator_after_fraction_bool
-
-
 \cs_new:Npn \@@_rf_prepare_amount_printing:N #1
   {
-    \seq_clear:N \l_@@_prepared_printing_seq
     \tl_case:NnF \l_@@_cmd_type_tl
       {
         \c_@@_cmd_type_cunum_tl 
@@ -7883,77 +7887,52 @@ and the derived file cooking-units.sty.
       }
       { \@@_create_internal_error:nN { post-process } \l_@@_cmd_type_tl }
     \bool_set_false:N \l_@@_seperator_after_fraction_bool
+    \seq_clear:N \l_@@_prepared_printing_seq
     \seq_map_indexed_inline:Nn #1
       {
-        \@@_rf_prepare_amount_printing_aux:nnnnnn {##1} ##2
+        \int_compare:nNnTF { \l_@@_nr_of_items } = {##1}
+          { \@@_rf_prepare_amount_printing_aux:nnnnnn { \c_true_bool } }
+          { \@@_rf_prepare_amount_printing_aux:nnnnnn { \c_false_bool } }
+         ##2
       }
   }
-
-
-\seq_new:N \l_@@_prepared_printing_seq
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_prepare_amount_printing_aux:nnnnnn}
+%  |#1| is a boolean which signifies if the last item of the sequence is encountered.
+%  |#2| to |#6| are our typical sequence-arguments. All this function acutally does
+%  is to store the to-be-printed stuff into |\l_@@_prepared_printing_seq|. Could be
+%  optimized a bit more. The booleans are set here so that later on |\seq_use:Nn| can
+%  be used.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_prepare_amount_printing_aux:nnnnnn #1#2#3#4#5#6
   {
     \bool_if:NTF #2
       {
-        \@@_rf_put_rght_prepared_printing:n
+        \seq_put_right:Nn \l_@@_prepared_printing_seq
           {
             \@@_print_fraction:nnnn {#3} {#4} {#5} {#6} 
-            \int_compare:nNnTF {#1} = { \seq_count:N \l_@@_processed_seq }
+            \bool_if:NTF #1
               { \bool_set_false:N \l_@@_seperator_after_fraction_bool }
               { \bool_set_true:N \l_@@_seperator_after_fraction_bool }
           }
       }{
-        \@@_rf_put_rght_prepared_printing:n
+        \seq_put_right:Nn \l_@@_prepared_printing_seq
           { 
             \@@_print_number:n {#6} 
             \bool_set_false:N \l_@@_seperator_after_fraction_bool
           }
       }
   }
-\cs_new:Npn \@@_rf_put_rght_prepared_printing:n #1
-  {
-    \seq_put_right:Nn \l_@@_prepared_printing_seq {#1}
-  }
-
-\seq_new:N \l_@@_processed_seq
-\cs_new:Npn \@@_rf_print_amount_correctly:
-  {
-    \bool_lazy_any:nTF
-      {
-        { \tl_if_empty_p:N \l_@@_original_amount_tl }
-        { \l_@@_pckopt_draft_bool }
-        { \@@_if_state_equal_p:n { error }  }
-      }{
-        \l_@@_original_amount_tl
-      }{
-        \int_compare:nNnTF { \seq_count:N \l_@@_prepared_printing_seq } = { 1 }
-          {
-            \seq_use:Nn \l_@@_prepared_printing_seq {}
-          }{
-        \bool_if:NTF \l_@@_rf_contains_range_bool
-          { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_rf_print_range_sign: } }
-          {
-            \bool_if:NTF \l_@@_rf_contains_times_bool
-              { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_rf_print_times_sign: } }
-              { \@@_create_internal_error:nx { neither-range-nor-times } { \fp_eval:n { \l_@@_rf_contains_range_bool + 2*\l_@@_rf_contains_times_bool } } }
-          }
-          }
-      }
-  }
-\cs_new:Npn \@@_rf_print_unit_correctly:
-  {
-    \@@_if_state_equal:nTF { error } 
-      { 
-        \tl_case:NnF \l_@@_cmd_type_tl
-          { \c_@@_cmd_type_cuam_tl { } }
-          { \@@_rf_print_unit_in_case_of_error: }      
-      }
-      { 
-%        \@@_new_print_unit_correctly: 
-        \@@_rf_print_unit_or_phrase:
-      }
-  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_print_fraction:nnnn}
+%  Printing a fraction is quite easy and straightforward. Use |\@@_print_number_default:n|
+%  for correct decimal-printing.
+%    \begin{macrocode}
 \cs_new:Npn \@@_print_fraction:nnnn #1#2#3#4
   {
     \int_compare:nNnT {#1} = { 1 } { \c_@@_minus_tl }
@@ -7964,8 +7943,22 @@ and the derived file cooking-units.sty.
       }
     \@@_frac:nn { \@@_print_number_default:n {#3} } { \@@_print_number_default:n {#4} }
   }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\@@_print_number:n}
+%  This command will be redefined.
+%    \begin{macrocode}
 \cs_new:Npn \@@_print_number:n #1 {}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_print_number_default:n}
+%  Do two things: Replace the dot with the correct decimal-sign of the current language
+%  and replace the |-| token with the correct minus sign.
+%    \begin{macrocode}
 \cs_new:Npn \@@_print_number_default:n #1
   {
     \tl_set:Nn \l_@@_tmpa_tl {#1}
@@ -7977,7 +7970,17 @@ and the derived file cooking-units.sty.
     \tl_replace_once:Nnn \l_@@_tmpa_tl { - } \c_@@_minus_tl
     \l_@@_tmpa_tl
   }
-  
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cutext_print_number:n, \@@_cutext_print_input_aux:nn, \@@_cutext_print_input_aux:nV}
+%  For \cCutext\ we pretty much always print the numbers using |\@@_print_number_default:n| (like |\cunum| does). However, \cCutext\ have the
+%  ability to print numerals (if the input can be transformed into one).
+%
+%  For numerals we captialize in the case of |\Cutext| and print it normally (assuming
+%  lowercase) for |\cutext|. If the number is equal to $1$ we use the special
+%  |one(m)|, |one(f)| or |one(n)| translation (which also gets captialized if needed).
+%    \begin{macrocode}  
 \cs_new_protected:Npn \@@_cutext_print_number:n #1
   {
     \bool_if:NTF \l_@@_lokal_numeral_bool
@@ -8004,7 +8007,16 @@ and the derived file cooking-units.sty.
       }
   }
 \cs_generate_variant:Nn \@@_cutext_print_input_aux:nn { nV }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_cuam_print_number:n, \@@_cuam_print_numerical_input_aux:nn, \@@_cuam_print_numerical_input_aux:nV }
+%  If both a phrase and a numeral is requested we do some more complicated stuff,
+%  else just print a number.
+%
+%  If the numeral is \emph{not} equal to $1$ use the |\@@_print_numeral:n| function.
+%  Else get the translation for |one(m)|, |one(f)| or |one(n)| (depends).
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@_cuam_print_number:n #1
   {
     \bool_lazy_and:nnTF
@@ -8015,7 +8027,6 @@ and the derived file cooking-units.sty.
       }
       { \@@_print_number_default:n {#1} }
   }
-
 \cs_new:Npn \@@_cuam_print_numerical_input_aux:nn #1#2
   {
     \int_compare:nNnTF {#1} = { 1 }
@@ -8031,50 +8042,86 @@ and the derived file cooking-units.sty.
       { \@@_print_numeral:n {#1} } 
   }
 \cs_generate_variant:Nn \@@_cuam_print_numerical_input_aux:nn { nV }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_rf_print_amount_correctly:}
+%  In case of an error just print the original input.
+%
+%  Else we check how many items the printing sequence has. If it is $1$
+%  print the sequence with an empty argument.
+%
+%  Else: Do we print ranges? Do we print times? If neither, there is something wrong.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_print_amount_correctly:
+  {
+    \@@_if_state_equal:nTF { error }
+%    \bool_lazy_any:nTF
+%      {
+%        { \@@_if_state_equal_p:n { error }  }
+%%        { \tl_if_empty_p:N \l_@@_original_amount_tl }
+%%        { \l_@@_pckopt_draft_bool }
+%      }
+      {
+        \l_@@_original_amount_tl
+      }{
+        \int_compare:nNnTF { \l_@@_nr_of_items } = { 1 }
+          { \seq_use:Nn \l_@@_prepared_printing_seq { } }
+          {
+            \bool_if:NTF \l_@@_rf_contains_range_bool
+              { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_rf_print_range_sign: } }
+              {
+                \bool_if:NTF \l_@@_rf_contains_times_bool
+                  { \seq_use:Nn \l_@@_prepared_printing_seq { \@@_print_times_sign: } }
+                  { 
+                    \@@_create_internal_error:nx { neither-range-nor-times } 
+                      { 
+                        \fp_eval:n 
+                          { \l_@@_rf_contains_range_bool + 2*\l_@@_rf_contains_times_bool } 
+                      } 
+                  }
+              }
+          }
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_print_unit_correctly:}
+%  Quite straightforward.
+%    \begin{macrocode}
+\cs_new:Npn \@@_rf_print_unit_correctly:
+  {
+    \@@_if_state_equal:nTF { error } 
+      { 
+        \tl_if_eq:NNF \l_@@_cmd_type_tl \c_@@_cmd_type_cuam_tl
+          { \@@_rf_print_unit_in_case_of_error: }
+      }
+      { \@@_rf_print_unit_or_phrase: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_rf_print_unit_or_phrase:}
+%  Printing the unit depends on the unit; nothing more or less.
+%    \begin{macrocode}
 \cs_new:Npn \@@_rf_print_unit_or_phrase:
   {
-%    \@@_if_state_equal:nTF { error }
-%      { 
-%        \tl_case:NnF \l_@@_cmd_type_tl
-%          { \c_@@_cmd_type_cuam_tl { } }
-%          { \@@_rf_print_unit_in_case_of_error: }
-%      }
-%      {
-        \tl_case:NnF \l_@@_cmd_type_tl
-          {
-            \c_@@_cmd_type_cunum_tl { \@@_cunum_print_correct_unit: }
-            \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_correct_unitname: }
-            \c_@@_cmd_type_cuam_tl { \@@_cuam_print_correct_unitphrase: }
-          }
-          { \@@_create_internal_error:nN { print-unit-acc } \l_@@_cmd_type_tl }
-%      }
+    \tl_case:NnF \l_@@_cmd_type_tl
+      {
+        \c_@@_cmd_type_cunum_tl { \@@_cunum_print_correct_unit: }
+        \c_@@_cmd_type_cCutext_tl { \@@_cutext_print_correct_unitname: }
+        \c_@@_cmd_type_cuam_tl { \@@_cuam_print_correct_unitphrase: }
+      }
+      { \@@_create_internal_error:nN { print-unit-acc } \l_@@_cmd_type_tl }
   }
-
-
 %    \end{macrocode}
 % \end{macro}
 %
 %
 %
-% \begin{macro}{ \@@_initialize_new_default:nnn , \@@_initialize_new_default:nnV  , 
-%    \@@_intialize_new_default_units:
-%  }
-% Shared by all commands and (nearly) first thing done. Sets the options,
-% sets the unit (and expands it if necessary), checks if unit is defined.
-% For |\cuam| the unit is a special |\c_@@_no_unit_marker_tl|. I could just check
-% if |\cuam| is used, but I think this is more general. If the marker is used
-% we do nothing, else we we check how the units change.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% First, convert the original unit to eV or a bonkers unit if necessary.
-% If we have an unit-change, store the wanted unit in |\l_@@_option_unit_tl|.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
+%
 %
 % \begin{macro}{\@@_initialise_new_after_parsing:n}
 % As the name suggests, this one is used \emph{after} parsing the amount.
@@ -8104,18 +8151,18 @@ and the derived file cooking-units.sty.
     \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
     \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
   }
-\cs_new_protected:Npn \@@_initialise_new_after_parsing:n #1
-  {    
-    \clist_if_empty:cF { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
-      {
-        \keys_set_groups:nnv 
-          { cooking-units } 
-          { unit-hook } 
-          { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
-        \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
-      }
-    \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
-  }
+%\cs_new_protected:Npn \@@_initialise_new_after_parsing:n #1
+%  {    
+%    \clist_if_empty:cF { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
+%      {
+%        \keys_set_groups:nnv 
+%          { cooking-units } 
+%          { unit-hook } 
+%          { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
+%        \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
+%      }
+%    \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
+%  }
 \cs_new:Npn \@@_decide_unit:
   {
     \@@_change_unit:TF
@@ -8125,14 +8172,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\@@_new_setup_bools_for_process_and_prints:}
-% Determines some stuff for later use in the processing/printing department.
-% It checks if the amount needs to be recalculated; and if fractions should be
-% printed or not.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
 %
 %
 %
@@ -8143,12 +8182,11 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_rf_general_checkups: 
   {
-%    \tl_set_eq:NN \l_@@_print_type_tl \l_@@_parse_and_process_type_tl
-    \@@_if_state_equal:nT { normal }
-      { 
-%        \@@_new_setup_bools_for_process_and_prints: 
-%        \@@_rf_setup_bools_for_process_and_prints:
-      }
+%    \@@_if_state_equal:nT { normal }
+%      { 
+%%        \@@_new_setup_bools_for_process_and_prints: 
+%%        \@@_rf_setup_bools_for_process_and_prints:
+%      }
     \@@_decide_unit:
     \@@_if_cmd_type_equal:nT { cCutext }
       { \@@_rf_cutext_check_if_translation_available: }
@@ -8156,26 +8194,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%
-%
-% \begin{macro}{\@@_process_amount_normally:n}
-% This command is called after parsing the amount if no special-sign, error
-% or so is encountered. First, initialize some stuff that is going to be important.
-% Afterwards, if \cCutext\ is used, check if a translation is available.
-% Then process the input depending on which case (number, range, fraction) we had.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}
-% This is called if the state is not \enquote{normal}. So the whole \enquote{process}
-% part is skipped. If a special sign was detected, print a warining. If
-% the 42-bool is true, change the amount accordingly. Nothing else is done.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
 %
 %
 % \begin{macro}{ \@@_rf_prepare_fourty_two_amount: }
@@ -8244,70 +8262,8 @@ and the derived file cooking-units.sty.
 %
 % \subsubsection{Process the input}
 %
-% \begin{macro}{ \@@_new_process_number_in_input: }
-% Straightforward. The number only consists of a number. Thus
-% calculate the things necessary and post process it depending on the command
-% (|\cunum|, etc.)\ used.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro}{ \@@_new_process_range_in_input: }
-% Same as before, this time with two variables.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_new_process_range_in_input: }
-% Here we are a bit more complicated, but not much.
-% For fractions, we generally do not calculate the several numbers.
-%
-% First, remove the minus signs from the numbers (if any).
-% Afterwards check if the printing type is a \enquote{number} (\enquote{range} is
-% not possible). If a \enquote{number} is requested, convert the fraction
-% to a number (simply by calculating the fraction). If we have a fraction, nothing
-% else needs to be done.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% This command loops over each variable, removes the minus and reverses the
-% bool if needed.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% Convert a fraction to a number. Check if the denominator is 0, if so, print an
-% error. Else, simply evaluate the fraction. If the minus bool is true,
-% add a minus sign on the left. Afterwards, process it as a number.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{ \@@_new_print_amount_correctly: }
-% After parsing, processing, etc.\ it is time to print the amount.
-% If an error was raised, simply print the \enquote{unparsed} original amount.
-%
-% Else, print the amount depending on \enquote{number}, \enquote{range}
-% or \enquote{fraction}. \enquote{number} and \enquote{range} are printed
-% according to the command used (|\cunum|, etc.).  Fractions are printed
-% indipendently from the commands.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_new_print_unit_correctly: , \@@_rf_print_unit_in_case_of_error: }
-% Prints the unit. In case of error, print the unit more or less directly.
-% Even in case of error there needs to be the correct spacing, etc.
-%
-% Else, parse the unit depending on the command used. For |\cuam| no unit
-% is printed, but a phrase can be required.
-%    \begin{macrocode}
-
-%    \end{macrocode}
+% \begin{macro}{  \@@_rf_print_unit_in_case_of_error: }
 % Prints the unit in case of error. Make sure the unit is printed correctly
 % with the correct spacing. If the unit is unknown, just print the input.
 %    \begin{macrocode}
@@ -8323,20 +8279,9 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro} { \@@_print_number_accordingly:N }
-% Prints the input |#1| according to the used command. 
-% This command is
-% also used in ranges. 
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
 %
-% \begin{macro} { \@@_print_range_accordingly:NN , \@@_rf_print_range_sign: }
+% \begin{macro} { \@@_rf_print_range_sign: , \@@_print_times_sign: }
 % Prints ranges. It simply prints the numbers twice, inbetween a range sign.
-%    \begin{macrocode}
-
-%    \end{macrocode}
 %    \begin{macrocode}
 \cs_new:Npn \@@_rf_print_range_sign:
   {
@@ -8359,31 +8304,13 @@ and the derived file cooking-units.sty.
           }
      }
   }
-
-\cs_new:Npn \@@_rf_print_times_sign:
+\cs_new:Npn \@@_print_times_sign:
   {
     \:$\times$\:
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_post_process_accordingly:NN }
-% After evaluating and changing the amounts (due to unit changing, rounding, etc.)
-% we post process the input (only for numbers and ranges). For |\cunum| nothing
-% needs to be done. For \cCutext\ and |\cuam| we post process the values accordingly
-% (checking if integer, etc.)
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_post_process_fraction_accordingly:NNN }
-% Decided to make this into its own command. This post processes fractions
-% which is only needed by \cCutext.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
 %
 % \begin{macro}{ \@@_print_numerical_input:N }
 %   The base printing command for numbers. Makes sure the minus sign
@@ -8471,27 +8398,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro} { \@@_parse_the_amount:n }
-% Does what the name suggests. |#1| is the input given by the user without changes.
-% It is then stored in |\l_@@_original_amount_tl| (which can be expanded, etc.).
-% Afterwards we rescan the input to remove spaces and make sure \_ and ? have
-% correct catcodes (last one can be active; screws some stuff up if it is so).
-% Then decides what's supposed to happen next.
-%    \begin{macrocode}
-
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{\@@_split_and_parse_input: }
-% If the weitd option \opt{42} is used, set the state to \enquote{42}.
-% Copy the original amount and prepapre to split the input.
-%    \begin{macrocode}
-
-
-
-
-
-%    \end{macrocode}
-% \end{macro}
 % \begin{macro}{\@@_prepare_just_print_input: }
 % If we decide the input is just to be printed, set it to \enquote{error} 
 % (because I am lazy and do not want to create another case to check).

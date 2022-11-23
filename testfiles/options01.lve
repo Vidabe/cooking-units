@@ -242,8 +242,8 @@
   \MYTYPE {o42-2} { \testcunum{\textcufrac{}{42}{42}}{kg} }
   \MYTYPE {o42-3} { \testcunum{\textcufrac{42}{42}{42}}{kg} }
   \MYTYPE {o42-4} { \testcunum{42--42}{kg} }
-  \MYTYPE {o42-5} { \testcunum{42(!)}{kg} }
-  \MYTYPE {o42-6} { \testcunum{42(!)--42(!)}{kg} }
+  \MYTYPE {o42-5} { \printUnknownAmountMsg{?}\testcunum{42(!)}{kg} }
+  \MYTYPE {o42-6} { \printUnknownAmountMsg{?--?}\testcunum{42(!)--42(!)}{kg} }
 }
 
 
