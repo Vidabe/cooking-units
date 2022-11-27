@@ -28,6 +28,12 @@
     \BOXTYPE { \cunum{0.5--1}{#1} }
   }
 
+\cs_new:Npn \TESTSTUFFnumeralRange #1#2#3
+  {
+    \BOXTYPE { \Cutext{#1--#2}{#3} }
+    \BOXTYPE { \Cutext{#1x#2}{#3} }
+  }
+
 \cs_new:Npn \testcutext #1#2
   {
     #1 \space #2
@@ -88,6 +94,10 @@
 }
 
 
+\TEST{Print-unit-text+numerals+rangeprod}{
+  \cusetup{print-numerals=true}
+  \TESTSTUFFnumeralRange{2}{3}{testb}
+}
 
 
 

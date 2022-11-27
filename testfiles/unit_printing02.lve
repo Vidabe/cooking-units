@@ -64,6 +64,14 @@
     \BOXTYPE { \testcunum{0.5--1}{#7} }
   }
 
+\cs_new:Npn \timessign { \__cookingunits_print_times_sign: }
+
+\cs_new:Npn \TESTSTUFFnumeralRange #1#2#3
+  {
+    \BOXTYPE { \testcutext{#1~to~#2}{#3} }
+    \BOXTYPE { \testcutext{#1\timessign#2}{#3} }
+  }
+
 \ExplSyntaxOff
 
 \newcookingunit{testa}
@@ -115,6 +123,10 @@
   \TESTSTUFFnumeral{one(n)}{two}{One(n)}{Two} {Testing-G}{Test-G-PLURAL}{Test-G-Symbol}
 }
 
+\TEST{Print-unit-text+numerals+rangeprod}{
+  \cusetup{print-numerals=true}
+  \TESTSTUFFnumeralRange {Two} {three} {Test-B-Plural}
+}
 
 
 \END
