@@ -891,8 +891,9 @@ and the derived file cooking-units.sty.
 % \end{itemize}
 %
 % Numbers and units are printed using \mycs{cunum}. The numerical part
-% can interpret \verb|_| and \texttt{/} as (mixed) fractions and
-% \verb|--| as a separator for ranges; to convert units use the option
+% can interpret \verb|_| and \texttt{/} as (mixed) fractions,
+% \verb|--| as a separator for ranges and |x| or |\times| for products; 
+%  to convert units use the option
 % \texttt{\meta{old-unit}=\meta{new-unit}}\footnote{New keys can be
 % added and defined, see \cref{sec:pred-units} and
 % \cref{sec:def-units} for further information.}.  It furthermore
@@ -913,7 +914,10 @@ and the derived file cooking-units.sty.
 %   \cunum{2,3}{kg}  \\
 %   \cunum{2--3}{kg}  \\
 %   \cunum{2.5--3.5}{kg}  \\
+%   \cunum{2.5 x 3.5}{kg}  \\
+%   \cunum{2.5 x 3 x 4,5}{kg}  \\
 %   \cunum[kg=g]{2.5--3,5}{kg}  \\
+%   \cunum[kg=g]{2.5 x 3,5}{kg}  \\
 %   \cunum[C=F]{200}{C}  \\
 %   \cunum[C=F]{180--200}{C} \\
 %   \cunum{1/2}{m}  \\
@@ -921,6 +925,7 @@ and the derived file cooking-units.sty.
 %   \cunum[m=cm]{1_1/2}{m}  \\
 %   \cunum{1_1/2--2}{m}  \\
 %   \cunum[m=cm]{1--1_1/2}{m}  \\
+%   \cunum[m=cm]{1 x 1_1/2 x 2}{m}  \\
 %   \cunum{?}{l}  \\
 %   \cunum{50}{dag}  \\
 %   \cunum{5}[0]{dag}  \\
@@ -937,7 +942,8 @@ and the derived file cooking-units.sty.
 % v1.10 it works similar\footnote{One could also say \enquote{exactly
 % like}.} to \mycs{cunum}: it allows the conversion between units and
 % interprets the numerical part (again |_| and |/| are used for
-% (mixed) fractions and |--| for ranges).  Furthermore, \cCutext\ allow
+% (mixed) fractions, |--| for ranges and |x| or |\times| for products).  
+%  Furthermore, \cCutext\ allow
 % the usages of numerals (see \cref{sec:load-time-options} for more information). 
 %^^A if the package
 %^^A option \opt{use-fmtcount-numerals} (see \cref{sec:load-time-options})
@@ -950,6 +956,7 @@ and the derived file cooking-units.sty.
 %   \cutext{1}{l} \\
 %   \Cutext{1}{l} \\
 %   \Cutext{1--2}{l} \\
+%   \Cutext{1 x 2}{l} \\
 %   \cutext{12}{l} \\
 %   \Cutext{13}{l} 
 % \end{cuexamplecode}
@@ -960,6 +967,7 @@ and the derived file cooking-units.sty.
 %   \Cutext{1}{l} \\
 %   \cutext{1--2}{l} \\
 %   \Cutext{1--2}{l} \\
+%   \Cutext{1 x 2}{l} \\
 %   \cutext{12}{l} \\
 %   \Cutext{13}{l} 
 % \end{cuexamplecode}
@@ -975,6 +983,7 @@ and the derived file cooking-units.sty.
 %   \cutext{1}{l} \\
 %   \Cutext{1}{l} \\
 %   \cutext{1--2}{l} \\
+%   \cutext{1 x 2}{l} \\
 %   \cutext{12}{l} \\
 %   \Cutext{13}{l} \\
 %   \Cutext{?}{l} \\
@@ -983,14 +992,16 @@ and the derived file cooking-units.sty.
 %
 % 
 % \lstinline|\cuam| works like \mycs{cunum}, but without a unit, so
-% changing units doesn't affect it. Like \mycs{cunum} \texttt{\_} and
-% \texttt{/} are used to imply a (mixed) fraction and |--| is used for ranges.
+% changing units doesn't affect it. It has the same syntax as \mycs{cunum}.
 %
 % \begin{cuexamplecode}
 %   \cuam{3} \\
 %   \cuam{2--3} \\
+%   \cuam{2 x 3 x 4} \\
 %   \cuam{2/3} \\
-%   \cuam{1_2/3} 
+%   \cuam{1_2/3} \\
+%   \cuam{2/3--1_2/3} \\
+%   \cuam{2/3 x 1 x 1_2/3}
 % \end{cuexamplecode}
 %
 % Furthermore it allows the concept of \enquote{phrases} (replacing a positive integer
@@ -1007,6 +1018,7 @@ and the derived file cooking-units.sty.
 %   \cuam{24} \\
 %   \cuam{12--24} \\
 %   \cuam{12--13}\\
+%   \cuam{12x24x36} \\
 %   \cuam{18} \\
 %   \cuam{60} 
 % \end{cuexamplecode}
@@ -1114,11 +1126,10 @@ and the derived file cooking-units.sty.
 %
 % Use singular if:
 % \begin{description}
-%    \item[normal] The absolute value of the number is smaller $2$
+%    \item[number] The absolute value of the number is smaller $2$
 %    \item[fraction] The absolute value of the evaluated fraction is smaller $2$.
 %     (e.g.\ $1\,\sfrac{1}{2} = 1.5$ uses singular, $2\,\sfrac{3}{4} = 2.75$ uses plural).
-%    \item[range] The absolute value of the second number is smaller $2$. 
-%       (e.g.\ \cuam{1--2}: Take $2$.)
+%    \item[range/product] Take the last item and use one of the rules above.
 % \end{description}
 %
 % For sources see \cite{Plural-French-Academia}, \cite{Plural-French-absolute-1} \&
@@ -1129,9 +1140,9 @@ and the derived file cooking-units.sty.
 % 
 % Use singular if:
 % \begin{description}
-%    \item[normal] The number is equal to $1$.
+%    \item[number] The number is equal to $1$.
 %    \item[fraction] There is no mixed fraction part and the numerator is equal to $1$.
-%    \item[range] The second number is equal to $1$.  (e.g.\ \cuam{1--2}: Take $2$.)
+%    \item[range/product] Take the last item and use one of the rules above.
 % \end{description}
 %
 % \section{Predefined units \& some notes}
@@ -1684,15 +1695,15 @@ and the derived file cooking-units.sty.
 % name and symbol for given language you can use \lstinline|\cudefinename|;
 %  to only change symbols use \lstinline|\cudefinesymbol|.
 %
-% \begin{function}{decimal-mark,cutext-range-sign, one(m),one(f),one(n)}
+% \begin{function}{decimal-mark,cutext-range-phrase, one(m),one(f),one(n)}
 %   Those are special keys (as they cannot be used as units). Not only
 %   are printed units language depending, but as is the decimal mark
 %   (|.| or |,|) and the text which substitutes the range-sign. 
 %   To set the decimal mark use
 %   \opt{decimal-mark} (see examples below), to set the range-sign for \cCutext\
-%   use \opt{cutext-range-sign}.
+%   use \opt{cutext-range-phrase}.
 %
-%   Note that \opt{cutext-range-sign} is \enquote{overwritten} by the \emph{option}
+%   Note that \opt{cutext-range-phrase} is \enquote{overwritten} by the \emph{option}
 %  \opt{cutext-range-sign}. If the \emph{option} is set, then the language symbol
 %  will be ignored.
 %
@@ -1740,7 +1751,7 @@ and the derived file cooking-units.sty.
 %      {h}   {hour} [hours]
 %      {C}   {degree\space Celsius} [degrees\space Celsius]
 %      {decimal-marker} {.}
-%      {cutext-range-sign} {~to~}
+%      {cutext-range-phrase} {~to~}
 %      {one(m)} {one}
 %      {one(f)} {one}
 %      {one(n)} {one}
@@ -1755,7 +1766,7 @@ and the derived file cooking-units.sty.
 %      {h}   {Stunde} [Stunden] <f>
 %      {C}   {Grad\space Celsius}
 %      {decimal-marker} {,}
-%      {cutext-range-sign} {~bis~}
+%      {cutext-range-phrase} {~bis~}
 %      {one(m)} {ein}
 %      {one(f)} {eine}
 %      {one(n)} {ein}
@@ -1787,7 +1798,7 @@ and the derived file cooking-units.sty.
 %  \cudefinesymbol {English}
 %    {
 %      {decimal-mark} {.}
-%      {cutext-range-sign} {~to~}
+%      {cutext-range-phrase} {~to~}
 %      {one(m)} {one}
 %      {one(f)} {one}
 %      {one(n)} {one}
@@ -1795,7 +1806,7 @@ and the derived file cooking-units.sty.
 %  \cudefinesymbol {German}
 %    {
 %      {decimal-mark} {,}
-%      {cutext-range-sign} {~bis~}
+%      {cutext-range-phrase} {~bis~}
 %      {one(m)} {ein}
 %      {one(f)} {eine}
 %      {one(n)} {ein}
@@ -1806,7 +1817,7 @@ and the derived file cooking-units.sty.
 %      {dl} {dL}
 %      {cl} {cL}
 %      {ml} {mL}
-%      {cutext-range-sign} {~\`{a}~}
+%      {cutext-range-phrase} {~\`{a}~}
 %      {decimal-mark} {,}
 %      {one(m)} {un}
 %      {one(f)} {une}
@@ -2412,7 +2423,7 @@ and the derived file cooking-units.sty.
 %   Allows \meta{character(s)} to be used in the first mandatory argument of 
 %  \mycs{cunum}, \mycs{cuam}, \cCutext{} without raising an error (you can customize this
 %  behavior, see \opt{set-unknown-message}). By default it is set to |?|.
-%  Please note that the sign |<| is not allowed as a special sign.
+%  Please note that the sign |<| is not allowed as a special sign. 
 % \end{function}
 %
 % \begin{cuexamplecode}
@@ -2628,7 +2639,6 @@ and the derived file cooking-units.sty.
 %  more information) with their phrase counterpart. This option is set to \false\ by default.
 % \end{function}
 %
-% \TODO{TEST AND FIXING!}
 % \begin{cuexample}
 %^^A \begin{myde}
 % For the German language:
@@ -2984,7 +2994,7 @@ and the derived file cooking-units.sty.
 % \end{cuexamplecode}
 % 
 %
-% \begin{function}{label} \TODO{Check label \& Co.}
+% \begin{function}{label}
 %   \begin{syntax}
 %     label = \{\meta{string}*\meta{integer}\}
 %   \end{syntax}
@@ -3200,7 +3210,6 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \TODO{42}
 % \begin{function}{42}
 %   \begin{syntax}
 %     42 = \meta{true/false}
@@ -3993,6 +4002,8 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_base_tl
 \tl_new:N \l_cookingunits_raw_amount_a_tl
 \tl_new:N \l_cookingunits_raw_amount_b_tl
+\tl_new:N \l_@@_times_space_tl
+\tl_new:N \l_@@_times_sign_tl
 %    \end{macrocode}
 %    \begin{macrocode}
 \tl_new:N \l_@@_cmd_hook_tl
@@ -4019,11 +4030,13 @@ and the derived file cooking-units.sty.
 \tl_gset_rescan:Nnn \g_@@_input_str_hash_one_tl
   { \char_set_catcode_letter:N \# } {#1}
 \tl_set:Nn \l_@@_allwed_integer_math_operators_tl { +-()*/ }
+\tl_set:Nn \l_@@_times_sign_tl { \ensuremath { \times } }
 %    \end{macrocode}
 %    \begin{macrocode}
 \tl_set:Nn \l_@@_cunum_range_sign_tl { -- }
 \tl_set:Nn \l_@@_cutext_range_sign_tl { }
 \tl_set:Nn \l_@@_value_unit_space_tl { \thinspace }
+\tl_set:Nn \l_@@_times_space_tl { \, } % \:
 \tl_set:Nn \l_@@_cutext_space_tl { ~ }
 \tl_set:Nn \l_@@_cutext_numeral_space_tl { \space }
 \tl_set:Nn \l_@@_cuphrase_space_tl { \space }
@@ -4700,12 +4713,11 @@ and the derived file cooking-units.sty.
     round-to-int .choices:nn = 
       { true , false }
       {
-        \msg_error:nnnn { cooking-units } { Option-deprecated }  { round-to-int } { round-precision = 0 }
-        \int_compare:nNnTF { \l_keys_choice_int } = { 1 }
+        \msg_error:nnnn { cooking-units } 
+          { Option-deprecated }  { round-to-int } { round-precision = 0 }
+        \int_compare:nNnT { \l_keys_choice_int } = { 1 }
           {
             \int_set:Nn \l_@@_round_precision_int { 0 }
-          }{
-          
           }
         \use:c { bool_set_ \l_keys_choice_tl :N } \l_@@_pckopt_round_to_int_bool
       } ,
@@ -4819,6 +4831,14 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %\end{macro}
 %
+%\begin{macro}{ amount-unit-space }
+%  Setting the space between the value and the printed unit.
+%    \begin{macrocode}
+    times-space .tl_set:N = \l_@@_times_space_tl ,
+    times-space .default:n = { \: } ,
+    times-space .groups:n = { unit-hook } ,
+%    \end{macrocode}
+%\end{macro}
 %
 %
 %
@@ -6751,6 +6771,7 @@ and the derived file cooking-units.sty.
 \seq_gset_from_clist:Nn \g_@@_allowed_special_keys_seq
   {
     cutext-range-sign , 
+    cutext-range-phrase ,
     decimal-mark ,
     one (m) ,
     one (f) ,
@@ -6791,11 +6812,16 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\@@_culang_def_base:nnn { name } { cutext-range-sign } { -- }
-\@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \c_@@_no_translation_str }
-\@@_culang_def_for:nnnn { German } { name } { cutext-range-sign } { ~bis~ }
-\@@_culang_def_for:nnnn { English } { name } { cutext-range-sign } { ~to~ }
-\@@_culang_def_for:nnnn { French } { name } { cutext-range-sign } { ~\`{a}~ }
+\@@_culang_def_base:nnn { name } { cutext-range-phrase } { -- }
+%\@@_culang_def_base:nnn { name } { cutext-range-sign } { -- }
+%\@@_culang_def_base:nnn { name-pl } { cutext-range-sign } { \c_@@_no_translation_str }
+\@@_culang_def_base:nnn { name-pl } { cutext-range-phrase } { \c_@@_no_translation_str  }
+%\@@_culang_def_for:nnnn { German } { name } { cutext-range-sign } { ~bis~ }
+%\@@_culang_def_for:nnnn { English } { name } { cutext-range-sign } { ~to~ }
+%\@@_culang_def_for:nnnn { French } { name } { cutext-range-sign } { ~\`{a}~ }
+\@@_culang_def_for:nnnn { German } { name } { cutext-range-phrase } { ~bis~ }
+\@@_culang_def_for:nnnn { English } { name } { cutext-range-phrase } { ~to~ }
+\@@_culang_def_for:nnnn { French } { name } { cutext-range-phrase } { ~\`{a}~ }
 %    \end{macrocode}
 %
 %
@@ -6859,10 +6885,6 @@ and the derived file cooking-units.sty.
   { normal , special_sign , 42 , error }
 \@@_def_new_type:nnn { cmd_type } { TF , T , p } 
   { cunum , cCutext , cuam }
-%\@@_def_new_type:nnn { parse_and_process_type } { TF , T } 
-%  { number , range , fraction, range_and_fraction  }
-%\@@_def_new_type:nnn { print_type } { TF , T } 
-%  { unknown , number , range , fraction  }
 \@@_def_new_type:nnn { bonkers_state } { } 
   { normal , going , fully , xD }
 %    \end{macrocode}
@@ -7913,6 +7935,7 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \l_@@_prepared_printing_seq
           {
             \@@_print_fraction:nnnn {#3} {#4} {#5} {#6} 
+            \bool_set_false:N \l_@@_cutext_uppercase_word_bool
             \bool_if:NTF #1
               { \bool_set_false:N \l_@@_seperator_after_fraction_bool }
               { \bool_set_true:N \l_@@_seperator_after_fraction_bool }
@@ -7921,7 +7944,7 @@ and the derived file cooking-units.sty.
         \seq_put_right:Nn \l_@@_prepared_printing_seq
           { 
             \@@_print_number:n {#6} 
-            \bool_set_false:N \l_@@_seperator_after_fraction_bool
+            \bool_set_false:N \l_@@_cutext_uppercase_word_bool
           }
       }
   }
@@ -8057,12 +8080,6 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_rf_print_amount_correctly:
   {
     \@@_if_state_equal:nTF { error }
-%    \bool_lazy_any:nTF
-%      {
-%        { \@@_if_state_equal_p:n { error }  }
-%%        { \tl_if_empty_p:N \l_@@_original_amount_tl }
-%%        { \l_@@_pckopt_draft_bool }
-%      }
       {
         \l_@@_original_amount_tl
       }{
@@ -8149,20 +8166,10 @@ and the derived file cooking-units.sty.
           { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
       }
     \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
-    \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
+    \@@_if_cmd_type_equal:nTF { cunum }
+      { \bool_set_false:N \l_@@_lokal_numeral_bool }
+      { \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool }
   }
-%\cs_new_protected:Npn \@@_initialise_new_after_parsing:n #1
-%  {    
-%    \clist_if_empty:cF { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
-%      {
-%        \keys_set_groups:nnv 
-%          { cooking-units } 
-%          { unit-hook } 
-%          { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
-%        \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
-%      }
-%    \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool
-%  }
 \cs_new:Npn \@@_decide_unit:
   {
     \@@_change_unit:TF
@@ -8182,11 +8189,6 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_rf_general_checkups: 
   {
-%    \@@_if_state_equal:nT { normal }
-%      { 
-%%        \@@_new_setup_bools_for_process_and_prints: 
-%%        \@@_rf_setup_bools_for_process_and_prints:
-%      }
     \@@_decide_unit:
     \@@_if_cmd_type_equal:nT { cCutext }
       { \@@_rf_cutext_check_if_translation_available: }
@@ -8208,17 +8210,6 @@ and the derived file cooking-units.sty.
         \@@_rf_prepare_fourty_two_amount_aux:nnnnn
           ##1
       }
-%    \tl_set:Nn \l_@@_number_tmpa_tl { 42 }
-%    \tl_set:Nn \l_@@_number_tmpb_tl { 42 }
-%    \tl_if_empty:NF \l_@@_mixed_fraction_tl
-%      { \tl_set:Nn \l_@@_mixed_fraction_tl { 42 } }
-%    \@@_if_state_equal:nT { special_sign }
-%      { 
-%        \tl_put_right:Nn \l_@@_number_tmpa_tl { (!) } 
-%        \tl_put_right:Nn \l_@@_number_tmpb_tl { (!) } 
-%        \tl_if_empty:NF \l_@@_mixed_fraction_tl
-%          { \tl_put_right:Nn \l_@@_mixed_fraction_tl { (!) }  }
-%      }
   }  
 \tl_const:Nn \c_@@_fourty_two_tl { 42 }
 \tl_const:Nn \c_@@_fourty_two_unknown_tl { 42(!) }
@@ -8226,34 +8217,18 @@ and the derived file cooking-units.sty.
   {
     \tl_clear:N \l_@@_mixed_fraction_tl
     \tl_clear:N \l_@@_number_tmpa_tl
-    \tl_clear:N \l_@@_number_tmpb_tl
-    \bool_if:NTF #1
+    \@@_if_state_equal:nTF { special_sign }
+      { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_unknown_tl }
+      { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_tl }
+    \bool_if:NT #1
       {
-        \@@_if_state_equal:nTF { special_sign }
-          {
-            \tl_if_empty:nF {#3}
-              { \tl_set_eq:NN \l_@@_mixed_fraction_tl \c_@@_fourty_two_unknown_tl }
-            \tl_if_empty:nF {#4}
-              { \tl_set_eq:NN \l_@@_number_tmpa_tl \c_@@_fourty_two_unknown_tl }
-            \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_unknown_tl
-          }{
-            \tl_if_empty:nF {#3}
-              { \tl_set_eq:NN \l_@@_mixed_fraction_tl \c_@@_fourty_two_tl }
-            \tl_if_empty:nF {#4}
-              { \tl_set_eq:NN \l_@@_number_tmpa_tl \c_@@_fourty_two_tl }
-            \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_tl
-          }
-        \@@_rf_seq_put_right:NnnVVV \l_@@_processed_seq
-          {#1} {#2} \l_@@_mixed_fraction_tl \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
-        %% seq put here
-      }{
-        \@@_if_state_equal:nTF { special_sign }
-          { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_unknown_tl }
-          { \tl_set_eq:NN \l_@@_number_tmpb_tl \c_@@_fourty_two_tl }
-        % seq put here
-        \@@_rf_seq_put_right:NnnnnV \l_@@_processed_seq
-          {#1} {#2} {#3} {#4} \l_@@_number_tmpb_tl
+        \tl_if_empty:nF {#3}
+          { \tl_set_eq:NN \l_@@_mixed_fraction_tl \l_@@_number_tmpb_tl }
+        \tl_if_empty:nF {#4}
+          { \tl_set_eq:NN \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl }
       }
+    \@@_rf_seq_put_right:NnnVVV \l_@@_processed_seq
+      {#1} {#2} \l_@@_mixed_fraction_tl \l_@@_number_tmpa_tl \l_@@_number_tmpb_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8285,28 +8260,29 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_rf_print_range_sign:
   {
-   \@@_if_cmd_type_equal:nTF { cunum }
-     { 
-       \bool_if:NT \l_@@_seperator_after_fraction_bool { \, }
-       \tl_use:N \l_@@_cunum_range_sign_tl 
-     }{
+%   \@@_if_cmd_type_equal:nTF { cunum }
+%     { 
+%       \bool_if:NT \l_@@_seperator_after_fraction_bool { \, }
+%       \tl_use:N \l_@@_cunum_range_sign_tl 
+%     }{
         \bool_lazy_or:nnTF
           { \@@_if_cmd_type_equal_p:n { cCutext } }
           { \l_@@_lokal_numeral_bool }
           {
-            \bool_set_false:N \l_@@_cutext_uppercase_word_bool
             \tl_if_empty:NTF \l_@@_cutext_range_sign_tl
-              { \@@_culang_print:nn { name } { cutext-range-sign } }
+              { 
+                \@@_culang_print:nn { name } { cutext-range-phrase } 
+              }
               { \tl_use:N \l_@@_cutext_range_sign_tl }
           }{ 
             \bool_if:NT \l_@@_seperator_after_fraction_bool { \, }
             \tl_use:N \l_@@_cunum_range_sign_tl 
           }
-     }
+%     }
   }
 \cs_new:Npn \@@_print_times_sign:
   {
-    \:$\times$\:
+    \l_@@_times_space_tl \l_@@_times_sign_tl \l_@@_times_space_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8329,34 +8305,6 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-%
-% \begin{macro}{ \@@_print_fractions:Nnn }
-%   The name of this function is the name of the game: It prints fractions.
-%   The minus sign is always put in front of the fraction.
-%
-%   The first argument regards the mixed fraction part. It is either empty
-%   or not empty. If empty, do nothing. Else insert and add space.
-%
-%  The 2nd and 3rd argument are the nominator and denominator, they are
-%  used in the fraction command directly.
-%
-%  All three arguments are currently tl varables, but only the first is a dedicated
-%  \enquote{can only take one token}.
-%
-%  Since v.1.10(alpha) it also prints the minus sign (hopefully correct).
-%    \begin{macrocode}
-\cs_new:Npn \@@_print_fractions:Nnn #1#2#3
-  {
-    \bool_if:NT \l_@@_minus_bool { \c_@@_minus_tl }
-    \tl_if_empty:NF #1
-      { 
-        #1 
-        \skip_horizontal:N \l_@@_mixed_frac_dim
-      }
-    \@@_frac:nn {#2} {#3}
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 %
@@ -8411,235 +8359,10 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_prepare_to_split_input:N}
-% Adapts the state into \enquote{range} or \enquote{fraction} if needed.
-% By default it is set to \enquote{number}. Ranges and Fractions are not allowed
-% together. Afterwards, split the input. If we encounter an error, we can use
-% |\use_none_delimit_by_q_nil:w| during the code to jump to this point.
-% This makes bailing out from the command more easy.
-%    \begin{macrocode}
-\cs_new:Npn \@@_prepare_to_split_input:N #1
-  {
-    \tl_if_in:NVT #1 \l_@@_input_range_sign_tl
-      {
-        \tl_replace_all:NVn #1 \l_@@_input_range_sign_tl { \q_@@_range } 
-        \@@_set_parse_and_process_type_to:n { range }
-      }
-    \tl_if_in:NnT #1 { / }
-      { 
-        \@@_if_parse_and_process_type_equal:nTF { range }
-          { \@@_set_parse_and_process_type_to:n { range_and_fraction } }
-          { \@@_set_parse_and_process_type_to:n { fraction } }
-      }
-    \@@_split_and_parse:N #1
-    \use_none_delimit_by_q_nil:w \q_nil
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
-% \begin{macro}{ \@@_split_and_parse:N}
-%   Splits the input into fractions or ranges (or numbers).
-% {identiier-num?}{}{}{num} sequence {}{frac}{draclower} sequence {mi}{}{}
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse:N #1
-  {
-    \tl_clear:N \l_@@_first_split_tl
-    \tl_clear:N \l_@@_split_input_tl
-    \tl_case:NnF \l_@@_parse_and_process_type_tl
-      {
-        \c_@@_parse_and_process_type_number_tl { \@@_split_and_parse_number:V }
-        \c_@@_parse_and_process_type_range_tl { \@@_split_and_parse_range:V }
-        \c_@@_parse_and_process_type_fraction_tl { \@@_split_and_parse_fraction:V }
-      } 
-      { \@@_create_internal_error:nN { split } \l_@@_parse_and_process_type_tl }
-    #1
-  }
-%    \end{macrocode}
-% \end{macro}
 %
-%    \begin{macrocode}
-%\cs_new:Npn \@@_split_range:n #1
-%  {
-%    \seq_clear:N \l_@@_split_parts_seq
-%    \tl_clear:N \l_@@_split_tl
-%    \@@_split_and_parse_range_aux:ww #1 \q_@@_range \q_stop
-%  }
-%\cs_new:Npn \@@_split_and_parse_range_aux:ww #1 \q_@@_range #2 \q_stop
-%  {
-%    \@@_split_fraction:n {#1}
-%    \seq_put_right:NV \l_@@_split_parts_seq \l_@@_split_tl
-%    \tl_if_empty:nF {#2}
-%      { 
-%        \@@_split_and_parse_range_aux:ww #2 \q_@@_range \q_stop      
-%      }
-%  }
 %
-%\cs_new:Npn \@@_split_fraction:n #1
-%  {
-%%    \@@_split_fraction_frac:ww #1 \q_stop /  \q_nil \q_stop \q_recursion_stop
-%    \@@_split_frac:ww #1 / \q_stop
-%  }
-%
-%\cs_new:Npn \@@_split_frac_mixed:ww #1 / #2 \q_stop
-%  {
-%    \tl_if_empty:nTF {#2}
-%      {
-%        %% no fraction detected!. 
-%      }{
-%        %% fraction detected!
-%        %% Check for _ in lower part
-%        \tl_if_in:nnT {#2} { _ }
-%          { \@@_create_error:n { fraction-wrong-order } }
-%        \@@_split_fraction_mixed:nww  #1 _ \q_stop {#3}
-%        \@@_asdasd:wwww _ #2 #1 _ \q_stop
-%      }
-%  }
-%\cs_new:Npn \@@_split_fraction_mixed:nww #1 _ #2 \q_stop #3
-%  {
-%    \tl_if_empty:nTF {#2}
-%      {
-%        \tl_put_right:Nn \l_@@_split_tl { {} {#2} {#3} }
-%      }{
-%        \tl_put_right:Nn \l_@@_split_tl { {#1} {#2} {#3} }
-%      }
-%  }
-%\cs_new:NPn \@@_asdasd:wwww #1_#2 / #3_#4 \q_stop
-%  {
-%    \tl_if_empty:nTF {#4}
-%      {
-%        %% Works
-%      }{
-%        \tl_put_right:Nn \l_@@_split_tl { {#2} {#3} {#4} }
-%      } 
-%  }
-%\cs_new:Npn \@@_split_fraction_frac:ww #1 / #2 \q_stop
-%  {
-%    \tl_if_empty:nTF {#2}
-%      {
-%        %% just a normal value
-%        \tl_put_right:Nn \l_@@_split_tl { {} {} {#1} }
-%      }{
-%        %% fraction found
-%        %% Is there a mixed fraction?
-%        \@@_split_fraction_mixed:wwn #1 _ \q_stop {#2}
-%      }
-%  }
-%\cs_new:Npn \@@_split_fraction_mixed:nww #1 _ #2 \q_stop #3
-%  {
-%    \tl_if_in:nnT {#3} { _ }
-%      { \@@_create_error:n { fraction-wrong-order } }
-%    \tl_if_empty:nTF {#1}
-%      {
-%        \tl_put_right:Nn \l_@@_split_tl { {} {#2} {#3} }
-%      }{
-%        \tl_put_right:Nn \l_@@_split_tl { {#1} {#2} {#3} }
-%      }
-%  }
-%\cs_new:Npn \@@_split_fraction:n #1
-%  {
-%    \@@_split_fraction_mixed:ww  
-%      #1 \q_stop / \q_recursion_tail _ \q_nil \q_stop
-%      \q_recursion_stop
-%  }
-%\cs_new:Npn \@@_split_fraction_mixed:ww #1 _ #2 \q_stop
-%  {
-%    \quark_if_nil:nTF {#2}
-%      { 
-%        \@@_split_fraction_frac:nww {} #1 \q_stop / 
-%        \q_stop 
-%      }{ 
-%        \@@_split_fraction_frac:nww {#1} #2 \q_stop
-%      }
-%  }
-%\cs_new:Npn \@@_split_fraction_frac:nww #1 #2 / #3 \q_stop
-%  {
-%    \quark_if_recursion_tail_stop_do:nn {#2} 
-%      { \@@_create_error:n { fraction-wrong-order } }
-%    \tl_put_right:Nn \l_@@_split_input_tl { {#1} {#2} {#3} }
-%    \use_none_delimit_by_q_recursion_stop:w
-%  }
-
-%    \end{macrocode}
-%
-% \begin{macro}{ \@@_split_and_parse_number:n }
-% Gets the input , parses it and stores it into |\l_@@_number_tmpa_tl|.
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_number:n #1
-  {
-    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_split_and_parse_range:n , \@@_split_and_parse_range_aux:ww }
-% Splits the input along |\q_@@_range|, parses the two parts and that's it.
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_range:n #1
-  {
-    \@@_split_and_parse_range_aux:ww #1 \q_stop
-  }
-\cs_new:Npn \@@_split_and_parse_range_aux:ww #1 \q_@@_range #2 \q_stop
-  {
-    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{ \@@_split_and_parse_fraction:n , \@@_split_and_parse_fraction_mixed:ww , \@@_split_and_parse_fraction_frac:ww }
-% A bit more tricky. We check first if a mixed fraction part exists. If not the function
-% get's |\q_nil|. Then we read the nominator and denominator. Inbetween we check
-% for errors
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_fraction:n #1
-  {
-    \@@_split_and_parse_fraction_mixed:ww  
-      #1 \q_stop / \q_recursion_tail _ \q_nil \q_stop
-      \q_recursion_stop
-  }
-%    \end{macrocode}
-% Gets the mixed fraction part (if it exists). If |#2| is |\q_nil| the part does not
-% exist. |#1| must then be of part |a/b|. 
-%
-% If |#2| is \emph{not} |\q_nil| it contains the fraction part with |a/b|. 
-% Parse the mixed fraction part and store it. Seperate |#2|.
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_fraction_mixed:ww #1 _ #2 \q_stop
-  {
-    \quark_if_nil:nTF {#2}
-      { 
-        \tl_clear:N \l_@@_mixed_fraction_tl
-        \@@_split_and_parse_fraction_frac:ww #1 \q_stop 
-      }{ 
-        \@@_parse_input_and_safe_in:nN {#1} \l_@@_mixed_fraction_tl
-        \@@_split_and_parse_fraction_frac:ww #2 \q_stop
-      }
-  }
-%    \end{macrocode}
-% Seperates nominator and denominator. If |#2| is equal to |\q_recursion_tail|
-% we probably had a construction like |a/b_c|, which is wrong. If so, create an error.
-% If everything is correct, parse the input and store it.
-%    \begin{macrocode}
-\cs_new:Npn \@@_split_and_parse_fraction_frac:ww #1 / #2 \q_stop
-  {
-    \quark_if_recursion_tail_stop_do:nn {#2} 
-      { \@@_create_error:n { fraction-wrong-order } }
-    \@@_parse_input_and_safe_in:nN {#1} \l_@@_number_tmpa_tl
-    \@@_parse_input_and_safe_in:nN {#2} \l_@@_number_tmpb_tl
-    \use_none_delimit_by_q_recursion_stop:w
-  }
-%    \end{macrocode}
-% \end{macro}
-% \begin{macro}{ \@@_split_and_parse_number:V , 
-%   \@@_split_and_parse_range:V , \@@_split_and_parse_fraction:V }
-% Some variants.
-%    \begin{macrocode}
-\cs_generate_variant:Nn \@@_split_and_parse_number:n { V }
-\cs_generate_variant:Nn \@@_split_and_parse_range:n { V }
-\cs_generate_variant:Nn \@@_split_and_parse_fraction:n { V }
-%    \end{macrocode}
-% \end{macro}
 %
 % \begin{macro}{ \@@_parse_input_and_safe_in:nN }
 %   Parses through |#1| and makes sure it is correct. This includes checking if there
@@ -10519,7 +10242,9 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop:n {#1} 
     \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#1}
       { 
-        \@@_set_unit:Nn \l_@@_curr_unit_tl {#1} 
+        \str_if_eq:nnTF { cutext-range-sign } {#1}
+          { \@@_set_unit:Nn \l_@@_curr_unit_tl { cutext-range-phrase } }
+          { \@@_set_unit:Nn \l_@@_curr_unit_tl {#1} }
         \bool_set_true:N \l_@@_tmpa_bool
       }{
         \@@_error_if_unit_not_defined:nNT {#1} \l_@@_curr_unit_tl 
@@ -10753,13 +10478,15 @@ and the derived file cooking-units.sty.
     \quark_if_recursion_tail_stop_do:nn {#2} 
       { \msg_error:nn { cooking-units } { missing-argument } }
     \seq_if_in:NnTF \g_@@_allowed_special_keys_seq {#1} 
-      { \@@_culang_def_for:Vnnn \l_@@_language_tl { name } }
-      {
+      { 
+        \str_if_eq:nnTF { cutext-range-sign } {#1}
+          { \@@_culang_def_for:Vnnn \l_@@_language_tl { name } { cutext-range-phrase } {#2} }
+          { \@@_culang_def_for:Vnnn \l_@@_language_tl { name } {#1} {#2} }
+      }{
         \@@_error_if_unit_not_defined:nTF {#1} 
-          { \use_none:nn }
-          { \@@_culang_def_for:Vnnn \l_@@_language_tl { unit-symbol } }
+          { \use_none:nn {#1} {#2} }
+          { \@@_culang_def_for:Vnnn \l_@@_language_tl { unit-symbol } {#1} {#2} }
       }
-     {#1} {#2}
     \@@_cuprint_define_printed_unit:nn
   }  
 %    \end{macrocode}
