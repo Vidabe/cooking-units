@@ -249,9 +249,12 @@
 
 
 \TEST{Weird-options-T}{
-  \MYTYPE {oT1} { \printTemperatureToCheckkg{-1}\testcunum{-1}{kg} }
-  \MYTYPE {oT2} { \testcunum{-1000}{g} }
-  \MYTYPE {oT3} { \printTemperatureToCheckkg{-1}\testcunum{-1}{kg} }
+  \OMIT
+  \cusetup{ add-temperature-to-check = { kg = 0 } }
+  \TIMO
+  \MYTYPE {oT1} { \printTemperatureToCheckkg{-1}\testcunum{\cookingunitsminux 1}{kg} }
+  \MYTYPE {oT2} { \testcunum{\cookingunitsminux 1000}{g} }
+  \MYTYPE {oT3} { \printTemperatureToCheckkg{-1}\testcunum{\cookingunitsminux 1}{kg} }
 }
 
 
