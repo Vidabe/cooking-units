@@ -817,6 +817,9 @@ and the derived file cooking-units.sty.
 % \changes {2022/06/06} {2.01} {Implement a way to define the plural-finding algorithm.}
 % \changes {2022/06/06} {2.01} {Add two public commands \cs{cookingunits_print_fraction:nnn} and \cs{cookingunits_print_range:nn}.}
 %
+% \changes {2022/11/27} {3.00} {Allow ranges and fractions to be combined!}
+% \changes {2022/11/27} {3.00} {New input type: products!}
+% \changes {2022/11/27} {3.00} {Change |cutext-range-unit| to |cutext-range-phrase|.}
 %
 %
 %
@@ -874,6 +877,10 @@ and the derived file cooking-units.sty.
 % Want to contribute a new language or make a correction to an existing one?
 % See \cref{sec:bug-feed} for more details. Wanna just check the
 % existing translations? See \cref{sec:Translations}.
+%
+% \subsection{What's new?}
+% Since v3.0 fraction and ranges can now be combined! 
+% Furthermore, products are introduced! Check the next section for more info.
 %
 % \section {The Commands}
 % \label{sec:commands}
@@ -3706,14 +3713,14 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \ProvidesExplPackage
   {cooking-units}
-  {2022/06/06}
-  {2.01} 
+  {2022/11/27}
+  {3.00} 
   {Ein Paket fuer Kocheinheiten}
 %    \end{macrocode}
 %
 % Checking if \pkg{expl3} is up-to-date, otherwise abort the loading of the package.
 %    \begin{macrocode}
-\@ifpackagelater { expl3 } { 2022/02/24 }
+\@ifpackagelater { expl3 } { 2022-09-28 }
   { }
   {
     \PackageError { cooking-units } { Support~package~expl3~too~old }
