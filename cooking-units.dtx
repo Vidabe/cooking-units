@@ -1117,9 +1117,9 @@ and the derived file cooking-units.sty.
 % While using \cCutext\ one may wonder which rules are used in order to determine
 % if the printed unit is singular or plural. If rules for a specific language are not found
 % the default ruleset is used. There are currently two rule sets: One default
-% and one if you are using french.
+% and one for the french language.
 %
-% Each set has three seperate rules: one for \enquote{normal} numbers, one for
+% Each set has three separate rules: one for \enquote{normal} numbers, one for
 % ranges and one for fractions.
 %
 % \subsubsection*{French}
@@ -4000,8 +4000,6 @@ and the derived file cooking-units.sty.
 \tl_new:N \l_@@_stored_units_tl
 \tl_new:N \l_@@_stored_formula_tl
 \tl_new:N \l_@@_base_tl
-\tl_new:N \l_cookingunits_raw_amount_a_tl
-\tl_new:N \l_cookingunits_raw_amount_b_tl
 \tl_new:N \l_@@_times_space_tl
 \tl_new:N \l_@@_times_sign_tl
 %    \end{macrocode}
@@ -4313,6 +4311,7 @@ and the derived file cooking-units.sty.
 \seq_new:N \l_@@_prepared_printing_seq
 \int_new:N \l_@@_nr_of_items
 \seq_new:N \l_@@_processed_seq
+\tl_new:N \l_@@_precompiled_options_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -6168,7 +6167,7 @@ and the derived file cooking-units.sty.
         \@@_if_unit_has_a_key:VTF #1
           {
             \tl_set_eq:Nc \l_@@_tmp_unit_tl { l_@@_base_key_unit_ #1 _tl }
-            \prop_get:cnNT { l_@@_new_cukeys_ \l_@@_tmp_unit_tl _prop } 
+            \prop_get:cnNT { l_@@_rf_cukeys_ \l_@@_tmp_unit_tl _prop } 
               { Liste } \l_@@_tmpa_seq
               {
                 \@@_seq_get_overlap:NNTF \g_@@_natural_units_seq \l_@@_tmpa_seq
@@ -6225,7 +6224,7 @@ and the derived file cooking-units.sty.
 \cs_new:Npn \@@_prepare_going_bonkers:N #1
   {
     \tl_set_eq:Nc \l_@@_tmp_unit_tl { l_@@_base_key_unit_ #1 _tl }
-    \prop_get:cnN { l_@@_new_cukeys_ \l_@@_tmp_unit_tl _prop } { Liste } \l_@@_tmpa_seq
+    \prop_get:cnN { l_@@_rf_cukeys_ \l_@@_tmp_unit_tl _prop } { Liste } \l_@@_tmpa_seq
     \bool_set_false:N \l_@@_tmpa_bool
     \bool_until_do:Nn \l_@@_tmpa_bool
       {
@@ -6978,9 +6977,14 @@ and the derived file cooking-units.sty.
   {
     \tl_clear:N \l_@@_phantom_tl
     \tl_clear:N \l_@@_option_unit_tl
+    \tl_clear:N \l_@@_precompiled_options_tl
     \bool_set_false:N \l_@@_lokal_recalc_for_people_bool
     \bool_set_false:N \l_@@_lokal_eval_fractions_bool
-    \tl_if_empty:nF {#2} { \keys_set:nn { cooking-units } {#2} }
+    \tl_if_empty:nF {#2} 
+      { 
+        \keys_precompile:nnN { cooking-units } {#2} \l_@@_precompiled_options_tl
+        \l_@@_precompiled_options_tl
+      }
     \IfNoValueF {#1}
       { \@@_reference_label_and_persons:n {#1} }
     \@@_expand_unit_input:Nn \l_@@_original_unit_tl {#3}
@@ -8140,7 +8144,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{\@@_initialise_new_after_parsing:n}
+% \begin{macro}{\@@_rf_initialise_after_parsing:n}
 % As the name suggests, this one is used \emph{after} parsing the amount.
 % This is done in order to know if there is an error, if the unit needs
 % to be changed and if this command needs to be called at all.
@@ -8165,7 +8169,7 @@ and the derived file cooking-units.sty.
           { unit-hook } 
           { l_@@_unit_option_ \l_@@_decided_unit_tl _clist }
       }
-    \tl_if_empty:nF {#1} { \keys_set:nn { cooking-units } {#1} }
+    \tl_if_empty:nF {#1} { \l_@@_precompiled_options_tl }
     \@@_if_cmd_type_equal:nTF { cunum }
       { \bool_set_false:N \l_@@_lokal_numeral_bool }
       { \bool_set_eq:NN \l_@@_lokal_numeral_bool \l_@@_pckopt_print_numeral_bool }
@@ -8448,7 +8452,6 @@ and the derived file cooking-units.sty.
       {
         \tl_if_in:NnTF \l_@@_input_mixed_fraction_sign_tl {#1}
           { 
-%            \@@_if_parse_and_process_type_equal:nTF { fraction }
             \bool_if:NTF \l_@@_rf_check_fraction_bool
               { \@@_create_error:n { Second-mixed-fraction-sign-not-allowed } }
               { \@@_create_error:n { missing-slash } }
@@ -8934,32 +8937,6 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-% \begin{macro} { \@@_check_if_integer_can_be_numerals:NN }
-% At this point we know that we have integers, so check if they are
-% below |\l_@@_print_numerals_below_int|. If they are, fine. Else,
-% set the boolean to false.
-%    \begin{macrocode}
-\cs_new:Npn \@@_check_if_integer_can_be_numerals:NN #1#2
-  {
-    \@@_if_parse_and_process_type_equal:nTF { range }
-      {
-        \bool_lazy_all:nF
-          {
-            { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-            { \int_compare_p:nNn {#2} < { \l_@@_print_numerals_below_int } }
-            { \int_compare_p:nNn {#1} > { 0 } }
-            { \int_compare_p:nNn {#2} > { 0 } }
-          }
-          { \bool_set_false:N \l_@@_lokal_numeral_bool }
-      }{
-        \bool_lazy_and:nnF
-          { \int_compare_p:nNn {#1} < { \l_@@_print_numerals_below_int } }
-          { \int_compare_p:nNn {#1} > { 0 } }
-          { \bool_set_false:N \l_@@_lokal_numeral_bool }
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
 %
 %
 %
@@ -9379,7 +9356,7 @@ and the derived file cooking-units.sty.
         \use_none_delimit_by_q_stop:w
       }
     \tl_set_eq:Nc \l_@@_original_unit_tl { l_@@_base_key_unit_ \l_@@_curr_unit_tl _tl }
-    \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_new_cukeys_ \l_@@_original_unit_tl _prop }
+    \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_rf_cukeys_ \l_@@_original_unit_tl _prop }
     \prop_get:NnN \l_@@_tmpa_prop {#1} \l_@@_new_key_base_tl
     \prop_get:NnN \l_@@_tmpa_prop { Liste } \l_@@_tmpa_seq
     \prop_get:NnN \l_@@_tmpa_prop { single } \l_@@_tmpa_tl
@@ -9497,7 +9474,7 @@ and the derived file cooking-units.sty.
       {
         \prop_gclear:N \g_@@_master_changer_prop
         \@@_cukeys_prepare_lists:N \l_@@_original_unit_tl
-        \@@_new_cukeys_create_keys:V \l_@@_original_unit_tl
+        \@@_rf_cukeys_create_keys:V \l_@@_original_unit_tl
       }
   }
 \cs_generate_variant:Nn \@@_cukeys_prepare_parsing_keys:nn { nV }
@@ -9591,10 +9568,10 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_cukeys_prepare_lists:N #1
   {
-    \prop_clear_new:c { l_@@_new_cukeys_ #1 _prop }
-    \prop_set_eq:cN { l_@@_new_cukeys_ #1 _prop } \l_@@_tmpa_prop
-    \prop_put:cnV { l_@@_new_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
-    \prop_put:cnV { l_@@_new_cukeys_ #1 _prop } { single } \l_@@_single_key_bool
+    \prop_clear_new:c { l_@@_rf_cukeys_ #1 _prop }
+    \prop_set_eq:cN { l_@@_rf_cukeys_ #1 _prop } \l_@@_tmpa_prop
+    \prop_put:cnV { l_@@_rf_cukeys_ #1 _prop } { Liste } \l_@@_tmpa_seq
+    \prop_put:cnV { l_@@_rf_cukeys_ #1 _prop } { single } \l_@@_single_key_bool
     \tl_set:cn { l_@@_unit_change_ #1 _tl } { 1 }
     \tl_set_eq:cN { l_@@_base_key_unit_ #1 _tl } #1
     \bool_if:NF \l_@@_single_key_bool
@@ -9609,33 +9586,33 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cukeys_create_keys:n , \@@_new_cukeys_create_keys:V }
+% \begin{macro}{ \@@_rf_cukeys_create_keys:n , \@@_rf_cukeys_create_keys:V }
 %  Here we start creating the keys. If seperate into two cases: 
 %  Do we have a single-key or not. If yes, just create the key |#1|
 %  and do what needs to be done. If not, we need to create a bunch of
 %  keys for each unit in the list.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_cukeys_create_keys:n #1
+\cs_new:Npn \@@_rf_cukeys_create_keys:n #1
   {
 %   % #1: original_unit
     \clist_set_from_seq:NN \l_@@_tmpa_clist \l_@@_tmpa_seq
     \bool_if:NTF \l_@@_single_key_bool
       { 
-        \@@_new_cukeys_define_key:nVn
+        \@@_rf_cukeys_define_key:nVn
            {#1} \l_@@_tmpa_clist {#1}
       }{  
         \seq_map_inline:Nn \l_@@_tmpa_seq
           {
-            \@@_new_cukeys_define_key:nVn 
+            \@@_rf_cukeys_define_key:nVn 
                {##1} \l_@@_tmpa_clist {#1}
           }
       }
   }
-\cs_generate_variant:Nn \@@_new_cukeys_create_keys:n { V }
+\cs_generate_variant:Nn \@@_rf_cukeys_create_keys:n { V }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cukeys_define_key:nnn , \@@_new_cukeys_define_key:nVn }
+% \begin{macro}{ \@@_rf_cukeys_define_key:nnn , \@@_rf_cukeys_define_key:nVn }
 %  Now we define some key(s). |#1| is the unit and key-to-be-defined.
 %  As |#1| is not expanded, this can contain control sequences, etc. not need for worry
 %  here.
@@ -9651,7 +9628,7 @@ and the derived file cooking-units.sty.
 %  In order to remind the user which choices each key have, define an error
 %  message for unknown keys.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_cukeys_define_key:nnn #1#2#3
+\cs_new:Npn \@@_rf_cukeys_define_key:nnn #1#2#3
   {
     \@@_if_unit_has_a_key:nF {#1} 
       { \seq_put_right:Nn \l_@@_list_of_defined_keys_seq {#1} }
@@ -9674,7 +9651,7 @@ and the derived file cooking-units.sty.
          #1 .groups:n = { change-unit }
       }
   }
-\cs_generate_variant:Nn \@@_new_cukeys_define_key:nnn { nVn }
+\cs_generate_variant:Nn \@@_rf_cukeys_define_key:nnn { nVn }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -9721,7 +9698,7 @@ and the derived file cooking-units.sty.
 %  so direct retrival of the value is possible in this case.
 %
 %  If |#1| and |#3| are different, we need to do some work. First, get the list
-%  of key-values |l_@@_new_cukeys_ #3 _prop| and store it in |\l_@@_tmpa_prop|.
+%  of key-values |l_@@_rf_cukeys_ #3 _prop| and store it in |\l_@@_tmpa_prop|.
 %  Now eval. 
 %
 %  Having unit |a| and wanting unit |b|, we need the value to go from |a| to |b|
@@ -9733,9 +9710,9 @@ and the derived file cooking-units.sty.
   {
     \str_if_eq:nnTF {#1} {#3}
       {
-        \prop_get:cnc { l_@@_new_cukeys_ #1 _prop } {#2} { l_@@_unit_change_ #1 _tl }
+        \prop_get:cnc { l_@@_rf_cukeys_ #1 _prop } {#2} { l_@@_unit_change_ #1 _tl }
       }{
-        \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_new_cukeys_ #3 _prop }
+        \prop_set_eq:Nc \l_@@_tmpa_prop { l_@@_rf_cukeys_ #3 _prop }
         \@@_tl_set_eval:cn { l_@@_unit_change_ #1 _tl }
           {
             ( \prop_item:Nn \l_@@_tmpa_prop {#2} ) /
@@ -10012,7 +9989,7 @@ and the derived file cooking-units.sty.
         \seq_clear_new:c { l_@@_list_ ##1 _seq }
         \tl_set_eq:Nc \l_@@_curr_unit_tl { l_@@_base_key_unit_ ##2 _tl }
         \prop_set_eq:cc { l_@@_keys_ ##1 _prop } 
-          { l_@@_new_cukeys_ \l_@@_curr_unit_tl _prop }
+          { l_@@_rf_cukeys_ \l_@@_curr_unit_tl _prop }
         \prop_get:cnc { l_@@_keys_ ##1 _prop } { Liste } { l_@@_list_ ##1 _seq }
       }
   }
@@ -10042,7 +10019,7 @@ and the derived file cooking-units.sty.
     \tl_put_right:Nx \l_@@_stored_formula_tl 
       { { (
         \exp_not:N \prop_item:Nn
-        \exp_not:c { l_@@_new_cukeys_ \l_@@_original_unit_tl _prop } {#1}
+        \exp_not:c { l_@@_rf_cukeys_ \l_@@_original_unit_tl _prop } {#1}
       ) } }
     \int_compare:nNnTF { \l_@@_depth_int } = { \l_@@_nr_of_units_int }
       { 
@@ -10364,7 +10341,6 @@ and the derived file cooking-units.sty.
 % (just a number), \enquote{range} and \enquote{fraction}.
 %    \begin{macrocode}
 \@@_culang_def_base:nnn { pluraltest } { normal } { \c_@@_no_translation_str }
-%\@@_culang_def_base:nnn { pluraltest } { range } { \c_@@_no_translation_str }
 \@@_culang_def_base:nnn { pluraltest } { fraction } { \c_@@_no_translation_str }
 %    \end{macrocode}
 % \end{macro}
@@ -10382,12 +10358,6 @@ and the derived file cooking-units.sty.
       { \bool_set_true:N  } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
-%\cs_set:cpn { @@_pluraltest_range_ \c_@@_no_translation_str :nn } #1#2
-%  {
-%    \fp_compare:nNnTF {#2} = { 1.0 }
-%      { \bool_set_true:N  } { \bool_set_false:N }
-%    \l_@@_cutext_use_single_bool
-%  }
 \cs_set:cpn { @@_pluraltest_fraction_ \c_@@_no_translation_str :nnn } #1#2#3
   {
     \tl_if_empty:nTF {#1}
@@ -10406,11 +10376,6 @@ and the derived file cooking-units.sty.
     \@@_culang_def_for:nnnn {#1} { pluraltest } { normal } {#1}
     \cs_set:cpn { @@_pluraltest_normal_ #1 :n } ##1 {#2}
   }
-%\cs_new:Npn \@@_pluraltest_define_range:nn #1#2
-%  {
-%    \@@_culang_def_for:nnnn {#1} { pluraltest } { range } {#1}
-%    \cs_set:cpn { @@_pluraltest_range_ #1 :nn } ##1##2 {#2}
-%  }
 \cs_new:Npn \@@_pluraltest_define_fraction:nn #1#2
   {
     \@@_culang_def_for:nnnn {#1} { pluraltest } { fraction } {#1}
@@ -10433,12 +10398,6 @@ and the derived file cooking-units.sty.
       { \bool_set_true:N } { \bool_set_false:N }
     \l_@@_cutext_use_single_bool
   }
-%\@@_pluraltest_define_range:nn { French }
-%  {  
-%    \fp_compare:nNnTF { \fp_abs:n {#2} } < { 2.0 }
-%      { \bool_set_true:N } { \bool_set_false:N }
-%    \l_@@_cutext_use_single_bool
-%  }
 \@@_pluraltest_define_fraction:nn { French }
   {  
     \tl_if_empty:nTF {#1}
@@ -10497,7 +10456,7 @@ and the derived file cooking-units.sty.
 %
 %
 %
-% \begin{macro}{ }
+% \begin{macro}{ phrase }
 %  Defining phrases. Phrases (sadly) depend on the language. 
 %  The idea is going to be: Each language has its own property list
 %  which is going to be stored for each language. Later, the property
@@ -10509,7 +10468,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{  }
+% \begin{macro}{ \@@_culang_get_phrase_prop:N }
 %    \begin{macrocode}
 \cs_new:Npn \@@_culang_get_phrase_prop:N #1
   {
@@ -10538,12 +10497,12 @@ and the derived file cooking-units.sty.
 \seq_new:N \l_@@_phrase_full_seq
 \NewDocumentCommand \cudefinephrase { m m }
   {
-    \@@_new_cuphrase_add:nn {#1} {#2}
+    \@@_rf_cuphrase_add:nn {#1} {#2}
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cuphrase_add:nn }
+% \begin{macro}{ \@@_rf_cuphrase_add:nn }
 %  |#1| is the language, |#2| is something to be parsed.
 %  I am also not quite happy with this construction, but it works.
 %
@@ -10566,17 +10525,14 @@ and the derived file cooking-units.sty.
 %
 %  Then store the variables and thats it.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_cuphrase_add:nn #1#2
+\cs_new:Npn \@@_rf_cuphrase_add:nn #1#2
   {
     \tl_set:Nn \l_@@_language_tl {#1}
     \@@_culang_if_translation_exists_for:VnnTF \l_@@_language_tl 
       { phrase } { phrase-lang }
       {  
-%        \@@_culang_let_for:VnnN \l_@@_language_tl { phrase } { phrase-prop }
-%          \l_@@_phrase_prop
         \prop_set_eq:Nc \l_@@_phrase_prop { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_get:NnN \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-%        \prop_get:NnN \l_@@_phrase_prop { full } \l_@@_phrase_full_seq
       }{
         \prop_new:c { l_@@_ \l_@@_language_tl _phrase_prop }
         \prop_clear:N \l_@@_phrase_prop
@@ -10585,13 +10541,9 @@ and the derived file cooking-units.sty.
       }
     \@@_sanitize_arrows:n {#2}
     \@@_parse_phrase:V \l_@@_sanitise_tl
-%    \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
-    \@@_new_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
+    \@@_rf_cuphrase_sort_sequence:N \l_@@_phrase_numbers_seq
     \prop_put:NnV \l_@@_phrase_prop { seq } \l_@@_phrase_numbers_seq
-%    \prop_put:NnV \l_@@_phrase_prop { full } \l_@@_phrase_full_seq
     \prop_set_eq:cN { l_@@_ \l_@@_language_tl _phrase_prop } \l_@@_phrase_prop
-%    \@@_culang_def_for:VnnV 
-%      \l_@@_language_tl { phrase } { phrase-prop } \l_@@_phrase_prop
     \@@_culang_def_for:VnnV 
       \l_@@_language_tl { phrase } { phrase-lang } \l_@@_language_tl
   }
@@ -10658,8 +10610,6 @@ and the derived file cooking-units.sty.
             \int_set:Nn \l_@@_tmpa_int {#1}   
             \tl_set:NV \l_@@_curr_unit_tl \l_@@_tmpa_int
              \tl_put_right:Nx \l_@@_phrase_tmpb_tl { { \l_@@_curr_unit_tl } }
-%            \bool_if:NT \l_@@_tmpa_bool
-%              { \tl_put_left:Nn \l_@@_curr_unit_tl { - } }   
           }{
             \@@_set_state_to:n { error } 
             \msg_error:nnn { cooking-units} { phrase-unit-not-an-integer } {#1}
@@ -10696,7 +10646,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cuphrase_add:nn }
+% \begin{macro}{ \@@_parse_stuff_plural:w }
 %  Store the pluarl form in the property list.
 %  Next, parse gender. Pretty much the same as before. By default we use
 %  a male gender.
@@ -10715,7 +10665,7 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cuphrase_add:nn }
+% \begin{macro}{ \@@_parse_stuff_gender:w }
 %  Check if the gender-input is correct, add it to the property list.
 %  Then finish the cycle and start a new one.
 %    \begin{macrocode}
@@ -10758,12 +10708,12 @@ and the derived file cooking-units.sty.
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{ \@@_new_cuphrase_sort_sequence:N }
+% \begin{macro}{ \@@_rf_cuphrase_sort_sequence:N }
 %  Sorting the sequence of numbers from highest to lowest (in absolute values).
 %  And if two absolute values are equal, negative numbers are preferred over
 %  positive ones.
 %    \begin{macrocode}
-\cs_new:Npn \@@_new_cuphrase_sort_sequence:N #1
+\cs_new:Npn \@@_rf_cuphrase_sort_sequence:N #1
   {
     \seq_sort:Nn #1
       {
@@ -10780,24 +10730,8 @@ and the derived file cooking-units.sty.
                   { \sort_return_swapped: }
               }
           }
-%        \int_set:Nn \l_@@_tmpa_int { \int_abs:n {##1} }
-%        \int_set:Nn \l_@@_tmpb_int { \int_abs:n {##2} }
-%        \int_compare:nNnTF { \l_@@_tmpa_int } < { \l_@@_tmpb_int }
-%          { \sort_return_swapped: }
-%          { 
-%            \int_compare:nNnTF { \l_@@_tmpa_int } > { \l_@@_tmpb_int }
-%              { \sort_return_same: }
-%              {
-%                \prop_get:NnN \l_@@_phrase_prop { ##1 - singlebool } \l_@@_tmpa_int
-%                \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
-%                  { \sort_return_same: }
-%                  { \sort_return_swapped: }
-%              }
-%          }
       }
   }
-%\cs_new:Npn \@@_use_i:nnnnn #1#2#3#4#5 {#1}
-%\cs_new:Npn \@@_use_ii:nnnnn #1#2#3#4#5 {#2}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -10813,7 +10747,7 @@ and the derived file cooking-units.sty.
 %
 % \subsection{Old stuff}
 %
-% \begin{macro} {  }
+% \begin{macro} { \@@_old_cutext:nnn }
 %    \begin{macrocode}
 \cs_new:Npn \@@_old_cutext:nnn #1#2#3
   {
