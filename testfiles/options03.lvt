@@ -10,29 +10,9 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \MYTYPE #1#2
-  {
-    \TYPE{#1}
-    \tl_set:Nn \msg_line_number: { 1 }
-    \hbox_set:Nn \l_tmpa_box {#2}
-    \box_show:N \l_tmpa_box
-  }
 
-\ExplSyntaxOn
+\input{a_command}
 
-\cs_new:Npn \cuerrormessagenumeral
-  { \msg_error:nnn {cooking-units} { define-Numeral-function } }
-\cs_new:Npn \cuerrormessageNumeral
-  { \msg_error:nnn {cooking-units} { define-Numeral-function } }
-
-\NewDocumentCommand \cuprimitivefraction { m m m }
-  {
-    \cookingunits_print_fraction:nnn {#1} {#2} {#3}
-  }
-\NewDocumentCommand \cuprimitiverange { m m }
-  {
-    \cookingunits_print_range:nn {#1} {#2}
-  }
 
 \cs_new:Npn \cunumeralfuncy #1 {lowercase-#1-numeral}
 \cs_new:Npn \Cunumeralfuncy #1 {uppercase-#1-numeral}

@@ -10,23 +10,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \MYTYPE #1#2
-  {
-    \TYPE{#1}
-    \hbox_set:Nn \l_tmpa_box {#2}
-    \box_show:N \l_tmpa_box
-  }
-
-\ExplSyntaxOn
-
-\NewDocumentCommand \cuprimitivefraction { m m m }
-  {
-    \cookingunits_print_fraction:nnn {#1} {#2} {#3}
-  }
-\NewDocumentCommand \cuprimitiverange { m m }
-  {
-    \cookingunits_print_range:nn {#1} {#2}
-  }
+\input{a_command}
 
 \ExplSyntaxOff
 

@@ -5,18 +5,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \BOXTYPE #1
-  {
-    \TYPE{ ------ }
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
-  }
-
-
-\cs_new:Npn \testcunum #1#2
-  {
-    #1 \, #2
-  }
+\input{a_command}
 
 \ExplSyntaxOff
 

@@ -1,0 +1,127 @@
+
+\cs_new:Npn \MYTYPE #1#2
+  {
+    \TYPE{#1}
+    \tl_set:Nn \msg_line_number: { 1 }
+    \hbox_set:Nn \l_tmpa_box {#2}
+    \box_show:N \l_tmpa_box
+  }
+
+\cs_new:Npn \BOXTYPE #1
+  {
+    \TYPE{------}
+    \tl_set:Nn \msg_line_number: {1}
+    \hbox_set:Nn \l_tmpa_box {#1}
+    \box_show:N \l_tmpa_box
+ }
+
+\cs_new:Npn \printUnknownAmountMsg #1
+  {
+    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
+  }
+\cs_new:Npn \printTokenNotAllowedMsg #1#2
+  {
+    \msg_error:nnnn { cooking-units } {Token-not-allowed} {#1} {#2}
+  }
+\cs_new:Npn \printForbiddenUnitMsg #1
+  {
+    \msg_error:nnn { cooking-units } {curef-forbidden-unit} {#1}
+  }
+\cs_new:Npn \printTemperatureToCheckkg #1
+  {
+    \msg_error:nnxx { cooking-units } { Temperature-too-low }
+      {#1 \space kg }
+      { 0 \space kg }
+  }
+\cs_new:Npn \printRangeTooManyItemsMsg #1#2
+  {
+    \msg_error:nnnn { cooking-units } {range-too-many-items} {#1} {#2}
+  }
+\cs_new:Npn \printRangeAndItemsNotAllowedMsg #1
+  {
+    \msg_error:nnn { cooking-units } { range-and-times-not-allowed } {#1} 
+  }
+\cs_new:Npn \ERRORRangeTimesAndItems #1#2
+  {
+    \msg_error:nnn { cooking-units } { range-and-times-not-allowed } {#2} 
+    \msg_error:nnnn { cooking-units } {range-too-many-items} {#1} {#2}
+  }
+
+
+\cs_new:Npn \cuerrormessagenumeral
+  { \msg_error:nn {cooking-units} { define-numeral-function } }
+\cs_new:Npn \cuerrormessageNumeral
+  { \msg_error:nn {cooking-units} { define-Numeral-function } }
+
+
+\cs_new:Npn \testcunum #1#2
+  {
+    #1 \thinspace #2
+ }
+\cs_new:Npn \testcutext #1#2
+  {
+    #1 ~ #2
+ }
+\cs_new:Npn \testCutext #1#2
+  {
+    #1 ~ #2
+ }
+\cs_new:Npn \testcuam #1
+  {
+    #1
+ }
+
+\cs_new:Npn \textcufracDim #1#2#3#4
+  {
+    \tl_if_empty:nF {#1}
+      { 
+        #1 
+        \skip_horizontal:n {#4}
+      }
+    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcufrac #1#2#3
+  {
+    \textcufracDim {#1} {#2} {#3} { \l__cookingunits_mixed_frac_dim }
+%    \tl_if_empty:nF {#1}
+%      { 
+%        #1 
+%        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
+%      }
+%    \__cookingunits_frac:nn {#2} {#3}
+  }
+\cs_new:Npn \textcunumtextfrac #1#2#3 #4
+  {
+    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
+  }
+
+
+\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+\cs_new:Npn \timessign { \__cookingunits_print_times_sign: }
+
+
+
+\cs_new:Npn \cuprintfrac #1#2 { up#1below#2 }
+\cs_new:Npn \cuprintfracM #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfrac {#2} {#3} 
+  }
+
+\cs_new:Npn \cuprintfracinline #1#2 { inline#1down#2 }
+\cs_new:Npn \cuprintfracMinline #1#2#3 
+  { 
+    #1 \skip_horizontal:N \l__cookingunits_mixed_frac_dim 
+    \cuprintfracinline {#2} {#3} 
+  }
+
+
+\NewDocumentCommand \cuprimitivefraction { m m m }
+  {
+    \cookingunits_print_fraction:nnn {#1} {#2} {#3}
+  }
+\NewDocumentCommand \cuprimitiverange { m m }
+  {
+    \cookingunits_print_range:nn {#1} {#2}
+  }
+

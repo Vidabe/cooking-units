@@ -12,27 +12,7 @@
 
 
 
-\cs_new:Npn \BOXTYPE #1
-  {
-    \TYPE{ ------ }
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
-  }
-
-
-\cs_new:Npn \textcutext #1#2
-  {
-    #1 \space #2
-  }
-\cs_new:Npn \textcutextfrac #1#2#3
-  {
-    \tl_if_empty:nF {#1}
-      { 
-        #1 
-        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
-      }
-    \__cookingunits_frac:nn {#2} {#3}
-  }
+\input{a_command}
 
 \ExplSyntaxOff
 

@@ -9,13 +9,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \BOXTYPE #1
-  {
-    \TYPE{ ------ }
-    \tl_set:Nn \msg_line_number: { 1 }
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
-  }
+\input{a_command}
 
 \cs_new:Npn \useCuam #1#2{\cuam {#1}}
 
@@ -65,10 +59,6 @@
   \BOXTYPE { #1{?--?}{testa} }
   }
 
-\cs_new:Npn \testcutext #1#2
-  {
-    #1 \space #2
-  }
 
 
 

@@ -9,13 +9,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \BOXTYPE #1
-  {
-    \TYPE{ ------ }
-    \tl_set:Nn \msg_line_number: { 1 }
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
-  }
+\input{a_command}
 
 
 \cs_new:Npn \TYPESTUFF #1
@@ -30,29 +24,8 @@
     \BOXTYPE { \cunum{0.5--1}{#1} }
   }
 
-\cs_new_eq:NN \minusSign \c__cookingunits_minus_tl
 
 
-\cs_new:Npn \printUnknownAmountMsg #1
-  {
-    \msg_warning:nnn { cooking-units } {amount-not-known} {#1}
-  }
-\cs_new:Npn \testcunum #1#2
-  {
-    #1 \, #2
-  }
-\cs_new:Npn \testcutext #1#2
-  {
-    #1 \space #2
-  }
-\cs_new:Npn \testCutext #1#2
-  {
-    #1 \space #2
-  }
-\cs_new:Npn \testcuam #1#2
-  {
-    #1
-  }
 
 \cs_new:Npn \TESTSTUFF #1#2#3
   {
@@ -127,19 +100,19 @@
   \BOXTYPE{\testcunum{\testmixedsfrac{1.1}{2}{3}}{testa}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1.1}{2.5}{3.9}}{testa}}
 %  
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{testa}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{testa}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{testa}}
 %  
-  \BOXTYPE{\testcunum{\minusSign 5}{testa}}
-  \BOXTYPE{\testcunum{\minusSign 2.5}{testa}}
-  \BOXTYPE{\testcunum{\minusSign 3--5}{testa}}
-  \BOXTYPE{\testcunum{3--\minusSign 5}{testa}}
-  \BOXTYPE{\testcunum{\minusSign 3--\minusSign 5}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 5}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 2.5}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 3--5}{testa}}
+  \BOXTYPE{\testcunum{3--\cookingunitsminux 5}{testa}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 3--\cookingunitsminux 5}{testa}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcunum{?}{testa}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcunum{12.3?}{testa}}
@@ -169,19 +142,19 @@
   \BOXTYPE{\testcutext{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
 %  
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
 %  
-  \BOXTYPE{\testcutext{\minusSign 5}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 2.5}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 3\space to\space 5}{Test-A}}
-  \BOXTYPE{\testcutext{3\space to\space \minusSign 5}{Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 3\space to\space \minusSign 5}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 2.5}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 3\space to\space 5}{Test-A}}
+  \BOXTYPE{\testcutext{3\space to\space \cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 3\space to\space \cookingunitsminux 5}{Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcutext{?}{Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcutext{12.3?}{Test-A}}
@@ -211,19 +184,19 @@
   \BOXTYPE{\testCutext{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
 %  
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
 %  
-  \BOXTYPE{\testCutext{\minusSign 5}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 2.5}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 3\space to\space 5}{Test-A}}
-  \BOXTYPE{\testCutext{3\space to\space \minusSign 5}{Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 3\space to\space \minusSign 5}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 2.5}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 3\space to\space 5}{Test-A}}
+  \BOXTYPE{\testCutext{3\space to\space \cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 3\space to\space \cookingunitsminux 5}{Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testCutext{?}{Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testCutext{12.3?}{Test-A}}
@@ -257,19 +230,19 @@
   \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\minusSign 5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 2.5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 3--5}{Test-A}}
-  \BOXTYPE{\testcuam{3--\minusSign 5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 3--\minusSign 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 2.5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 3--5}{Test-A}}
+  \BOXTYPE{\testcuam{3--\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcuam{?}{Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcuam{12.3?}{Test-A}}
@@ -314,19 +287,19 @@
   \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2}{3}}{GTest-A}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2,5}{3,9}}{GTest-A}}
 %  
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
   \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign\testmixedsfrac{1}{2}{3}}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
 %  
-  \BOXTYPE{\testcunum{\minusSign 5}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign 2,5}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign 3--5}{GTest-A}}
-  \BOXTYPE{\testcunum{3--\minusSign 5}{GTest-A}}
-  \BOXTYPE{\testcunum{\minusSign 3--\minusSign 5}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 5}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 2,5}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 3--5}{GTest-A}}
+  \BOXTYPE{\testcunum{3--\cookingunitsminux 5}{GTest-A}}
+  \BOXTYPE{\testcunum{\cookingunitsminux 3--\cookingunitsminux 5}{GTest-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcunum{?}{GTest-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcunum{12,3?}{GTest-A}}
@@ -356,19 +329,19 @@
   \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
 %  
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
 %  
-  \BOXTYPE{\testcutext{\minusSign 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 2,5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 3\space undsoweiter\space 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{3\space undsoweiter\space \minusSign 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\minusSign 3\space undsoweiter\space \minusSign 5}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 5}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 2,5}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
+  \BOXTYPE{\testcutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcutext{?}{German-Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcutext{12,3?}{German-Test-A}}
@@ -398,19 +371,19 @@
   \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
 %  
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
   \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
 %  
-  \BOXTYPE{\testCutext{\minusSign 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 2,5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 3\space undsoweiter\space 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{3\space undsoweiter\space \minusSign 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\minusSign 3\space undsoweiter\space \minusSign 5}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 5}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 2,5}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
+  \BOXTYPE{\testCutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testCutext{?}{German-Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testCutext{12,3?}{German-Test-A}}
@@ -444,19 +417,19 @@
   \BOXTYPE{\testcuam{\testmixedsfrac{1,1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1,1}{2,5}{3,9}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
   \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\minusSign 5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 2,5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 3--5}{Test-A}}
-  \BOXTYPE{\testcuam{3--\minusSign 5}{Test-A}}
-  \BOXTYPE{\testcuam{\minusSign 3--\minusSign 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 2,5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 3--5}{Test-A}}
+  \BOXTYPE{\testcuam{3--\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\testcuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
 %  
   \BOXTYPE{\printUnknownAmountMsg?\testcuam{?}{Test-A}}
   \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcuam{12,3?}{Test-A}}

@@ -10,32 +10,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \MYTYPE #1#2
-  {
-    \TYPE{#1}
-    \hbox_set:Nn \l_tmpa_box {#2}
-    \box_show:N \l_tmpa_box
-  }
-
-
-\cs_new:Npn \testcunum #1#2
-  {
-    #1 \, #2
-  }
-\cs_new:Npn \textcufrac #1#2#3
-  {
-    \tl_if_empty:nF {#1}
-      { 
-        #1 
-        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
-      }
-    \__cookingunits_frac:nn {#2} {#3}
-  }
-\cs_new:Npn \textcunumtextfrac #1#2#3 #4
-  {
-    \testcunum{ \textcufrac {#1} {#2} {#3} }{#4}
-  }
-\cs_new:Npn \cookingunitsminux { \c__cookingunits_minus_tl }
+\input{a_command}
 
 
 \ExplSyntaxOff

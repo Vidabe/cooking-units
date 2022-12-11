@@ -8,12 +8,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\cs_new:Npn \BOXTYPE #1
-  {
-    \TYPE{ ------ }
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
-  }
+\input{a_command}
 
 
 \cs_new:Npn \TYPESTUFF #1
@@ -28,18 +23,7 @@
     \BOXTYPE { \cunum{0.5--1}{#1} }
   }
 
-\cs_new:Npn \testcunum #1#2
-  {
-    #1 \, #2
-  }
-\cs_new:Npn \testcutext #1#2
-  {
-    #1 \space #2
-  }
-\cs_new:Npn \testCutext #1#2
-  {
-    #1 \space #2
-  }
+
 
 \cs_new:Npn \TESTSTUFF #1#2#3
   {
@@ -64,7 +48,6 @@
     \BOXTYPE { \testcunum{0.5--1}{#7} }
   }
 
-\cs_new:Npn \timessign { \__cookingunits_print_times_sign: }
 
 \cs_new:Npn \TESTSTUFFnumeralRange #1#2#3
   {
