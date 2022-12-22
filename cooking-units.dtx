@@ -620,8 +620,14 @@ and the derived file cooking-units.sty.
     {lb} { 14 }
     {st} { 1 }
   }
-\cuaddtokeys {m} {ft} {0.3048}
-\cuaddtokeys {m} {km} {1000}
+\cuaddtokeychain
+  {
+    {m} { 1 }
+    {ft} { 0.3048 }
+    {km} { 1000 }
+  }
+%\cuaddtokeys {m} {ft} {0.3048}
+%\cuaddtokeys {m} {km} {1000}
 \cuaddsinglekeys {C}
   {
     {Ro} { #1*21/40 + 7.5 }
@@ -1565,10 +1571,7 @@ and the derived file cooking-units.sty.
 %   reason to use those units) and you want to implement 'stone' (yes,
 %   I was surprised myself that such a unit exists, but it even
 %   appears in a Sherlock Holmes story). You exactly know that
-%   \SI{1}{\st} equals \SI{14}{\lb}, well \dots\ now you have two
-%   choices. \lstinline|\cuaddkeys| or \lstinline|\cuaddtokeys| (use
-%   the one best fitting). This example uses the first, the next the
-%   latter one.
+%   \SI{1}{\st} equals \SI{14}{\lb} and use \lstinline|\cuaddtokeychain|. 
 % \begin{lstlisting}
 %  \newcookingunit{st} %% defining new unit 'stone'
 %  \cuaddtokeychain
@@ -1637,7 +1640,7 @@ and the derived file cooking-units.sty.
 %
 % \subsection{Obsolete Commands}
 %
-% \begin{function}{cudefinekeys}
+% \begin{function}{\cudefinekeys}
 %   \begin{syntax}
 %     \mycs{cudefinekeys}\marg{unit-key-1}
 %     \ \ \{
@@ -5400,10 +5403,9 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \msg_new:nnnn { cooking-units } { Key-not-defined } 
   { 
-    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeys or \
+    The \ key \ '#1' \ is \ not \ defined. \ Use \ \cudefinekeychain or \
     \cudefinesinglekey to \ define \ keys. 
-  } 
-  { 
+  }{ 
     This \ key \ is \ not \ defined, \ perhaps \ you  \ misspelled \ it.
     \msg_see_documentation_text:n {cooking-units} 
   }
@@ -5446,8 +5448,8 @@ and the derived file cooking-units.sty.
     '#3' \ as \ a \ set \ of \ choices \ and \ '#2' \ is \ non \ of \ these.
   }{ 
     The \ key \ accepts \ only \ a \ fixed \ set \ of \ choices. \
-    You \ can \ add \ new \ choices \ via \ \token_to_str:N \cuaddkeys, ~ 
-    \token_to_str:N \cuaddsinglekeys ~ and \ \token_to_str:N \cuaddtokeys.
+    You \ can \ add \ new \ choices \ via \ \token_to_str:N \cuaddtokeychain, ~ 
+    and ~ \token_to_str:N \cuaddsinglekeys .
     \msg_see_documentation_text:n {cooking-units} 
   }
 %    \end{macrocode}
@@ -9175,7 +9177,6 @@ and the derived file cooking-units.sty.
 % \begin{macro}{ }
 %   Defining keys.
 %    \begin{macrocode}
-
 %% To be deleted. In order to remove error messages.
 %\newcommand \cudefinekeys {}
 %\newcommand \cudefinesinglekey {}
@@ -9198,6 +9199,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \cudefinekeys { m m }
   {
+    \msg_warning:nnn { cooking-units } { obsolete-command } 
+      { \cudefinekeys } { \cudefinekeychain }
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_define:n {#1}
     \@@_cukeys_prepare_parsing_keys:nn {#1} {#2}
@@ -9305,12 +9308,16 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \NewDocumentCommand \cuaddkeys { m m }
   {
+    \msg_warning:nnn { cooking-units } { obsolete-command } 
+      { \cuaddkeys } { \cuaddtokeychain }
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_add:n {#1}
     \@@_cukeys_prepare_parsing_keys:nn {#1} {#2}
   }
 \NewDocumentCommand \cuaddtokeys { m m m }
   {
+    \msg_warning:nnn { cooking-units } { obsolete-command } 
+      { \cuaddtokeys } { \cuaddtokeychain }
     \bool_set_false:N \l_@@_single_key_bool
     \@@_initialice_cukeys_add:n {#1}
     \tl_set:Nn \l_@@_tmpa_tl { {#2} { \fp_eval:n { 1.0 / (#3) } } }
@@ -11286,43 +11293,76 @@ and the derived file cooking-units.sty.
 %  }
 %    \end{macrocode}
 %    \begin{macrocode}
-\cudefinekeys { d }
+\cudefinekeychain
   {
+    { d } { 1 }
     { h }  { 24 }
     { min }{ 1440 }
     { s }  { 86400 }
-    { hbareV-1 } { 151926746.1e+7 * 86400 } %% (151926746.1 +- 2.1) e+7
+    { hbareV-1 } { 151926746.1e+7 * 86400 } %% (151926746.1 +- 2.1) e+7  
   }
+%\cudefinekeys { d }
+%  {
+%    { h }  { 24 }
+%    { min }{ 1440 }
+%    { s }  { 86400 }
+%    { hbareV-1 } { 151926746.1e+7 * 86400 } %% (151926746.1 +- 2.1) e+7
+%  }
 %\cuaddtokeys { s } { hbareV-1 } { 6.582119514e-16 }
 %    \end{macrocode}
 %    \begin{macrocode}
-\cudefinekeys { m }
+\cudefinekeychain
   {
+    { m } { 1 }
     { dm } { 10 }
     { cm } { 100 }
     { mm } { 1000 }
     { in } { 36/0.9144 }
     { chbareV-1 } { 5067730.759 } %% 5067730.759 +- 0.070
   }
+%\cudefinekeys { m }
+%  {
+%    { dm } { 10 }
+%    { cm } { 100 }
+%    { mm } { 1000 }
+%    { in } { 36/0.9144 }
+%    { chbareV-1 } { 5067730.759 } %% 5067730.759 +- 0.070
+%  }
 %\cuaddtokeys { m } { chbareV-1 } { 1.97326972e-7 }
 %    \end{macrocode}
 %    \begin{macrocode}
-\cudefinekeys { l }
+\cudefinekeychain
   {
+    { l } { 1 }
     { dl } { 10 }
     { cl } { 100 } 
     { ml }{ 1000 } 
     { (chbareV-1)3 } { 130148929.5e+12 * 1e-3 } %% (130148929.5 +- 5.4 e+12)*1e-3
   }
+%\cudefinekeys { l }
+%  {
+%    { dl } { 10 }
+%    { cl } { 100 } 
+%    { ml }{ 1000 } 
+%    { (chbareV-1)3 } { 130148929.5e+12 * 1e-3 } %% (130148929.5 +- 5.4 e+12)*1e-3
+%  }
 %    \end{macrocode}
 %    \begin{macrocode}
-\cudefinekeys { J }
+\cudefinekeychain
   {
+    { J } { 1 }
     { kJ }{ 1e-3 }
     { cal }{ 0.2388459 }
     { kcal }{ 0.2388459e-3 }
     { eV }{ 624150912.6e+10 } %% (624150912.6 +- 3.9) e+10
   }
+%\cudefinekeys { J }
+%  {
+%    { kJ }{ 1e-3 }
+%    { cal }{ 0.2388459 }
+%    { kcal }{ 0.2388459e-3 }
+%    { eV }{ 624150912.6e+10 } %% (624150912.6 +- 3.9) e+10
+%  }
 %\cuaddtokeys { J } { eV } { 1.6021766208e-19 }
 %    \end{macrocode}
 %    \begin{macrocode}
