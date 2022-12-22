@@ -1,7 +1,7 @@
 
 \cs_new:Npn \MYTYPE #1#2
   {
-    \TYPE{#1}
+    \TYPE {#1}
     \tl_set:Nn \msg_line_number: { 1 }
     \hbox_set:Nn \l_tmpa_box {#2}
     \box_show:N \l_tmpa_box
@@ -9,10 +9,7 @@
 
 \cs_new:Npn \BOXTYPE #1
   {
-    \TYPE{------}
-    \tl_set:Nn \msg_line_number: {1}
-    \hbox_set:Nn \l_tmpa_box {#1}
-    \box_show:N \l_tmpa_box
+    \MYTYPE { ------ } {#1}
  }
 
 \cs_new:Npn \printUnknownAmountMsg #1
@@ -54,22 +51,10 @@
   { \msg_error:nn {cooking-units} { define-Numeral-function } }
 
 
-\cs_new:Npn \testcunum #1#2
-  {
-    #1 \thinspace #2
- }
-\cs_new:Npn \testcutext #1#2
-  {
-    #1 ~ #2
- }
-\cs_new:Npn \testCutext #1#2
-  {
-    #1 ~ #2
- }
-\cs_new:Npn \testcuam #1
-  {
-    #1
- }
+\cs_new:Npn \testcunum #1#2 { #1 \thinspace #2 }
+\cs_new:Npn \testcutext #1#2 { #1 ~ #2 }
+\cs_new:Npn \testCutext #1#2 { #1 ~ #2 }
+\cs_new:Npn \testcuam #1 {#1}
 
 \cs_new:Npn \textcufracDim #1#2#3#4
   {
@@ -83,12 +68,6 @@
 \cs_new:Npn \textcufrac #1#2#3
   {
     \textcufracDim {#1} {#2} {#3} { \l__cookingunits_mixed_frac_dim }
-%    \tl_if_empty:nF {#1}
-%      { 
-%        #1 
-%        \skip_horizontal:N \l__cookingunits_mixed_frac_dim
-%      }
-%    \__cookingunits_frac:nn {#2} {#3}
   }
 \cs_new:Npn \textcunumtextfrac #1#2#3 #4
   {
