@@ -61,6 +61,7 @@
   {
     #1 \skip_horizontal:N\ltmpaskip \testsfrac{#2}{#3}
   }
+\cs_new:Npn \usetestCuam #1#2{\testcuam {#1}}
 
 
 \newcookingunit{testa}
@@ -215,233 +216,233 @@
 
 
 \TEST{Print-cuam}{
-  \BOXTYPE{\testcuam{1}{Test-A}}
-  \BOXTYPE{\testcuam{2}{Test-A}}
-  \BOXTYPE{\testcuam{2.5}{Test-A}}
-  \BOXTYPE{\testcuam{2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{1}{Test-A}}
+  \BOXTYPE{\usetestCuam{2}{Test-A}}
+  \BOXTYPE{\usetestCuam{2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{2.5}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{1--2}{Test-A}}
-  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
-  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
-  \BOXTYPE{\testcuam{1.5--2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{1--2}{Test-A}}
+  \BOXTYPE{\usetestCuam{1.5--2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{1.5--2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{1.5--2.5}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\testsfrac{1}{2}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testsfrac{1}{2}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1.1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1.1}{2.5}{3.9}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
 %  
-  \BOXTYPE{\testcuam{\cookingunitsminux 5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 2.5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 3--5}{Test-A}}
-  \BOXTYPE{\testcuam{3--\cookingunitsminux 5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux 2.5}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux 3--5}{Test-A}}
+  \BOXTYPE{\usetestCuam{3--\cookingunitsminux 5}{Test-A}}
+  \BOXTYPE{\usetestCuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
 %  
-  \BOXTYPE{\printUnknownAmountMsg?\testcuam{?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcuam{12.3?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcuam{\testsfrac{1}{?}}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcuam{\testsfrac{?}{?}}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcuam{\testmixedsfrac?12}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcuam{1--?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcuam{?--1}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcuam{?--?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg?\usetestCuam{?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{12.3?}\usetestCuam{12.3?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1/?}\usetestCuam{\testsfrac{1}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?/?}\usetestCuam{\testsfrac{?}{?}}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\usetestCuam{\testmixedsfrac?12}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{1--?}\usetestCuam{1--?}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--1}\usetestCuam{?--1}{Test-A}}
+  \BOXTYPE{\printUnknownAmountMsg{?--?}\usetestCuam{?--?}{Test-A}}
 }
 
 
 
 
-
-
-
-
-
-%%%% ---------------------------
-
-
-
-
-\selectlanguage{ngerman}
-
-
-
-\TEST{Print-cunum-German}{
-  \BOXTYPE{\testcunum{1}{GTest-A}}
-  \BOXTYPE{\testcunum{2}{GTest-A}}
-  \BOXTYPE{\testcunum{2,5}{GTest-A}}
-  \BOXTYPE{\testcunum{2,5}{GTest-A}}
+%
+%
+%
+%
+%
+%%%%% ---------------------------
+%
+%
+%
+%
+%\selectlanguage{ngerman}
+%
+%
+%
+%\TEST{Print-cunum-German}{
+%  \BOXTYPE{\testcunum{1}{GTest-A}}
+%  \BOXTYPE{\testcunum{2}{GTest-A}}
+%  \BOXTYPE{\testcunum{2,5}{GTest-A}}
+%  \BOXTYPE{\testcunum{2,5}{GTest-A}}
+%%  
+%  \BOXTYPE{\testcunum{1--2}{GTest-A}}
+%  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
+%  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
+%  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
 %  
-  \BOXTYPE{\testcunum{1--2}{GTest-A}}
-  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
-  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
-  \BOXTYPE{\testcunum{1,5--2,5}{GTest-A}}
-  
-  \BOXTYPE{\testcunum{\testsfrac{1}{2}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2,5}{3,9}}{GTest-A}}
-%  
-  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
-%  
-  \BOXTYPE{\testcunum{\cookingunitsminux 5}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux 2,5}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux 3--5}{GTest-A}}
-  \BOXTYPE{\testcunum{3--\cookingunitsminux 5}{GTest-A}}
-  \BOXTYPE{\testcunum{\cookingunitsminux 3--\cookingunitsminux 5}{GTest-A}}
-%  
-  \BOXTYPE{\printUnknownAmountMsg?\testcunum{?}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcunum{12,3?}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcunum{\testsfrac{1}{?}}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcunum{\testsfrac{?}{?}}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcunum{\testmixedsfrac?12}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcunum{1--?}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcunum{?--1}{GTest-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcunum{?--?}{GTest-A}}
-}
-
-
-
-\TEST{Print-cutext-German}{
-  \BOXTYPE{\testcutext{1}{German-Test-A}}
-  \BOXTYPE{\testcutext{2}{German-Test-A}}
-  \BOXTYPE{\testcutext{2,5}{German-Test-A}}
-  \BOXTYPE{\testcutext{2,5}{German-Test-A}}
-%  
-  \BOXTYPE{\testcutext{1\space undsoweiter\space2}{German-Test-A}}
-  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-%  
-  \BOXTYPE{\testcutext{\testsfrac{1}{2}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
-%  
-  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-%  
-  \BOXTYPE{\testcutext{\cookingunitsminux 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux 2,5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
-  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
-%  
-  \BOXTYPE{\printUnknownAmountMsg?\testcutext{?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcutext{12,3?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcutext{\testsfrac{1}{?}}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcutext{\testsfrac{?}{?}}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcutext{\testmixedsfrac?12}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcutext{1\space undsoweiter\space ?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcutext{?\space undsoweiter\space 1}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcutext{?\space undsoweiter\space ?}{German-Test-A}}
-}
-
-
-
-\TEST{Print-Cutext-German}{
-  \BOXTYPE{\testCutext{1}{German-Test-A}}
-  \BOXTYPE{\testCutext{2}{German-Test-A}}
-  \BOXTYPE{\testCutext{2,5}{German-Test-A}}
-  \BOXTYPE{\testCutext{2,5}{German-Test-A}}
-%  
-  \BOXTYPE{\testCutext{1\space undsoweiter\space2}{German-Test-A}}
-  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
-%  
-  \BOXTYPE{\testCutext{\testsfrac{1}{2}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
-%  
-  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
-%  
-  \BOXTYPE{\testCutext{\cookingunitsminux 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux 2,5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
-  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
-%  
-  \BOXTYPE{\printUnknownAmountMsg?\testCutext{?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testCutext{12,3?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1/?}\testCutext{\testsfrac{1}{?}}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?/?}\testCutext{\testsfrac{?}{?}}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testCutext{\testmixedsfrac?12}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1--?}\testCutext{1\space undsoweiter\space ?}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--1}\testCutext{?\space undsoweiter\space 1}{German-Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--?}\testCutext{?\space undsoweiter\space ?}{German-Test-A}}
-}
-
-
-
-
-
-
-
-\TEST{Print-cuam-German}{
-  \BOXTYPE{\testcuam{1}{Test-A}}
-  \BOXTYPE{\testcuam{2}{Test-A}}
-  \BOXTYPE{\testcuam{2,5}{Test-A}}
-  \BOXTYPE{\testcuam{2,5}{Test-A}}
-%  
-  \BOXTYPE{\testcuam{1--2}{Test-A}}
-  \BOXTYPE{\testcuam{1,5--2,5}{Test-A}}
-  \BOXTYPE{\testcuam{1,5--2,5}{Test-A}}
-  \BOXTYPE{\testcuam{1,5--2,5}{Test-A}}
-%  
-  \BOXTYPE{\testcuam{\testsfrac{1}{2}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1,1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1,1}{2,5}{3,9}}{Test-A}}
-%  
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
-%  
-  \BOXTYPE{\testcuam{\cookingunitsminux 5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 2,5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 3--5}{Test-A}}
-  \BOXTYPE{\testcuam{3--\cookingunitsminux 5}{Test-A}}
-  \BOXTYPE{\testcuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
-%  
-  \BOXTYPE{\printUnknownAmountMsg?\testcuam{?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcuam{12,3?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcuam{\testsfrac{1}{?}}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcuam{\testsfrac{?}{?}}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcuam{\testmixedsfrac?12}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcuam{1--?}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcuam{?--1}{Test-A}}
-  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcuam{?--?}{Test-A}}
-}
-
-
+%  \BOXTYPE{\testcunum{\testsfrac{1}{2}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1,1}{2,5}{3,9}}{GTest-A}}
+%%  
+%  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{GTest-A}}
+%%  
+%  \BOXTYPE{\testcunum{\cookingunitsminux 5}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux 2,5}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux 3--5}{GTest-A}}
+%  \BOXTYPE{\testcunum{3--\cookingunitsminux 5}{GTest-A}}
+%  \BOXTYPE{\testcunum{\cookingunitsminux 3--\cookingunitsminux 5}{GTest-A}}
+%%  
+%  \BOXTYPE{\printUnknownAmountMsg?\testcunum{?}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcunum{12,3?}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcunum{\testsfrac{1}{?}}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcunum{\testsfrac{?}{?}}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcunum{\testmixedsfrac?12}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcunum{1--?}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcunum{?--1}{GTest-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcunum{?--?}{GTest-A}}
+%}
+%
+%
+%
+%\TEST{Print-cutext-German}{
+%  \BOXTYPE{\testcutext{1}{German-Test-A}}
+%  \BOXTYPE{\testcutext{2}{German-Test-A}}
+%  \BOXTYPE{\testcutext{2,5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{2,5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testcutext{1\space undsoweiter\space2}{German-Test-A}}
+%  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testcutext{\testsfrac{1}{2}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testcutext{\cookingunitsminux 5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux 2,5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+%  \BOXTYPE{\testcutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\printUnknownAmountMsg?\testcutext{?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testcutext{12,3?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1/?}\testcutext{\testsfrac{1}{?}}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?/?}\testcutext{\testsfrac{?}{?}}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testcutext{\testmixedsfrac?12}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1--?}\testcutext{1\space undsoweiter\space ?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--1}\testcutext{?\space undsoweiter\space 1}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--?}\testcutext{?\space undsoweiter\space ?}{German-Test-A}}
+%}
+%
+%
+%
+%\TEST{Print-Cutext-German}{
+%  \BOXTYPE{\testCutext{1}{German-Test-A}}
+%  \BOXTYPE{\testCutext{2}{German-Test-A}}
+%  \BOXTYPE{\testCutext{2,5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{2,5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testCutext{1\space undsoweiter\space2}{German-Test-A}}
+%  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{1,5\space undsoweiter\space2,5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testCutext{\testsfrac{1}{2}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1,1}{2,5}{3,9}}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{German-Test-A}}
+%%  
+%  \BOXTYPE{\testCutext{\cookingunitsminux 5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux 2,5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space 5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+%  \BOXTYPE{\testCutext{\cookingunitsminux 3\space undsoweiter\space \cookingunitsminux 5}{German-Test-A}}
+%%  
+%  \BOXTYPE{\printUnknownAmountMsg?\testCutext{?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{12.3?}\testCutext{12,3?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1/?}\testCutext{\testsfrac{1}{?}}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?/?}\testCutext{\testsfrac{?}{?}}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\testCutext{\testmixedsfrac?12}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1--?}\testCutext{1\space undsoweiter\space ?}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--1}\testCutext{?\space undsoweiter\space 1}{German-Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--?}\testCutext{?\space undsoweiter\space ?}{German-Test-A}}
+%}
+%
+%
+%
+%
+%
+%
+%
+%\TEST{Print-cuam-German}{
+%  \BOXTYPE{\usetestCuam{1}{Test-A}}
+%  \BOXTYPE{\usetestCuam{2}{Test-A}}
+%  \BOXTYPE{\usetestCuam{2,5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{2,5}{Test-A}}
+%%  
+%  \BOXTYPE{\usetestCuam{1--2}{Test-A}}
+%  \BOXTYPE{\usetestCuam{1,5--2,5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{1,5--2,5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{1,5--2,5}{Test-A}}
+%%  
+%  \BOXTYPE{\usetestCuam{\testsfrac{1}{2}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1,1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1,1}{2,5}{3,9}}{Test-A}}
+%%  
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\testmixedsfrac{1}{2}{3}}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux\testmixedsfrac{1}{2}{3}}{Test-A}}
+%%  
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux 5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux 2,5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux 3--5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{3--\cookingunitsminux 5}{Test-A}}
+%  \BOXTYPE{\usetestCuam{\cookingunitsminux 3--\cookingunitsminux 5}{Test-A}}
+%%  
+%  \BOXTYPE{\printUnknownAmountMsg?\usetestCuam{?}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{12.3?}\usetestCuam{12,3?}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1/?}\usetestCuam{\testsfrac{1}{?}}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?/?}\usetestCuam{\testsfrac{?}{?}}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?_1/2}\usetestCuam{\testmixedsfrac?12}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{1--?}\usetestCuam{1--?}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--1}\usetestCuam{?--1}{Test-A}}
+%  \BOXTYPE{\printUnknownAmountMsg{?--?}\usetestCuam{?--?}{Test-A}}
+%}
+%
+%
 
 
 

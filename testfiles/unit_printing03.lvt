@@ -101,28 +101,28 @@
   \TYPESTUFF \useCuam
 }
 
-
-\selectlanguage{ngerman}
-
-\TEST{Print-cunum-German}{
-\selectlanguage{ngerman}
-  \TYPESTUFF \cunum
-}
-
-\TEST{Print-cutext-German}{
-  \TYPESTUFF \cutext
-}
-
-\TEST{Print-Cutext-German}{
-  \TYPESTUFF \Cutext
-}
-
-\TEST{Print-cuam-German}{
-  \TYPESTUFF \useCuam
-}
-
-
-
+%
+%\selectlanguage{ngerman}
+%
+%\TEST{Print-cunum-German}{
+%\selectlanguage{ngerman}
+%  \TYPESTUFF \cunum
+%}
+%
+%\TEST{Print-cutext-German}{
+%  \TYPESTUFF \cutext
+%}
+%
+%\TEST{Print-Cutext-German}{
+%  \TYPESTUFF \Cutext
+%}
+%
+%\TEST{Print-cuam-German}{
+%  \TYPESTUFF \useCuam
+%}
+%
+%
+%
 
 
 
