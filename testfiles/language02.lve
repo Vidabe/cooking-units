@@ -25,38 +25,38 @@
 
 \TEST{plural-choosing-default}
   {
-\BOXTYPE { \textcutext{1}{Stand} }
-\BOXTYPE { \textcutext{1.5}{Standos} }
-\BOXTYPE { \textcutext{2}{Standos} }
-\BOXTYPE { \textcutext{3}{Standos} }
-\BOXTYPE { \textcutext{\textcutextfrac{}{1}{2}}{Stand} }
-\BOXTYPE { \textcutext{\textcutextfrac{}{3}{2}}{Standos} }
-\BOXTYPE { \textcutext{\textcutextfrac{}52}{Standos} }
-\BOXTYPE { \textcutext{\textcutextfrac{1}12}{Standos} }
-\BOXTYPE { \textcutext{\textcutextfrac{2}12}{Standos} }
-\BOXTYPE { \textcutext{\textcutextfrac{}13}{Stand} }
-\BOXTYPE { \textcutext{1--2}{Standos} }
-\BOXTYPE { \textcutext{1--1.5}{Standos} }
-\BOXTYPE { \textcutext{0.8--1}{Stand} }
+\BOXTYPE { \testcutext{1}{Stand} }
+\BOXTYPE { \testcutext{1.5}{Standos} }
+\BOXTYPE { \testcutext{2}{Standos} }
+\BOXTYPE { \testcutext{3}{Standos} }
+\BOXTYPE { \testcutext{\textcufrac{}{1}{2}}{Stand} }
+\BOXTYPE { \testcutext{\textcufrac{}{3}{2}}{Standos} }
+\BOXTYPE { \testcutext{\textcufrac{}52}{Standos} }
+\BOXTYPE { \testcutext{\textcufrac{1}12}{Standos} }
+\BOXTYPE { \testcutext{\textcufrac{2}12}{Standos} }
+\BOXTYPE { \testcutext{\textcufrac{}13}{Stand} }
+\BOXTYPE { \testcutext{1--2}{Standos} }
+\BOXTYPE { \testcutext{1--1.5}{Standos} }
+\BOXTYPE { \testcutext{0.8--1}{Stand} }
 }
 
 \selectlanguage{cooking-units-testlanguage}
 
 \TEST{plural-choosing-test}
   {
-\BOXTYPE { \textcutext{1}{Test} }
-\BOXTYPE { \textcutext{1.5}{Test} }
-\BOXTYPE { \textcutext{2}{Testos} }
-\BOXTYPE { \textcutext{3}{Testos} }
-\BOXTYPE { \textcutext{\textcutextfrac{}{1}{2}}{Test} }
-\BOXTYPE { \textcutext{\textcutextfrac{}{3}{2}}{Test} }
-\BOXTYPE { \textcutext{\textcutextfrac{}52}{Testos} }
-\BOXTYPE { \textcutext{\textcutextfrac{1}12}{Test} }
-\BOXTYPE { \textcutext{\textcutextfrac{2}12}{Testos} }
-\BOXTYPE { \textcutext{\textcutextfrac{}13}{Test} }
-\BOXTYPE { \textcutext{1--2}{Testos} }
-\BOXTYPE { \textcutext{1--1.5}{Test} }
-\BOXTYPE { \textcutext{0.8--1}{Test} }
+\BOXTYPE { \testcutext{1}{Test} }
+\BOXTYPE { \testcutext{1.5}{Test} }
+\BOXTYPE { \testcutext{2}{Testos} }
+\BOXTYPE { \testcutext{3}{Testos} }
+\BOXTYPE { \testcutext{\textcufrac{}{1}{2}}{Test} }
+\BOXTYPE { \testcutext{\textcufrac{}{3}{2}}{Test} }
+\BOXTYPE { \testcutext{\textcufrac{}52}{Testos} }
+\BOXTYPE { \testcutext{\textcufrac{1}12}{Test} }
+\BOXTYPE { \testcutext{\textcufrac{2}12}{Testos} }
+\BOXTYPE { \testcutext{\textcufrac{}13}{Test} }
+\BOXTYPE { \testcutext{1--2}{Testos} }
+\BOXTYPE { \testcutext{1--1.5}{Test} }
+\BOXTYPE { \testcutext{0.8--1}{Test} }
   }
 
 
