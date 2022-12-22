@@ -10,7 +10,7 @@
 
 
 
-\input{a_commands}
+\input{a_command}
 
 \ExplSyntaxOff
 

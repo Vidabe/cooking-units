@@ -8,7 +8,7 @@
 \ExplSyntaxOn
 \debug_on:n { check-declarations , deprecation , log-functions }
 
-\input{a_commands}
+\input{a_command}
 
 
 \ExplSyntaxOff
