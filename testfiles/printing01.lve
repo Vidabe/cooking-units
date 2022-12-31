@@ -17,33 +17,43 @@
 
 \cs_new:Npn \PrintTheResults #1#2#3
   {
-    \MYTYPE {p#11} { #2{1}#3 }
-    \MYTYPE {p#12} { #2{1--2}#3 }
-    \MYTYPE {p#13} { #2{1.1--2.2}#3 }
-    \MYTYPE {p#14} { #2{2.1--\textcufrac{}{1}{2.2}}#3 }
-    \MYTYPE {p#14.1} { #2{\textcufrac{1}{2}{3}\,--\textcufrac{}{1}{2.2}}#3 }
-    \MYTYPE {p#15} { #2{3.1\timessign2.2}#3 }
-    \MYTYPE {p#16} { #2{4.1 \timessign 2.2 \timessign 3.3}#3 }
-    \MYTYPE {p#17} { #2{5.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3}#3 }
-    \MYTYPE {p#18} 
+    \MYTYPE {p#1 1} { #2{1}#3 }
+    \MYTYPE {p#1 2} { #2{1--2}#3 }
+    \MYTYPE {p#1 3} { #2{1.1--2.2}#3 }
+    \MYTYPE {p#1 4} { #2{2.1--\textcufrac{}{1}{2.2}}#3 }
+    \MYTYPE {p#1 4.1} { #2{\textcufrac{1}{2}{3}\,--\textcufrac{}{1}{2.2}}#3 }
+    \MYTYPE {p#1 5} { #2{3.1\timessign2.2}#3 }
+    \MYTYPE {p#1 6} { #2{4.1 \timessign 2.2 \timessign 3.3}#3 }
+    \MYTYPE {p#1 7} { #2{5.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3}#3 }
+    \MYTYPE {p#1 8} 
       { #2{1.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3 \timessign 4.4 
           \timessign 5.5 \timessign 6.61}#3 
       }
+    \MYTYPE {p#1 9.1} { #2{\cookingunitsminux1}#3 }
+    \MYTYPE {p#1 9.2} { #2{1}#3 }
+    \MYTYPE {p#1 9.3} { #2{1}#3 }
+    \MYTYPE {p#1 9.4} { #2{\cookingunitsminux1}#3 }
+    \MYTYPE {p#1 9.5} { #2{1}#3 }
   }
 \cs_new:Npn \PrintTheResultscutext #1#2#3
   {
-    \MYTYPE {p#11} { #2{1}#3 }
-    \MYTYPE {p#12} { #2{1~to~2}#3 }
-    \MYTYPE {p#13} { #2{1.1~to~2.2}#3 }
-    \MYTYPE {p#14} { #2{2.1~to~\textcufrac{}{1}{2.2}}#3 }
-    \MYTYPE {p#14.1} { #2{\textcufrac{1}{2}{3}~to~\textcufrac{}{1}{2.2}}#3 }
-    \MYTYPE {p#15} { #2{3.1\timessign2.2}#3 }
-    \MYTYPE {p#16} { #2{4.1 \timessign 2.2 \timessign 3.3}#3 }
-    \MYTYPE {p#17} { #2{5.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3}#3 }
-    \MYTYPE {p#18} 
+    \MYTYPE {p#1 1} { #2{1}#3 }
+    \MYTYPE {p#1 2} { #2{1~to~2}#3 }
+    \MYTYPE {p#1 3} { #2{1.1~to~2.2}#3 }
+    \MYTYPE {p#1 4} { #2{2.1~to~\textcufrac{}{1}{2.2}}#3 }
+    \MYTYPE {p#1 4.1} { #2{\textcufrac{1}{2}{3}~to~\textcufrac{}{1}{2.2}}#3 }
+    \MYTYPE {p#1 5} { #2{3.1\timessign2.2}#3 }
+    \MYTYPE {p#1 6} { #2{4.1 \timessign 2.2 \timessign 3.3}#3 }
+    \MYTYPE {p#1 7} { #2{5.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3}#3 }
+    \MYTYPE {p#1 8} 
       { #2{1.1 \timessign \textcufrac{1}{2.2}{2} \timessign 3.3 \timessign 4.4 
           \timessign 5.5 \timessign 6.61}#3 
       }
+    \MYTYPE {p#1 9.1} { #2{\cookingunitsminux1}#3 }
+    \MYTYPE {p#1 9.2} { #2{1}#3 }
+    \MYTYPE {p#1 9.3} { #2{1}#3 }
+    \MYTYPE {p#1 9.4} { #2{\cookingunitsminux1}#3 }
+    \MYTYPE {p#1 9.5} { #2{1}#3 }
   }
 
 \ExplSyntaxOff

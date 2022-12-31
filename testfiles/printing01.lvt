@@ -16,15 +16,20 @@
 
 \cs_new:Npn \PrintTheTests #1#2#3
   {
-    \MYTYPE {p#11} { #2{1}#3 }
-    \MYTYPE {p#12} { #2{1--2}#3 }
-    \MYTYPE {p#13} { #2{1,1--2,2}#3 }
-    \MYTYPE {p#14} { #2{2.1--1/2,2}#3 }
-    \MYTYPE {p#14.1} { #2{1_2/3--1/2,2}#3 }
-    \MYTYPE {p#15} { #2{3.1x2,2}#3 }
-    \MYTYPE {p#16} { #2{4.1 x 2,2 x 3.3}#3 }
-    \MYTYPE {p#17} { #2{5.1 \times 1_2,2/2 x 3.3}#3 }
-    \MYTYPE {p#18} { #2{1.1 x 1_2,2/2 x 3.3 \times 4.4 \times 5.5 \times 6.611}#3 }
+    \MYTYPE {p#1 1} { #2{1}#3 }
+    \MYTYPE {p#1 2} { #2{1--2}#3 }
+    \MYTYPE {p#1 3} { #2{1,1--2,2}#3 }
+    \MYTYPE {p#1 4} { #2{2.1--1/2,2}#3 }
+    \MYTYPE {p#1 4.1} { #2{1_2/3--1/2,2}#3 }
+    \MYTYPE {p#1 5} { #2{3.1x2,2}#3 }
+    \MYTYPE {p#1 6} { #2{4.1 x 2,2 x 3.3}#3 }
+    \MYTYPE {p#1 7} { #2{5.1 \times 1_2,2/2 x 3.3}#3 }
+    \MYTYPE {p#1 8} { #2{1.1 x 1_2,2/2 x 3.3 \times 4.4 \times 5.5 \times 6.611}#3 }
+    \MYTYPE {p#1 9.1} { #2{-1}#3 }
+    \MYTYPE {p#1 9.2} { #2{+1}#3 }
+    \MYTYPE {p#1 9.3} { #2{-+-1}#3 }
+    \MYTYPE {p#1 9.4} { #2{-+-+-1}#3 }
+    \MYTYPE {p#1 9.5} { #2{+-+-1}#3 }
   }
 
 \ExplSyntaxOff
@@ -60,6 +65,9 @@
   \MYTYPE {peC5} { \cuam{1--2 x 3--4--5} }
   \MYTYPE {peC6} { \cuam{1 x 2 x 3 x 4--5} }
 }
+
+
+
 \END
 
 
