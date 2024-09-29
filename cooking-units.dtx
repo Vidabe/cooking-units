@@ -967,7 +967,7 @@ and the derived file cooking-units.sty.
 %^^A \pkg{fmtcount}).
 %
 % \begin{cuexamplecode}
-%   \cutext{1}{l} \\
+%   \cutext[]{1}{l} \\
 %   \Cutext{1}{l} \\
 %   \Cutext{1--2}{l} \\
 %   \Cutext{1 x 2}{l} \\
@@ -4268,7 +4268,7 @@ and the derived file cooking-units.sty.
 %    , \l_@@_pckopt_print_numeral_bool
 %    , \l_@@_lokal_numeral_bool
 %    , \l_@@_phrase_negative_bool
-%    , \l_@@_cutext_use_single_bool
+%    , \l_@@_use_singular_bool
 %    , \l_@@_symbol_was_set_by_key_bool
 %    , \l_@@_contains_valid_key_bool
 %    , \l_@@_check_decimal_bool
@@ -4292,6 +4292,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_pckopt_round_precision_negative_bool
 \bool_new:N \l_@@_pckopt_fourty_two_bool
 \bool_new:N \l_@@_pckopt_bonkers_bool
+\int_new:N \l_@@_pckopt_force_singular_plural_int
 \bool_new:N \l_@@_minus_bool
 \bool_new:N \l_@@_round_number_bool
 \bool_new:N \l_@@_single_key_bool
@@ -4303,7 +4304,7 @@ and the derived file cooking-units.sty.
 \bool_new:N \l_@@_pckopt_print_numeral_bool
 \bool_new:N \l_@@_lokal_numeral_bool
 \bool_new:N \l_@@_phrase_negative_bool
-\bool_new:N \l_@@_cutext_use_single_bool
+\bool_new:N \l_@@_use_singular_bool
 \bool_new:N \l_@@_symbol_was_set_by_key_bool
 \bool_new:N \l_@@_contains_valid_key_bool
 \bool_new:N \l_@@_check_decimal_bool
@@ -4695,7 +4696,14 @@ and the derived file cooking-units.sty.
 % \end{macro}
 %
 %
-%
+% \begin{macro}{ singular, plural }
+% Not quite sure about the naming schema, but for a first draft this works (the danger
+% about drafts is -- of course -- that they can becoma permanent quite easily).
+%    \begin{macrocode}
+    singular .code:n = { \int_set:Nn \l_@@_pckopt_force_singular_plural_int { 1 } } ,
+    plural .code:n  = { \int_set:Nn \l_@@_pckopt_force_singular_plural_int { 2 } } ,
+%    \end{macrocode}
+% \end{macro}
 %
 %
 %
@@ -6968,7 +6976,7 @@ and the derived file cooking-units.sty.
       {
         \c_@@_cmd_type_cunum_tl { \tl_set:Nn \l_@@_phantom_tl {#4} }
         \c_@@_cmd_type_cCutext_tl  { \@@_initialice_addon_cutext: }
-        \c_@@_cmd_type_cuam_tl { }
+        \c_@@_cmd_type_cuam_tl { \@@_initialice_addon_cuam: }
       }
       { \@@_create_internal_error:nN { init-acc } \l_@@_cmd_type_tl }
   }
@@ -7075,9 +7083,29 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_initialice_addon_cutext:
   {
-    \bool_set_false:N \l_@@_cutext_use_single_bool
+    \@@_initialice_singular_plural:
     \bool_if:NT \l_@@_pckopt_cutext_to_cunum_bool
       { \@@_set_cmd_type_to:n { cunum } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_initialice_addon_cuam:} 
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_addon_cuam:
+  {
+    \@@_initialice_singular_plural:
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_initialice_singular_plural:} 
+%  We set the singular/plural enforcer for \cCutext\ and |\cuam|. 
+%    \begin{macrocode}
+\cs_new:Npn \@@_initialice_singular_plural:
+  {
+    \bool_set_false:N \l_@@_use_singular_bool
+    \int_set_eq:NN \l_@@_pckopt_force_singular_plural_int \c_zero_int
   }
 %    \end{macrocode}
 % \end{macro}
@@ -7566,7 +7594,15 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
 \cs_new:Npn \@@_rf_cutext_post_process:N #1
   {
-    \@@_rf_check_plural:N #1
+    \int_case:nnF { \l_@@_pckopt_force_singular_plural_int }
+      {
+        { 0 } { \@@_rf_check_plural:N #1 }
+        { 1 } { \bool_set_true:N \l_@@_use_singular_bool }
+        { 2 } { \bool_set_false:N \l_@@_use_singular_bool }
+      } { 
+        \@@_create_internal_error:nV { cutext-check-plural } 
+          \l_@@_pckopt_force_singular_plural_int 
+      } 
     \bool_lazy_and:nnT 
       { \l_@@_lokal_numeral_bool }
       { ! \l_@@_rf_contains_fraction_bool }
@@ -7819,10 +7855,7 @@ and the derived file cooking-units.sty.
             \@@_find_common_phrase_aux:Nnn #2 ##1 
             \bool_if:NT \l_@@_tmpa_bool
               {
-                \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
-                  { \prop_get:NnN \l_@@_phrase_prop { ##1 } \l_@@_phrase_text_tl }
-                  { \prop_get:NnN \l_@@_phrase_prop { ##1 - pl } \l_@@_phrase_text_tl }
-                \prop_get:NnN \l_@@_phrase_prop { ##1 - gender } \l_@@_phrase_gender_tl
+                \@@_set_common_phrase:n {##1}
                 \seq_map_break: 
               }
           }
@@ -7865,6 +7898,29 @@ and the derived file cooking-units.sty.
           { \seq_put_right:NV \l_@@_reduced_numbers_seq \l_@@_tmpa_int }
           { \bool_set_false:N \l_@@_tmpa_bool \seq_map_break: }
       }        
+  }
+%    \end{macrocode}
+% \end{macro}
+
+% \begin{macro}{\@@_set_common_phrase:n}
+% We've found a common phrase! Set some tl's accordingly and check if we enforce
+% singular or plural.
+%    \begin{macrocode}
+\cs_new:Npn \@@_set_common_phrase:n #1
+  {
+    \int_case:nnF { \l_@@_pckopt_force_singular_plural_int }
+      {
+        { 1 } { \bool_set_true:N \l_@@_use_singular_bool }
+        { 2 } { \bool_set_false:N \l_@@_use_singular_bool }
+      }{
+        \int_compare:nNnTF { \l_@@_tmpa_int } = { 1 }
+          { \bool_set_true:N  } { \bool_set_false:N  }
+          \l_@@_use_singular_bool
+      }
+    \bool_if:NTF \l_@@_use_singular_bool
+      { \prop_get:NnN \l_@@_phrase_prop { #1 } \l_@@_phrase_text_tl }
+      { \prop_get:NnN \l_@@_phrase_prop { #1 - pl } \l_@@_phrase_text_tl }
+    \prop_get:NnN \l_@@_phrase_prop { #1 - gender } \l_@@_phrase_gender_tl
   }
 %    \end{macrocode}
 % \end{macro}
@@ -8340,7 +8396,7 @@ and the derived file cooking-units.sty.
     \@@_set_state_to:n { error }
     \msg_error:nnnn { cooking-units } { internal-error } {#1} #2 
   }
-\cs_generate_variant:Nn \@@_create_internal_error:nn { nx }
+\cs_generate_variant:Nn \@@_create_internal_error:nn { nx, nV }
 \cs_new:Npn \@@_create_error:n #1
   {
     \@@_set_state_to:n { error }
@@ -8879,7 +8935,7 @@ and the derived file cooking-units.sty.
     \bool_if:NTF \l_@@_lokal_numeral_bool
       { \l_@@_cutext_numeral_space_tl }
       { \l_@@_cutext_space_tl }
-    \bool_if:NTF \l_@@_cutext_use_single_bool
+    \bool_if:NTF \l_@@_use_singular_bool
       { \@@_culang_print:nV { name } \l_@@_decided_unit_tl }
       { \@@_culang_print:nV { name-pl }  \l_@@_decided_unit_tl }
   }
@@ -8941,7 +8997,7 @@ and the derived file cooking-units.sty.
 %  {
 %    \fp_compare:nNnTF {#1} = { 1.0 }
 %      { \bool_set_true:N  } { \bool_set_false:N }
-%    \l_@@_cutext_use_single_bool
+%    \l_@@_use_singular_bool
 %  }
 %    \end{macrocode}
 % \end{macro}
@@ -10371,14 +10427,14 @@ and the derived file cooking-units.sty.
   {
     \fp_compare:nNnTF {#1} = { 1.0 }
       { \bool_set_true:N  } { \bool_set_false:N }
-    \l_@@_cutext_use_single_bool
+    \l_@@_use_singular_bool
   }
 \cs_set:cpn { @@_pluraltest_fraction_ \c_@@_no_translation_str :nnn } #1#2#3
   {
     \tl_if_empty:nTF {#1}
       { \fp_compare:nNnTF {#2} = { \c_one_fp } } { \use_ii:nn }
       { \bool_set_true:N  } { \bool_set_false:N }
-    \l_@@_cutext_use_single_bool
+    \l_@@_use_singular_bool
   }
 %    \end{macrocode}
 % \end{macro}
@@ -10411,7 +10467,7 @@ and the derived file cooking-units.sty.
   {  
     \fp_compare:nNnTF { \fp_abs:n {#1} } < { 2.0 }
       { \bool_set_true:N } { \bool_set_false:N }
-    \l_@@_cutext_use_single_bool
+    \l_@@_use_singular_bool
   }
 \@@_pluraltest_define_fraction:nn { French }
   {  
@@ -10419,7 +10475,7 @@ and the derived file cooking-units.sty.
       { \fp_compare:nNnTF { #2/#3 } < { 2.0 } }
       { \fp_compare:nNnTF { #1 + #2/#3 } < { 2.0 } }
       { \bool_set_true:N } { \bool_set_false:N }
-    \l_@@_cutext_use_single_bool
+    \l_@@_use_singular_bool
   }
 %    \end{macrocode}
 % \end{macro}
