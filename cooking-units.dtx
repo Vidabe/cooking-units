@@ -2686,8 +2686,9 @@ and the derived file cooking-units.sty.
 %     plural
 %   \end{syntax}
 %  These options enforce either the |singular| or |plural| form if used in \cCutext\ and
-%  |\cuam| (for the latter only if phrases are used). They take no arguments. If a combination
-%  of both options are used only the last one counts.
+%  \mycs{cuam} (for the latter only if phrases are used). They take no arguments. If a combination
+%  of both options are used only the last one counts. \emph{Note: They have no effect
+%  if set in \mycs{cusetup}! They only have an effect as a lokal option!}
 % \end{function}
 % \begin{cuexample}
 %^^A \begin{myde}
@@ -2696,7 +2697,9 @@ and the derived file cooking-units.sty.
 %   \cutext{2}{l} \\
 %   \cutext[plural]{1}{l} \\
 %   \cutext[singular]{2}{l} \\
-%   \cutext[plural, singular]{2}{l}
+%   \cutext[plural, singular]{2}{l} \\
+%   \cusetup{plural} @ 
+%   \cutext{1}{l}
 % \end{cuexamplecode}
 %^^A \end{myde}
 % \end{cuexample}
