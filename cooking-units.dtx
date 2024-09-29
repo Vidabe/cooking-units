@@ -972,7 +972,9 @@ and the derived file cooking-units.sty.
 %   \Cutext{1--2}{l} \\
 %   \Cutext{1 x 2}{l} \\
 %   \cutext{12}{l} \\
-%   \Cutext{13}{l} 
+%   \Cutext{13}{l} \\
+%   \cutext[plural]{1}{l} \\
+%   \cutext[singular]{2}{l} 
 % \end{cuexamplecode}
 % and using (e.g.)\ package option \opt{use-fmtcount-numerals=true}
 % \cusetup{print-numerals=true}
@@ -983,7 +985,9 @@ and the derived file cooking-units.sty.
 %   \Cutext{1--2}{l} \\
 %   \Cutext{1 x 2}{l} \\
 %   \cutext{12}{l} \\
-%   \Cutext{13}{l} 
+%   \Cutext{13}{l} \\
+%   \cutext[plural]{1}{l} \\
+%   \cutext[singular]{2}{l} 
 % \end{cuexamplecode}
 % \cusetup{print-numerals=false}
 % You can customize the numeral functions used with \opt{numeral-function} and
@@ -1002,6 +1006,8 @@ and the derived file cooking-units.sty.
 %   \Cutext{13}{l} \\
 %   \Cutext{?}{l} \\
 %   \Cutext{1/2}{l} \\
+%   \cutext[plural]{1}{l} \\
+%   \cutext[singular]{2}{l} 
 % \end{cuexamplecode}
 %
 % 
@@ -1037,6 +1043,10 @@ and the derived file cooking-units.sty.
 %   \cuam{60} 
 % \end{cuexamplecode}
 %^^A \end{myde}
+%
+% \begin{cunote}
+%   The options \opt{singular} and \opt{plural} also work for phrases! 
+% \end{cunote}
 %
 %
 % \section{Label \& refs: Changing the amount of the recipe}
@@ -2670,6 +2680,26 @@ and the derived file cooking-units.sty.
 %^^A \end{myde}
 % \end{cuexample}
 %
+% \begin{function} {singular, plural}
+%   \begin{syntax}
+%     singular
+%     plural
+%   \end{syntax}
+%  These options enforce either the |singular| or |plural| form if used in \cCutext\ and
+%  |\cuam| (for the latter only if phrases are used). They take no arguments. If a combination
+%  of both options are used only the last one counts.
+% \end{function}
+% \begin{cuexample}
+%^^A \begin{myde}
+% \begin{cuexamplecode}
+%   \cutext{1}{l} \\
+%   \cutext{2}{l} \\
+%   \cutext[plural]{1}{l} \\
+%   \cutext[singular]{2}{l} \\
+%   \cutext[plural, singular]{2}{l}
+% \end{cuexamplecode}
+%^^A \end{myde}
+% \end{cuexample}
 %
 % \subsubsection{Rounding options}
 %
@@ -4702,6 +4732,8 @@ and the derived file cooking-units.sty.
 %    \begin{macrocode}
     singular .code:n = { \int_set:Nn \l_@@_pckopt_force_singular_plural_int { 1 } } ,
     plural .code:n  = { \int_set:Nn \l_@@_pckopt_force_singular_plural_int { 2 } } ,
+    singular .value_forbidden:n = { true } ,
+    plural .value_forbidden:n = { true } ,
 %    \end{macrocode}
 % \end{macro}
 %
