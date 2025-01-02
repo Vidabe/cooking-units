@@ -403,7 +403,7 @@ and the derived file cooking-units.sty.
     m , dm , cm , mm , in , space ,
     l , dl , cl , ml , space ,
     cal , kcal , J , kJ , eV ,  space ,
-    pn , EL , TL ,  csp , dsp , ssp , Msp , space ,
+    pn , EL , TL ,  csp , dsp , ssp , Msp, cup , space ,
     \clist_use:Nn \l_list_of_textunits_clist { , } ,
     THEEND
   }
@@ -3513,8 +3513,7 @@ and the derived file cooking-units.sty.
 %   For what kind of thing do I need \emph{Natrium} for?
 %
 % \unititem{fathom}*en* 
-%  Strangely enough, I never assumed this to be an actual unit. I thought it is a placeholder
-%  for \dots\ I do not know. Took me quite a bit to understand that this \emph{is} an unit.
+%  Strangely enough, I never assumed this to be an actual unit. I cannot fathom why.
 %   \begin{myquote}
 %      In length, the common sperm whale-line measures something over two hundred
 %      fathoms.
@@ -3570,9 +3569,7 @@ and the derived file cooking-units.sty.
 %
 % \bigskip
 %
-%   \CreateTableForPhrases { German }
-%
-% \bigskip
+%  \CreateTableForPhrases { German } \par \bigskip
 % \begin{minipage}{\textwidth}
 % Some further phrases, just to write them down (they are not implemented, 
 % as they are barely used).
@@ -3588,6 +3585,14 @@ and the derived file cooking-units.sty.
 % \end{minipage}
 %
 % Note that Gro{\ss}gros has other (probably more common) synonyms.
+%
+%\clearpage
+% \subsection{Austrian}
+% \begin{tabular}{ l l l l l }
+%   \toprule
+%   \CreateTableForLanguages{ Austrian }
+% \end{tabular}
+%
 %
 %\clearpage
 % \subsection{French}
@@ -3671,6 +3676,7 @@ and the derived file cooking-units.sty.
 %\end{center}
 %
 % \cunum{1}{USfloz}
+% \cunum{1}{impfloz}
 %
 %\begin{center}
 %\begin{tabular} { r @{ } l @{ }l r @{ } l }
@@ -9967,7 +9973,9 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %  \end{macro}
-% 
+%
+%
+%
 %
 %
 % \begin{macro}{\declarecookingderivatives}
@@ -11139,19 +11147,29 @@ and the derived file cooking-units.sty.
 \newcookingunit { dl }
 \newcookingunit { cl }
 \newcookingunit { ml }
+\int_new:N \l_@@_floz_print_state_int
+\int_set:Nn \l_@@_floz_print_state_int { 0 }
 \bool_new:N \l_@@_floz_superscript_bool
-\cs_new:Npn \@@_floz_symbols:n #1
+\bool_set_true:N \l_@@_floz_superscript_bool
+\cs_new:Npn \@@_floz_symbols:nnn #1 #2#3
   {
-    \bool_if:NF \l_@@_floz_superscript_bool
-      { #1\, }
-    fl.\,oz
-    \bool_if:NT \l_@@_floz_superscript_bool 
-      { \textsuperscript{#1} }
+    \int_case:nn \l_@@_floz_print_state_int
+      {
+        { 0 } {#1}
+        { 1 } {#2}
+        { 2 } 
+          { 
+            \bool_if:NF \l_@@_floz_superscript_bool { #3\, }
+            #2
+            \bool_if:NT \l_@@_floz_superscript_bool { \textsuperscript {#3} }
+          }
+      }
   }
-\newcookingunit [ symbol = { \@@_floz_symbols:n { US } } ] { USfloz }
-\newcookingunit [ symbol = { \@@_floz_symbols:n { imp } } ]  { impfloz }
+\newcookingunit [ symbol = { \@@_floz_symbols:nnn { oz } { fl\,oz } { US } } ] { USfloz }
+\newcookingunit [ symbol = { \@@_floz_symbols:nnn { oz } { fl\,oz }  { imp } } ]  { impfloz }
 \newcookingunit [ 
-    symbol={ \ensuremath { \@@_frac:nn { c^3 \hbar^3 } { eV^3 } } },  natural-unit
+    symbol={ \ensuremath { \@@_frac:nn { c^3 \hbar^3 } { eV^3 } } }
+    ,  natural-unit
   ] { (chbareV-1)3 }
 %    \end{macrocode}
 %
@@ -11171,6 +11189,7 @@ and the derived file cooking-units.sty.
 \newcookingunit [ csp. ] { csp } %% coffeespoonful
 \newcookingunit [ dsp. ] { dsp }
 \newcookingunit [ Msp. ] { Msp }
+\newcookingunit { cup }
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -11224,6 +11243,7 @@ and the derived file cooking-units.sty.
     { EL } [ EL ] { Essl{\"o}ffel }
     { TL } [ TL ] { Teel{\"o}ffel }
     { csp } [ KL ] { Mokkal{\"o}ffel }
+    { cup } [ Tasse ] { Tasse } [ Tassen ] < f >
 %    \end{macrocode}
 %    \begin{macrocode}
     { decimal-mark } { , }
@@ -11233,6 +11253,11 @@ and the derived file cooking-units.sty.
   }
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\cudefinename { Austrian }
+  {
+    { cup } [ H\"aferl ] { H\"aferl } < n >
+  }
 %
 %    \begin{macrocode}
 \cudefinename { English }
@@ -11285,6 +11310,7 @@ and the derived file cooking-units.sty.
     { dsp } { dessertspoonful } 
     { csp } { coffeespoonful } 
     { ssp } { saltspoonful } 
+    { cup } { cup } [ cups ] 
 %    \end{macrocode}
 %    \begin{macrocode}
     { decimal-mark } { . }
@@ -11367,6 +11393,7 @@ and the derived file cooking-units.sty.
     { pn } [ pinc\'{e}e ] { pinc\'{e}e } [ pinc\'{e}es ] < f >
     { EL } [c.\`{a}.s.] { cuill\`{e}re  \space \`{a} \space  soupe } [ cuill\`{e}res  \space \`{a} \space  soupe ] < f >
     { TL } [c.\`{a}.c.] { cuill\`{e}re  \space \`{a} \space  caf\'{e} } [ cuill\`{e}res  \space \`{a} \space  caf\'{e} ] < f >
+    { cup } [ tasse ] { tasse } [ tasses ] < f >
 %    \end{macrocode}
 %    \begin{macrocode}
     { decimal-mark } { , }
